@@ -13,7 +13,16 @@
 
 	* Add missing files in the tarballs.
 
+2012-05-02  Cedric Bail
+
+	* Do less allocation and reuse much more Evas_Map.
+
 2012-05-02 Carsten Haitzler (The Rasterman)
 
 	* Fix possible problems with other subsystems depending on X11 display
-        being closed (XCloseDisplay not close() on socket fd).
+	  being closed (XCloseDisplay not close() on socket fd).
+
+2012-05-02  ChunEon Park (Hermet)
+
+	* Font: actually it doesnt append the font to the hash when font_hash is
+	  created inside. Now it is fixed.
