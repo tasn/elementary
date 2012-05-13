@@ -30,3 +30,6 @@
 2012-05-03 Shilpa Onkar Singh
 	* naviframe: Bug Fix: Wrong signal sent when title/subtitle is set in
 	  naviframe.
+
+2012-05-13  Dave Andreoli
+	* Fileselector: honor folder_only when using EIO (backport 70965)
