@@ -71,6 +71,17 @@ struct _Widget_Request
    Eina_Bool first : 1;
 };
 
+typedef struct _Listing_Request Listing_Request;
+struct _Listing_Request
+{
+   Widget_Data      *sd;
+   Elm_Object_Item  *parent_it;
+
+   Evas_Object      *obj;
+   const char       *path;
+   Eina_Bool         first : 1;
+};
+
 typedef enum {
   ELM_DIRECTORY = 0,
   ELM_FILE_IMAGE = 1,
