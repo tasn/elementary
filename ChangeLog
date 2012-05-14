@@ -32,4 +32,10 @@
 	  naviframe.
 
 2012-05-13  Dave Andreoli
+
 	* Fileselector: honor folder_only when using EIO (backport 70965)
+
+2012-05-14  Shinwoo Kim
+
+	* menu: remove crash issue when no-parent item is passed to the
+	  elm_menu_item_separator_add()
