@@ -13,10 +13,6 @@
 
 	* Add missing files in the tarballs.
 
-2012-05-02 Cedric Bail
-
-	* Do less allocation and reuse much more Evas_Map.
-
 2012-05-02 Carsten Haitzler (The Rasterman)
 
 	* Fix possible problems with other subsystems depending on X11 display
