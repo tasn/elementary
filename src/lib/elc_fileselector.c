@@ -71,17 +71,6 @@ struct _Widget_Request
    Eina_Bool first : 1;
 };
 
-typedef struct _Listing_Request Listing_Request;
-struct _Listing_Request
-{
-   Widget_Data      *sd;
-   Elm_Object_Item  *parent_it;
-
-   Evas_Object      *obj;
-   const char       *path;
-   Eina_Bool         first : 1;
-};
-
 typedef enum {
   ELM_DIRECTORY = 0,
   ELM_FILE_IMAGE = 1,
@@ -573,13 +562,13 @@ _do_anchors(Evas_Object *obj,
 static Eina_Bool
 _filter_cb(void *data, Eio_File *handler, const Eina_File_Direct_Info *info)
 {
-   Listing_Request *lreq = data;
+   Widget_Request *wr = data;
    const char *filename;
 
    if (info->path[info->name_start] == '.')
      return EINA_FALSE;
 
-   if (lreq->sd->only_folder && info->type != EINA_FILE_DIR)
+   if (wr->wd->only_folder && info->type != EINA_FILE_DIR)
       return EINA_FALSE;
 
    filename = eina_stringshare_add(info->path);
