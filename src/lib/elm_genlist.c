@@ -674,7 +674,7 @@ _sizing_eval(Evas_Object *obj)
    else if (wd->mode == ELM_LIST_LIMIT)
      {
         maxw = -1;
-        minw = vmw + minw;
+        minw = vmw + wd->realminw;
      }
    else
      {
@@ -5327,8 +5327,6 @@ elm_genlist_mode_set(Evas_Object  *obj,
    if (!wd) return;
    if (wd->mode == mode) return;
    wd->mode = mode;
-   if (wd->mode == ELM_LIST_COMPRESS)
-     elm_genlist_homogeneous_set(obj, EINA_FALSE);
    _sizing_eval(obj);
 }
 
