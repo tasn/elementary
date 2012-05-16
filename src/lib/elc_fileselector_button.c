@@ -249,8 +249,7 @@ _selection_done(void            *data,
    wd->fsw = NULL;
    evas_object_del(del);
 
-   evas_object_smart_callback_call(wd->self, SIG_FILE_CHOSEN,
-                                   (void *)wd->fsd.path);
+   evas_object_smart_callback_call(wd->self, SIG_FILE_CHOSEN, (void *)file);
 }
 
 static void
