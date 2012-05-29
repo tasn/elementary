@@ -135,7 +135,7 @@ EAPI void                 elm_video_stop(Evas_Object *video);
  * @brief Is the video actually playing.
  *
  * @param video The video object to proceed the request on.
- * @return EINA_TRUE if the video is actually playing.
+ * @return @c EINA_TRUE if the video is actually playing.
  *
  * You should consider watching event on the object instead of polling
  * the object state.
@@ -148,7 +148,7 @@ EAPI Eina_Bool            elm_video_is_playing_get(const Evas_Object *video);
  * @brief Is it possible to seek inside the video.
  *
  * @param video The video object to proceed the request on.
- * @return EINA_TRUE if is possible to seek inside the video.
+ * @return @c EINA_TRUE if is possible to seek inside the video.
  *
  * @ingroup Video
  */
@@ -158,7 +158,7 @@ EAPI Eina_Bool            elm_video_is_seekable_get(const Evas_Object *video);
  * @brief Is the audio muted.
  *
  * @param video The video object to proceed the request on.
- * @return EINA_TRUE if the audio is muted.
+ * @return @c EINA_TRUE if the audio is muted.
  *
  * @ingroup Video
  */
@@ -199,7 +199,7 @@ EAPI void                 elm_video_audio_level_set(Evas_Object *video, double v
  * Elm_Video object.
  *
  * @param video The video object.
- * @return the time(in seconds) since the beginning of the media file.
+ * @return The time (in seconds) since the beginning of the media file.
  *
  * @ingroup Video
  */
@@ -210,7 +210,7 @@ EAPI double               elm_video_play_position_get(const Evas_Object *video);
  * Elm_Video object.
  *
  * @param video The video object.
- * @param position the time(in seconds) since the beginning of the media file.
+ * @param position The time (in seconds) since the beginning of the media file.
  *
  * @ingroup Video
  */
@@ -219,7 +219,7 @@ EAPI void                 elm_video_play_position_set(Evas_Object *video, double
  * @brief Get the total playing time (in seconds) of the Elm_Video object.
  *
  * @param video The video object.
- * @return the total duration(in seconds) of the media file.
+ * @return The total duration (in seconds) of the media file.
  *
  * @ingroup Video
  */
@@ -241,7 +241,7 @@ EAPI void                 elm_video_remember_position_set(Evas_Object *video, Ei
  * @brief Set whether the object can remember the last played position.
  *
  * @param video The video object.
- * @return whether the object remembers the last played position (EINA_TRUE)
+ * @return whether the object remembers the last played position (@c EINA_TRUE)
  * or not.
  *
  * @note This API only serves as indication. System support is required.
@@ -251,7 +251,7 @@ EAPI void                 elm_video_remember_position_set(Evas_Object *video, Ei
 EAPI Eina_Bool            elm_video_remember_position_get(const Evas_Object *video);
 
 /**
- * @brief Get the title (for ex. DVD title) from this emotion object.
+ * @brief Get the title (for instance DVD title) from this emotion object.
  *
  * @param video The Elm_Video object.
  * @return A string containing the title.
