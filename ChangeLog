@@ -42,5 +42,8 @@
 
 2012-05-16  Tom Hacohen (TAsn)
 
-        * Fix fileselector selection done bug and pass the right string.
-        
+	* Fix fileselector selection done bug and pass the right string.
+
+2012-05-28 Mike Blumenkrantz
+
+	* Fix sizing calc error in list item homogenizing
