@@ -945,7 +945,16 @@ elm_widget_sub_object_add(Evas_Object *obj,
              sd2->parent_obj = obj;
              _elm_widget_top_win_focused_set(sobj, sd->top_win_focused);
              if (!sd->child_can_focus && (_is_focusable(sobj)))
-               sd->child_can_focus = EINA_TRUE;
+               {
+                  Smart_Data *sdt = evas_object_smart_data_get(obj);
+                  sdt->child_can_focus = EINA_TRUE;
+                  while (sdt->parent_obj)
+                    {
+                       sdt = evas_object_smart_data_get(sdt->parent_obj);
+                       if (sdt->child_can_focus) break;
+                       sdt->child_can_focus = EINA_TRUE;
+                    }
+               }
           }
      }
    else
@@ -1005,14 +1014,21 @@ elm_widget_sub_object_del(Evas_Object *obj,
           {
              Evas_Object *subobj;
              const Eina_List *l;
-             sd->child_can_focus = EINA_FALSE;
-             EINA_LIST_FOREACH(sd->subobjs, l, subobj)
+             Smart_Data *sdt = evas_object_smart_data_get(obj);
+             while (1)
                {
-                  if (_is_focusable(subobj))
+                  sdt->child_can_focus = EINA_FALSE;
+                  EINA_LIST_FOREACH(sdt->subobjs, l, subobj)
                     {
-                       sd->child_can_focus = EINA_TRUE;
-                       break;
+                       if ((subobj != sobj) && (_is_focusable(subobj)))
+                         {
+                            sdt->child_can_focus = EINA_TRUE;
+                            break;
+                         }
                     }
+                  if (sdt->child_can_focus) break;
+                  if (!sdt->parent_obj) break;
+                  sdt = evas_object_smart_data_get(sdt->parent_obj);
                }
           }
         Smart_Data *sd2 = evas_object_smart_data_get(sobj);
