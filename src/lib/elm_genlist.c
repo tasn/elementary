@@ -2045,6 +2045,20 @@ _item_state_realize(Elm_Gen_Item *it,
 }
 
 static void
+_item_order_update(const Eina_Inlist *l, int start)
+{
+   Elm_Gen_Item *it, *it2;
+
+   for (it = ELM_GEN_ITEM_FROM_INLIST(l); l; l = l->next, it = ELM_GEN_ITEM_FROM_INLIST(l))
+     {
+        it->item->order_num_in = start++;
+        _elm_genlist_item_odd_even_update(it);
+        it2 = ELM_GEN_ITEM_FROM_INLIST(l->next);
+        if (it2 && (it->item->order_num_in != it2->item->order_num_in)) return;
+     }
+}
+
+static void
 _item_realize(Elm_Gen_Item *it,
               int           in,
               Eina_Bool     calc)
@@ -2060,8 +2074,7 @@ _item_realize(Elm_Gen_Item *it,
      {
         if (it->item->order_num_in != in)
           {
-             it->item->order_num_in = in;
-             _elm_genlist_item_odd_even_update(it);
+             _item_order_update(EINA_INLIST_GET(it), in);
              _elm_genlist_item_state_update(it, NULL);
              _elm_genlist_item_index_update(it);
           }
@@ -2114,7 +2127,7 @@ _item_realize(Elm_Gen_Item *it,
                                  elm_widget_mirrored_get(WIDGET(it)));
      }
 
-   _elm_genlist_item_odd_even_update(it);
+   _item_order_update(EINA_INLIST_GET(it), in);
 
    treesize = edje_object_data_get(VIEW(it), "treesize");
    if (treesize) tsize = atoi(treesize);
@@ -5391,6 +5404,7 @@ elm_genlist_block_count_set(Evas_Object *obj,
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   if (count < 1) return;
    wd->max_items_per_block = count;
    wd->item_cache_max = wd->max_items_per_block * 2;
    _item_cache_clean(wd);
@@ -6140,7 +6154,7 @@ _tree_effect_animator_cb(void *data)
                }
              else if (wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_CONTRACT)
                {
-                  if (expanded_next_it->item->scrl_y >= expanded_next_it->item->old_scrl_y) //did not calculate next item position
+                  if (expanded_next_it->item->scrl_y > expanded_next_it->item->old_scrl_y) //did not calculate next item position
                      expanded_next_it->item->old_scrl_y = cvy + cvh;
 
                   if (expanded_next_it->item->old_scrl_y > (cvy + cvh))
