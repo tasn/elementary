@@ -65,3 +65,7 @@
 2012-06-01 Mike Blumenkrantz
 
         * Re-setting the current mirrored mode state no longer causes a full recalc
+
+2012-06-07 Mike Blumenkrantz
+
+        * 1.0.1 release
