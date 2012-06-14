@@ -73,3 +73,7 @@
 2012-06-14 WooHyun Jung
 
         * box : Added elm_widget_sub_object_del for box_unpack and box_unpack_all
+
+2012-06-14 Seunggyun Kim
+
+        * Fix elm_config_font_overlay_apply() to also apply rescaling properly.
