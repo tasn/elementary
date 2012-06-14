@@ -69,3 +69,7 @@
 2012-06-07 Mike Blumenkrantz
 
         * 1.0.1 release
+
+2012-06-14 WooHyun Jung
+
+        * box : Added elm_widget_sub_object_del for box_unpack and box_unpack_all

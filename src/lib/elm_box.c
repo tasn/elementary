@@ -512,8 +512,10 @@ elm_box_unpack(Evas_Object *obj, Evas_Object *subobj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   evas_object_box_remove(wd->box, subobj);
+   if ((!wd) || (!wd->box)) return;
+
+   if (evas_object_box_remove(wd->box, subobj))
+     elm_widget_sub_object_del(obj, subobj);
 }
 
 EAPI void
@@ -521,7 +523,15 @@ elm_box_unpack_all(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   Evas_Object_Box_Data *bd;
+   Evas_Object_Box_Option *opt;
+   Eina_List *l;
+   if ((!wd) || (!wd->box)) return;
+
+   bd = evas_object_smart_data_get(wd->box);
+   EINA_LIST_FOREACH (bd->children, l, opt)
+     elm_widget_sub_object_del(obj, opt->obj);
+
    evas_object_box_remove_all(wd->box, EINA_FALSE);
 }
 
