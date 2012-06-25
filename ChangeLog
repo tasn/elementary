@@ -77,3 +77,8 @@
 2012-06-14 Seunggyun Kim
 
         * Fix elm_config_font_overlay_apply() to also apply rescaling properly.
+
+2012-06-25 Daniel Juyung Seo (SeoZ)
+
+	* Genlist: Fixed tree expand bug. Check item type when an item is requested
+	to be expanded/contracted.
