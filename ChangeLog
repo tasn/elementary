@@ -428,3 +428,7 @@
 
         * Fix re-order animation when it doesn't end correctly.
         
+2012-09-03  Shinwoo Kim (kimcinoo)
+
+        * Fix popup to apply the same style to the notify sub-widget.
+        

@@ -7,6 +7,7 @@ Fixes:
 
    * Now elm_datetime_field_limit_set() can set year limits wihtout problems.
    * Fix re-order animation when iot doesn't end correctly.
+   * Fix popup to apply the same style to the notify sub-widget.
 
 Changes since Elementary 1.0.0:
 -------------------------
