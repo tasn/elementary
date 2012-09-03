@@ -406,6 +406,10 @@
 	* Track window states as a total count and be able to self-throttle
           or suspend rendering as a result.
 
+2012-08-30  Carsten Haitzler (The Rasterman)
+
+        1.7.0 release
+
 2012-08-30  Shilpa Onkar Singh
 
 	* Naviframe's item Subtitle_label deleted in item_free.
@@ -419,3 +423,8 @@
         * Fix min/max limit setting to respect field boundaires EXCEPT
           for years which have no boundaries with
           elm_datetime_field_limit_set()
+
+2012-09-03  Bluezery
+
+        * Fix re-order animation when it doesn't end correctly.
+        
