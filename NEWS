@@ -1,4 +1,11 @@
-Elementary 1.7.0
+Elementary 1.7.1
+
+Changes since Elementary 1.7.0:
+-------------------------
+
+Fixes:
+
+   * Now elm_datetime_field_limit_set() can set year limits wihtout problems.
 
 Changes since Elementary 1.0.0:
 -------------------------
