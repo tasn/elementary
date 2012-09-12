@@ -433,7 +433,7 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
               dir = ELM_CTXPOPUP_DIRECTION_DOWN;
               break;
            default:
-              break;
+              continue;
           }
         break;
      }
