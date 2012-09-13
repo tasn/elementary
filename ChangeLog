@@ -435,3 +435,7 @@
 2012-09-12  Thiep Ha
 
         * Fix ctxpopup direction if -1 is uses as priority.
+
+2012-09-13  Prince Kumar Dubey
+
+        * Fix diskselector when bounce off and round enabled.
