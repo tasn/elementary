@@ -439,3 +439,7 @@
 2012-09-13  M.V.K. Sumanth
 
         * Fix diskselector when bounce off and round enabled.
+
+2012-09-14  Shinwoo Kim (kimcinoo)
+
+        * Fix info field set for bubble widget.
