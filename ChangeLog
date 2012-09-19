@@ -443,3 +443,7 @@
 2012-09-14  Shinwoo Kim (kimcinoo)
 
         * Fix info field set for bubble widget.
+
+2012-09-19 Michael Bouchaud (yoz)
+
+        * fix resizing on naviframe when an item is poped
