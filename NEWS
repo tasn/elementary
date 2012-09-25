@@ -11,6 +11,7 @@ Fixes:
    * Fix Ctxpopup direction if unknown priority used
    * Fix diskselector when bounce off and round enabled.
    * Fix bubble info field set.
+   * Escape theme filename correctly.
 
 Changes since Elementary 1.0.0:
 -------------------------
