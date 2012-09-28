@@ -456,3 +456,7 @@
 2012-09-25  Cedric Bail
 
 	* Escape theme filename correctly.
+
+2012-09-28  Shinwoo Kim (kimcinoo)
+
+        * Fix disk selector selection of middle item when obj not at 0.

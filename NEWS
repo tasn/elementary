@@ -12,7 +12,8 @@ Fixes:
    * Fix diskselector when bounce off and round enabled.
    * Fix bubble info field set.
    * Escape theme filename correctly.
-
+   * Fix diskselector selection of middle item.
+   
 Changes since Elementary 1.0.0:
 -------------------------
 
