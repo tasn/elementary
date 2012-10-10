@@ -15,7 +15,8 @@ Fixes:
    * Fix diskselector selection of middle item.
    * Fix copy&paste error in elm_flip.
    * Fix possible invalid memory access in elm_access.
-
+   * Fix diskselector bug with more than 4 items.
+   
 Changes since Elementary 1.0.0:
 -------------------------
 

@@ -465,3 +465,9 @@
 
 	* fix copy&paste error in elm_flip.
 	* fix possible invalid memory access in elm_access.
+
+2012-10-10  Shinwoo Kim (kimcinoo)
+
+        * Fix diskselector bug on round with appended items with more
+        than 4 items.
+                
