@@ -470,4 +470,7 @@
 
         * Fix diskselector bug on round with appended items with more
         than 4 items.
-                
+
+2012-10-11  WooHyun Jung
+
+	* Fix a bug in elm_panel. Content should be a sub-object of elm_panel.

@@ -229,6 +229,7 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    wd->content = content;
    if (content)
      {
+        elm_widget_sub_object_add(obj, wd->content);
         evas_object_box_append(wd->bx, wd->content);
         evas_object_show(wd->content);
      }

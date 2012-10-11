@@ -16,7 +16,8 @@ Fixes:
    * Fix copy&paste error in elm_flip.
    * Fix possible invalid memory access in elm_access.
    * Fix diskselector bug with more than 4 items.
-   
+   * Fix a bug in elm_paenl. Content should be a sub-object of elm_panel.
+      
 Changes since Elementary 1.0.0:
 -------------------------
 
