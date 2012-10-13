@@ -474,3 +474,7 @@
 2012-10-11  WooHyun Jung
 
 	* Fix a bug in elm_panel. Content should be a sub-object of elm_panel.
+
+2012-10-12  Shinwoo Kim (kimcinoo)
+
+        * Fix conform widget to be part of focus chain.
