@@ -18,6 +18,7 @@ Fixes:
    * Fix diskselector bug with more than 4 items.
    * Fix a bug in elm_panel. Content should be a sub-object of elm_panel.
    * Fix conform widget to be part of focus chain.
+   * Fix genlist reorder mode item not being resized on genlist resize.
 
 Changes since Elementary 1.0.0:
 -------------------------
