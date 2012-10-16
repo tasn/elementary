@@ -487,3 +487,7 @@
 
         * Fix genlist reorder mode item not being resized on genlist resize.
 
+2012-10-17  Jihoon Kim (jihoon)
+
+        * Fix elm_widget_type_check warning in the _on_size_hints_changed of elm_video.
+
