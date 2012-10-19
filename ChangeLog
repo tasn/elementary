@@ -494,3 +494,7 @@
 2012-10-19  Tae-Hwan Kim (Bluezery)
 
         * Fixed wrong_calc_job parameter.
+
+2012-10-19  ChunEon Park (Hermet)
+
+        * Fix elm_transit image animation which last few frames are skipped.
