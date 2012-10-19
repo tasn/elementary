@@ -491,3 +491,6 @@
 
         * Fix elm_widget_type_check warning in the _on_size_hints_changed of elm_video.
 
+2012-10-19  Tae-Hwan Kim (Bluezery)
+
+        * Fixed wrong_calc_job parameter.

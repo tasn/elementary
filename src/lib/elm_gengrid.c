@@ -1161,7 +1161,7 @@ _item_place(Elm_Gen_Item *it,
                             if (wsd->calc_job)
                               ecore_job_del(wsd->calc_job);
                             wsd->calc_job =
-                              ecore_job_add(_calc_job, WIDGET(it));
+                              ecore_job_add(_calc_job, wsd);
 
                             return;
                          }
