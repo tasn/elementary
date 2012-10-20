@@ -498,3 +498,7 @@
 2012-10-19  ChunEon Park (Hermet)
 
         * Fix elm_transit image animation which last few frames are skipped.
+
+2012-10-20  Cedric Bail
+
+	1.7.1 release
