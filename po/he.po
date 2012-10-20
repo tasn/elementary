@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-08-30 14:02+0900\n"
+"POT-Creation-Date: 2012-10-20 13:35+0200\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Aharon Hillel <a.hillel@samsung.com>\n"
 "Language-Team: General\n"
@@ -38,7 +38,7 @@ msgid "Clicked"
 msgstr ""
 
 #: src/lib/elm_button.c:255 src/lib/elm_check.c:200 src/lib/elm_gengrid.c:618
-#: src/lib/elm_genlist.c:1281 src/lib/elm_list.c:1353 src/lib/elm_radio.c:241
+#: src/lib/elm_genlist.c:1287 src/lib/elm_list.c:1353 src/lib/elm_radio.c:241
 #: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1253
 msgid "State: Disabled"
 msgstr ""
@@ -77,7 +77,7 @@ msgstr ""
 msgid "default:LTR"
 msgstr "default:RTL"
 
-#: src/lib/elm_diskselector.c:621
+#: src/lib/elm_diskselector.c:622
 msgid "diskselector item"
 msgstr ""
 
@@ -105,7 +105,7 @@ msgstr ""
 msgid "Gengrid Item"
 msgstr ""
 
-#: src/lib/elm_genlist.c:1315
+#: src/lib/elm_genlist.c:1321
 msgid "Genlist Item"
 msgstr ""
 
