@@ -1,4 +1,12 @@
-Elementary 1.7.1
+Elementary 1.7.2
+
+Changes since Elementary 1.7.1:
+-------------------------
+
+Fixes:
+
+   * Fix promote and demote in genlist when the object isn't yet fully builded
+
 
 Changes since Elementary 1.7.0:
 -------------------------

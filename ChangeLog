@@ -502,3 +502,7 @@
 2012-10-20  Cedric Bail
 
 	1.7.1 release
+
+2012-10-25  Michael Bouchaud (yoz)
+
+         * some fix for promote and demote in genlist
