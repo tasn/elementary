@@ -28,6 +28,8 @@ Fixes:
    * Fix conform widget to be part of focus chain.
    * Fix genlist reorder mode item not being resized on genlist resize.
    * Fixed gengrid wrong_calc_job parameter.
+   * Fix elm_transit image animation that last few frames are skipped.
+   * FIx elm_transit to accept proxy object.
 
 Changes since Elementary 1.0.0:
 -------------------------
