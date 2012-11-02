@@ -6,6 +6,7 @@ Changes since Elementary 1.7.1:
 Fixes:
 
    * Fix promote and demote in genlist when the object isn't yet fully builded
+   * Fix the elm_flip to accept proxy object.
 
 
 Changes since Elementary 1.7.0:

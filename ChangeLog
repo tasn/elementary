@@ -510,3 +510,7 @@
 2012-10-30  ChunEon Park (Hermet)
 
         * Fix the transit to accept proxy object.
+
+2012-11-02  ChunEon Park (Hermet)
+
+        * Don't update map uv with image size for proxy object in elm_flip.
