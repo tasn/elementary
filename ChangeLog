@@ -514,3 +514,7 @@
 2012-11-02  ChunEon Park (Hermet)
 
         * Don't update map uv with image size for proxy object in elm_flip.
+
+2012-11-07  Mikael Sans (xhell)
+
+        * Fix wrong parameter for thumbnail error in elm_icon.
