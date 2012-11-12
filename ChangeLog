@@ -518,3 +518,7 @@
 2012-11-07  Mikael Sans (xhell)
 
         * Fix wrong parameter for thumbnail error in elm_icon.
+
+2012-10-25  Michael Bouchaud (yoz)
+
+        * Add missing selected event in elm_index (elm_index_item_selected_set)
