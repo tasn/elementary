@@ -10,6 +10,7 @@ Fixes:
    * Fix wrong parameter for thumbnail error in elm_icon.
    * Fix missing event selected in elm_index (elm_index_item_selected_set)
    * Fix update the min size hint on elm_label after a text set
+   * Fix flip widget who show the two face at same time
 
 
 Changes since Elementary 1.7.0:

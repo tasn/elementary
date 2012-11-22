@@ -519,10 +519,14 @@
 
         * Fix wrong parameter for thumbnail error in elm_icon.
 
-2012-10-25  Michael Bouchaud (yoz)
+2012-11-12  Michael Bouchaud (yoz)
 
         * Add missing selected event in elm_index (elm_index_item_selected_set)
 
-2012-11-14  Michael Bouchaud (yoz)
+2012-11-21  Michael Bouchaud (yoz)
 
         * update the min size hint on elm_label after a text set
+
+2012-11-22  Michael Bouchaud (yoz)
+
+        * fix elm_flip to show only one face at a time
