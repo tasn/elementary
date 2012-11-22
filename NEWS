@@ -9,6 +9,7 @@ Fixes:
    * Fix the elm_flip to accept proxy object.
    * Fix wrong parameter for thumbnail error in elm_icon.
    * Fix missing event selected in elm_index (elm_index_item_selected_set)
+   * Fix update the min size hint on elm_label after a text set
 
 
 Changes since Elementary 1.7.0:

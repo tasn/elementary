@@ -522,3 +522,7 @@
 2012-10-25  Michael Bouchaud (yoz)
 
         * Add missing selected event in elm_index (elm_index_item_selected_set)
+
+2012-11-14  Michael Bouchaud (yoz)
+
+        * update the min size hint on elm_label after a text set
