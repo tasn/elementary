@@ -544,3 +544,7 @@
 
         1.7.2 release
 
+2012-11-23  Carsten Haitzler (The Rasterman)
+
+        * Fix build on systems without clearenv() (eg bsd).
+
