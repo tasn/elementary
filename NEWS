@@ -6,6 +6,7 @@ Changes since Elementary 1.7.2:
 Fixes:
 
    * Fix the naviframe to clear the text parts when it's item is deleted.
+   * Fix the mapbuf to update it's content correcltly evenif they go outside of the buffer. 
 
 
 Elementary 1.7.2
