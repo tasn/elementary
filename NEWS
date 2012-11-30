@@ -8,6 +8,7 @@ Fixes:
    * Fix the naviframe to clear the text parts when it's item is deleted.
    * Fix the mapbuf to update it's content correcltly evenif they go outside of the buffer.
    * Fix the naviframe to resize it's items which are inserted.
+   * Fix layout when content_set or text_set is executed with NULL part name.
 
 
 Elementary 1.7.2

@@ -571,9 +571,7 @@ _elm_layout_part_aliasing_eval(Elm_Layout_Smart_Data *sd,
 
 #undef ALIAS_LIST
 
-   if (!aliases) return EINA_TRUE;
-
-   while (aliases->alias && aliases->real_part)
+   while (aliases && aliases->alias && aliases->real_part)
      {
         /* NULL matches the 1st */
         if ((!*part) || (!strcmp(*part, aliases->alias)))

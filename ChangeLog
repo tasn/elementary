@@ -560,3 +560,7 @@
 2012-11-30  ChunEon Park (Hermet)
 
         * Fix the naviframe to resize it's items which are inserted.
+
+2012-11-30  WooHyun Jung
+
+        * Fix layout when content_set or text_set is called with NULL part name.
