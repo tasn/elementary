@@ -1276,7 +1276,8 @@ elm_naviframe_item_insert_before(Evas_Object *obj,
 
    it = _item_new(obj, prev_it,
                   title_label, prev_btn, next_btn, content, item_style);
-   if (!it) return NULL;
+   if (!it) return;
+   elm_widget_resize_object_set(obj, VIEW(it));
 
    sd->stack = eina_inlist_prepend_relative
        (sd->stack, EINA_INLIST_GET(it),
@@ -1304,7 +1305,8 @@ elm_naviframe_item_insert_after(Evas_Object *obj,
 
    it = _item_new(obj, (Elm_Naviframe_Item *)after,
                   title_label, prev_btn, next_btn, content, item_style);
-   if (!it) return NULL;
+   if (!it) return;
+   elm_widget_resize_object_set(obj, VIEW(it));
 
    /* let's share that whole logic, if it goes to the top */
    if (elm_naviframe_top_item_get(obj) == after)

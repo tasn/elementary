@@ -556,3 +556,7 @@
 
         * Fix the mapbuf to update it's contents correctly, even if they go
         outside of the buffer
+
+2012-11-30  ChunEon Park (Hermet)
+
+        * Fix the naviframe to resize it's items which are inserted.
