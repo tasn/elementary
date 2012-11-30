@@ -564,3 +564,7 @@
 2012-11-30  WooHyun Jung
 
         * Fix layout when content_set or text_set is called with NULL part name.
+
+2012-11-30  ChunEon Park (Hermet)
+
+        * emit the signals for content_set/unset text_set/unset one time!

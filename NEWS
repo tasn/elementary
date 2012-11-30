@@ -9,6 +9,7 @@ Fixes:
    * Fix the mapbuf to update it's content correcltly evenif they go outside of the buffer.
    * Fix the naviframe to resize it's items which are inserted.
    * Fix layout when content_set or text_set is executed with NULL part name.
+   * Fix the naviframe to send signal emits one time for content show/hide, text show/hide.
 
 
 Elementary 1.7.2
