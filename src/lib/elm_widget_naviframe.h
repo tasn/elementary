@@ -162,6 +162,7 @@ struct _Elm_Naviframe_Content_Item_Pair
 {
    EINA_INLIST;
    const char *part;
+   Evas_Object *content;
    Elm_Naviframe_Item *it;
 };
 
