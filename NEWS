@@ -11,6 +11,7 @@ Fixes:
    * Fix layout when content_set or text_set is executed with NULL part name.
    * Fix the naviframe to send signal emits one time for content show/hide, text show/hide.
    * Fix case where tooltips could go offscreen unnecessarily
+   * Fix possible divide by zero in els_scroller animator.
 
 
 Elementary 1.7.2
