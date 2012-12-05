@@ -200,6 +200,13 @@ _item_text_signals_emit(Elm_Naviframe_Item *it)
      }
 }
 
+static void
+_item_signals_emit(Elm_Naviframe_Item *it)
+{
+   _item_text_signals_emit(it);
+   _item_content_signals_emit(it);
+}
+
 /* FIXME: we need to handle the case when this function is called
  * during a transition */
 static void
@@ -223,9 +230,6 @@ _item_style_set(Elm_Naviframe_Item *it,
 
    elm_widget_theme_object_set
      (WIDGET(it), VIEW(it), "naviframe", buf, elm_widget_style_get(WIDGET(it)));
-
-   _item_text_signals_emit(it);
-   _item_content_signals_emit(it);
 
    if (sd->freeze_events)
      evas_object_freeze_events_set(VIEW(it), EINA_FALSE);
@@ -254,6 +258,7 @@ _elm_naviframe_smart_theme(Evas_Object *obj)
    EINA_INLIST_FOREACH (sd->stack, it)
      {
         _item_style_set(it, it->style);
+        _item_signals_emit(it);
         _item_title_visible_update(it);
      }
 
@@ -1548,6 +1553,7 @@ elm_naviframe_item_style_set(Elm_Object_Item *it,
      if (!strcmp("basic", nit->style)) return;
 
    _item_style_set(nit, item_style);
+   _item_signals_emit(nit);
    _item_title_visible_update(nit);
 }
 
