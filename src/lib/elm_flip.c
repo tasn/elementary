@@ -667,6 +667,8 @@ _state_update(Elm_Flip_Smart_Data *sd)
           {
              Vertex3 vo[4];
 
+             memset(vo, 0, sizeof (vo));
+
              if (b > 0) nn = num + sd->slices_h - row - 1;
              else nn = num + row;
 
