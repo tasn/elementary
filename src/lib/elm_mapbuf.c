@@ -107,7 +107,7 @@ _configure(Evas_Object *obj)
    evas_object_geometry_get(ELM_WIDGET_DATA(sd)->resize_obj, &x, &y, &w, &h);
    evas_object_geometry_get(sd->content, &x2, &y2, &w2, &h2);
 
-   if ((x != x2) || (y != y2))
+   if ((x != x2) || (y != y2) || (w != w2) || (h != h2))
      {
         if (!sd->enabled)
           evas_object_move(sd->content, x, y);

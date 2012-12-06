@@ -15,6 +15,9 @@ Fixes:
    * Fix uninitialized data path in elm_flip, elm_gesture_layer, elm_interface_scrollable, els_scroller.
    * Fix possible segv in elm_quicklaunch infrastructure.
    * Fix elm_conform buffer to always terminate with at least one '\0'.
+   * Fix the mapbuf to show it's content properly, If the content doesn't
+   have resized, it wouldn't be showed up.
+
 
 
 Elementary 1.7.2
