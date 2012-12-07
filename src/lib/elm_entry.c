@@ -2389,7 +2389,7 @@ _elm_entry_text_set(Evas_Object *obj, const char *item, const char *entry)
      {
         edje_object_part_text_set(wd->ent, "elm.text", entry);
      }
-   if ((entry) && (entry[0]))
+   if (len > 0)
      _elm_entry_update_guide(obj, EINA_TRUE);
    else
      _elm_entry_update_guide(obj, EINA_FALSE);
