@@ -275,7 +275,7 @@ _signal_mouse_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emiss
    wd->focused = EINA_TRUE;
    _view_update(data);
 
-   if (elm_widget_focus_get(data) && sd->editable)
+   if (elm_widget_focus_get(data) && wd->editable)
      {
         elm_entry_input_panel_show(wd->entry);
         elm_object_focus_set(wd->entry, EINA_TRUE);
