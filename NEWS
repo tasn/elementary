@@ -22,6 +22,7 @@ Fixes:
    * Safer call to mkstemp in elm_cnp.
    * Simplify test in elm_entry_text_set.
    * Fix wheel scroll direction with shift.
+   * Fix focus problem in multibuttonentry. Entry can get focus only when multibuttonentry is focused.
 
 Elementary 1.7.2
 
