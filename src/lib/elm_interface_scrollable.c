@@ -1723,7 +1723,7 @@ _elm_scroll_wheel_event_cb(void *data,
        (evas_key_modifier_is_set(ev->modifiers, "Super")))
      return;
    else if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-     direction = 1;
+     direction = !direction;
    _elm_scroll_content_pos_get(sid->obj, &x, &y);
    if ((sid->down.bounce_x_animator) || (sid->down.bounce_y_animator) ||
        (sid->scrollto.x.animator) || (sid->scrollto.y.animator))
