@@ -1,3 +1,13 @@
+Elementary 1.7.4
+
+Changes since Elementary 1.7.3:
+-------------------------
+
+Fixes:
+
+   * Fix the naviframe title_set problem that caused the title visible status reset
+
+
 Elementary 1.7.3
 
 Changes since Elementary 1.7.2:
