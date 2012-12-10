@@ -6,6 +6,7 @@ Changes since Elementary 1.7.3:
 Fixes:
 
    * Fix the naviframe title_set problem that caused the title visible status reset
+   * Make sure data is not NULL in elm_interface_scrollable.
 
 
 Elementary 1.7.3
