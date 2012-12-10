@@ -7,7 +7,7 @@ Fixes:
 
    * Fix the naviframe title_set problem that caused the title visible status reset
    * Make sure data is not NULL in elm_interface_scrollable.
-
+   * Correctly handle failure case in _x11_notify_handler_image.
 
 Elementary 1.7.3
 

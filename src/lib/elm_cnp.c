@@ -819,6 +819,7 @@ _x11_notify_handler_image(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify
      }
    /* generate tmp name */
    tmp = _tempfile_new(data->length);
+   if (!tmp) return 0;
    memcpy(tmp->map, data->data, data->length);
    munmap(tmp->map, data->length);
    /* FIXME: Add to paste image data to clean up */
@@ -1867,22 +1868,15 @@ _tempfile_new(int size)
    tmppath = getenv("TMP");
    if (!tmppath) tmppath = P_tmpdir;
    len = snprintf(NULL, 0, "%s/%sXXXXXX", tmppath, "elmcnpitem-");
-   if (len < 0)
-     {
-        free(info);
-        return NULL;
-     }
+   if (len < 0) goto on_error;
    len++;
    info->filename = malloc(len);
-   if (!info->filename)
-     {
-        free(info);
-        return NULL;
-     }
+   if (!info->filename) goto on_error;
    snprintf(info->filename,len,"%s/%sXXXXXX", tmppath, "elmcnpitem-");
    cur_umask = umask(S_IRWXO | S_IRWXG);
    info->fd = mkstemp(info->filename);
    umask(cur_umask);
+   if (info->fd < 0) goto on_error;
 # ifdef __linux__
      {
         char *tmp;
@@ -1904,30 +1898,30 @@ _tempfile_new(int size)
      }
 # endif
    cnp_debug("filename is %s\n", info->filename);
-   if (size < 1)
-     {
-        /* Set map to NULL and return */
-        info->map = NULL;
-        info->len = 0;
-        return info;
-     }
+   if (size < 1) goto on_error;
    /* Map it in */
    if (ftruncate(info->fd, size))
      {
         perror("ftruncate");
-        info->map = NULL;
-        info->len = 0;
-        return info;
+        goto on_error;
      }
    eina_mmap_safety_enabled_set(EINA_TRUE);
    info->map = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, info->fd, 0);
    if (info->map == MAP_FAILED)
      {
         perror("mmap");
-        info->map = NULL;
-        info->len = 0;
+        goto on_error;
      }
    return info;
+
+ on_error:
+   if (info->fd >= 0) close(info->fd);
+   info->fd = -1;
+   /* Set map to NULL and return */
+   info->map = NULL;
+   info->len = 0;
+   free(info);
+   return NULL;
 #else
    (void) size;
    return NULL;
