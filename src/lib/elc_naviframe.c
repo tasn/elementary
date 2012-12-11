@@ -394,7 +394,6 @@ _item_del_pre_hook(Elm_Object_Item *it)
          (sd->stack->last->prev, Elm_Naviframe_Item);
 
    sd->stack = eina_inlist_remove(sd->stack, EINA_INLIST_GET(nit));
-   if (!sd->stack) elm_widget_resize_object_set(WIDGET(it), sd->dummy_edje);
 
    if (top && !sd->on_deletion) /* must raise another one */
      {
@@ -1115,9 +1114,6 @@ _elm_naviframe_smart_add(Evas_Object *obj)
 {
    EVAS_SMART_DATA_ALLOC(obj, Elm_Naviframe_Smart_Data);
 
-   priv->dummy_edje = ELM_WIDGET_DATA(priv)->resize_obj =
-       edje_object_add(evas_object_evas_get(obj));
-
    ELM_WIDGET_CLASS(_elm_naviframe_parent_sc)->base.add(obj);
 
    priv->auto_pushed = EINA_TRUE;
@@ -1142,8 +1138,6 @@ _elm_naviframe_smart_del(Evas_Object *obj)
      }
 
    sd->on_deletion = EINA_FALSE;
-
-   evas_object_del(sd->dummy_edje);
 
    ELM_WIDGET_CLASS(_elm_naviframe_parent_sc)->base.del(obj);
 }
@@ -1362,7 +1356,6 @@ elm_naviframe_item_pop(Evas_Object *obj)
          (sd->stack->last->prev, Elm_Naviframe_Item);
 
    sd->stack = eina_inlist_remove(sd->stack, EINA_INLIST_GET(it));
-   if (!sd->stack) elm_widget_resize_object_set(obj, sd->dummy_edje);
 
    if (prev_it)
      {
