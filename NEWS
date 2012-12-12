@@ -9,8 +9,7 @@ Fixes:
    * Make sure data is not NULL in elm_interface_scrollable.
    * Correctly handle failure case in _x11_notify_handler_image.
    * Fix missuse of EINA_INLIST_FOREACH in elm_transit.c.
-   * Remove dummy object from elm_naviframe.
-   * Restore dummy object to elm_naviframe. Now, dummy object is always smart member of naviframe.
+   * Now, dummy object is always smart member of naviframe.
 
 
 Elementary 1.7.3
