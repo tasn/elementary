@@ -629,3 +629,7 @@
 2012-12-11  WooHyun Jung
 
 	* Remove dummy object from elm_naviframe.
+
+2012-12-12  WooHyun Jung
+
+	* Restore dummy object to elm_naviframe. Now, dummy object is always smart member of naviframe.
