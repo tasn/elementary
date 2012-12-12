@@ -629,3 +629,8 @@
 2012-12-12  WooHyun Jung
 
 	* Now, dummy object is always smart member of naviframe.
+
+2012-12-12  Nicolas Aguirre
+
+	* backport r76226 : Elm: Fix Escape namespace to compile on Windows.
+
