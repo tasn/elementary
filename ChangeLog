@@ -817,3 +817,7 @@
 2013-04-09  WooHyun Jung
 
         * When ctxpopup includes elm_list, elm_list should get focus when ctxpopup is shown.
+
+2013-06-10  Stefan Schmidt
+
+        * Fix potential free'ed memory dereference in naviframe
