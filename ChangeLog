@@ -634,3 +634,6 @@
 
 	* backport r76226 : Elm: Fix Escape namespace to compile on Windows.
 
+2012-12-13  Nicolas Aguirre
+
+	* Fix build on win32
