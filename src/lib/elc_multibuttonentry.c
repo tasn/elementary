@@ -1720,9 +1720,6 @@ elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_I
    ELM_CHECK_WIDTYPE(obj, widtype);
    EINA_SAFETY_ON_NULL_RETURN(func);
 
-   new_item_filter= _filter_new(func, data);
-   if (!new_item_filter) return;
-
    EINA_LIST_FOREACH(wd->filter_list, l, _item_filter)
      {
         if (_item_filter && ((_item_filter->callback_func == func) && (_item_filter->data == data)))
@@ -1731,6 +1728,9 @@ elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_I
              return;
           }
      }
+   new_item_filter= _filter_new(func, data);
+   if (!new_item_filter) return;
+
    wd->filter_list = eina_list_append(wd->filter_list, new_item_filter);
 }
 
