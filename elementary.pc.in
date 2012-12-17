@@ -1,9 +1,11 @@
+PACKAGE_TARNAME=@PACKAGE_TARNAME@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 pkgdatadir=@datadir@/elementary
 themes=${pkgdatadir}/themes
+docdir=@docdir@
 
 Name: elementary
 Description: Mobile device touchscreen widget library

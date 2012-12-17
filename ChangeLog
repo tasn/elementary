@@ -637,3 +637,8 @@
 2012-12-13  Nicolas Aguirre
 
 	* Fix build on win32
+
+2012-12-17 Vincent Torri
+
+	* Add XML output to doc
+	* Add installation rule for doc

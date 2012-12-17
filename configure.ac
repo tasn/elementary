@@ -813,6 +813,10 @@ echo "  Build elementary_test....: ${have_elementary_test}"
 echo "  Examples.................: ${enable_build_examples}"
 echo "  Examples installed.......: ${enable_install_examples}"
 echo "  Build elementary_config..: ${have_elementary_config}"
+echo "  Documentation............: ${build_doc}"
+if test "x${build_doc}" = "xyes" ; then
+echo "    Installation...........: make install-doc"
+fi
 echo
 echo "Compilation................: make (or gmake)"
 echo "  CPPFLAGS.................: $CPPFLAGS"

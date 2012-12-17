@@ -73,11 +73,15 @@ config.rpath
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = elementary.pc
 
-.PHONY: doc screenshots
+.PHONY: doc install-doc screenshots
 
 doc:
 	@echo "entering doc/"
 	$(MAKE) -C doc doc
+
+install-doc:
+	@echo "entering doc/"
+	make -C doc install-doc
 
 screenshots: all
 	@echo "entering src/examples/"

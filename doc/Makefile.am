@@ -2,7 +2,7 @@ SUBDIRS = widgets
 
 MAINTAINERCLEANFILES = Makefile.in
 
-.PHONY: doc
+.PHONY: doc install-doc
 
 PACKAGE_DOCNAME = $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc
 
@@ -181,19 +181,19 @@ widget-tree-figures: doc
 doc-clean:
 	rm -rf img/widget html/ latex/ man/ xml/ $(top_builddir)/$(PACKAGE_DOCNAME).tar*
 
-gen-doc:
+doc-build:
 	$(efl_doxygen)
 	cp -r $(srcdir)/img/* html/
 	cp -r $(srcdir)/img/* latex/
 
 #run the last rule whenever the elm widget tree changes
 #commit the changed pictures, then. depends on python and graphviz
-doc: all doc-clean widget-preview gen-doc
+doc: all doc-clean widget-preview doc-build
 	@echo "Entering src/examples/"
 	$(MAKE) -C $(top_builddir)/src/examples screenshots
 	rm -rf $(PACKAGE_DOCNAME).tar*
 	mkdir -p $(PACKAGE_DOCNAME)/doc
-	cp -R html/ latex/ man/ $(PACKAGE_DOCNAME)/doc
+	cp -R html/ latex/ man/ xml/ $(PACKAGE_DOCNAME)/doc
 	tar cf $(PACKAGE_DOCNAME).tar $(PACKAGE_DOCNAME)/
 	bzip2 -9 $(PACKAGE_DOCNAME).tar
 	rm -rf $(PACKAGE_DOCNAME)/
@@ -201,10 +201,20 @@ doc: all doc-clean widget-preview gen-doc
 
 clean-local: doc-clean
 
+# what about examples screenshots ?
+install-doc: doc-build
+	install -d $(docdir)
+	cp -R html latex man xml $(docdir)
+
+uninstall-local:
+	rm -rf $(docdir)/html $(docdir)/latex $(docdir)/man $(docdir)/xml
+
 else
 
 doc:
 	@echo "Documentation not built. Run ./configure --help"
+
+install-doc: doc
 
 endif
 
