@@ -678,7 +678,7 @@ _fix_items_visibility(Widget_Data *wd, Evas_Coord *iw, Evas_Coord vw, Eina_Bool 
         if (it->separator)
           {
              prev = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
-             it->prio.priority = prev->prio.priority;
+             if (prev) it->prio.priority = prev->prio.priority;
           }
      }
 
