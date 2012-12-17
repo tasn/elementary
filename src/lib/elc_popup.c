@@ -922,13 +922,12 @@ _content_get(Evas_Object *obj)
 static Evas_Object *
 _action_button_get(Evas_Object *obj, unsigned int idx)
 {
-   unsigned int num = idx - 1;
    Evas_Object *button = NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd || !wd->button_count) return NULL;
-   if (wd->buttons[num])
-     button = wd->buttons[num]->btn;
+   if (wd->buttons[idx])
+     button = wd->buttons[idx]->btn;
    return button;
 }
 
@@ -937,7 +936,6 @@ _content_get_hook(Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Evas_Object *content = NULL;
-   char buff[3];
    unsigned int i;
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -948,19 +946,18 @@ _content_get_hook(Evas_Object *obj, const char *part)
      content = _title_icon_get(obj);
    else if (!strncmp(part, "button", 6))
      {
-        part += 6;
-        for (i = 0; i < ELM_POPUP_ACTION_BUTTON_MAX; i++)
-          {
-             snprintf(buff, sizeof(buff), "%u", i+1);
-             if (!strncmp(part, buff, sizeof(buff)))
-               {
-                  content = _action_button_get(obj, i+1);
-                  break;
-               }
-          }
+        i = atoi(part + 6) - 1;
+
+        if (i >= ELM_POPUP_ACTION_BUTTON_MAX)
+          goto err;
+
+        content = _action_button_get(obj, i);
       }
    else
-     WRN("The part name is invalid! : popup=%p", obj);
+     goto err;
+   return content;
+err:
+   WRN("The part name is invalid! : popup=%p", obj);
    return content;
 }
 

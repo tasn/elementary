@@ -642,3 +642,7 @@
 
 	* Add XML output to doc
 	* Add installation rule for doc
+
+2012-12-17  Chueon Park (Hermet)
+
+	* Fix the popup that returned invalid action buttons.
