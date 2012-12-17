@@ -11,6 +11,7 @@ Fixes:
    * Fix missuse of EINA_INLIST_FOREACH in elm_transit.c.
    * Now, dummy object is always smart member of naviframe.
    * Fix the popup that returned invalid action buttons.
+   * Fix the naviframe to not have crash even if user deletes the naviframe in the transition finished cb.
 
 
 Elementary 1.7.3
