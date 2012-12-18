@@ -899,10 +899,20 @@ _elm_image_smart_preload_set(Evas_Object *obj,
 {
    ELM_IMAGE_DATA_GET(obj, sd);
 
-   if (sd->edje) return;
+   if (sd->edje || !sd->preloading) return;
 
    evas_object_image_preload(sd->img, disable);
    sd->preloading = !disable;
+
+   if (disable)
+     {
+        if (sd->show && sd->img) evas_object_show(sd->img);
+        if (sd->prev_img)
+          {
+             evas_object_del(sd->prev_img);
+             sd->prev_img = NULL;
+          }
+     }
 }
 
 static void

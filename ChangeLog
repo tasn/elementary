@@ -650,3 +650,11 @@
 2012-12-17  Chueon Park (Hermet)
 
 	* Makes naviframe safety even if someone deletes the naviframe in transition finished cb.
+
+2012-12-18  Chueon Park (Hermet)
+
+	* Don't Elm_transit image animation use image preloading to avoid image flickering.
+
+2012-12-18  Chueon Park (Hermet)
+
+	* Let image update right now if the image preloading is disabled.
