@@ -1208,7 +1208,10 @@ _remove_item_tags(const char *str)
      return NULL;
 
    if (!eina_strbuf_append(buf, str))
-     return NULL;
+     {
+        eina_strbuf_free(buf);
+        return NULL;
+     }
 
    while (EINA_TRUE)
      {

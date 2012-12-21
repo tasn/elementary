@@ -15,6 +15,7 @@ Fixes:
    * Fix Don't elm_transit image animation use the image preloading to avoid image flickering.
    * Fix the image to show the image right now if the image preloading is disabled.
    * Fix small memory leak in elm_map error path
+   * Fix memory leak in _item_tag_remove of elm_entry.
 
 
 Elementary 1.7.3

@@ -662,3 +662,7 @@
 2012-12-21  Stefan Schmidt
 
 	* Fix small memory leak in elm_map error path.
+
+2012-12-21  Jihoon Kim
+
+	* Fix memory leak in _item_tag_remove of elm_entry.
