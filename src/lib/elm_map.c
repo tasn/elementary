@@ -2946,6 +2946,8 @@ _kml_parse(Elm_Map_Route *r)
                          (buf, sz, EINA_TRUE, _xml_route_dump_cb, &dump);
                        free(buf);
                     }
+                  else
+                    free(buf);
                }
           }
         fclose(f);

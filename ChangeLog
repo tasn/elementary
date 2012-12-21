@@ -658,3 +658,7 @@
 2012-12-18  Chueon Park (Hermet)
 
 	* Let image update right now if the image preloading is disabled.
+
+2012-12-21  Stefan Schmidt
+
+	* Fix small memory leak in elm_map error path.
