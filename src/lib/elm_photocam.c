@@ -1462,6 +1462,7 @@ elm_photocam_file_set(Evas_Object *obj,
 {
    int w, h;
    double tz;
+   Evas_Load_Error err;
 
    ELM_PHOTOCAM_CHECK(obj) EVAS_LOAD_ERROR_NONE;
    ELM_PHOTOCAM_DATA_GET(obj, sd);
@@ -1474,6 +1475,12 @@ elm_photocam_file_set(Evas_Object *obj,
    evas_object_image_file_set(sd->img, NULL, NULL);
    evas_object_image_load_scale_down_set(sd->img, 0);
    evas_object_image_file_set(sd->img, sd->file, NULL);
+   err = evas_object_image_load_error_get(sd->img);
+   if (err != EVAS_LOAD_ERROR_NONE)
+     {
+        ERR("Things are going bad for '%s' (%p)", file, sd->img);
+	    return err;
+     }
    evas_object_image_size_get(sd->img, &w, &h);
 
    sd->do_region = evas_object_image_region_support_get(sd->img);
@@ -1496,6 +1503,13 @@ elm_photocam_file_set(Evas_Object *obj,
    evas_object_image_file_set(sd->img, NULL, NULL);
    evas_object_image_load_scale_down_set(sd->img, 8);
    evas_object_image_file_set(sd->img, sd->file, NULL);
+   err = evas_object_image_load_error_get(sd->img);
+   if (err != EVAS_LOAD_ERROR_NONE)
+     {
+        ERR("Things are going bad for '%s' (%p)", file, sd->img);
+	    return err;
+     }
+
    evas_object_image_preload(sd->img, 0);
    sd->main_load_pending = EINA_TRUE;
 
