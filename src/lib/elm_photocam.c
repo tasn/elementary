@@ -1479,7 +1479,7 @@ elm_photocam_file_set(Evas_Object *obj,
    if (err != EVAS_LOAD_ERROR_NONE)
      {
         ERR("Things are going bad for '%s' (%p)", file, sd->img);
-	    return err;
+        return err;
      }
    evas_object_image_size_get(sd->img, &w, &h);
 
@@ -1507,7 +1507,7 @@ elm_photocam_file_set(Evas_Object *obj,
    if (err != EVAS_LOAD_ERROR_NONE)
      {
         ERR("Things are going bad for '%s' (%p)", file, sd->img);
-	    return err;
+        return err;
      }
 
    evas_object_image_preload(sd->img, 0);
