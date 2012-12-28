@@ -5,6 +5,16 @@ Changes since Elementary 1.7.3:
 
 Fixes:
 
+   * Fix bug where genlist would delete items added during selection callback if a clear was queued
+
+
+Elementary 1.7.4
+
+Changes since Elementary 1.7.3:
+-------------------------
+
+Fixes:
+
    * Fix the naviframe title_set problem that caused the title visible status reset
    * Make sure data is not NULL in elm_interface_scrollable.
    * Correctly handle failure case in _x11_notify_handler_image.
