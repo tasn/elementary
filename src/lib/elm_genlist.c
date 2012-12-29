@@ -4569,6 +4569,7 @@ _elm_genlist_smart_del(Evas_Object *obj)
 
    if (sd->decorate_all_mode)
      elm_genlist_decorate_mode_set(ELM_WIDGET_DATA(sd)->obj, EINA_FALSE);
+   sd->queue = eina_list_free(sd->queue);
    elm_genlist_clear(obj);
    evas_object_del(sd->pan_obj);
    sd->pan_obj = NULL;
