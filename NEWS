@@ -1,11 +1,12 @@
-Elementary 1.7.4
+Elementary 1.7.5
 
-Changes since Elementary 1.7.3:
+Changes since Elementary 1.7.4:
 -------------------------
 
 Fixes:
 
    * Fix bug where genlist would delete items added during selection callback if a clear was queued
+   * Tooltips now correctly set NETWM tooltip window type
 
 
 Elementary 1.7.4
