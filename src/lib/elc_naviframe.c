@@ -280,17 +280,17 @@ _item_text_set_hook(Elm_Object_Item *it,
        (!strcmp(part, "elm.text.title")))
      {
         eina_stringshare_replace(&nit->title_label, label);
-        snprintf(buf, sizeof(buf), "elm.text.title");
         if (label)
           edje_object_signal_emit(VIEW(it), "elm,state,title_label,show", "elm");
         else
           edje_object_signal_emit(VIEW(it), "elm,state,title_label,hide", "elm");
+        edje_object_part_text_set(VIEW(it), "elm.text.title", label);
 
         //XXX: ACCESS
         if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
           {
              nit->title = _elm_access_edje_object_part_object_register
-                          (WIDGET(nit), VIEW(nit), buf);
+                          (WIDGET(nit), VIEW(nit), "elm.text.title");
              _elm_access_text_set(_elm_access_object_get(nit->title),
                                   ELM_ACCESS_TYPE, E_("title"));
           }
@@ -298,26 +298,25 @@ _item_text_set_hook(Elm_Object_Item *it,
    else if (!strcmp("subtitle", part))
      {
         eina_stringshare_replace(&nit->subtitle_label, label);
-        snprintf(buf, sizeof(buf), "elm.text.subtitle");
         if (label)
           edje_object_signal_emit(VIEW(it), "elm,state,subtitle,show", "elm");
         else
           edje_object_signal_emit(VIEW(it), "elm,state,subtitle,hide", "elm");
+        edje_object_part_text_set(VIEW(it), "elm.text.subtitle", label);
 
         //XXX: ACCESS
         if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
           {
              nit->subtitle = _elm_access_edje_object_part_object_register
-                             (WIDGET(nit), VIEW(nit), buf);
+                             (WIDGET(nit), VIEW(nit), "elm.text.subtitle");
              _elm_access_text_set(_elm_access_object_get(nit->subtitle),
                                   ELM_ACCESS_TYPE, E_("sub title"));
           }
      }
    else
      {
-        snprintf(buf, sizeof(buf), "%s", part);
         EINA_INLIST_FOREACH(nit->text_list, pair)
-          if (!strcmp(buf, pair->part)) break;
+          if (!strcmp(part, pair->part)) break;
 
         if (!pair)
           {
@@ -328,7 +327,7 @@ _item_text_set_hook(Elm_Object_Item *it,
                   WIDGET(it));
                   return;
                }
-             eina_stringshare_replace(&pair->part, buf);
+             eina_stringshare_replace(&pair->part, part);
              nit->text_list = eina_inlist_append(nit->text_list,
                                                  EINA_INLIST_GET(pair));
              if (label)
@@ -337,18 +336,17 @@ _item_text_set_hook(Elm_Object_Item *it,
                snprintf(buf, sizeof(buf), "elm,state,%s,hide", part);
              edje_object_signal_emit(VIEW(it), buf, "elm");
           }
+        edje_object_part_text_set(VIEW(it), part, label);
 
         //XXX: ACCESS
         if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
           {
              pair->access_object = _elm_access_edje_object_part_object_register
-                             (WIDGET(nit), VIEW(nit), buf);
+                             (WIDGET(nit), VIEW(nit), part);
              _elm_access_text_set(_elm_access_object_get(pair->access_object),
-                                  ELM_ACCESS_TYPE, E_(buf));
+                                  ELM_ACCESS_TYPE, E_(part));
           }
      }
-
-   edje_object_part_text_set(VIEW(nit), buf, label);
 
    elm_layout_sizing_eval(WIDGET(nit));
 }
