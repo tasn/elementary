@@ -1,5 +1,12 @@
 Elementary 1.7.5
 
+Changes since Elementary 1.7.5:
+-------------------------
+
+Fixes:
+
+   * Fix omitting signal emission when customized text parts change the text.
+
 Changes since Elementary 1.7.4:
 -------------------------
 
