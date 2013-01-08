@@ -323,6 +323,9 @@ _elm_hover_smart_sub_object_add(Evas_Object *obj,
 {
    ELM_HOVER_DATA_GET(obj, sd);
 
+   if (evas_object_data_get(sboj, "elm-parent") == obj)
+     return EINA_TRUE;
+
    if (!ELM_WIDGET_CLASS(_elm_hover_parent_sc)->sub_object_add(obj, sobj))
      return EINA_FALSE;
 

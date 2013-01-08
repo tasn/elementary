@@ -124,6 +124,9 @@ static Eina_Bool
 _elm_flip_smart_sub_object_add(Evas_Object *obj,
                                Evas_Object *sobj)
 {
+   if (evas_object_data_get(sboj, "elm-parent") == obj)
+     return EINA_TRUE;
+
    if (!ELM_WIDGET_CLASS(_elm_flip_parent_sc)->sub_object_add(obj, sobj))
      return EINA_FALSE;
 

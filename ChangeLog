@@ -694,3 +694,7 @@
 2013-01-06  Jaehyun Cho (jae_hyun_cho@naver.com)
 
         * Fix omitting signal emission when customized text parts change the text.
+
+2013-01-08  Jaehwan Kim
+
+        * Fix the bug which the callbacks of the sub-object are added even if the sub-object is added the parent object.
