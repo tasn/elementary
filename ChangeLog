@@ -698,3 +698,7 @@
 2013-01-08  Jaehwan Kim
 
         * Fix the bug which the callbacks of the sub-object are added even if the sub-object is added the parent object.
+
+2013-01-10  Shinwoo Kim
+
+	* backport r82456: Fix potential problem which would cause resource leak.
