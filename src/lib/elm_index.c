@@ -142,16 +142,6 @@ _index_box_auto_fill(Evas_Object *obj,
         evas_object_show(o);
 
         i++;
-        evas_object_smart_calculate(box); // force a calc so we know the size
-        evas_object_size_hint_min_get(box, &mw, &mh);
-        if (mh > h)
-          {
-             _index_box_clear(obj, box, level);
-             if (i > 0)
-               {
-                  // FIXME: only i objects fit! try again. overflows right now
-               }
-          }
      }
 
    evas_object_smart_calculate(box);
@@ -452,7 +442,6 @@ _on_mouse_down(void *data,
    if (!sd->autohide_disabled)
      {
         _index_box_clear(data, sd->bx[1], 1);
-        _index_box_auto_fill(data, sd->bx[0], 0);
         elm_layout_signal_emit(data, "elm,state,active", "elm");
      }
    _sel_eval(data, ev->canvas.x, ev->canvas.y);
@@ -693,7 +682,6 @@ elm_index_autohide_disabled_set(Evas_Object *obj,
    if (sd->autohide_disabled)
      {
         _index_box_clear(obj, sd->bx[1], 1);
-        _index_box_auto_fill(obj, sd->bx[0], 0);
         elm_layout_signal_emit(obj, "elm,state,active", "elm");
      }
    else
@@ -948,8 +936,13 @@ elm_index_level_go(Evas_Object *obj,
    ELM_INDEX_CHECK(obj);
    ELM_INDEX_DATA_GET(obj, sd);
 
+   _index_box_clear(obj, sd->bx[0], 0);
    _index_box_auto_fill(obj, sd->bx[0], 0);
-   if (sd->level == 1) _index_box_auto_fill(obj, sd->bx[1], 1);
+   if (sd->level == 1)
+     {
+        _index_box_clear(obj, sd->bx[1], 1);
+        _index_box_auto_fill(obj, sd->bx[1], 1);
+     }
 }
 
 EAPI void
