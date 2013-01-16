@@ -8,6 +8,7 @@ Fixes:
    * Fix potential problem which would cause resource leak.
    * Fix omitting signal emission when customized text parts change the text.
    * Fix the bug which the callbacks of the sub-object are added even if the sub-object is added the parent object.
+   * Fix "changed" signal being sent twice in case of toggle style when check is clicked.
 
 Changes since Elementary 1.7.4:
 -------------------------
