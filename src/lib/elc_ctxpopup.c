@@ -273,6 +273,7 @@ _parent_resize(void *data,
    wd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 
    evas_object_hide(data);
+   evas_object_smart_callback_call(data, SIG_DISMISSED, NULL);
 }
 
 static void

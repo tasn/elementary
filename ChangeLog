@@ -715,3 +715,7 @@
 2013-01-16  Jaeun Choi
 
         * Fix bug where index is not re-filled if autohide disabled
+
+2013-01-17  Bora Hwang (bora1.hwang@samsung.com)
+
+        * when parent of ctxpopup is resized, ctxpopup calls dismissed signal
