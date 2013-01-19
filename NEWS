@@ -6,6 +6,7 @@ Changes since Elementary 1.7.5:
 Fixes:
 
    * when parent of ctxpopup is resized, ctxpopup calls dismissed signal.
+   * When string in entry is changed, access to sd should be forbidden after smart_callback_call is called.
 
 Elementary 1.7.5
 
