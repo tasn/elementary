@@ -8,6 +8,13 @@ struct _Elm_Ctxpopup_Item
 {
    ELM_WIDGET_ITEM;
    Elm_Object_Item *list_item;
+
+   struct
+     {
+        Evas_Smart_Cb org_func_cb;
+        const void    *org_data;
+        Evas_Object   *cobj;
+     } wcb;
 };
 
 struct _Widget_Data
@@ -17,6 +24,7 @@ struct _Widget_Data
    Evas_Object *content;
    Evas_Object *list;
    Evas_Object *box;
+   Eina_List   *items;
    Evas_Object *arrow;
    Evas_Object *bg;
    Elm_Ctxpopup_Direction dir;
@@ -127,6 +135,7 @@ static void _disable_hook(Evas_Object *obj);
 static void _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source);
 static void _signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data);
 static void _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data);
+static void _item_wrap_cb(void *data, Evas_Object *obj, void *event_info);
 
 static const char SIG_DISMISSED[] = "dismissed";
 
@@ -751,6 +760,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd;
+   Elm_Ctxpopup_Item *it;
 
    wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -758,6 +768,9 @@ _del_hook(Evas_Object *obj)
    elm_ctxpopup_clear(obj);
    evas_object_del(wd->arrow);
    evas_object_del(wd->base);
+
+   EINA_LIST_FREE (wd->items, it)
+     elm_widget_item_free(it);
    free(wd);
 }
 
@@ -1127,11 +1140,13 @@ _item_del_pre_hook(Elm_Object_Item *it)
    if (eina_list_count(elm_list_items_get(list)) < 2)
      {
         elm_object_item_del(ctxpopup_it->list_item);
+        wd->items = eina_list_remove(wd->items, it);
         evas_object_hide(WIDGET(ctxpopup_it));
         return EINA_TRUE;
      }
 
    elm_object_item_del(ctxpopup_it->list_item);
+   wd->items = eina_list_remove(wd->items, it);
    if (wd->list_visible)
      _sizing_eval(WIDGET(ctxpopup_it));
 
@@ -1170,6 +1185,13 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    edje_object_signal_callback_del_full(wd->base, emission, source, func_cb, data);
+}
+
+static void
+_item_wrap_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Elm_Ctxpopup_Item *item = data;
+   item->wcb.org_func_cb((void *)item->wcb.org_data, item->wcb.cobj, item);
 }
 
 EAPI Evas_Object *
@@ -1386,7 +1408,11 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
         _content_set_hook(obj, "default", wd->list);
      }
 
-   item->list_item = elm_list_item_append(wd->list, label, icon, NULL, func, data);
+   item->wcb.org_func_cb = func;
+   item->wcb.org_data = data;
+   item->wcb.cobj = obj;
+   item->list_item = elm_list_item_append(wd->list, label, icon, NULL, _item_wrap_cb, item);
+   wd->items = eina_list_append(wd->items, item);
 
    wd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 
