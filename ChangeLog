@@ -728,3 +728,6 @@
 
         * Fix memory leak of the ctxpopup and callback function to be a ctxpoup obj is delivered to.
 
+2013-01-23  WooHyun Jung
+
+        * In _timer_cb of elm_notify, access to sd should be forbidden after smart_callback_call is called.
