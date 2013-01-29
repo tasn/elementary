@@ -10,7 +10,7 @@ Fixes:
    * Fix memory leak of the ctxpopup and callback function to be ctxpopup obj is delivered to.
    * In _timer_cb of elm_notify, access to sd should be forbidden after smart_callback_call is called.
    * Fix the scroll position is calculated by the size of pan object, not the size of scroller.
-
+   * Fix a elm_transit crash issue when user delete all target objects in the effect end callback.
 
 Elementary 1.7.5
 
