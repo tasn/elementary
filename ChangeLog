@@ -731,3 +731,7 @@
 2013-01-23  WooHyun Jung
 
         * In _timer_cb of elm_notify, access to sd should be forbidden after smart_callback_call is called.
+
+2013-01-29  Jaehwan Kim
+
+        * Fix the scroll position is calculated by the size of pan object, not the size of scroller.
