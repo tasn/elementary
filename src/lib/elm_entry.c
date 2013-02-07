@@ -2698,7 +2698,8 @@ elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
    if (wd->single_line == single_line) return;
    wd->single_line = single_line;
    wd->linewrap = ELM_WRAP_NONE;
-   elm_entry_cnp_mode_set(obj, ELM_CNP_MODE_NO_IMAGE);
+   if (elm_entry_cnp_mode_get(obj) == ELM_CNP_MODE_MARKUP)
+     elm_entry_cnp_mode_set(obj, ELM_CNP_MODE_NO_IMAGE);
    _theme_hook(obj);
    if (wd->scroller)
      {

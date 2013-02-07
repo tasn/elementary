@@ -11,6 +11,7 @@ Fixes:
    * In _timer_cb of elm_notify, access to sd should be forbidden after smart_callback_call is called.
    * Fix the scroll position is calculated by the size of pan object, not the size of scroller.
    * Fix a elm_transit crash issue when user delete all target objects in the effect end callback.
+   * elm_entry_single_line_set should not change cnp_mode when PLAINTEXT mode.
 
 Elementary 1.7.5
 
