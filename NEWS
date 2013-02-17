@@ -16,6 +16,7 @@ Fixes:
    * Fix the scroll position is calculated by the size of pan object, not the size of scroller.
    * Fix a elm_transit crash issue when user delete all target objects in the effect end callback.
    * elm_entry_single_line_set should not change cnp_mode when PLAINTEXT mode.
+   * ignore tab key widget focus change if control/alt is pressed
 
 Elementary 1.7.5
 
