@@ -3,6 +3,10 @@ Elementary 1.7.6
 Changes since Elementary 1.7.5:
 -------------------------
 
+Improvements:
+
+   * Better 64bits support.
+
 Fixes:
 
    * when parent of ctxpopup is resized, ctxpopup calls dismissed signal.
