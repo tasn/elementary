@@ -17,6 +17,7 @@ Fixes:
    * Fix a elm_transit crash issue when user delete all target objects in the effect end callback.
    * elm_entry_single_line_set should not change cnp_mode when PLAINTEXT mode.
    * ignore tab key widget focus change if control/alt is pressed
+   * prevent blank entry hoversels
 
 Elementary 1.7.5
 
