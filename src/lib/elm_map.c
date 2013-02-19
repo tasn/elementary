@@ -2944,10 +2944,8 @@ _kml_parse(Elm_Map_Route *r)
                     {
                        eina_simple_xml_parse
                          (buf, sz, EINA_TRUE, _xml_route_dump_cb, &dump);
-                       free(buf);
                     }
-                  else
-                    free(buf);
+                  free(buf);
                }
           }
         fclose(f);
@@ -3037,8 +3035,8 @@ _name_parse(Elm_Map_Name *n)
                     {
                        eina_simple_xml_parse
                          (buf, sz, EINA_TRUE, _xml_name_dump_cb, &dump);
-                       free(buf);
                     }
+                  free(buf);
                }
           }
         fclose(f);
