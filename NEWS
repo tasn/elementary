@@ -18,7 +18,8 @@ Fixes:
    * elm_entry_single_line_set should not change cnp_mode when PLAINTEXT mode.
    * ignore tab key widget focus change if control/alt is pressed
    * prevent blank entry hoversels
-
+   * Fix vsync option in gl engine windows
+   
 Elementary 1.7.5
 
 Changes since Elementary 1.7.5:

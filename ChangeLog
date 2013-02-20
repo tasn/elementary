@@ -752,3 +752,8 @@
 
         * ignore tab key widget focus change if control/alt is pressed
         * prevent blank entry hoversels
+
+2013-02-20 Carsten Haitzler (The Rasterman)
+
+        * Fix gl engine vsync option pass-in in elm_win
+        
