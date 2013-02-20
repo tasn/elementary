@@ -362,7 +362,7 @@ elm_progressbar_pulse(Evas_Object *obj,
    ELM_PROGRESSBAR_DATA_GET(obj, sd);
 
    state = !!state;
-   if ((!sd->pulse) && (sd->pulse_state == state)) return;
+   if ((!sd->pulse) || (sd->pulse_state == state)) return;
 
    sd->pulse_state = state;
 
