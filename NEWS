@@ -20,6 +20,7 @@ Fixes:
    * prevent blank entry hoversels
    * Fix vsync option in gl engine windows
    * Fix elm_progressbar_pulse() to abort if pulsing not enabled
+   * Fix scroller acceleration bug. It was accelerated even it's scrolled after finishing the previous scroll. This happens with page scroll enabled.
         
 Elementary 1.7.5
 

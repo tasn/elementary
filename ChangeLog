@@ -758,3 +758,7 @@
         * Fix gl engine vsync option pass-in in elm_win
         * Fix elm_progressbar_pulse() to abort if pulsing not enabled
 
+2013-02-21  Jaehwan Kim
+
+        * Fix scroller acceleration bug. It was accelerated even it's scrolled
+        after finishing the previous scroll. This happens with page scroll enabled.
