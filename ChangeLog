@@ -762,3 +762,7 @@
 
         * Fix scroller acceleration bug. It was accelerated even it's scrolled
         after finishing the previous scroll. This happens with page scroll enabled.
+
+2013-03-02  Brian J. Lovin
+
+        * Fix initial value of the spinner on the first mouse move.
