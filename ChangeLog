@@ -766,3 +766,7 @@
 2013-03-02  Brian J. Lovin
 
         * Fix initial value of the spinner on the first mouse move.
+
+2013-03-11  Tom Hacohen (TAsn)
+
+	* Entry: Fixed a bug with text appending.

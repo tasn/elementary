@@ -22,6 +22,7 @@ Fixes:
    * Fix elm_progressbar_pulse() to abort if pulsing not enabled
    * Fix scroller acceleration bug. It was accelerated even it's scrolled after finishing the previous scroll. This happens with page scroll enabled.
    * Fix initial value of the spinner on the first mouse move.
+   * Entry: Fixed a bug with text appending.
         
 Elementary 1.7.5
 
