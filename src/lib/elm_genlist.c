@@ -2957,7 +2957,7 @@ _long_press_cb(void *data)
 {
    Elm_Gen_Item *it = data, *it_tmp;
    Elm_Genlist_Smart_Data *sd;
-   Eina_List *list, *l;
+   Eina_List *list;
 
    sd = GL_IT(it)->wsd;
 
@@ -2983,10 +2983,9 @@ _long_press_cb(void *data)
 
         list = elm_genlist_realized_items_get
             (ELM_WIDGET_DATA(GL_IT(it)->wsd)->obj);
-        EINA_LIST_FOREACH (list, l, it_tmp)
-          {
-             if (it != it_tmp) _item_unselect(it_tmp);
-          }
+        EINA_LIST_FREE(list, it_tmp)
+          if (it != it_tmp) _item_unselect(it_tmp);
+
         if (elm_genlist_item_expanded_get((Elm_Object_Item *)it))
           {
              elm_genlist_item_expanded_set((Elm_Object_Item *)it, EINA_FALSE);
@@ -4628,14 +4627,14 @@ _access_obj_process(Elm_Genlist_Smart_Data * sd, Eina_Bool is_access)
 {
    Item_Block *itb;
    Eina_Bool done = EINA_FALSE;
-   
+
    EINA_INLIST_FOREACH(sd->blocks, itb)
      {
         if (itb->realized)
           {
              Eina_List *l;
              Elm_Gen_Item *it;
-             
+
              done = EINA_TRUE;
              EINA_LIST_FOREACH(itb->items, l, it)
                {
@@ -4654,7 +4653,7 @@ _access_hook(Evas_Object *obj, Eina_Bool is_access)
 {
    ELM_GENLIST_CHECK(obj);
    ELM_GENLIST_DATA_GET(obj, sd);
-   
+
    if (is_access)
      ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next =
      _elm_genlist_smart_focus_next;
@@ -6351,13 +6350,13 @@ elm_genlist_scroller_policy_get(const Evas_Object *obj,
 EAPI void
 elm_genlist_realized_items_update(Evas_Object *obj)
 {
-   Eina_List *list, *l;
+   Eina_List *list;
    Elm_Object_Item *it;
 
    ELM_GENLIST_CHECK(obj);
 
    list = elm_genlist_realized_items_get(obj);
-   EINA_LIST_FOREACH (list, l, it)
+   EINA_LIST_FREE(list, it)
      elm_genlist_item_update(it);
 }
 
@@ -6440,7 +6439,7 @@ elm_genlist_decorate_mode_set(Evas_Object *obj,
                               Eina_Bool decorated)
 {
    Elm_Gen_Item *it;
-   Eina_List *list, *l;
+   Eina_List *list;
    Elm_Object_Item *deco_it;
 
    ELM_GENLIST_CHECK(obj);
@@ -6460,7 +6459,7 @@ elm_genlist_decorate_mode_set(Evas_Object *obj,
    list = elm_genlist_realized_items_get(obj);
    if (!sd->decorate_all_mode)
      {
-        EINA_LIST_FOREACH (list, l, it)
+        EINA_LIST_FREE(list, it)
           {
              if (it->item->type != ELM_GENLIST_ITEM_GROUP)
                _decorate_all_item_unrealize(it);
@@ -6479,7 +6478,7 @@ elm_genlist_decorate_mode_set(Evas_Object *obj,
              _decorate_item_finished_signal_cb(deco_it, obj, NULL, NULL);
           }
 
-        EINA_LIST_FOREACH (list, l, it)
+        EINA_LIST_FREE(list, it)
           {
              if (it->item->type != ELM_GENLIST_ITEM_GROUP)
                {
@@ -6488,6 +6487,7 @@ elm_genlist_decorate_mode_set(Evas_Object *obj,
                }
           }
      }
+
    if (sd->calc_job) ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, sd);
 }
