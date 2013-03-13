@@ -1481,6 +1481,19 @@ _elm_list_smart_focus_next(const Evas_Object *obj,
 }
 
 static void
+_access_hook(Evas_Object *obj, Eina_Bool is_access)
+{
+   ELM_LIST_CHECK(obj);
+   ELM_LIST_DATA_GET(obj, sd);
+
+   if (is_access)
+     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next =
+        _elm_list_smart_focus_next;
+   else
+     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next = NULL;
+}
+
+static void
 _elm_list_smart_add(Evas_Object *obj)
 {
    Evas_Coord minw, minh;
@@ -1642,12 +1655,16 @@ _elm_list_smart_set_user(Elm_List_Smart_Class *sc)
 
    ELM_WIDGET_CLASS(sc)->sub_object_del = _elm_list_smart_sub_object_del;
    ELM_WIDGET_CLASS(sc)->on_focus = _elm_list_smart_on_focus;
-   ELM_WIDGET_CLASS(sc)->focus_next = _elm_list_smart_focus_next;
+   ELM_WIDGET_CLASS(sc)->focus_next = NULL;
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
    ELM_WIDGET_CLASS(sc)->theme = _elm_list_smart_theme;
    ELM_WIDGET_CLASS(sc)->disable = _elm_list_smart_disable;
    ELM_WIDGET_CLASS(sc)->event = _elm_list_smart_event;
    ELM_WIDGET_CLASS(sc)->translate = _elm_list_smart_translate;
+   ELM_WIDGET_CLASS(sc)->access = _access_hook;
+
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     ELM_WIDGET_CLASS(sc)->focus_next = _elm_list_smart_focus_next;
 
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_list_smart_sizing_eval;
 }

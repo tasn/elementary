@@ -770,3 +770,7 @@
 2013-03-11  Tom Hacohen (TAsn)
 
 	* Entry: Fixed a bug with text appending.
+
+2013-03-13  WooHyun Jung
+
+        * List : Focus_next should be executed only when access mode is enabled.
