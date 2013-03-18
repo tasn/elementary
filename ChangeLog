@@ -778,3 +778,7 @@
 2013-03-13  Tae-Hwan Kim (bluezery)
 
         * Fix a memory leak in elm_genlist. Return value of elm_genlist_realized_items_get should be freed
+
+2013-03-18  WooHyun Jung
+
+        * Focus highlight should be reconfigured when theme is changed.

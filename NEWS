@@ -24,6 +24,7 @@ Fixes:
    * Fix initial value of the spinner on the first mouse move.
    * Entry: Fixed a bug with text appending.
    * List : Focus_next should be executed only when access mode is enabled.
+   * Focus highlight should be reconfigured when theme is changed.
         
 Elementary 1.7.5
 
