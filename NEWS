@@ -25,6 +25,7 @@ Fixes:
    * Entry: Fixed a bug with text appending.
    * List : Focus_next should be executed only when access mode is enabled.
    * Focus highlight should be reconfigured when theme is changed.
+   * Fix the elm_shutdown bug in _elm_shutdown_config.
         
 Elementary 1.7.5
 

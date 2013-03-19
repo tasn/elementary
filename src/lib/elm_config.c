@@ -2123,6 +2123,17 @@ _elm_config_init(void)
 void
 _elm_config_sub_shutdown(void)
 {
+#ifdef HAVE_ELEMENTARY_X
+   if (_prop_all_update_timer)
+     {
+        ecore_timer_del(_prop_all_update_timer);
+        _prop_all_update_timer = NULL;
+        _prop_all_update_cb(NULL);
+     }
+   if (_prop_change_delay_timer) ecore_timer_del(_prop_change_delay_timer);
+   _prop_change_delay_timer = NULL;
+#endif
+
 #define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
    if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
        ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
@@ -2255,17 +2266,6 @@ _elm_config_profile_set(const char *profile)
 void
 _elm_config_shutdown(void)
 {
-#ifdef HAVE_ELEMENTARY_X
-   if (_prop_all_update_timer)
-     {
-        ecore_timer_del(_prop_all_update_timer);
-        _prop_all_update_timer = NULL;
-        _prop_all_update_cb(NULL);
-     }
-   if (_prop_change_delay_timer) ecore_timer_del(_prop_change_delay_timer);
-   _prop_change_delay_timer = NULL;
-#endif
-
 #define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
    if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
        ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
