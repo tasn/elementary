@@ -377,6 +377,8 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
                             &hover_area.y,
                             &hover_area.w,
                             &hover_area.h);
+   if (!strcmp(elm_widget_type_get(wd->parent), "elm_win"))
+     hover_area.x = hover_area.y = 0;
 
    evas_object_geometry_get(obj, &pos.x, &pos.y, NULL, NULL);
 
@@ -1299,6 +1301,8 @@ elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 
    //Update Background
    evas_object_geometry_get(parent, &x, &y, &w, &h);
+   if (!strcmp(elm_widget_type_get(parent), "elm_win"))
+     x = y = 0;
    evas_object_move(wd->bg, x, y);
    evas_object_resize(wd->bg, w, h);
 

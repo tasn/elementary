@@ -788,3 +788,7 @@
         * Fix the elm_shutdown bug in _elm_shutdown_config.
         When the elm_shutdown is used after elm_config_all_flush, the segment fault occur.
         It's why it uses ecore_x in _prop_all_update_cb after removing it.
+
+2013-03-27  Mike Blumenkrantz
+
+        * fix ctxpopup geometry when parent is an elm_win
