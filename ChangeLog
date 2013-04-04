@@ -796,3 +796,7 @@
 2013-03-27  Mike Blumenkrantz
 
         * fix ctxpopup geometry when parent is an elm_win
+
+2013-04-04  Rafael Antognolli
+
+        * 1.7.6 release
