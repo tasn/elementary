@@ -800,3 +800,7 @@
 2013-04-04  Rafael Antognolli
 
         * 1.7.6 release
+
+2013-04-08  Jaehwan Kim
+
+        * Quit the scroll animator if the scroller don't have a bounce and reach a edge.
