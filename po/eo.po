@@ -6,102 +6,103 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2013-02-04 22:59+0100\n"
-"PO-Revision-Date: 2013-02-04 22:10+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
+"POT-Creation-Date: 2013-04-07 18:45+0200\n"
+"PO-Revision-Date: 2013-04-06 21:14+0000\n"
+"Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-02-05 05:23+0000\n"
-"X-Generator: Launchpad (build 16468)\n"
+"X-Launchpad-Export-Date: 2013-04-08 06:21+0000\n"
+"X-Generator: Launchpad (build 16550)\n"
+"Language: eo\n"
 
-#: src/lib/elc_fileselector.c:749
+#: src/lib/elc_fileselector.c:774
 msgid "Up"
 msgstr "Supren"
 
-#: src/lib/elc_fileselector.c:764
+#: src/lib/elc_fileselector.c:789
 msgid "Home"
 msgstr "Hejmo"
 
-#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1405
+#: src/lib/elc_fileselector.c:1016 src/lib/elm_entry.c:1279
+#: src/lib/elm_entry.c:1304
 msgid "Cancel"
 msgstr "Nuligi"
 
-#: src/lib/elc_fileselector.c:1001
+#: src/lib/elc_fileselector.c:1025
 msgid "OK"
 msgstr "Bone"
 
-#: src/lib/elm_button.c:55
+#: src/lib/elm_button.c:56
 msgid "Clicked"
 msgstr "Alklakita"
 
-#: src/lib/elm_button.c:255 src/lib/elm_check.c:200 src/lib/elm_gengrid.c:618
-#: src/lib/elm_genlist.c:1287 src/lib/elm_list.c:1360 src/lib/elm_radio.c:241
-#: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1253
+#: src/lib/elm_button.c:284 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:701
+#: src/lib/elm_genlist.c:1421 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_spinner.c:510 src/lib/elm_toolbar.c:1797
 msgid "State: Disabled"
 msgstr "Stato: malŝaltita"
 
-#: src/lib/elm_button.c:279
+#: src/lib/elm_button.c:311
 msgid "Button"
 msgstr "Butono"
 
-#: src/lib/elm_calendar.c:132
+#: src/lib/elm_calendar.c:135
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_check.c:47 src/lib/elm_check.c:50 src/lib/elm_check.c:213
-#: src/lib/elm_radio.c:83 src/lib/elm_radio.c:242
+#: src/lib/elm_check.c:45 src/lib/elm_check.c:226 src/lib/elm_radio.c:84
+#: src/lib/elm_radio.c:258
 msgid "State: On"
 msgstr "Stato: enŝaltita"
 
-#: src/lib/elm_check.c:60 src/lib/elm_check.c:63 src/lib/elm_check.c:225
-#: src/lib/elm_radio.c:244
+#: src/lib/elm_check.c:51 src/lib/elm_check.c:238 src/lib/elm_radio.c:260
 msgid "State: Off"
 msgstr "Stato: malŝaltita"
 
-#: src/lib/elm_check.c:209 src/lib/elm_check.c:222
+#: src/lib/elm_check.c:222 src/lib/elm_check.c:235
 msgid "State"
 msgstr "Stato"
 
-#: src/lib/elm_check.c:289
+#: src/lib/elm_check.c:303
 msgid "Check"
 msgstr "Kontroli"
 
-#: src/lib/elm_colorselector.c:895
+#: src/lib/elm_colorselector.c:1340
 msgid "color selector palette item"
 msgstr "ero de elektilo de kolorpaletro"
 
-#: src/lib/elm_config.c:2100
+#: src/lib/elm_config.c:2237
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: src/lib/elm_diskselector.c:622
+#: src/lib/elm_diskselector.c:651
 msgid "diskselector item"
 msgstr "ero de diskelektilo"
 
-#: src/lib/elm_entry.c:1399
+#: src/lib/elm_entry.c:1272
 msgid "Copy"
 msgstr "Kopii"
 
-#: src/lib/elm_entry.c:1402
+#: src/lib/elm_entry.c:1276
 msgid "Cut"
 msgstr "Eltondi"
 
-#: src/lib/elm_entry.c:1416
+#: src/lib/elm_entry.c:1291
 msgid "Select"
 msgstr "Elekti"
 
-#: src/lib/elm_entry.c:1422
+#: src/lib/elm_entry.c:1298
 msgid "Paste"
 msgstr "Alglui"
 
-#: src/lib/elm_entry.c:2654
+#: src/lib/elm_entry.c:2947
 msgid "Entry"
 msgstr "Ero"
 
-#: src/lib/elm_gengrid.c:650
+#: src/lib/elm_gengrid.c:731
 msgid "Gengrid Item"
 msgstr "Ero de komuna krado"
 
@@ -109,54 +110,54 @@ msgstr "Ero de komuna krado"
 msgid "Genlist Item"
 msgstr ""
 
-#: src/lib/elm_label.c:355
+#: src/lib/elm_label.c:402
 msgid "Label"
 msgstr "Etikedo"
 
 #: src/lib/elm_list.c:1400
 msgid "List Item"
-msgstr ""
+msgstr "Listero"
 
-#: src/lib/elm_progressbar.c:260
+#: src/lib/elm_progressbar.c:267
 msgid "progressbar"
 msgstr "progresbreto"
 
-#: src/lib/elm_radio.c:271
+#: src/lib/elm_radio.c:288
 msgid "Radio"
 msgstr "Radiobutono"
 
-#: src/lib/elm_slider.c:778
+#: src/lib/elm_slider.c:821
 msgid "slider"
 msgstr "ŝovilo"
 
-#: src/lib/elm_spinner.c:534
+#: src/lib/elm_spinner.c:599
 msgid "spinner increment button"
 msgstr "alkrementa sago-butono"
 
-#: src/lib/elm_spinner.c:542
+#: src/lib/elm_spinner.c:608
 msgid "spinner decrement button"
 msgstr "dekrementa sago-butono"
 
-#: src/lib/elm_spinner.c:549
+#: src/lib/elm_spinner.c:616
 msgid "spinner"
 msgstr "sago-butono"
 
-#: src/lib/elm_toolbar.c:988
+#: src/lib/elm_toolbar.c:1294 src/lib/elm_toolbar.c:1858
 msgid "Selected"
 msgstr "Elektita"
 
-#: src/lib/elm_toolbar.c:1251
+#: src/lib/elm_toolbar.c:1795
 msgid "Separator"
 msgstr "Disigilo"
 
-#: src/lib/elm_toolbar.c:1255
+#: src/lib/elm_toolbar.c:1799
 msgid "State: Selected"
 msgstr "Stato: elektita"
 
-#: src/lib/elm_toolbar.c:1257
+#: src/lib/elm_toolbar.c:1801
 msgid "Has menu"
 msgstr "Ĝi havas menuo"
 
 #: src/lib/elm_toolbar.c:1322
 msgid "Tool Item"
-msgstr ""
+msgstr "Ila ero"
