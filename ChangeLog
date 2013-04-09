@@ -813,3 +813,7 @@
 
         * Fix layout_example_02.
         * Fix hoversel_example_01.
+
+2013-04-09  WooHyun Jung
+
+        * When ctxpopup includes elm_list, elm_list should get focus when ctxpopup is shown.

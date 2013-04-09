@@ -1012,7 +1012,7 @@ _ctxpopup_show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
      {
         elm_list_go(wd->list);
         wd->visible = EINA_TRUE;
-        elm_object_focus_set(obj, EINA_TRUE);
+        elm_object_focus_set(wd->list, EINA_TRUE);
         return;
      }
 
