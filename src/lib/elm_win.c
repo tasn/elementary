@@ -2043,7 +2043,7 @@ _elm_win_frame_cb_minimize(void *data,
    Elm_Win_Smart_Data *sd;
 
    if (!(sd = data)) return;
-   sd->iconified = EINA_TRUE;
+   // sd->iconified = EINA_TRUE;
    TRAP(sd, iconified_set, EINA_TRUE);
 }
 
@@ -2307,6 +2307,24 @@ _elm_x_io_err(void *data __UNUSED__)
    elm_exit();
 }
 #endif
+
+static void
+_elm_win_cb_hide(void *data __UNUSED__,
+                 Evas *e __UNUSED__,
+                 Evas_Object *obj __UNUSED__,
+                 void *event_info __UNUSED__)
+{
+   _elm_win_state_eval_queue();
+}
+
+static void
+_elm_win_cb_show(void *data __UNUSED__,
+                 Evas *e __UNUSED__,
+                 Evas_Object *obj __UNUSED__,
+                 void *event_info __UNUSED__)
+{
+   _elm_win_state_eval_queue();
+}
 
 EAPI Evas_Object *
 elm_win_add(Evas_Object *parent,
@@ -2667,6 +2685,8 @@ elm_win_add(Evas_Object *parent,
    ecore_evas_callback_focus_out_set(sd->ee, _elm_win_focus_out);
    ecore_evas_callback_move_set(sd->ee, _elm_win_move);
    ecore_evas_callback_state_change_set(sd->ee, _elm_win_state_change);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _elm_win_cb_hide, sd);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _elm_win_cb_show, sd);
 
    evas_image_cache_set(sd->evas, (_elm_config->image_cache * 1024));
    evas_font_cache_set(sd->evas, (_elm_config->font_cache * 1024));
@@ -3112,7 +3132,7 @@ elm_win_fullscreen_set(Evas_Object *obj,
      }
    else
      {
-        sd->fullscreen = fullscreen;
+        // sd->fullscreen = fullscreen;
 
         if (fullscreen)
           {
@@ -3161,7 +3181,7 @@ elm_win_maximized_set(Evas_Object *obj,
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 
-   sd->maximized = maximized;
+   // sd->maximized = maximized;
    // YYY: handle if sd->img_obj
    TRAP(sd, maximized_set, maximized);
 #ifdef HAVE_ELEMENTARY_X
@@ -3185,7 +3205,7 @@ elm_win_iconified_set(Evas_Object *obj,
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 
-   sd->iconified = iconified;
+   // sd->iconified = iconified;
    TRAP(sd, iconified_set, iconified);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
@@ -3208,7 +3228,7 @@ elm_win_withdrawn_set(Evas_Object *obj,
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 
-   sd->withdrawn = withdrawn;
+   // sd->withdrawn = withdrawn;
    TRAP(sd, withdrawn_set, withdrawn);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
@@ -3472,7 +3492,7 @@ elm_win_sticky_set(Evas_Object *obj,
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 
-   sd->sticky = sticky;
+   // sd->sticky = sticky;
    TRAP(sd, sticky_set, sticky);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
