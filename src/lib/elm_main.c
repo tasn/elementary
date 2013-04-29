@@ -205,7 +205,7 @@ _prefix_shutdown(void)
 }
 
 static struct {
-     void *handle;
+     Eina_Module *handle;
      void (*init)(void);
      void (*shutdown)(void);
      Eina_Bool (*app_connect)(const char *appname);
@@ -214,11 +214,11 @@ static struct {
 #define _CLOUSEAU_LOAD_SYMBOL(cls_struct, sym) \
    do \
      { \
-        (cls_struct).sym = dlsym((cls_struct).handle, "clouseau_" #sym); \
+        (cls_struct).sym = eina_module_symbol_get((cls_struct).handle, "clouseau_" #sym); \
         if (!(cls_struct).sym) \
           { \
              WRN("Failed loading symbol '%s' from the clouseau library.", "clouseau_" #sym); \
-             dlclose((cls_struct).handle); \
+             eina_module_free((cls_struct).handle); \
              (cls_struct).handle = NULL; \
              return EINA_FALSE; \
           } \
@@ -236,11 +236,13 @@ _clouseau_module_load()
    if (!want_cls)
       return EINA_FALSE;
 
-   const char *clouseau_lib = PACKAGE_LIB_DIR "/libclouseau" LIBEXT;
-   _clouseau_info.handle = dlopen(clouseau_lib, RTLD_LAZY);
-   if (!_clouseau_info.handle)
+   _clouseau_info.handle = eina_module_new(
+         PACKAGE_LIB_DIR "/libclouseau" LIBEXT);
+   if (!eina_module_load(_clouseau_info.handle))
      {
         WRN("Failed loading the clouseau library.");
+        eina_module_free(_clouseau_info.handle);
+        _clouseau_info.handle = NULL;
         return EINA_FALSE;
      }
 
@@ -287,7 +289,11 @@ elm_shutdown(void)
    while (_elm_win_deferred_free) ecore_main_loop_iterate();
 
    if (_clouseau_info.shutdown)
-      _clouseau_info.shutdown();
+     {
+        _clouseau_info.shutdown();
+        eina_module_free(_clouseau_info.handle);
+        _clouseau_info.handle = NULL;
+     }
 // wrningz :(
 //   _prefix_shutdown();
    if (app_name)
