@@ -204,6 +204,53 @@ _prefix_shutdown(void)
    app_pfx = NULL;
 }
 
+static struct {
+     void *handle;
+     void (*init)(void);
+     void (*shutdown)(void);
+     Eina_Bool (*app_connect)(const char *appname);
+} _clouseau_info;
+
+#define _CLOUSEAU_LOAD_SYMBOL(cls_struct, sym) \
+   do \
+     { \
+        (cls_struct).sym = dlsym((cls_struct).handle, "clouseau_" #sym); \
+        if (!(cls_struct).sym) \
+          { \
+             WRN("Failed loading symbol '%s' from the clouseau library.", "clouseau_" #sym); \
+             dlclose((cls_struct).handle); \
+             (cls_struct).handle = NULL; \
+             return EINA_FALSE; \
+          } \
+     } \
+   while (0)
+
+static Eina_Bool
+_clouseau_module_load()
+{
+   const char *elm_clouseau_env = getenv("ELM_CLOUSEAU");
+   Eina_Bool want_cls = EINA_FALSE;
+   if (elm_clouseau_env)
+      want_cls = atoi(elm_clouseau_env);
+
+   if (!want_cls)
+      return EINA_FALSE;
+
+   const char *clouseau_lib = PACKAGE_LIB_DIR "/libclouseau" LIBEXT;
+   _clouseau_info.handle = dlopen(clouseau_lib, RTLD_LAZY);
+   if (!_clouseau_info.handle)
+     {
+        WRN("Failed loading the clouseau library.");
+        return EINA_FALSE;
+     }
+
+   _CLOUSEAU_LOAD_SYMBOL(_clouseau_info, init);
+   _CLOUSEAU_LOAD_SYMBOL(_clouseau_info, shutdown);
+   _CLOUSEAU_LOAD_SYMBOL(_clouseau_info, app_connect);
+
+   return EINA_TRUE;
+}
+
 EAPI int
 elm_init(int    argc,
          char **argv)
@@ -213,6 +260,16 @@ elm_init(int    argc,
    elm_quicklaunch_init(argc, argv);
    elm_quicklaunch_sub_init(argc, argv);
    _prefix_shutdown();
+
+   if (_clouseau_module_load())
+     {
+        _clouseau_info.init();
+        if(!_clouseau_info.app_connect(elm_app_name_get()))
+          {
+             ERR("Failed connecting to the clouseau server.");
+          }
+     }
+
    return _elm_init_count;
 }
 
@@ -228,6 +285,9 @@ elm_shutdown(void)
    if (_elm_init_count > 0) return _elm_init_count;
    _elm_win_shutdown();
    while (_elm_win_deferred_free) ecore_main_loop_iterate();
+
+   if (_clouseau_info.shutdown)
+      _clouseau_info.shutdown();
 // wrningz :(
 //   _prefix_shutdown();
    if (app_name)
