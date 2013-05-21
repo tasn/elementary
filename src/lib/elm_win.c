@@ -2101,11 +2101,22 @@ static void
 _elm_win_frame_add(Elm_Win_Smart_Data *sd,
                    const char *style)
 {
-   evas_output_framespace_set(sd->evas, 0, 22, 0, 26);
+   const char *framespacestr;
+   int fx = 0, fy = 0, fw = 0, fh = 0;
 
    sd->frame_obj = edje_object_add(sd->evas);
-   elm_widget_theme_object_set
-     (ELM_WIDGET_DATA(sd)->obj, sd->frame_obj, "border", "base", style);
+   if (!elm_widget_theme_object_set
+       (ELM_WIDGET_DATA(sd)->obj, sd->frame_obj, "border", "base", style))
+     {
+        evas_object_del(sd->frame_obj);
+        sd->frame_obj = NULL;
+        return;
+     }
+
+   framespacestr = edje_object_data_get(sd->frame_obj, "framespace");
+   if (framespacestr)
+       sscanf(framespacestr, "%d %d %d %d", &fx, &fy, &fw, &fh);
+   evas_output_framespace_set(sd->evas, fx, fy, fw, fh);
 
    evas_object_is_frame_object_set(sd->frame_obj, EINA_TRUE);
    evas_object_move(sd->frame_obj, 0, 0);
@@ -3146,7 +3157,8 @@ elm_win_fullscreen_set(Evas_Object *obj,
                  ENGINE_COMPARE(ELM_WAYLAND_EGL))
                _elm_win_frame_add(sd, "default");
 
-             evas_object_show(sd->frame_obj);
+             if (sd->frame_obj)
+               evas_object_show(sd->frame_obj);
           }
 
         TRAP(sd, fullscreen_set, fullscreen);
