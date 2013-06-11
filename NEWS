@@ -4,6 +4,7 @@ Changes since Elementary 1.7.7:
 Fixes:
 
    * Fix potential free'ed memory dereference in naviframe.
+   * Make elm_tooltip more robust if not run inside X
 
 Elementary 1.7.7
 

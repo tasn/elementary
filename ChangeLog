@@ -821,3 +821,6 @@
 2013-06-10  Stefan Schmidt
 
         * Fix potential free'ed memory dereference in naviframe
+
+2013-06-11  Daniel Willmann
+        * Make elm_tooltip more robust if not run inside X
