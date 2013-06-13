@@ -1156,6 +1156,7 @@ elm_fileselector_selected_set(Evas_Object *obj,
 {
    Eina_Bool ret = EINA_TRUE;
    char *path;
+   char *selected;
 
    ELM_FILESELECTOR_CHECK(obj) EINA_FALSE;
    ELM_FILESELECTOR_DATA_GET(obj, sd);
@@ -1171,7 +1172,10 @@ elm_fileselector_selected_set(Evas_Object *obj,
              goto clean_up;
           }
 
-        _populate(obj, ecore_file_dir_get(path), NULL);
+        selected = ecore_file_dir_get(path);
+        _populate(obj, selected, NULL);
+        free(selected);
+
         if (sd->filename_entry)
           {
              char *s;
