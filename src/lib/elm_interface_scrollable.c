@@ -1044,10 +1044,9 @@ _elm_scroll_content_size_get(const Evas_Object *obj,
                              Evas_Coord *h)
 {
    ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(obj, sid);
+   ELM_PAN_DATA_GET(sid->pan_obj, psd);
 
-   if (!sid->content) return;
-
-   evas_object_geometry_get(sid->content, NULL, NULL, w, h);
+   psd->api->content_size_get(sid->pan_obj, w, h);
 }
 
 static void
