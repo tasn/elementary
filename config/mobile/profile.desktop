@@ -1,11 +1,6 @@
 [Desktop Entry]
-Comment=Configuration set up to work best with touchscreen<br>phones, tablets and similar devices.
-Comment[fr]=Configuration adaptée aux écrans tactiles<br>des téléphones, tablettes et apparentés.
-Comment[it]=Configurazione adatta per l'uso in smartphone<br>con interfaccia tattile, tablets e similari.
-Comment[ko]=터치스크린 기반의 휴대폰, 태블릿 등과 같은 장치에 맞는 설정.
-Comment[pt]=Configuração de ecrãs táteis como os dos telefones, tablets e similares.
 Encoding=UTF-8
-Icon=icon.png
+Type=Link
 Name=Mobile
 Name[eo]=Poŝtelefono
 Name[es]=Móvil
@@ -14,4 +9,10 @@ Name[gl]=Móbil
 Name[ko]=터치스크린
 Name[pt]=Ecrã tátil
 Name[ru]=Мобильные устройства
-Type=Link
+Comment=Configuration set up to work best with touchscreen<br>phones, tablets and similar devices.
+Comment[eo]=Agordoj kongruas plej kun tuŝekranaj telefonoj,<br> tabulkomputiloj aŭ similaj aparatoj.
+Comment[fr]=Configuration adaptée aux écrans tactiles<br>des téléphones, tablettes et apparentés.
+Comment[it]=Configurazione adatta per l'uso in smartphone<br>con interfaccia tattile, tablets e similari.
+Comment[ko]=터치스크린 기반의 휴대폰, 태블릿 등과 같은 장치에 맞는 설정.
+Comment[pt]=Configuração de ecrãs táteis como os dos telefones, tablets e similares.
+Icon=icon.png
