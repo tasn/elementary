@@ -158,6 +158,7 @@ Fixes:
    * Fix elm_transit image animation that last few frames are skipped.
    * FIx elm_transit to accept proxy object.
    * Fix a memory leak of elm_genlist - EINA_LIST_FREE should be used for returned value of elm_genlist_realized_items_get
+   * Fix elm_object_item_part_content_set bug with end content in elm_list.
 
 Changes since Elementary 1.0.0:
 -------------------------

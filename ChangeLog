@@ -827,3 +827,7 @@
 
 2013-06-13  Rafael Antognolli
         * Get the framespace from the theme.
+
+2013-07-13  Daniel Juyung Seo
+
+        * Fix elm_object_item_part_content_set bug with end content in elm_list.
