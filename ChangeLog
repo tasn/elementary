@@ -818,6 +818,10 @@
 
         * When ctxpopup includes elm_list, elm_list should get focus when ctxpopup is shown.
 
+2013-05-11  Rafael Antognolli
+
+        * 1.7.7 release
+
 2013-06-10  Stefan Schmidt
 
         * Fix potential free'ed memory dereference in naviframe
@@ -826,8 +830,13 @@
         * Make elm_tooltip more robust if not run inside X
 
 2013-06-13  Rafael Antognolli
+
         * Get the framespace from the theme.
 
 2013-07-13  Daniel Juyung Seo
 
         * Fix elm_object_item_part_content_set bug with end content in elm_list.
+
+2013-08-02  Eduardo Lima (Etrunko)
+
+        * 1.7.8 release
