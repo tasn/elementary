@@ -840,3 +840,8 @@
 2013-08-02  Eduardo Lima (Etrunko)
 
         * 1.7.8 release
+
+2013-08-30  Tom Hacohen (TAsn)
+
+	* Clouseau: Added clouseau integration.
+

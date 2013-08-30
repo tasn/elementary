@@ -3,6 +3,9 @@ Elementary 1.7.8
 Changes since Elementary 1.7.7:
 -------------------------
 
+Improvements:
+   * Clouseau: Added clouseau integration.
+
 Fixes:
 
    * Fix potential free'ed memory dereference in naviframe.
