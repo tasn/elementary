@@ -249,10 +249,6 @@ elm_main(int argc, char **argv)
 
    if (!(gld = calloc(1, sizeof(GLData)))) return 1;
 
-   // set the preferred engine to opengl_x11. if it isnt' available it
-   // may use another transparently
-   elm_config_preferred_engine_set("opengl_x11");
-   
    win = elm_win_add(NULL, "glview simple", ELM_WIN_BASIC);
    elm_win_title_set(win, "GLView Simple");
    elm_win_autodel_set(win, EINA_TRUE);
