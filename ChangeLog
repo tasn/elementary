@@ -849,3 +849,6 @@
 
 	* Gesture layer: Fix gesture layer with "pointer" events.
 
+2013-09-18  Eduardo Lima (Etrunko)
+
+        * 1.7.9 release

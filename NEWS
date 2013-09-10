@@ -1,4 +1,3 @@
-	* Gesture layer: Fix gesture layer with "pointer" events.
 Elementary 1.7.9
 
 Changes since Elementary 1.7.8:
@@ -8,6 +7,10 @@ Improvements:
    * Clouseau: Added clouseau integration.
 
 Fixes:
+   * elm/examples: Autodetect engine on the glview example too.
+   * elm/tests: Autodetect engine, instead of hardcode it.
+   * elm/index: Fix example, must call elm_index_level_go().
+   * list: Fix list_example_03  - call elm_list_go().
    * Gesture layer: Fix gesture layer with "pointer" events.
 
 Elementary 1.7.8
