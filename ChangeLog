@@ -845,3 +845,7 @@
 
 	* Clouseau: Added clouseau integration.
 
+2013-09-18  Tom Hacohen (TAsn)
+
+	* Gesture layer: Fix gesture layer with "pointer" events.
+

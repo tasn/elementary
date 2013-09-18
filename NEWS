@@ -1,10 +1,19 @@
-Elementary 1.7.8
+	* Gesture layer: Fix gesture layer with "pointer" events.
+Elementary 1.7.9
 
-Changes since Elementary 1.7.7:
+Changes since Elementary 1.7.8:
 -------------------------
 
 Improvements:
    * Clouseau: Added clouseau integration.
+
+Fixes:
+   * Gesture layer: Fix gesture layer with "pointer" events.
+
+Elementary 1.7.8
+
+Changes since Elementary 1.7.7:
+-------------------------
 
 Fixes:
 
