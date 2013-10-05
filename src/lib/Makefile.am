@@ -135,6 +135,10 @@ elc_popup.h \
 elc_popup_eo.h \
 elc_popup_legacy.h \
 elc_popup_common.h \
+elm_abcd.h \
+elm_abcd_common.h \
+elm_abcd_eo.h \
+elm_abcd_legacy.h \
 elm_access.h \
 elm_actionslider.h \
 elm_actionslider_eo.h \
@@ -395,6 +399,7 @@ elc_naviframe.c \
 elc_player.c \
 elc_popup.c \
 elc_scrolled_entry.c \
+elm_abcd.c \
 elm_access.c \
 elm_actionslider.c \
 elm_app_common.c \
