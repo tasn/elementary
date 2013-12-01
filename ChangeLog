@@ -1765,3 +1765,6 @@
 
         * 1.8 release
 
+2013-12-01  Mike Blumenkrantz
+
+        * fix mouse eventing on e border theme
