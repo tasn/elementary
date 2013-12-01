@@ -1760,3 +1760,8 @@
 2013-11-28  Daniel Juyung Seo (SeoZ)
 
         * spinner: fix mouse wheel support.
+
+2013-12-01  Carsten Haitzler (The Rasterman)
+
+        * 1.8 release
+
