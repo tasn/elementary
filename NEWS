@@ -10,7 +10,14 @@ Additions:
 Improvements:
 
 Fixes:
-
+   * naviframe: clip the shadow also
+   * elementary: shuttup autotools.
+   * elementary/elm_button: Change the timing of signal_emitting.
+   * elm_interface_scrollable: fix scroller page flick calculation roundup routine.
+   * elm_interface_scrollable: reset momentum_animator to null when return cancel from the animator.
+   * gengrid: refactoring of commit 7187a3124fc6c169fcfec2c249a1fd483481fbba
+   * Gengrid: Enable Scroll To Type when item bring in or show region.
+   * theme - fix evrything theme elements for enlightenment (T596)
    * fix mouse eventing on e border theme
 
 Removals:
