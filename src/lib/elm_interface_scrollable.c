@@ -1607,7 +1607,7 @@ _elm_scroll_content_pos_set(Eo *obj, void *_pd, va_list *list)
      (sid->edje_obj, "elm.dragable.vbar", 0.0, vy);
    edje_object_part_drag_value_set
      (sid->edje_obj, "elm.dragable.hbar", vx, 0.0);
-   
+
    if (!sid->down.bounce_x_animator)
      {
         if (((x < minx) && (0 <= sid->down.dx)) ||
@@ -2023,7 +2023,11 @@ _elm_scroll_momentum_animator(void *data)
    Evas_Coord x, y, dx, dy, px, py, maxx, maxy, minx, miny;
    Eina_Bool no_bounce_x_end = EINA_FALSE, no_bounce_y_end = EINA_FALSE;
 
-   if (!sid->pan_obj) return ECORE_CALLBACK_CANCEL;
+   if (!sid->pan_obj)
+     {
+        sid->down.momentum_animator = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
 
    t = ecore_loop_time_get();
    dt = t - sid->down.anim_start;
@@ -2348,7 +2352,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    Evas_Coord x = 0, y = 0, ox = 0, oy = 0;
-   Evas_Event_Mouse_Down *ev;
+   Evas_Event_Mouse_Up *ev;
 
    if (!sid->pan_obj) return;
 
@@ -2892,7 +2896,7 @@ _elm_scroll_hold_enterer(void *data)
    Evas_Coord ox = 0, oy = 0, fx = 0, fy = 0;
 
    sid->down.hold_enterer = NULL;
-   
+
    fx = sid->down.hold_x;
    fy = sid->down.hold_y;
 

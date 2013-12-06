@@ -1,9 +1,11 @@
+================
+Elementary 1.9.0
+================
+
 Changes since Elementary 1.8.0:
 -------------------------
 
 Additions:
-
-   * Add elm_object_tooltip_orient_set() and elm_object_tooltip_orient_get().
 
 Improvements:
 

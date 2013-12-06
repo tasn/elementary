@@ -1761,6 +1761,14 @@
 
         * spinner: fix mouse wheel support.
 
+2013-12-01  Carsten Haitzler (The Rasterman)
+
+        * 1.8 release
+
 2013-12-01  Abhinandan Aryadipta (aryarockstar)
 
         * tooltip: Added elm_object_tooltip_orient_set() and elm_object_tooltip_orient_get().
+
+2013-12-01  Mike Blumenkrantz
+
+        * fix mouse eventing on e border theme

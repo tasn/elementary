@@ -587,7 +587,7 @@ _button_remove(Evas_Object *obj,
    else
      {
         char style[1024];
-        
+
         snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
         snprintf(buf, sizeof(buf), "buttons%i", sd->last_button_number);
         if (!elm_layout_theme_set(sd->action_area, "popup", buf, style))
@@ -619,7 +619,7 @@ static void
 _list_add(Evas_Object *obj)
 {
    char style[1024];
-   
+
    ELM_POPUP_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -853,7 +853,7 @@ static void
 _item_new(Elm_Popup_Item *it)
 {
    char style[1024];
-   
+
    elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
    elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
@@ -864,7 +864,7 @@ _item_new(Elm_Popup_Item *it)
    elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
 
    VIEW(it) = elm_layout_add(WIDGET(it));
-   
+
    snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(WIDGET(it)));
    if (!elm_layout_theme_set(VIEW(it), "popup", "item", style))
      CRITICAL("Failed to set layout!");
@@ -1497,7 +1497,7 @@ _elm_popup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Popup_Smart_Data *priv = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    char style[1024];
-   
+
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
@@ -1509,7 +1509,7 @@ _elm_popup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    snprintf(style, sizeof(style), "%s", "default");
    if (!elm_layout_theme_set(obj, "popup", "base", style))
      CRITICAL("Failed to set layout!");
-   
+
    snprintf(style, sizeof(style), "popup/%s", "default");
 
    priv->notify = elm_notify_add(obj);
@@ -1756,6 +1756,40 @@ _orient_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 EAPI void
+elm_popup_align_set(Evas_Object *obj, double horizontal, double vertical)
+{
+   ELM_POPUP_CHECK(obj);
+   eo_do(obj, elm_obj_popup_align_set(horizontal, vertical));
+}
+
+static void
+_align_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double horizontal = va_arg(*list, double);
+   double vertical = va_arg(*list, double);
+   Elm_Popup_Smart_Data *sd = _pd;
+
+   elm_notify_align_set(sd->notify, horizontal, vertical);
+}
+
+EAPI void
+elm_popup_align_get(const Evas_Object *obj, double *horizontal, double *vertical)
+{
+   ELM_POPUP_CHECK(obj);
+   eo_do((Eo *) obj, elm_obj_popup_align_get(horizontal, vertical));
+}
+
+static void
+_align_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double *horizontal = va_arg(*list, double *);
+   double *vertical = va_arg(*list, double *);
+   Elm_Popup_Smart_Data *sd = _pd;
+
+   elm_notify_align_get(sd->notify, horizontal, vertical);
+}
+
+EAPI void
 elm_popup_timeout_set(Evas_Object *obj,
                       double timeout)
 {
@@ -1922,6 +1956,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_ALLOW_EVENTS_SET), _allow_events_set),
         EO_OP_FUNC(ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_ALLOW_EVENTS_GET), _allow_events_get),
         EO_OP_FUNC(ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_ITEM_APPEND), _item_append),
+        EO_OP_FUNC(ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_ALIGN_SET), _align_set),
+        EO_OP_FUNC(ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_ALIGN_GET), _align_get),
         EO_OP_FUNC_SENTINEL
   };
    eo_class_funcs_set(klass, func_desc);
@@ -1938,6 +1974,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_POPUP_SUB_ID_ALLOW_EVENTS_SET, "Sets whether events should be passed to by a click outside."),
      EO_OP_DESCRIPTION(ELM_OBJ_POPUP_SUB_ID_ALLOW_EVENTS_GET, "Returns value indicating whether allow event is enabled or not."),
      EO_OP_DESCRIPTION(ELM_OBJ_POPUP_SUB_ID_ITEM_APPEND, "Add a new item to a Popup object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_POPUP_SUB_ID_ALIGN_SET, "Set the popup alignment relative to its parent."),
+     EO_OP_DESCRIPTION(ELM_OBJ_POPUP_SUB_ID_ALIGN_GET, "Return the popup alignment relative to its parent."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {
