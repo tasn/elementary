@@ -11,6 +11,8 @@ Improvements:
 
 Fixes:
    * Ensmallen efm event area and make it overlap with icon event area
+   * theme - focus out color should have been 255 all around. why 253?
+   * Update systray theme to have only one box
 
 Removals:
 
