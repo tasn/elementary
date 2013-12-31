@@ -254,6 +254,8 @@ _elm_image_smart_smooth_scale_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Image_Smart_Data *sd = _pd;
 
+   if (!ret) return;
+
    if (sd->edje)
      {
         *ret = EINA_FALSE;
@@ -286,7 +288,7 @@ _elm_image_smart_fill_inside_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    Elm_Image_Smart_Data *sd = _pd;
 
-   *ret =  sd->fill_inside;
+   if (ret) *ret = sd->fill_inside;
 }
 
 static void
@@ -313,7 +315,7 @@ _elm_image_smart_resize_up_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    Elm_Image_Smart_Data *sd = _pd;
 
-   *ret = sd->resize_up;
+   if (ret) *ret = sd->resize_up;
 }
 
 static void
@@ -338,7 +340,7 @@ _elm_image_smart_resize_down_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
    Elm_Image_Smart_Data *sd = _pd;
-   *ret = sd->resize_up;
+   if (ret) *ret = sd->resize_up;
 }
 
 static void
@@ -803,7 +805,7 @@ _elm_image_smart_scale_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Image_Smart_Data *sd = _pd;
    double *ret = va_arg(*list, double *);
 
-   *ret = sd->scale;
+   if (ret) *ret = sd->scale;
 }
 
 EAPI Evas_Object *
@@ -1088,7 +1090,7 @@ _elm_image_smart_smooth_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Image_Smart_Data *sd = _pd;
-   *ret =  sd->smooth;
+   if (ret) *ret = sd->smooth;
 }
 
 EAPI void
@@ -1166,7 +1168,7 @@ _elm_image_smart_no_scale_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Image_Smart_Data *sd = _pd;
-   *ret = sd->no_scale;
+   if (ret) *ret = sd->no_scale;
 }
 
 EAPI void
@@ -1245,7 +1247,7 @@ _elm_image_smart_fill_outside_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
    Elm_Image_Smart_Data *sd = _pd;
-   *ret = !sd->fill_inside;
+   if (ret) *ret = !sd->fill_inside;
 }
 
 EAPI void
@@ -1312,7 +1314,7 @@ _elm_image_smart_load_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    int *ret = va_arg(*list, int *);
 
-   *ret = sd->load_size;
+   if (ret) *ret = sd->load_size;
 }
 
 EAPI void
@@ -1452,7 +1454,7 @@ _elm_image_smart_orient_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    Elm_Image_Orient *ret = va_arg(*list, Elm_Image_Orient *);
 
-   *ret = sd->orient;
+   if (ret) *ret = sd->orient;
 }
 
 EAPI void
@@ -1517,7 +1519,7 @@ _elm_image_smart_editable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Image_Smart_Data *sd = _pd;
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
-   *ret = sd->edit;
+   if (ret) *ret = sd->edit;
 }
 
 EAPI Evas_Object *
@@ -1537,7 +1539,7 @@ _elm_image_smart_object_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    Elm_Image_Smart_Data *sd = _pd;
 
-   *ret = sd->img;
+   if (ret) *ret = sd->img;
 }
 
 EAPI void
@@ -1577,7 +1579,7 @@ _elm_image_smart_aspect_fixed_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Image_Smart_Data *sd = _pd;
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
-   *ret = sd->aspect_fixed;
+   if (ret) *ret = sd->aspect_fixed;
 }
 
 EAPI Eina_Bool
@@ -1598,11 +1600,11 @@ _elm_image_smart_animated_available_get(Eo *obj, void *_pd, va_list *list)
 
    if (sd->edje)
      {
-        *ret = EINA_FALSE;
+        if (ret) *ret = EINA_FALSE;
         return;
      }
 
-   *ret = evas_object_image_animated_get(elm_image_object_get(obj));
+   if (ret) *ret = evas_object_image_animated_get(elm_image_object_get(obj));
 }
 
 EAPI void
@@ -1661,7 +1663,7 @@ _elm_image_smart_animated_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Image_Smart_Data *sd = _pd;
-   *ret =  sd->anim;
+   if (ret) *ret = sd->anim;
 }
 
 EAPI void
@@ -1709,7 +1711,7 @@ _elm_image_smart_animated_play_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Image_Smart_Data *sd = _pd;
-   *ret = sd->play;
+   if (ret) *ret = sd->play;
 }
 
 static void
