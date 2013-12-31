@@ -763,14 +763,14 @@ static void
 _elm_spinner_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = _elm_spinner_smart_focus_next_enable;
+   if (ret) *ret = _elm_spinner_smart_focus_next_enable;
 }
 
 static void
 _elm_spinner_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   if (ret) *ret = EINA_FALSE;
 }
 
 static Evas_Object *
@@ -887,7 +887,7 @@ _elm_spinner_label_format_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char **ret = va_arg(*list, const char **);
    Elm_Spinner_Smart_Data *sd = _pd;
-   *ret = sd->label;
+   if (ret) *ret = sd->label;
 }
 
 EAPI void
@@ -969,7 +969,7 @@ _elm_spinner_step_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    double *ret = va_arg(*list, double *);
    Elm_Spinner_Smart_Data *sd = _pd;
-   *ret = sd->step;
+   if (ret) *ret = sd->step;
 }
 
 EAPI void
@@ -1017,7 +1017,7 @@ _elm_spinner_value_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    double *ret = va_arg(*list, double *);
    Elm_Spinner_Smart_Data *sd = _pd;
-   *ret = sd->val;
+   if (ret) *ret = sd->val;
 }
 
 EAPI void
@@ -1050,7 +1050,7 @@ _elm_spinner_wrap_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Spinner_Smart_Data *sd = _pd;
-   *ret = sd->wrap;
+   if (ret) *ret = sd->wrap;
 }
 
 EAPI void
@@ -1162,7 +1162,7 @@ _elm_spinner_editable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Spinner_Smart_Data *sd = _pd;
-   *ret = sd->editable;
+   if (ret) *ret = sd->editable;
 }
 
 EAPI void
@@ -1195,7 +1195,7 @@ _elm_spinner_interval_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    double *ret = va_arg(*list, double *);
    Elm_Spinner_Smart_Data *sd = _pd;
-   *ret = sd->first_interval;
+   if (ret) *ret = sd->first_interval;
 }
 
 EAPI void
@@ -1228,7 +1228,7 @@ _elm_spinner_base_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    double *ret = va_arg(*list, double *);
    Elm_Spinner_Smart_Data *sd = _pd;
-   *ret = sd->val_base;
+   if (ret) *ret = sd->val_base;
 }
 
 EAPI void
@@ -1261,7 +1261,7 @@ _elm_spinner_round_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    int *ret = va_arg(*list, int *);
    Elm_Spinner_Smart_Data *sd = _pd;
-   *ret = sd->round;
+   if (ret) *ret = sd->round;
 }
 
 static void
