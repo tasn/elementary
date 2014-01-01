@@ -2683,14 +2683,14 @@ static void
 _elm_genlist_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = _elm_genlist_smart_focus_next_enable;
+   if (ret) *ret = _elm_genlist_smart_focus_next_enable;
 }
 
 static void
 _elm_genlist_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   if (ret) *ret = EINA_FALSE;
 }
 
 static void
@@ -5414,7 +5414,7 @@ _items_count(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    unsigned int *ret = va_arg(*list, unsigned int *);
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   *ret = sd->item_count;
+   if (ret) *ret = sd->item_count;
 }
 
 EAPI Elm_Object_Item *
@@ -5445,7 +5445,7 @@ _item_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const void *func_data = va_arg(*list, const void *);
    Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
    Elm_Genlist_Smart_Data *sd = _pd;
-   *ret = NULL;
+   if (ret) *ret = NULL;
 
    it = _elm_genlist_item_new
        (sd, itc, data, (Elm_Gen_Item *)parent, type, func, func_data);
@@ -5475,7 +5475,7 @@ _item_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    it->item->before = EINA_FALSE;
    _item_queue(sd, it, NULL);
 
-   *ret = (Elm_Object_Item *)it;
+   if (ret) *ret = (Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *
@@ -5506,7 +5506,7 @@ _item_prepend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const void *func_data = va_arg(*list, const void *);
    Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
    Elm_Genlist_Smart_Data *sd = _pd;
-   *ret = NULL;
+   if (ret) *ret = NULL;
 
    it = _elm_genlist_item_new
        (sd, itc, data, (Elm_Gen_Item *)parent, type, func, func_data);
@@ -5536,7 +5536,7 @@ _item_prepend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    it->item->before = EINA_TRUE;
    _item_queue(sd, it, NULL);
 
-   *ret = (Elm_Object_Item *)it;
+   if (ret) *ret = (Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *
@@ -5570,7 +5570,7 @@ _item_insert_after(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Gen_Item *after = (Elm_Gen_Item *)after_it;
    Elm_Gen_Item *it;
 
-   *ret = NULL;
+   if (ret) *ret = NULL;
 
    ELM_GENLIST_ITEM_CHECK(after_it);
    Elm_Genlist_Smart_Data *sd = _pd;
@@ -5602,7 +5602,7 @@ _item_insert_after(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    it->item->before = EINA_FALSE;
    _item_queue(sd, it, NULL);
 
-   *ret = (Elm_Object_Item *)it;
+   if (ret) *ret = (Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *
@@ -5635,7 +5635,7 @@ _item_insert_before(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Gen_Item *before = (Elm_Gen_Item *)before_it;
    Elm_Gen_Item *it;
 
-   *ret = NULL;
+   if (ret) *ret = NULL;
 
    ELM_GENLIST_ITEM_CHECK(before_it);
    Elm_Genlist_Smart_Data *sd = _pd;
@@ -5666,7 +5666,7 @@ _item_insert_before(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    it->item->before = EINA_TRUE;
    _item_queue(sd, it, NULL);
 
-   *ret = (Elm_Object_Item *)it;
+   if (ret) *ret = (Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *
@@ -5699,7 +5699,7 @@ _item_sorted_insert(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
    const void *func_data = va_arg(*list, const void *);
    Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
+   if (ret) *ret = NULL;
 
    Elm_Genlist_Smart_Data *sd = _pd;
 
@@ -5776,7 +5776,7 @@ _item_sorted_insert(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    _item_queue(sd, it, _elm_genlist_item_list_compare);
 
-   *ret = (Elm_Object_Item *)it;
+   if (ret) *ret = (Elm_Object_Item *)it;
 }
 
 EAPI void
@@ -5824,7 +5824,7 @@ _multi_select_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   *ret = sd->multi;
+   if (ret) *ret = sd->multi;
 }
 
 EAPI void
@@ -5863,7 +5863,7 @@ _multi_select_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Object_Multi_Select_Mode *ret = va_arg(*list, Elm_Object_Multi_Select_Mode *);
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   *ret = sd->multi_select_mode;
+   if (ret) *ret = sd->multi_select_mode;
 }
 
 EAPI Elm_Object_Item *
@@ -5902,7 +5902,7 @@ _selected_items_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const Eina_List **ret = va_arg(*list, const Eina_List **);
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   *ret = sd->selected;
+   if (ret) *ret = sd->selected;
 }
 
 EAPI Eina_List *
@@ -5922,7 +5922,7 @@ _realized_items_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    Eina_List **ret = va_arg(*list, Eina_List **);
    Elm_Genlist_Smart_Data *sd = _pd;
-   *ret = NULL;
+   if (ret) *ret = NULL;
 
    EINA_INLIST_FOREACH(sd->blocks, itb)
      {
@@ -6009,7 +6009,7 @@ _at_xy_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         else *posret = -1;
      }
 
-   *ret = NULL;
+   if (ret) *ret = NULL;
 }
 
 EAPI Elm_Object_Item *
@@ -6028,7 +6028,7 @@ _first_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
    Elm_Genlist_Smart_Data *sd = _pd;
-   *ret = NULL;
+   if (ret) *ret = NULL;
 
    if (!sd->items) return;
 
@@ -6036,7 +6036,7 @@ _first_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    while ((it) && (it->generation < sd->generation))
      it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
 
-   *ret = (Elm_Object_Item *)it;
+   if (ret) *ret = (Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *
@@ -6054,7 +6054,7 @@ _last_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Gen_Item *it;
 
    Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
+   if (ret) *ret = NULL;
 
    Elm_Genlist_Smart_Data *sd = _pd;
 
@@ -6064,7 +6064,7 @@ _last_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    while ((it) && (it->generation < sd->generation))
      it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
 
-   *ret = (Elm_Object_Item *)it;
+   if (ret) *ret = (Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *
@@ -6811,7 +6811,7 @@ _mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_List_Mode *ret = va_arg(*list, Elm_List_Mode *);
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   *ret = sd->mode;
+   if (ret) *ret = sd->mode;
 }
 
 EAPI void
@@ -6889,7 +6889,7 @@ _homogeneous_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   *ret = sd->homogeneous;
+   if (ret) *ret = sd->homogeneous;
 }
 
 EAPI void
@@ -6927,7 +6927,7 @@ _block_count_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    int *ret = va_arg(*list, int *);
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   *ret = sd->max_items_per_block;
+   if (ret) *ret = sd->max_items_per_block;
 }
 
 EAPI void
@@ -6962,7 +6962,7 @@ _longpress_timeout_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    double *ret = va_arg(*list, double *);
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   *ret = sd->longpress_timeout;
+   if (ret) *ret = sd->longpress_timeout;
 }
 
 EAPI void
@@ -7099,7 +7099,7 @@ _decorated_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   *ret = (Elm_Object_Item *)sd->mode_item;
+   if (ret) *ret = (Elm_Object_Item *)sd->mode_item;
 }
 
 EAPI Eina_Bool
@@ -7117,7 +7117,7 @@ _decorate_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   *ret = sd->decorate_all_mode;
+   if (ret) *ret = sd->decorate_all_mode;
 }
 
 EAPI void
@@ -7233,7 +7233,7 @@ _reorder_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   *ret = sd->reorder_mode;
+   if (ret) *ret = sd->reorder_mode;
 }
 
 EAPI Elm_Genlist_Item_Type
@@ -7383,7 +7383,7 @@ _select_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Object_Select_Mode *ret = va_arg(*list, Elm_Object_Select_Mode *);
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   *ret = sd->select_mode;
+   if (ret) *ret = sd->select_mode;
 }
 
 EAPI void
@@ -7418,7 +7418,7 @@ _highlight_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   *ret = sd->highlight;
+   if (ret) *ret = sd->highlight;
 }
 
 EAPI void
@@ -7496,7 +7496,7 @@ _tree_effect_enabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   *ret = sd->tree_effect_enabled;
+   if (ret) *ret = sd->tree_effect_enabled;
 }
 
 EAPI void
@@ -7529,7 +7529,7 @@ _focus_on_selection_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Genlist_Smart_Data *sd = _pd;
-   *ret = sd->focus_on_selection_enabled;
+   if (ret) *ret = sd->focus_on_selection_enabled;
 }
 
 EAPI Elm_Object_Item *
