@@ -1,6 +1,29 @@
 ================
-Elementary 1.8.2
+Elementary 1.8.3
 ================
+
+Changes since Elementary 1.8.2:
+-------------------------------
+
+Additions:
+
+Improvements:
+
+Fixes:
+   * gengrid, genlist: Fallback into default item style if the required item
+     style does not exist.
+   * elm: replace 0 or 1 with EINA_FALSE or EINA_TRUE
+   * elm_test: use EINA_TRUE or FALSE instead of 1 or 0
+   * Widget: Don't check if it's the correct class everywhere.
+   * Updating serbian translation
+   * elm theme - fix toggle color to hide invisible orange rect
+   * entry: fix build warning about explicit braces to avoid ambiguous 'else'
+   * More NULL checks in many widgets
+   * elm_thumb: Delete ethumb object on smart_del in order to prevent the
+     ethumb from being left as an artifact after the elm_thumb has been deleted.
+   * update e startup splash version to 18
+
+Removals:
 
 Changes since Elementary 1.8.1:
 -------------------------------
