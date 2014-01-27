@@ -1,6 +1,20 @@
 ================
-Elementary 1.8.3
+Elementary 1.8.4
 ================
+
+Changes since Elementary 1.8.3:
+-------------------------------
+
+Additions:
+
+Improvements:
+
+Fixes:
+    * scroller: Fixed wheel event callback
+    * doxygen: fix 'icon' and 'check' widget examples
+    * elm glview - evas sync before rendering with always draw to sync right
+
+Removals:
 
 Changes since Elementary 1.8.2:
 -------------------------------
