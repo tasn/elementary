@@ -1,6 +1,18 @@
 ================
-Elementary 1.8.4
+Elementary 1.8.5
 ================
+
+Changes since Elementary 1.8.4:
+-------------------------------
+
+Additions:
+
+Improvements:
+
+Fixes:
+    * elm entry: Fix anchor bug finding wrong anchor geometry
+
+Removals:
 
 Changes since Elementary 1.8.3:
 -------------------------------
