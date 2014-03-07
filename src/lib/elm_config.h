@@ -806,6 +806,10 @@ EAPI const char *elm_config_preferred_engine_get(void);
  */
 EAPI void        elm_config_preferred_engine_set(const char *engine);
 
+/**
+ * @}
+ */
+
 typedef struct _Elm_Text_Class
 {
    const char *name;
@@ -1421,6 +1425,47 @@ EAPI Eina_Bool elm_config_audio_mute_get(Edje_Channel channel);
 EAPI void      elm_config_audio_mute_set(Edje_Channel channel, Eina_Bool mute);
 
 /**
- * @}
+ * @defgroup Item_Config Widget Item Configuration
+ * @ingroup Elementary
+ *
+ * This configures the widget item related configurations.
+ *
+ * @{
  */
 
+typedef enum _Elm_Item_Select_Mode_On_Dir_Key
+{
+   ELM_ITEM_SELECT_MODE_ON_DIR_KEY_SELECT, /**< select and highlight the next item when the direction keys are pressed */
+   ELM_ITEM_SELECT_MODE_ON_DIR_KEY_HIGHLIGHT, /**<  do not select but highlight the next item when the direction keys are pressed */
+   ELM_ITEM_SELECT_MODE_ON_DIR_KEY_NONE /**< do not select and do not highlight the next item when the direction keys are pressed. */
+} Elm_Item_Select_Mode_On_Dir_Key; /**< @since 1.10 */
+
+/**
+ * Get the item select mode when direction keys are pressed.
+ *
+ * @return item select mode
+ *
+ * This returns the item select mode when direction keys(up, down, left, right) are pressed.
+ *
+ * @see elm_config_item_select_mode_on_dir_key_set()
+ * @ingroup Item
+ * @since 1.10
+ */
+EAPI Elm_Item_Select_Mode_On_Dir_Key elm_config_item_select_mode_on_dir_key_get(void);
+
+/**
+ * Set the item select mode when direction keys are pressed.
+ *
+ * @param mode Item select mode
+ *
+ * This sets the item select mode when direction keys(up, down, left, right) are pressed.
+ *
+ * @see elm_config_item_select_mode_on_dir_key_get()
+ * @ingroup Item
+ * @since 1.10
+ */
+EAPI void elm_config_item_select_mode_on_dir_key_set(Elm_Item_Select_Mode_On_Dir_Key mode);
+
+/**
+ * @}
+ */

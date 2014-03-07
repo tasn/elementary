@@ -278,6 +278,7 @@ struct _Elm_Config
    unsigned char audio_mute_alert;
    unsigned char audio_mute_all;
    Eina_List    *bindings;
+   unsigned char item_select_mode_on_dir_key;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;

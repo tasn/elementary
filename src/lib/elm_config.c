@@ -557,6 +557,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, audio_mute_input, T_UCHAR);
    ELM_CONFIG_VAL(D, T, audio_mute_alert, T_UCHAR);
    ELM_CONFIG_VAL(D, T, audio_mute_all, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, item_select_mode_on_dir_key, T_UCHAR);
    ELM_CONFIG_LIST(D, T, bindings, _config_bindings_widget_edd);
 #undef T
 #undef D
@@ -1554,6 +1555,7 @@ _config_load(void)
    _elm_config->audio_mute_input = 0;
    _elm_config->audio_mute_alert = 0;
    _elm_config->audio_mute_all = 0;
+   _elm_config->item_select_mode_on_dir_key = 0;
 }
 
 static const char *
@@ -2948,6 +2950,18 @@ elm_config_audio_mute_set(Edje_Channel channel, Eina_Bool mute)
         break;
      }
    edje_audio_channel_mute_set(channel, mute);
+}
+
+EAPI Elm_Item_Select_Mode_On_Dir_Key
+elm_config_item_select_mode_on_dir_key_get(void)
+{
+   return _elm_config->item_select_mode_on_dir_key;
+}
+
+EAPI void
+elm_config_item_select_mode_on_dir_key_set(Elm_Item_Select_Mode_On_Dir_Key mode)
+{
+   _elm_config->item_select_mode_on_dir_key = mode;
 }
 
 EAPI void
