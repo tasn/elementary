@@ -3026,6 +3026,7 @@ _elm_config_init(void)
    _elm_recache();
    _elm_clouseau_reload();
    _elm_config_key_binding_hash();
+   printf("config %d\n", _elm_config->item_select_mode_on_dir_key);
 }
 
 void
