@@ -1,6 +1,34 @@
 ================
-Elementary 1.9.0
+Elementary 1.9.1
 ================
+
+Changes since Elementary 1.9.0:
+-------------------------------
+
+Additions:
+
+Improvements:
+
+Fixes:
+
+   * elm_win: Unbreak the ABI break of window type.
+   * Fix slider overlay parenting
+   * entry - send selection,cleared signal if a selection is dismissed.
+   * naviframe: Fix smart_show function to show only top item view
+   * Avoid Month wrapping by ignoring summer time correction.
+   * entry - fix menu to not popup after every time mobile sel handles are clicked
+   * Fix bug of moving cursor handler
+   * fix ctxpopup getting min size from content immediately on set
+   * object_item: Check null in elm_object_item_del.
+   * diskselector: Fix segmentation fault (T988)
+   * Fix broken slider popup hide logic
+   * Fix slider popup creation with custom themes
+   * move slider track functions up
+   * Fix homogeneous genlist recalc on theme change (T1023)
+   * hover: Made hover itself unfocusable.
+
+Removals:
+
 
 Changes since Elementary 1.8.0:
 -------------------------------
