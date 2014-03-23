@@ -2368,14 +2368,16 @@ _item_multi_select_down(Elm_Genlist_Smart_Data *sd)
 static Eina_Bool
 _all_items_deselect(Elm_Genlist_Smart_Data *sd)
 {
-   Eina_List *l;
-   Elm_Object_Item *it;
-
    if (!sd->selected) return EINA_FALSE;
 
-   l = eina_list_clone(sd->selected);
-   EINA_LIST_FREE(l, it)
-     elm_genlist_item_selected_set(it, EINA_FALSE);
+   sd->deselecting = eina_list_clone(sd->selected);
+   while (sd->deselecting)
+     {
+        Elm_Object_Item *it = eina_list_data_get(sd->deselecting);
+
+        sd->deselecting = eina_list_remove_list(sd->deselecting, sd->deselecting);
+        elm_genlist_item_selected_set(it, EINA_FALSE);
+     }
 
    return EINA_TRUE;
 }
@@ -3067,7 +3069,11 @@ _elm_genlist_item_del_not_serious(Elm_Gen_Item *it)
    if (it->walking > 0) return;
 
    if (it->selected)
-     sd->selected = eina_list_remove(sd->selected, it);
+     {
+        sd->selected = eina_list_remove(sd->selected, it);
+        if (sd->deselecting)
+          sd->deselecting = eina_list_remove(sd->deselecting, it);
+     }
 
    if (it->itc->func.del)
      it->itc->func.del((void *)it->base.data, WIDGET(it));
