@@ -1,6 +1,27 @@
 ================
-Elementary 1.9.1
+Elementary 1.9.2
 ================
+
+Changes since Elementary 1.9.1:
+-------------------------------
+
+Fixes:
+
+   * theme overlays - fix to prepend on overlay to be semantically consistent
+   * entry - fixed calc issue of the wrap none mode.
+   * segment_control, toolbar: Fixed broken scale of widget item.
+   * entry - entry did word wrapping even the mode was ELM_WRAP_NONE.
+   * list/genlist: Fixed Home and End key event handling routine.
+   * diskselector: Compare correct variables. (CID1193236)
+   * atspi_object: Added missing comma. (CID1193238)
+   * index: Set variable to NULL after free. (CID1193250)
+   * access: Fixed memory leak. (CID1193244)
+   * fix scrollbar to be clickable even if vieport is tiny compared to content
+   * naviframe : Fixed the overlap issue during multiple push.
+   * genlist needs to iterate exactly once over a fixed list when deselcting all items
+   * list: Fixed item multi/single selection routine to skip disabled item correctly.
+   * genlist: Fixed item multi/single selection routine to skip disabled item correctly.
+   * prefs: Add EVIL_LIBS to build to avoid problems with missing regex.h under mingw
 
 Changes since Elementary 1.9.0:
 -------------------------------
