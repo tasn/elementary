@@ -229,6 +229,14 @@ _elm_cursor_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_U
      }
    else
      {
+        if (cur->obj)
+          {
+             evas_object_del(cur->obj);
+             cur->obj = NULL;
+          }
+        ecore_evas_object_cursor_set(cur->ee, NULL,
+                                     ELM_OBJECT_LAYER_CURSOR, cur->hot_x,
+                                     cur->hot_y);
 #ifdef HAVE_ELEMENTARY_X
         if (cur->x.win)
           ecore_x_window_cursor_set(cur->x.win, cur->x.cursor);
