@@ -1,6 +1,15 @@
 ================
-Elementary 1.9.2
+Elementary 1.9.3
 ================
+
+Changes since Elementary 1.9.2:
+-------------------------------
+
+Fixes:
+
+   * elm win - fix tracking of current position to properly store it in win obj
+   * spinner: crash issue on deletion fix
+   * fix left over soft cursors in elm (T893)
 
 Changes since Elementary 1.9.1:
 -------------------------------
