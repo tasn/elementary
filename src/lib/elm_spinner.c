@@ -508,22 +508,15 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
                  (!strcmp(ev->key, "KP_Enter")) ||
                  (!strcmp(ev->key, "space")))
           {
-             _entry_toggle_cb(NULL, obj, NULL, NULL);
+             if (sd->spin_timer) _val_dec_stop(obj);
+             else _entry_toggle_cb(NULL, obj, NULL, NULL);
           }
+        else if (sd->spin_timer) _val_dec_stop(obj);
      }
    else if (type == EVAS_CALLBACK_KEY_UP)
      {
-        if (!strcmp(ev->key, "Right") ||
-            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)) ||
-            !strcmp(ev->key, "Up") ||
-            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
-          _val_inc_stop(obj);
-        else if (!strcmp(ev->key, "Left") ||
-                 ((!strcmp(ev->key, "KP_Left")) && (!ev->string)) ||
-                 !strcmp(ev->key, "Down") ||
-                 ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
-          _val_dec_stop(obj);
-        else return;
+        if (sd->spin_timer) _val_dec_stop(obj);
+        else return EINA_FALSE;
 
         goto success;
      }
