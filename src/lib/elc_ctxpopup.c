@@ -130,19 +130,16 @@ _elm_ctxpopup_smart_event(Eo *obj, void *_pd, va_list *list)
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   if (!strcmp(ev->key, "Tab"))
-     {
-        if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-          elm_widget_focus_cycle(sd->box, ELM_FOCUS_PREVIOUS);
-        else
-          elm_widget_focus_cycle(sd->box, ELM_FOCUS_NEXT);
-        if (ret) *ret = EINA_TRUE;
-        return;
-     }
-
    if (sd->box)
      {
-        if ((!strcmp(ev->key, "Left")) ||
+        if (!strcmp(ev->key, "Tab"))
+          {
+             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+               elm_widget_focus_cycle(sd->box, ELM_FOCUS_PREVIOUS);
+             else
+               elm_widget_focus_cycle(sd->box, ELM_FOCUS_NEXT);
+          }
+        else if ((!strcmp(ev->key, "Left")) ||
             ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
           elm_widget_focus_cycle(sd->box, ELM_FOCUS_LEFT);
         else if ((!strcmp(ev->key, "Right")) ||
