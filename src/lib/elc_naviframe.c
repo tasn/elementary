@@ -1077,6 +1077,8 @@ _on_item_push_finished(void *data,
 
    evas_object_hide(VIEW(it));
 
+   elm_object_signal_emit(VIEW(it), "elm,state,invisible", "elm");
+
    if (sd->freeze_events)
      evas_object_freeze_events_set(VIEW(it), EINA_FALSE);
 }
@@ -1612,6 +1614,7 @@ _item_insert_before(Eo *obj, void *_pd, va_list *list)
        EINA_INLIST_GET(((Elm_Naviframe_Item *)before)));
 
    elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
+   elm_object_signal_emit(VIEW(it), "elm,state,invisible", "elm");
 
    elm_layout_sizing_eval(obj);
 
@@ -1672,6 +1675,8 @@ _item_insert_after(Eo *obj, void *_pd, va_list *list)
           elm_object_focus_set(VIEW(it), EINA_TRUE);
         else
           elm_object_focus_set(WIDGET(it), EINA_TRUE);
+        elm_object_signal_emit(VIEW(it), "elm,state,visible", "elm");
+        elm_object_signal_emit(VIEW(after), "elm,state,invisible", "elm");
      }
    else
      elm_object_signal_emit(VIEW(it), "elm,state,invisible", "elm");
