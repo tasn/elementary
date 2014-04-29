@@ -516,7 +516,7 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    else if (type == EVAS_CALLBACK_KEY_UP)
      {
         if (sd->spin_timer) _val_dec_stop(obj);
-        else return EINA_FALSE;
+        else return;
 
         goto success;
      }
