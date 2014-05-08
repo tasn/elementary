@@ -1,25 +1,46 @@
 group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
    images.image: "bevel_dark_out.png" COMP;
    parts {
-      rect { "fader";
+      rect { "fader"; mouse;
          desc { hid;
+            rel1.relative: 0.5 0.5;
+            rel2.relative: 0.5 0.5;
             color: 0 0 0 0;
+            link.base: "polkit,hide";
+            link.transition: DECEL 0.2;
+            link.after: "hide_done";
+            program { "hide_done";
+               action: SIGNAL_EMIT "polkit,hide,done" "polkit";
+            }
          }
          desc { "visible"; vis;
             color: 0 0 0 160;
-            link.base: "load" "";
-            link.transition: LINEAR 0.2;
+            link.base: "show" "";
+            link.transition: ACCEL 0.2;
          }
       }
-      rect { "base";
+      rect { "clip";
          desc {
-            rel1.relative: 0.3 0.3;
-            rel2.relative: 0.7 0.7;
+            hid;
+            rel1.relative: 0.5 0.5;
+            rel2.relative: 0.5 0.5;
+            link.base: "polkit,hide";
+            link.transition: DECEL 0.2;
+         }
+         desc { "visible";
+            link.base: "show" "";
+            link.transition: ACCEL 0.2;
+         }
+      }
+      rect { "base"; clip: "clip";
+         desc {
+            rel1.relative: 0.3 0.4;
+            rel2.relative: 0.7 0.6;
             color_class: "dialog_base";
             color: 64 64 64 255;
          }
       }
-      image { "bevel";
+      image { "bevel"; clip: "clip";
          desc {
             rel1.to: "base";
             rel2.to: "base";
@@ -29,7 +50,7 @@ group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
             fill.smooth: 0;
          }
       }
-      text { "e.text.info";
+      text { "polkit.text.info"; clip: "clip";
          effect: SHADOW BOTTOM;
          scale: 1;
          desc {
@@ -42,9 +63,11 @@ group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
             rel2.relative: 1 0;
             color: FN_COL_DEFAULT;
             text { text: "Password required";
-               font: FNBD; size: 11;
+               font: FNBD; size: 10;
+               size_range: 7 12;
                min: 1 1;
                ellipsis: -1;
+               fit: 1 0;
                /*
                filter: "fat = buffer(\"alpha\") \
                         grow ({ 8, dst = fat }) \
@@ -55,17 +78,28 @@ group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
             }
          }
       }
-      text { "user";
-         effect: SHADOW BOTTOM;
-         scale: 1;
+      swallow { "polkit.swallow.info"; clip: "clip";
          desc {
+            min: 0 40;
             align: 0.5 0;
-            fixed: 0 1;
             rel1.to_x: "base";
-            rel1.to_y: "e.text.info";
+            rel1.to_y: "polkit.text.info";
             rel1.relative: 0 1;
             rel1.offset: 0 2;
             rel2.to: "base";
+            rel2.relative: 1 0;
+         }
+      }
+      text { "textinfo"; clip: "clip";
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         desc {
+            align: 0.5 1;
+            fixed: 0 1;
+            rel1.to_x: "base";
+            rel1.relative: 0 1;
+            rel2.to_x: "base";
+            rel2.to_y: "polkit.swallow.users";
             rel2.relative: 1 0;
             color: FN_COL_DISABLE;
             text { text: "Select Authentication ID";
@@ -74,30 +108,72 @@ group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
                ellipsis: -1;
             }
          }
+         desc { "password"; inherit: "default";
+            text.text: "Enter password";
+         }
       }
-      swallow { "e.swallow.users"; mouse;
-         scale: 1;
+      rect { "pwclip"; clip: "clip";
+         desc { hid;
+            minmul: 0 1;
+            max: 0 0;
+            rel2.relative: 0 1;
+            rel1.to: "polkit.swallow.password";
+            rel2.to: "polkit.swallow.password";
+         }
+         desc { "password";
+            rel1.to: "polkit.swallow.password";
+            rel2.to: "polkit.swallow.password";
+         }
+      }
+      swallow { "polkit.swallow.password"; mouse; clip: "pwclip";
+         desc { hid;
+            rel1.to: "polkit.swallow.users";
+            rel2.to: "polkit.swallow.users";
+         }
+         desc { "password"; inherit: "default"; vis; }
+      }
+      swallow { "polkit.swallow.buttons"; mouse; clip: "clip";
          desc {
-            align: 0.5 0;
+            align: 0.5 1;
             rel1.to_x: "base";
-            rel1.to_y: "user";
-            rel1.offset: 0 2;
             rel1.relative: 0 1;
             rel2.to: "base";
+         }
+         desc { "password"; inherit: "default"; hid;
+            minmul: 1 0;
+            max: -1 0;
+         }
+      }
+      swallow { "polkit.swallow.users"; mouse; clip: "clip";
+         desc {
+            align: 0.5 1;
+            rel1.to_x: "base";
+            rel1.relative: 0 1;
+            rel2.to_x: "base";
+            rel2.to_y: "polkit.swallow.buttons";
             rel2.relative: 1 0;
          }
-      }
-      swallow { "e.swallow.buttons"; mouse;
-         scale: 1;
-         desc {
-            align: 0.5 0;
-            rel1.to_x: "base";
-            rel1.to_y: "e.swallow.users";
-            rel1.offset: 0 2;
-            rel1.relative: 0 1;
-            rel2.to: "base";
+         desc { "password"; inherit: "default";
+            hid;
+            rel2.to_y: "base";
+            rel2.relative: 1 1;
          }
       }
-      
+      target_group: "password" "polkit.swallow.buttons" "polkit.swallow.password"
+                    "pwclip" "polkit.swallow.users" "textinfo";
+      program { signal: "polkit,password,hidden";
+         action: STATE_SET "default";
+         groups: "password";
+         transition: DECEL 0.2;
+      }
+      program { signal: "polkit,password,visible";
+         action: STATE_SET "password";
+         groups: "password";
+         transition: DECEL 0.2;
+         sequence {
+            action: SIGNAL_EMIT "polkit,password,visible,done" "polkit";
+            in: 0.01 0;
+         }
+      }
    }
 }
