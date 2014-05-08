@@ -1,0 +1,103 @@
+group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
+   images.image: "bevel_dark_out.png" COMP;
+   parts {
+      rect { "fader";
+         desc { hid;
+            color: 0 0 0 0;
+         }
+         desc { "visible"; vis;
+            color: 0 0 0 160;
+            link.base: "load" "";
+            link.transition: LINEAR 0.2;
+         }
+      }
+      rect { "base";
+         desc {
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 0.7 0.7;
+            color_class: "dialog_base";
+            color: 64 64 64 255;
+         }
+      }
+      image { "bevel";
+         desc {
+            rel1.to: "base";
+            rel2.to: "base";
+            image.normal: "bevel_dark_out.png";
+            image.border: 1 1 1 1;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+      text { "e.text.info";
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         desc {
+            align: 0.0 0;
+            fixed: 0 1;
+            rel1.to: "base";
+            //rel1.offset: -30 -30;
+            rel2.to_x: "base";
+            //rel2.offset: 20 10;
+            rel2.relative: 1 0;
+            color: FN_COL_DEFAULT;
+            text { text: "Password required";
+               font: FNBD; size: 11;
+               min: 1 1;
+               ellipsis: -1;
+               /*
+               filter: "fat = buffer(\"alpha\") \
+                        grow ({ 8, dst = fat }) \
+                        blur ({ 12, src = fat, color = \"black\" }) \
+                        blur ({ 4, color = \"white\" }) \
+                        blend ()";
+               */
+            }
+         }
+      }
+      text { "user";
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         desc {
+            align: 0.5 0;
+            fixed: 0 1;
+            rel1.to_x: "base";
+            rel1.to_y: "e.text.info";
+            rel1.relative: 0 1;
+            rel1.offset: 0 2;
+            rel2.to: "base";
+            rel2.relative: 1 0;
+            color: FN_COL_DISABLE;
+            text { text: "Select Authentication ID";
+               font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+            }
+         }
+      }
+      swallow { "e.swallow.users"; mouse;
+         scale: 1;
+         desc {
+            align: 0.5 0;
+            rel1.to_x: "base";
+            rel1.to_y: "user";
+            rel1.offset: 0 2;
+            rel1.relative: 0 1;
+            rel2.to: "base";
+            rel2.relative: 1 0;
+         }
+      }
+      swallow { "e.swallow.buttons"; mouse;
+         scale: 1;
+         desc {
+            align: 0.5 0;
+            rel1.to_x: "base";
+            rel1.to_y: "e.swallow.users";
+            rel1.offset: 0 2;
+            rel1.relative: 0 1;
+            rel2.to: "base";
+         }
+      }
+      
+   }
+}

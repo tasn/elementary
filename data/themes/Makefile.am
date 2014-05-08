@@ -70,6 +70,7 @@ edc/packagekit.edc \
 edc/pager.edc \
 edc/pager16.edc \
 edc/pointer.edc \
+edc/polkit.edc \
 edc/preview.edc \
 edc/radio.edc \
 edc/randr.edc \
