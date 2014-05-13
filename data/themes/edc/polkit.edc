@@ -17,6 +17,10 @@ group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
             color: 0 0 0 160;
             link.base: "show" "";
             link.transition: ACCEL 0.2;
+            link.after: "show_done";
+            program { "show_done";
+               action: SIGNAL_EMIT "polkit,show,done" "polkit";
+            }
             link.base: "polkit,visible" "polkit";
          }
       }
@@ -40,6 +44,24 @@ group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
             color_class: "dialog_base";
             color: 64 64 64 255;
          }
+         desc { "success"; inherit: "default";
+            color_class: "";
+            color: 20 237 20 255;
+            link.base: "polkit,login,success";
+            link.transition: DECEL 0.2;
+            link.after: "auth_hide";
+         }
+         desc { "failure"; inherit: "default";
+            color_class: "";
+            color: 237 20 20 255;
+            link.base: "polkit,login,fail";
+            link.transition: DECEL 0.2;
+            link.after: "auth_hide";
+         }
+      }
+      program { "auth_hide";
+         in: 1.5 0.0;
+         action: SIGNAL_EMIT "polkit,hide" "polkit";
       }
       image { "bevel"; clip: "clip";
          desc {
@@ -78,6 +100,26 @@ group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
                */
             }
          }
+         desc { "success"; inherit: "default";
+            text.text: "Authentication successful!";
+            color: 0 0 0 255;
+            link.base: "polkit,login,success";
+            link.transition: DECEL 0.2;
+         }
+         desc { "failure"; inherit: "default";
+            color: 0 0 0 255;
+            text.text: "Authentication failed!";
+            link.base: "polkit,login,fail";
+            link.transition: DECEL 0.2;
+         }
+      }
+      rect { "authclip"; clip: "clip";
+         desc{}
+         desc { "auth";
+            color: 255 255 255 190;
+            link.base: "polkit,authenticating";
+            link.transition: DECEL 0.2;
+         }
       }
       swallow { "polkit.swallow.info"; clip: "clip";
          desc {
@@ -91,7 +133,7 @@ group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
             rel2.relative: 1 0;
          }
       }
-      text { "textinfo"; clip: "clip";
+      text { "textinfo"; clip: "authclip";
          effect: SHADOW BOTTOM;
          scale: 1;
          desc {
@@ -113,7 +155,7 @@ group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
             text.text: "Enter password";
          }
       }
-      rect { "pwclip"; clip: "clip";
+      rect { "pwclip"; clip: "authclip";
          desc { hid;
             minmul: 0 1;
             max: 0 0;
@@ -133,7 +175,7 @@ group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
          }
          desc { "password"; inherit: "default"; vis; }
       }
-      swallow { "polkit.swallow.buttons"; mouse; clip: "clip";
+      swallow { "polkit.swallow.buttons"; mouse; clip: "authclip";
          desc {
             align: 0.5 1;
             rel1.to_x: "base";
@@ -145,7 +187,7 @@ group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
             max: -1 0;
          }
       }
-      swallow { "polkit.swallow.users"; mouse; clip: "clip";
+      swallow { "polkit.swallow.users"; mouse; clip: "authclip";
          desc {
             align: 0.5 1;
             rel1.to_x: "base";
