@@ -182,6 +182,7 @@ group { "elm/genlist/item_compress/polkit_action/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "texts" "polkit.text.header polkit.text.desc";
    parts {
+      rect { "event"; mouse; }
       text { "polkit.text.header";
          scale;
          effect: SHADOW BOTTOM;
