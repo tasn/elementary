@@ -194,8 +194,8 @@ group { "elm/genlist/item_compress/polkit_action/default"; nomouse;
             rel2.offset: -3 -3;
             rel2.relative: 0.0 1.0;
             color: FN_COL_DEFAULT;
-            color_class: "list_group_item";
-            text { font: FN; size: 10;
+            color_class: "list_item";
+            text { font: FNBD; size: 10;
                min: 1 1;
                align: 0 0.5;
                ellipsis: -1;
@@ -210,6 +210,7 @@ group { "elm/genlist/item_compress/polkit_action/default"; nomouse;
             rel1.to_x: "polkit.text.desc";
             rel2.relative: 1 1;
             rel2.offset: -5 -3;
+            text.font: FN;
          }
       }
    }
