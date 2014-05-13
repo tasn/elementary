@@ -17,6 +17,7 @@ group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
             color: 0 0 0 160;
             link.base: "show" "";
             link.transition: ACCEL 0.2;
+            link.base: "polkit,visible" "polkit";
          }
       }
       rect { "clip";
