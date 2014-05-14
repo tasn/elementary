@@ -203,7 +203,7 @@ group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
          }
       }
       target_group: "password" "polkit.swallow.buttons" "polkit.swallow.password"
-                    "pwclip" "polkit.swallow.users" "textinfo";
+                    "pwclip" "polkit.swallow.users" "polkit.text.help";
       program { signal: "polkit,password,hidden";
          action: STATE_SET "default";
          groups: "password";
