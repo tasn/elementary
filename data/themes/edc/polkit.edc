@@ -133,7 +133,7 @@ group { "elm/layout/polkit-auth/base"; nomouse; program_source: "polkit";
             rel2.relative: 1 0;
          }
       }
-      text { "textinfo"; clip: "authclip";
+      text { "polkit.text.help"; clip: "authclip";
          effect: SHADOW BOTTOM;
          scale: 1;
          desc {
