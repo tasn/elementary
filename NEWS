@@ -1,6 +1,21 @@
 ================
-Elementary 1.9.3
+Elementary 1.9.4
 ================
+
+Changes since Elementary 1.9.3:
+-------------------------------
+
+Fixes:
+
+   * spinner: fixed odd behavior of the spinner
+   * ctxpopup: sd->box null check and event_flag set for previous and next focus move.
+   * tooltips position more accurately in X in xinerama
+   * entry no longer completely breaks focus by focusing itself on selection signal
+   * toolbar: Fixed wrong edje api usage for elm objects.
+   * genlist: Removed unnecessary item show call on multi select.
+   * ctxpopup bg theme should block all mouse events, not just left button
+   * ctxpopup should not blindly show arrows when they are not wanted by the theme
+
 
 Changes since Elementary 1.9.2:
 -------------------------------
