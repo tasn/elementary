@@ -1,0 +1,163 @@
+# Galician translation for enlightenment
+# Copyright (c) 2013 Rosetta Contributors and Canonical Ltd 2013
+# This file is distributed under the same license as the enlightenment package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: enlightenment\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2013-04-07 18:45+0200\n"
+"PO-Revision-Date: 2013-05-24 09:17+0000\n"
+"Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>\n"
+"Language-Team: Galician <gl@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2014-01-11 06:27+0000\n"
+"X-Generator: Launchpad (build 16890)\n"
+
+#: src/lib/elc_fileselector.c:1341
+msgid "Up"
+msgstr "Arriba"
+
+#: src/lib/elc_fileselector.c:1356
+msgid "Home"
+msgstr "Cartafol persoal"
+
+#: src/lib/elc_fileselector.c:1583 src/lib/elm_entry.c:1346
+#: src/lib/elm_entry.c:1371
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/lib/elc_fileselector.c:1592
+msgid "OK"
+msgstr "Aceptar"
+
+#: src/lib/elm_button.c:58
+msgid "Clicked"
+msgstr "Premido"
+
+#: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:705
+#: src/lib/elm_genlist.c:1464 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
+#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:561
+#: src/lib/elm_toolbar.c:1979
+msgid "State: Disabled"
+msgstr "Estado: Desactivado"
+
+#: src/lib/elm_button.c:304
+msgid "Button"
+msgstr "Botón"
+
+#: src/lib/elm_calendar.c:142
+msgid "%B %Y"
+msgstr "%B %Y"
+
+#: src/lib/elm_check.c:52 src/lib/elm_check.c:235 src/lib/elm_radio.c:92
+#: src/lib/elm_radio.c:266
+msgid "State: On"
+msgstr "Estado: Conectado"
+
+#: src/lib/elm_check.c:58 src/lib/elm_check.c:247 src/lib/elm_radio.c:268
+msgid "State: Off"
+msgstr "Estado: Desconectado"
+
+#: src/lib/elm_check.c:231 src/lib/elm_check.c:244
+msgid "State"
+msgstr "Estado"
+
+#: src/lib/elm_check.c:312
+msgid "Check"
+msgstr "Comprobar"
+
+#: src/lib/elm_colorselector.c:1370
+msgid "color selector palette item"
+msgstr "Paleta de selección de cor"
+
+#: src/lib/elm_config.c:2441
+msgid "default:LTR"
+msgstr "Predeterminado: LTR"
+
+#: src/lib/elm_diskselector.c:681
+msgid "diskselector item"
+msgstr "Selector de disco"
+
+#: src/lib/elm_entry.c:1333
+msgid "Copy"
+msgstr "Copiar"
+
+#: src/lib/elm_entry.c:1338
+msgid "Cut"
+msgstr "Cortar"
+
+#: src/lib/elm_entry.c:1358
+msgid "Select"
+msgstr "Seleccionar"
+
+#: src/lib/elm_entry.c:1342 src/lib/elm_entry.c:1365
+msgid "Paste"
+msgstr "Pegar"
+
+#: src/lib/elm_entry.c:3306
+msgid "Entry"
+msgstr "Entrada"
+
+#: src/lib/elm_gengrid.c:735
+msgid "Gengrid Item"
+msgstr "Grella xenérica"
+
+#: src/lib/elm_genlist.c:1321
+msgid "Genlist Item"
+msgstr "Lista xenérica"
+
+#: src/lib/elm_label.c:408
+msgid "Label"
+msgstr "Etiqueta"
+
+#: src/lib/elm_list.c:1400
+msgid "List Item"
+msgstr "Lista"
+
+#: src/lib/elm_progressbar.c:296
+msgid "progressbar"
+msgstr "barra de progreso"
+
+#: src/lib/elm_radio.c:296
+msgid "Radio"
+msgstr "Radio"
+
+#: src/lib/elm_slider.c:894
+msgid "slider"
+msgstr "Barra de desprazamento"
+
+#: src/lib/elm_spinner.c:650
+msgid "spinner increment button"
+msgstr "botón de aumento"
+
+#: src/lib/elm_spinner.c:659
+msgid "spinner decrement button"
+msgstr "botón de disminución"
+
+#: src/lib/elm_spinner.c:667
+msgid "spinner"
+msgstr "botón de spinner"
+
+#: src/lib/elm_toolbar.c:1450 src/lib/elm_toolbar.c:2040
+msgid "Selected"
+msgstr "Seleccionado"
+
+#: src/lib/elm_toolbar.c:1977
+msgid "Separator"
+msgstr "Separador"
+
+#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1981
+msgid "State: Selected"
+msgstr "Estado: Seleccionado"
+
+#: src/lib/elm_toolbar.c:1983
+msgid "Has menu"
+msgstr "Ten menú"
+
+#: src/lib/elm_toolbar.c:1322
+msgid "Tool Item"
+msgstr "Elemento de ferramenta"
