@@ -1,6 +1,14 @@
 ================
-Elementary 1.9.4
+Elementary 1.9.5
 ================
+
+Changes since Elementary 1.9.4:
+-------------------------------
+
+Fixes:
+
+   * elm_test: Set PACKAGE_LIB_DIR to fix windows runtime
+
 
 Changes since Elementary 1.9.3:
 -------------------------------
