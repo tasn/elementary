@@ -1,6 +1,16 @@
 =================
-Elementary 1.10.0
+Elementary 1.10.1
 =================
+
+Changes since 1.10.0:
+---------------------
+
+Fixes:
+
+   * scroller - emits the missed signals
+   * elm win - if no ELM_DISPLAY is set, try more engines before giving up (T1294)
+   * config: always create a themes directory for user.
+   * po: Set all initial values for Language and Language-Team
 
 Changes since Elementary 1.9.0:
 -------------------------------
