@@ -62,7 +62,7 @@ _elm_dayselector_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Dayselector_Data 
    Eina_List *l;
    char buf[1024];
    struct tm time_daysel;
-   Elm_Dayselector_Item *it;
+   Elm_Dayselector_Item_Data *it;
 
    if (sd->weekdays_names_set)
      return EINA_TRUE;
@@ -87,7 +87,7 @@ _update_items(Evas_Object *obj)
    Eina_List *l;
    Eina_Bool rtl;
    unsigned int last_day;
-   Elm_Dayselector_Item *it;
+   Elm_Dayselector_Item_Data *it;
 
    ELM_DAYSELECTOR_DATA_GET(obj, sd);
 
@@ -117,7 +117,7 @@ _update_items(Evas_Object *obj)
 
 static inline unsigned int
 _item_location_get(Elm_Dayselector_Data *sd,
-                   Elm_Dayselector_Item *it)
+                   Elm_Dayselector_Item_Data *it)
 {
    return (ELM_DAYSELECTOR_MAX - sd->week_start + it->day) %
           ELM_DAYSELECTOR_MAX;
@@ -130,7 +130,7 @@ _elm_dayselector_elm_widget_theme_apply(Eo *obj, Elm_Dayselector_Data *sd)
 
    Eina_List *l;
    char buf[1024];
-   Elm_Dayselector_Item *it;
+   Elm_Dayselector_Item_Data *it;
 
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
@@ -160,7 +160,7 @@ _item_del_cb(void *data,
 {
    Eina_List *l;
    char buf[1024];
-   Elm_Dayselector_Item *it;
+   Elm_Dayselector_Item_Data *it;
 
    ELM_DAYSELECTOR_DATA_GET(data, sd);
 
@@ -175,7 +175,7 @@ _item_del_cb(void *data,
              elm_layout_signal_emit(obj, buf, "elm");
 
              VIEW(it) = NULL;
-             elm_widget_item_free(it);
+             eo_del((Eo *)EO_OBJ(it));
 
              elm_layout_sizing_eval(obj);
              break;
@@ -189,7 +189,7 @@ _item_signal_emit_cb(void *data,
                      const char *emission,
                      const char *source EINA_UNUSED)
 {
-   Elm_Dayselector_Item *it = data;
+   Elm_Dayselector_Item_Data *it = data;
 
    eina_stringshare_replace(&it->day_style, emission);
 }
@@ -199,17 +199,17 @@ _item_clicked_cb(void *data,
                  Evas_Object *obj EINA_UNUSED,
                  void *event_info EINA_UNUSED)
 {
-   Elm_Dayselector_Item *it = data;
+   Elm_Dayselector_Item_Data *it = data;
 
    evas_object_smart_callback_call(WIDGET(it), SIG_CHANGED, (void *)it->day);
 }
 
-static Elm_Dayselector_Item *
+static Elm_Dayselector_Item_Data *
 _item_find(const Evas_Object *obj,
            Elm_Dayselector_Day day)
 {
    Eina_List *l;
-   Elm_Dayselector_Item *it;
+   Elm_Dayselector_Item_Data *it;
 
    ELM_DAYSELECTOR_DATA_GET(obj, sd);
 
@@ -226,7 +226,7 @@ _elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
 
    int day;
    char buf[1024];
-   Elm_Dayselector_Item *it = NULL;
+   Elm_Dayselector_Item_Data *it = NULL;
 
    if (strcmp(elm_object_widget_type_get(content), "Elm_Check"))
      return EINA_FALSE;
@@ -251,7 +251,8 @@ _elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
      }
    else
      {
-        it = elm_widget_item_new(obj, Elm_Dayselector_Item);
+        Eo *eo_it = eo_add(ELM_DAYSELECTOR_ITEM_CLASS, obj);
+        it = eo_data_scope_get(eo_it, ELM_DAYSELECTOR_ITEM_CLASS);
         it->day = day;
 
         snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
@@ -259,7 +260,7 @@ _elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
         eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(buf, content));
         if (!int_ret)
           {
-             elm_widget_item_free(it);
+             eo_del(eo_it);
              return EINA_FALSE;
           }
 
@@ -289,13 +290,20 @@ _elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
    return EINA_TRUE;
 }
 
+EOLIAN static void
+_elm_dayselector_item_eo_base_constructor(Eo *eo_item, Elm_Dayselector_Item_Data *item)
+{
+   eo_do_super(eo_item, ELM_DAYSELECTOR_ITEM_CLASS, eo_constructor());
+   item->base = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
+}
+
 EOLIAN static Evas_Object*
 _elm_dayselector_elm_container_content_unset(Eo *obj, Elm_Dayselector_Data *sd, const char *item)
 {
    int day;
    char buf[1024];
    Evas_Object *content;
-   Elm_Dayselector_Item *it = NULL;
+   Elm_Dayselector_Item_Data *it = NULL;
 
    day = atoi(item + (strlen(item) - 1));
    if (day < 0 || day > ELM_DAYSELECTOR_MAX) return NULL;
@@ -325,7 +333,7 @@ _elm_dayselector_elm_container_content_unset(Eo *obj, Elm_Dayselector_Data *sd, 
    elm_layout_signal_emit(obj, buf, "elm");
 
    VIEW(it) = NULL;
-   elm_widget_item_free(it);
+   eo_del((Eo *)EO_OBJ(it));
 
    elm_layout_sizing_eval(obj);
 
@@ -336,7 +344,7 @@ static void
 _items_style_set(Evas_Object *obj)
 {
    Eina_List *l;
-   Elm_Dayselector_Item *it;
+   Elm_Dayselector_Item_Data *it;
    unsigned int weekend_last;
 
    ELM_DAYSELECTOR_DATA_GET(obj, sd);
@@ -426,13 +434,13 @@ _elm_dayselector_evas_object_smart_add(Eo *obj, Elm_Dayselector_Data *priv)
 EOLIAN static void
 _elm_dayselector_evas_object_smart_del(Eo *obj, Elm_Dayselector_Data *sd)
 {
-   Elm_Dayselector_Item *it;
+   Elm_Dayselector_Item_Data *it;
 
    EINA_LIST_FREE(sd->items, it)
      {
         sd->items = eina_list_remove(sd->items, it);
         eina_stringshare_del(it->day_style);
-        elm_widget_item_free(it);
+        eo_del((Eo *)EO_OBJ(it));
      }
 
    /* handles freeing sd */
@@ -476,7 +484,7 @@ _elm_dayselector_week_start_set(Eo *obj, Elm_Dayselector_Data *sd, Elm_Dayselect
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Eina_List *l;
    char buf[1024];
-   Elm_Dayselector_Item *it;
+   Elm_Dayselector_Item_Data *it;
 
    /* just shuffling items, so swalling them directly */
    sd->week_start = day;
@@ -532,7 +540,7 @@ _elm_dayselector_weekdays_names_set(Eo *obj, Elm_Dayselector_Data *sd, const cha
    int idx;
    time_t now;
    struct tm time_daysel;
-   Elm_Dayselector_Item *it;
+   Elm_Dayselector_Item_Data *it;
    char buf[1024];
 
    if (weekdays)
@@ -564,7 +572,7 @@ _elm_dayselector_weekdays_names_get(Eo *obj, Elm_Dayselector_Data *sd EINA_UNUSE
 {
    int idx;
    const char *weekday;
-   Elm_Dayselector_Item *it;
+   Elm_Dayselector_Item_Data *it;
    Eina_List *weekdays = NULL;
 
    for (idx = 0; idx < ELM_DAYSELECTOR_MAX; idx++)
@@ -589,3 +597,5 @@ _elm_dayselector_class_constructor(Eo_Class *klass)
 }
 
 #include "elm_dayselector.eo.c"
+#include "elm_dayselector_item.eo.c"
+
