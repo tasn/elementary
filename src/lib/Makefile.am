@@ -849,7 +849,9 @@ BUILT_SOURCES = \
 		elm_color_item.eo.c \
 		elm_color_item.eo.h \
 		elm_dayselector_item.eo.c \
-		elm_dayselector_item.eo.h
+		elm_dayselector_item.eo.h \
+		elm_hoversel_item.eo.c \
+		elm_hoversel_item.eo.h
 
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
 elementaryeolianfiles_DATA = \
@@ -946,7 +948,8 @@ elementaryeolianfiles_DATA = \
 	     elm_win.eo \
 	     elm_widget_item.eo \
 	     elm_color_item.eo \
-	     elm_dayselector_item.eo
+	     elm_dayselector_item.eo \
+	     elm_hoversel_item.eo
 
 EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
@@ -1045,6 +1048,7 @@ nodist_includesunstable_HEADERS = \
 				  elm_widget_item.eo.h \
 				  elm_color_item.eo.h \
 				  elm_dayselector_item.eo.h \
+				  elm_hoversel_item.eo.h \
 				  elm_layout.eo.legacy.h \
 				  elm_frame.eo.legacy.h \
 				  elm_hover.eo.legacy.h \
@@ -1110,7 +1114,8 @@ nodist_includesunstable_HEADERS = \
 				  elm_win.eo.legacy.h \
 				  elm_widget_item.eo.legacy.h \
 				  elm_color_item.eo.legacy.h \
-				  elm_dayselector_item.eo.legacy.h
+				  elm_dayselector_item.eo.legacy.h \
+				  elm_hoversel_item.eo.legacy.h
 
 if HAVE_CXX11
 
