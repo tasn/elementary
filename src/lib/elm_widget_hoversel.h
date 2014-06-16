@@ -2,6 +2,9 @@
 #define ELM_WIDGET_HOVERSEL_H
 
 #include "Elementary.h"
+#include "elm_hoversel_item.eo.h"
+
+#include "elm_object_item_migration_temp.h"
 
 #include <Eio.h>
 
@@ -32,10 +35,10 @@ struct _Elm_Hoversel_Data
    Eina_Bool             expanded   : 1;
 };
 
-typedef struct _Elm_Hoversel_Item Elm_Hoversel_Item;
-struct _Elm_Hoversel_Item
+typedef struct _Elm_Hoversel_Item_Data Elm_Hoversel_Item_Data;
+struct _Elm_Hoversel_Item_Data
 {
-   ELM_WIDGET_ITEM;
+   Elm_Widget_Item_Data *base;
 
    const char   *label;
    const char   *icon_file;
@@ -70,16 +73,19 @@ struct _Elm_Hoversel_Item
        return val;                                       \
     }
 
-#define ELM_HOVERSEL_CHECK(obj)                              \
+#define ELM_HOVERSEL_CHECK(obj)                          \
   if (EINA_UNLIKELY(!eo_isa((obj), ELM_HOVERSEL_CLASS))) \
     return
 
-#define ELM_HOVERSEL_ITEM_CHECK(it)                         \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, ); \
-  ELM_HOVERSEL_CHECK(it->base.widget);
+#define ELM_HOVERSEL_ITEM_DATA_GET(o, sd) \
+  Elm_Hoversel_Item_Data * sd = eo_data_scope_get(o, ELM_HOVERSEL_ITEM_CLASS)
 
-#define ELM_HOVERSEL_ITEM_CHECK_OR_RETURN(it, ...)                     \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-  ELM_HOVERSEL_CHECK(it->base.widget) __VA_ARGS__;
+#define ELM_HOVERSEL_ITEM_CHECK(obj)                           \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_HOVERSEL_ITEM_CLASS))) \
+    return
+
+#define ELM_HOVERSEL_ITEM_CHECK_OR_RETURN(obj, ...)         \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_HOVERSEL_ITEM_CLASS))) \
+    return __VA_ARGS__;
 
 #endif
