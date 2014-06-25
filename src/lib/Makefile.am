@@ -786,7 +786,9 @@ BUILT_SOURCES = \
 		elm_segment_control_item.eo.c \
 		elm_segment_control_item.eo.h \
 		elm_slideshow_item.eo.c \
-		elm_slideshow_item.eo.h
+		elm_slideshow_item.eo.h \
+		elm_flipselector_item.eo.c \
+		elm_flipselector_item.eo.h
 
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
 elementaryeolianfiles_DATA = \
@@ -884,7 +886,8 @@ elementaryeolianfiles_DATA = \
 	     elm_dayselector_item.eo \
 	     elm_hoversel_item.eo \
 	     elm_segment_control_item.eo \
-	     elm_slideshow_item.eo
+	     elm_slideshow_item.eo \
+	     elm_flipselector_item.eo
 
 EXTRA_DIST += \
               ${elementaryeolianfiles_DATA}

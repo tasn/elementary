@@ -4,6 +4,7 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
+
 #include "elm_widget_flipselector.h"
 
 #define MY_CLASS ELM_FLIPSELECTOR_CLASS
@@ -101,14 +102,19 @@ static void
 _update_view(Evas_Object *obj)
 {
    const char *label;
-   Elm_Flipselector_Item *item;
+   Elm_Widobj_Item *item;
 
    ELM_FLIPSELECTOR_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    label = NULL;
    item = DATA_GET(sd->current);
-   if (item) label = item->label;
+
+   if (item)
+     {
+        ELM_FLIPSELECTOR_ITEM_DATA_GET(item, item_data);
+        label = item_data->label;
+     }
 
    elm_layout_text_set(obj, "elm.top", label ? label : "");
    elm_layout_text_set(obj, "elm.bottom", label ? label : "");
@@ -116,24 +122,23 @@ _update_view(Evas_Object *obj)
    edje_object_message_signal_process(wd->resize_obj);
 }
 
-static void
-_item_text_set_hook(Elm_Object_Item *it,
-                    const char *part,
-                    const char *label)
+EOLIAN static void
+_elm_flipselector_item_elm_widget_item_part_text_set(Eo *eo_item,
+                                                     Elm_Flipselector_Item_Data *item,
+                                                     const char *part,
+                                                     const char *label)
 {
    Eina_List *l;
-   Elm_Flipselector_Item *item;
 
    if (!label) return;
 
    if (part && strcmp(part, "default")) return;
 
-   item = (Elm_Flipselector_Item *)it;
    ELM_FLIPSELECTOR_DATA_GET(WIDGET(item), sd);
 
    if (!sd->items) return;
 
-   l = eina_list_data_find_list(sd->items, item);
+   l = eina_list_data_find_list(sd->items, eo_item);
    if (!l) return;
 
    eina_stringshare_del(item->label);
@@ -149,19 +154,21 @@ _item_text_set_hook(Elm_Object_Item *it,
      }
 }
 
-static const char *
-_item_text_get_hook(const Elm_Object_Item *it,
-                    const char *part)
+EOLIAN static const char *
+_elm_flipselector_item_elm_widget_item_part_text_get(Eo *item EINA_UNUSED,
+                                                     Elm_Flipselector_Item_Data *it,
+                                                     const char *part)
 {
    if (part && strcmp(part, "default")) return NULL;
 
-   return ((Elm_Flipselector_Item *)it)->label;
+   return it->label;
 }
 
-static void
-_item_signal_emit_hook(Elm_Object_Item *it,
-                       const char *emission,
-                       const char *source)
+EOLIAN static void
+_elm_flipselector_item_elm_widget_item_signal_emit(Eo *eo_item EINA_UNUSED,
+                                                   Elm_Flipselector_Item_Data *it,
+                                                   const char *emission,
+                                                   const char *source)
 {
    edje_object_signal_emit(VIEW(it), emission, source);
 }
@@ -180,7 +187,7 @@ _flipselector_walk(Elm_Flipselector_Data *sd)
 static void
 _sentinel_eval(Elm_Flipselector_Data *sd)
 {
-   Elm_Flipselector_Item *it;
+   Elm_Widobj_Item *it;
    Eina_List *l;
 
    if (!sd->items)
@@ -204,26 +211,27 @@ static void
 _flipselector_process_deletions(Elm_Flipselector_Data *sd)
 {
    Eina_List *l;
-   Elm_Flipselector_Item *it;
+   Elm_Widobj_Item *eo_item;
    Eina_Bool skip = EINA_TRUE;
    Eina_Bool sentinel_eval = EINA_FALSE;
 
    sd->walking++; /* avoid nested deletions */
 
-   EINA_LIST_FOREACH(sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
-        if (!it->deleted) continue;
+        ELM_FLIPSELECTOR_ITEM_DATA_GET(eo_item, item);
+        if (!item->deleted) continue;
 
         if (sd->current == l)
           {
              if (sd->current == sd->sentinel) sentinel_eval = EINA_TRUE;
              sd->current = eina_list_prev(sd->current);
           }
-        sd->items = eina_list_remove(sd->items, it);
+        sd->items = eina_list_remove(sd->items, eo_item);
 
         if (!sd->current) sd->current = sd->items;
 
-        elm_widget_item_del(it);
+        eo_do(eo_item, elm_wdg_item_del());
         skip = EINA_FALSE;
 
         if (eina_list_count(sd->items) <= 1)
@@ -259,17 +267,18 @@ _flipselector_unwalk(Elm_Flipselector_Data *sd)
 static void
 _on_item_changed(Elm_Flipselector_Data *sd)
 {
-   Elm_Flipselector_Item *item;
+   Elm_Widobj_Item *eo_item;
 
-   item = DATA_GET(sd->current);
-   if (!item) return;
+   eo_item = DATA_GET(sd->current);
+   if (!eo_item) return;
    if (sd->deleting) return;
 
+   ELM_FLIPSELECTOR_ITEM_DATA_GET(eo_item, item);
    if (item->func)
-     item->func((void *)item->base.data, WIDGET(item), item);
+     item->func((void *)item->base->data, WIDGET(item), eo_item);
    if (!item->deleted)
      evas_object_smart_callback_call
-       (sd->obj, SIG_SELECTED, item);
+       (sd->obj, SIG_SELECTED, eo_item);
 }
 
 static void
@@ -288,13 +297,12 @@ _send_msg(Elm_Flipselector_Data *sd,
    _on_item_changed(sd);
 }
 
-static Eina_Bool
-_item_del_pre_hook(Elm_Object_Item *it)
+EOLIAN static Eina_Bool
+_elm_flipselector_item_elm_widget_item_del_pre(Eo *eo_item, Elm_Flipselector_Item_Data *item)
 {
-   Elm_Flipselector_Item *item, *item2;
+   Elm_Widobj_Item *eo_item2;
    Eina_List *l;
 
-   item = (Elm_Flipselector_Item *)it;
    ELM_FLIPSELECTOR_DATA_GET(WIDGET(item), sd);
 
    if (sd->walking > 0)
@@ -305,9 +313,9 @@ _item_del_pre_hook(Elm_Object_Item *it)
 
    _flipselector_walk(sd);
 
-   EINA_LIST_FOREACH(sd->items, l, item2)
+   EINA_LIST_FOREACH(sd->items, l, eo_item2)
      {
-        if (item2 == item)
+        if (eo_item2 == eo_item)
           {
              if (sd->current == l)
                {
@@ -315,7 +323,8 @@ _item_del_pre_hook(Elm_Object_Item *it)
                   if (!sd->current) sd->current = l->next;
                   if (sd->current)
                     {
-                       item2 = sd->current->data;
+                       eo_item2 = sd->current->data;
+                       ELM_FLIPSELECTOR_ITEM_DATA_GET(eo_item2, item2);
                        _send_msg(sd, MSG_FLIP_DOWN, (char *)item2->label);
                     }
                   else _send_msg(sd, MSG_FLIP_DOWN, "");
@@ -332,35 +341,39 @@ _item_del_pre_hook(Elm_Object_Item *it)
    return EINA_TRUE;
 }
 
-static Elm_Flipselector_Item *
+EOLIAN static void
+_elm_flipselector_item_eo_base_constructor(Eo *obj, Elm_Flipselector_Item_Data *it)
+{
+   eo_do_super(obj, ELM_FLIPSELECTOR_ITEM_CLASS, eo_constructor());
+   it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
+}
+
+static Elm_Widobj_Item *
 _item_new(Evas_Object *obj,
           const char *label,
           Evas_Smart_Cb func,
           const void *data)
 {
    unsigned int len;
-   Elm_Flipselector_Item *it;
+   Elm_Widobj_Item *eo_item;
 
    ELM_FLIPSELECTOR_DATA_GET(obj, sd);
 
-   it = elm_widget_item_new(obj, Elm_Flipselector_Item);
-   if (!it) return NULL;
+   eo_item = eo_add(ELM_FLIPSELECTOR_ITEM_CLASS, obj);
+   if (!eo_item) return NULL;
 
-   elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
-   elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
-   elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
-   elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
+   ELM_FLIPSELECTOR_ITEM_DATA_GET(eo_item, it);
 
    len = strlen(label);
    if (len > sd->max_len) len = sd->max_len;
 
    it->label = eina_stringshare_add_length(label, len);
    it->func = func;
-   it->base.data = data;
+   it->base->data = data;
 
    /* TODO: no view here, but if one desires general contents in the
     * future... */
-   return it;
+   return eo_item;
 }
 
 EOLIAN static Eina_Bool
@@ -392,7 +405,7 @@ _elm_flipselector_elm_widget_theme_apply(Eo *obj, Elm_Flipselector_Data *sd)
 static void
 _flip_up(Elm_Flipselector_Data *sd)
 {
-   Elm_Flipselector_Item *item;
+   Elm_Widobj_Item *eo_item;
 
    if (!sd->current) return;
 
@@ -406,16 +419,17 @@ _flip_up(Elm_Flipselector_Data *sd)
    else
      sd->current = eina_list_prev(sd->current);
 
-   item = DATA_GET(sd->current);
-   if (!item) return;
+   eo_item = DATA_GET(sd->current);
+   if (!eo_item) return;
 
+   ELM_FLIPSELECTOR_ITEM_DATA_GET(eo_item, item);
    _send_msg(sd, MSG_FLIP_UP, (char *)item->label);
 }
 
 static void
 _flip_down(Elm_Flipselector_Data *sd)
 {
-   Elm_Flipselector_Item *item;
+   Elm_Widobj_Item *eo_item;
 
    if (!sd->current) return;
 
@@ -428,9 +442,10 @@ _flip_down(Elm_Flipselector_Data *sd)
           (sd->obj, SIG_OVERFLOWED, NULL);
      }
 
-   item = DATA_GET(sd->current);
-   if (!item) return;
+   eo_item = DATA_GET(sd->current);
+   if (!eo_item) return;
 
+   ELM_FLIPSELECTOR_ITEM_DATA_GET(eo_item, item);
    _send_msg(sd, MSG_FLIP_DOWN, (char *)item->label);
 }
 
@@ -582,7 +597,7 @@ _elm_flipselector_evas_object_smart_del(Eo *obj, Elm_Flipselector_Data *sd)
    if (sd->walking) ERR("flipselector deleted while walking.\n");
 
    while (sd->items)
-     elm_widget_item_del(DATA_GET(sd->items));
+     eo_do(DATA_GET(sd->items), elm_wdg_item_del());
 
    ecore_timer_del(sd->spin);
 
@@ -631,7 +646,7 @@ _elm_flipselector_flip_prev(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 EOLIAN static Elm_Object_Item *
 _elm_flipselector_item_append(Eo *obj, Elm_Flipselector_Data *sd, const char *label, Evas_Smart_Cb func, const void *data)
 {
-   Elm_Flipselector_Item *item;
+   Elm_Widobj_Item *item;
 
    item = _item_new(obj, label, func, data);
    if (!item) return NULL;
@@ -660,7 +675,7 @@ _elm_flipselector_item_append(Eo *obj, Elm_Flipselector_Data *sd, const char *la
 EOLIAN static Elm_Object_Item *
 _elm_flipselector_item_prepend(Eo *obj, Elm_Flipselector_Data *sd, const char *label, Evas_Smart_Cb func, void *data)
 {
-   Elm_Flipselector_Item *item;
+   Elm_Widobj_Item *item;
 
    item = _item_new(obj, label, func, data);
    if (!item) return NULL;
@@ -695,15 +710,16 @@ _elm_flipselector_items_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 EOLIAN static Elm_Object_Item*
 _elm_flipselector_first_item_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
-   Elm_Flipselector_Item *it;
+   Elm_Widobj_Item *eo_item;
    Eina_List *l;
 
    if (!sd->items) return NULL;
 
-   EINA_LIST_FOREACH(sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
+        ELM_FLIPSELECTOR_ITEM_DATA_GET(eo_item, it);
         if (it->deleted) continue;
-        return (Elm_Object_Item *)it;
+        return (Elm_Object_Item *)eo_item;
      }
 
    return NULL;
@@ -712,15 +728,16 @@ _elm_flipselector_first_item_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 EOLIAN static Elm_Object_Item*
 _elm_flipselector_last_item_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
-   Elm_Flipselector_Item *it;
+   Elm_Widobj_Item *eo_item;
    Eina_List *l;
 
    if (!sd->items) return NULL;
 
-   EINA_LIST_REVERSE_FOREACH(sd->items, l, it)
+   EINA_LIST_REVERSE_FOREACH(sd->items, l, eo_item)
      {
-        if (it->deleted) continue;
-        return (Elm_Object_Item *)it;
+        ELM_FLIPSELECTOR_ITEM_DATA_GET(eo_item, item);
+        if (item->deleted) continue;
+        return (Elm_Object_Item *)eo_item;
      }
    return NULL;
 }
@@ -731,32 +748,31 @@ _elm_flipselector_selected_item_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *
    return DATA_GET(sd->current);
 }
 
-EAPI void
-elm_flipselector_item_selected_set(Elm_Object_Item *it,
-                                   Eina_Bool selected)
+EOLIAN static void
+_elm_flipselector_item_selected_set(Eo *eo_item,
+                                    Elm_Flipselector_Item_Data *item,
+                                    Eina_Bool selected)
 {
-   Elm_Flipselector_Item *item, *_item, *cur;
+   Elm_Widobj_Item *_item, *cur;
    int flipside = MSG_FLIP_UP;
    Eina_List *l;
 
-   ELM_FLIPSELECTOR_ITEM_CHECK_OR_RETURN(it);
-
-   item = (Elm_Flipselector_Item *)it;
    ELM_FLIPSELECTOR_DATA_GET(WIDGET(item), sd);
 
    cur = DATA_GET(sd->current);
-   if ((selected) && (cur == item)) return;
+   if ((selected) && (cur == eo_item)) return;
 
    _flipselector_walk(sd);
 
-   if ((!selected) && (cur == item))
+   if ((!selected) && (cur == eo_item))
      {
         EINA_LIST_FOREACH(sd->items, l, _item)
           {
-             if (!_item->deleted)
+             ELM_FLIPSELECTOR_ITEM_DATA_GET(_item, _item_data);
+             if (!_item_data->deleted)
                {
                   sd->current = l;
-                  _send_msg(sd, MSG_FLIP_UP, (char *)_item->label);
+                  _send_msg(sd, MSG_FLIP_UP, (char *)_item_data->label);
                   break;
                }
           }
@@ -768,7 +784,7 @@ elm_flipselector_item_selected_set(Elm_Object_Item *it,
      {
         if (_item == cur) flipside = MSG_FLIP_DOWN;
 
-        if (_item == item)
+        if (_item == eo_item)
           {
              sd->current = l;
              _send_msg(sd, flipside, (char *)item->label);
@@ -779,48 +795,42 @@ elm_flipselector_item_selected_set(Elm_Object_Item *it,
    _flipselector_unwalk(sd);
 }
 
-EAPI Eina_Bool
-elm_flipselector_item_selected_get(const Elm_Object_Item *it)
+EOLIAN static Eina_Bool
+_elm_flipselector_item_selected_get(Eo *eo_item,
+                                    Elm_Flipselector_Item_Data *item)
 {
-   Elm_Flipselector_Item *item;
-
-   ELM_FLIPSELECTOR_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
-
-   item = (Elm_Flipselector_Item *)it;
    ELM_FLIPSELECTOR_DATA_GET(WIDGET(item), sd);
 
-   return eina_list_data_get(sd->current) == item;
+   return eina_list_data_get(sd->current) == eo_item;
 }
 
-EAPI Elm_Object_Item *
-elm_flipselector_item_prev_get(const Elm_Object_Item *it)
+EOLIAN static Elm_Widobj_Item *
+_elm_flipselector_item_prev_get(Eo *eo_item,
+                                Elm_Flipselector_Item_Data *item)
 {
-   Elm_Flipselector_Item *item = (Elm_Flipselector_Item *)it;
    Eina_List *l;
 
-   ELM_FLIPSELECTOR_ITEM_CHECK_OR_RETURN(it, NULL);
    ELM_FLIPSELECTOR_DATA_GET(WIDGET(item), sd);
 
    if ((!sd->items)) return NULL;
 
-   l = eina_list_data_find_list(sd->items, it);
+   l = eina_list_data_find_list(sd->items, eo_item);
    if (l && l->prev) return DATA_GET(l->prev);
 
    return NULL;
 }
 
-EAPI Elm_Object_Item *
-elm_flipselector_item_next_get(const Elm_Object_Item *it)
+EOLIAN static Elm_Widobj_Item *
+_elm_flipselector_item_next_get(Eo *eo_item,
+                                Elm_Flipselector_Item_Data *item)
 {
    Eina_List *l;
-   Elm_Flipselector_Item *item = (Elm_Flipselector_Item *)it;
 
-   ELM_FLIPSELECTOR_ITEM_CHECK_OR_RETURN(it, NULL);
    ELM_FLIPSELECTOR_DATA_GET(WIDGET(item), sd);
 
    if ((!sd->items)) return NULL;
 
-   l = eina_list_data_find_list(sd->items, it);
+   l = eina_list_data_find_list(sd->items, eo_item);
    if (l && l->next) return DATA_GET(l->next);
 
    return NULL;
@@ -856,4 +866,36 @@ _elm_flipselector_class_constructor(Eo_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+EAPI void
+elm_flipselector_item_selected_set(Elm_Object_Item *it,
+                                   Eina_Bool selected)
+{
+   eo_do((Eo*)it, elm_obj_flipselector_item_selected_set(selected));
+}
+
+EAPI Eina_Bool
+elm_flipselector_item_selected_get(const Elm_Object_Item *it)
+{
+   Eina_Bool ret;
+   eo_do((Eo*)it, ret = elm_obj_flipselector_item_selected_get());
+   return ret;
+}
+
+EAPI Elm_Object_Item *
+elm_flipselector_item_prev_get(const Elm_Object_Item *it)
+{
+   Elm_Widobj_Item *ret = NULL;
+   eo_do((Eo*)it, ret = elm_obj_flipselector_item_prev_get());
+   return (Elm_Object_Item *)ret;
+}
+
+EAPI Elm_Object_Item *
+elm_flipselector_item_next_get(const Elm_Object_Item *it)
+{
+   Elm_Widobj_Item *ret = NULL;
+   eo_do((Eo*)it, ret = elm_obj_flipselector_item_next_get());
+   return (Elm_Object_Item *)ret;
+}
+
+#include "elm_flipselector_item.eo.c"
 #include "elm_flipselector.eo.c"
