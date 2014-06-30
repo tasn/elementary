@@ -3,6 +3,9 @@
 
 #include "Elementary.h"
 
+#include "elm_object_item_migration_temp.h"
+#include "elm_menu_item.eo.h"
+
 /**
  * @addtogroup Widget
  * @{
@@ -29,12 +32,12 @@ struct _Elm_Menu_Data
    Eina_Bool             menu_bar : 1;
 };
 
-typedef struct _Elm_Menu_Item       Elm_Menu_Item;
-struct _Elm_Menu_Item
+typedef struct _Elm_Menu_Item_Data       Elm_Menu_Item_Data;
+struct _Elm_Menu_Item_Data
 {
-   ELM_WIDGET_ITEM;
+   Elm_Widget_Item_Data *base;
 
-   Elm_Menu_Item *parent;
+   Elm_Widobj_Item *parent;
    Evas_Object   *content;
    const char    *icon_str;
    const char    *label;
@@ -82,16 +85,20 @@ struct _Elm_Menu_Item
        return val;                                   \
     }
 
+#define ELM_MENU_ITEM_DATA_GET(o, sd) \
+  Elm_Menu_Item_Data * sd = eo_data_scope_get(o, ELM_MENU_ITEM_CLASS)
+
 #define ELM_MENU_CHECK(obj)                              \
   if (EINA_UNLIKELY(!eo_isa((obj), ELM_MENU_CLASS))) \
     return
 
-#define ELM_MENU_ITEM_CHECK(it)                             \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, ); \
-  ELM_MENU_CHECK(it->base.widget);
+#define ELM_MENU_ITEM_CHECK(obj)                            \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_MENU_ITEM_CLASS))) \
+    return
 
-#define ELM_MENU_ITEM_CHECK_OR_RETURN(it, ...)                         \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-  ELM_MENU_CHECK(it->base.widget) __VA_ARGS__;
+#define ELM_MENU_ITEM_CHECK_OR_RETURN(obj, ...)             \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_MENU_ITEM_CLASS))) \
+    return __VA_ARGS__;
+
 
 #endif
