@@ -2,7 +2,9 @@
 #define ELM_WIDGET_CTXPOPUP_H
 
 #include "elm_widget_layout.h"
+#include "elm_ctxpopup_item.eo.h"
 
+#include "elm_object_item_migration_temp.h"
 /**
  * @addtogroup Widget
  * @{
@@ -14,15 +16,15 @@
  * widgets which are a ctxpopup with some more logic on top.
  */
 
-typedef struct _Elm_Ctxpopup_Item       Elm_Ctxpopup_Item;
+typedef struct _Elm_Ctxpopup_Item_Data       Elm_Ctxpopup_Item_Data;
 
 /**
  * Base widget smart data extended with ctxpopup instance data.
  */
 typedef struct _Elm_Ctxpopup_Data Elm_Ctxpopup_Data;
-struct _Elm_Ctxpopup_Item
+struct _Elm_Ctxpopup_Item_Data
 {
-   ELM_WIDGET_ITEM;
+   Elm_Widget_Item_Data *base;
 
    Elm_Object_Item *list_item;
 
@@ -84,5 +86,8 @@ struct _Elm_Ctxpopup_Data
 #define ELM_CTXPOPUP_CHECK(obj)                              \
   if (EINA_UNLIKELY(!eo_isa((obj), ELM_CTXPOPUP_CLASS))) \
     return
+
+#define ELM_CTXPOPUP_ITEM_DATA_GET(o, sd) \
+  Elm_Ctxpopup_Item_Data * sd = eo_data_scope_get(o, ELM_CTXPOPUP_ITEM_CLASS)
 
 #endif
