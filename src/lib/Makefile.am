@@ -859,7 +859,9 @@ BUILT_SOURCES = \
 		elm_flipselector_item.eo.c \
 		elm_flipselector_item.eo.h \
 		elm_menu_item.eo.c \
-		elm_menu_item.eo.h
+		elm_menu_item.eo.h \
+		elm_ctxpopup_item.eo.c \
+		elm_ctxpopup_item.eo.h
 
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
 elementaryeolianfiles_DATA = \
@@ -961,7 +963,8 @@ elementaryeolianfiles_DATA = \
 	     elm_segment_control_item.eo \
 	     elm_slideshow_item.eo \
 	     elm_flipselector_item.eo \
-	     elm_menu_item.eo
+	     elm_menu_item.eo \
+	     elm_ctxpopup_item.eo
 
 EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
@@ -1064,6 +1067,7 @@ nodist_includesunstable_HEADERS = \
 				  elm_segment_control_item.eo.h \
 				  elm_flipselector_item.eo.h \
 				  elm_menu_item.eo.h \
+				  elm_ctxpopup_item.eo.h \
 				  elm_slideshow_item.eo.h \
 				  elm_layout.eo.legacy.h \
 				  elm_frame.eo.legacy.h \
@@ -1135,7 +1139,8 @@ nodist_includesunstable_HEADERS = \
 				  elm_segment_control_item.eo.legacy.h \
 				  elm_slideshow_item.eo.legacy.h \
 				  elm_flipselector_item.eo.legacy.h \
-				  elm_menu_item.eo.legacy.h
+				  elm_menu_item.eo.legacy.h \
+				  elm_ctxpopup_item.eo.legacy.h
 
 if HAVE_CXX11
 
