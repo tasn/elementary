@@ -2,6 +2,9 @@
 #define ELM_WIDGET_MULTIBUTTONENTRY_H
 
 #include "elm_widget_layout.h"
+#include "elm_object_item_migration_temp.h"
+
+#include "elm_multibuttonentry_item.eo.h"
 
 /**
  * @addtogroup Widget
@@ -47,11 +50,11 @@ typedef enum _Multibuttonentry_View_State
    MULTIBUTTONENTRY_VIEW_SHRINK
 } Multibuttonentry_View_State;
 
-typedef struct _Multibuttonentry_Item Elm_Multibuttonentry_Item;
+typedef struct _Multibuttonentry_Item_Data Elm_Multibuttonentry_Item_Data;
 
-struct _Multibuttonentry_Item
+struct _Multibuttonentry_Item_Data
 {
-   ELM_WIDGET_ITEM;
+   Elm_Widget_Item_Data *base;
 
    Evas_Object  *button;
    Evas_Coord    vw, rw; // vw: visual width, real width
@@ -123,16 +126,19 @@ struct _Elm_Multibuttonentry_Data
        return val;                                               \
     }
 
+#define ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(o, sd) \
+  Elm_Multibuttonentry_Item_Data * sd = eo_data_scope_get(o, ELM_MULTIBUTTONENTRY_ITEM_CLASS)
+
 #define ELM_MULTIBUTTONENTRY_CHECK(obj)                              \
   if (EINA_UNLIKELY(!eo_isa((obj), ELM_MULTIBUTTONENTRY_CLASS))) \
     return
 
-#define ELM_MULTIBUTTONENTRY_ITEM_CHECK(it)                 \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, ); \
-  ELM_MULTIBUTTONENTRY_CHECK(it->base.widget);
+#define ELM_MULTIBUTTONENTRY_ITEM_CHECK(obj)                 \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_MULTIBUTTONENTRY_ITEM_CLASS))) \
+    return
 
-#define ELM_MULTIBUTTONENTRY_ITEM_CHECK_OR_RETURN(it, ...)             \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-  ELM_MULTIBUTTONENTRY_CHECK(it->base.widget) __VA_ARGS__;
+#define ELM_MULTIBUTTONENTRY_ITEM_CHECK_OR_RETURN(obj, ...)             \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_MULTIBUTTONENTRY_ITEM_CLASS))) \
+    return __VA_ARGS__;
 
 #endif
