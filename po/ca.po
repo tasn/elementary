@@ -1,163 +1,258 @@
-# Catalan translation for enlightenment
-# Copyright (c) 2013 Rosetta Contributors and Canonical Ltd 2013
-# This file is distributed under the same license as the enlightenment package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
-#
+# Catalan translation for Elementary.
+# This file is put in the public domain.
+# Marc Furtià  i Puig <marc.furtia@gmail.com>, 2013.
+# Joan Coll <jcoll2@gmail.com>, 2013.
 msgid ""
 msgstr ""
-"Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2013-04-07 18:45+0200\n"
-"PO-Revision-Date: 2014-05-30 19:17+0000\n"
-"Last-Translator: joancoll <Unknown>\n"
-"Language-Team: Catalan <ca@li.org>\n"
+"Project-Id-Version: Elementary\n"
+"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
+"POT-Creation-Date: 2014-06-16 11:32+0200\n"
+"PO-Revision-Date: 2014-06-18 10:35+0000\n"
+"Last-Translator: JoanColl <Unknown>\n"
+"Language-Team: Catalan\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-05-31 05:58+0000\n"
-"X-Generator: Launchpad (build 17031)\n"
+"X-Launchpad-Export-Date: 2014-06-19 06:35+0000\n"
+"X-Generator: Launchpad (build 17048)\n"
+"Language: ca\n"
 
-#: src/lib/elc_fileselector.c:1341
+#: src/lib/elc_fileselector.c:749
 msgid "Up"
 msgstr "Amunt"
 
-#: src/lib/elc_fileselector.c:1356
+#: src/lib/elc_fileselector.c:764
 msgid "Home"
 msgstr "Carpeta personal"
 
-#: src/lib/elc_fileselector.c:1583 src/lib/elm_entry.c:1346
-#: src/lib/elm_entry.c:1371
+#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1413
 msgid "Cancel"
 msgstr "Cancel·la"
 
-#: src/lib/elc_fileselector.c:1592
+#: src/lib/elc_fileselector.c:1001
 msgid "OK"
 msgstr "Accepta"
 
-#: src/lib/elm_button.c:58
+#: src/lib/elm_button.c:55
 msgid "Clicked"
 msgstr "Clicat"
 
-#: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:705
-#: src/lib/elm_genlist.c:1464 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
-#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:561
-#: src/lib/elm_toolbar.c:1979
+#: src/lib/elm_button.c:255 src/lib/elm_check.c:200 src/lib/elm_gengrid.c:618
+#: src/lib/elm_genlist.c:1287 src/lib/elm_list.c:1365 src/lib/elm_radio.c:241
+#: src/lib/elm_spinner.c:499 src/lib/elm_toolbar.c:1253
 msgid "State: Disabled"
 msgstr "Estat: desactivat"
 
-#: src/lib/elm_button.c:304
+#: src/lib/elm_button.c:279
 msgid "Button"
 msgstr "Botó"
 
-#: src/lib/elm_calendar.c:142
+#: src/lib/elm_calendar.c:132
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_check.c:52 src/lib/elm_check.c:235 src/lib/elm_radio.c:92
-#: src/lib/elm_radio.c:266
+#: src/lib/elm_check.c:47 src/lib/elm_check.c:50 src/lib/elm_check.c:213
+#: src/lib/elm_radio.c:83 src/lib/elm_radio.c:242
 msgid "State: On"
 msgstr "Estat: activat"
 
-#: src/lib/elm_check.c:58 src/lib/elm_check.c:247 src/lib/elm_radio.c:268
+#: src/lib/elm_check.c:60 src/lib/elm_check.c:63 src/lib/elm_check.c:225
+#: src/lib/elm_radio.c:244
 msgid "State: Off"
 msgstr "Estat: desactivat"
 
-#: src/lib/elm_check.c:231 src/lib/elm_check.c:244
+#: src/lib/elm_check.c:209 src/lib/elm_check.c:222
 msgid "State"
 msgstr "Estat"
 
-#: src/lib/elm_check.c:312
+#: src/lib/elm_check.c:289
 msgid "Check"
 msgstr "Comprova"
 
-#: src/lib/elm_colorselector.c:1370
+#: src/lib/elm_colorselector.c:895
 msgid "color selector palette item"
 msgstr "paleta de selecció de color"
 
-#: src/lib/elm_config.c:2441
+#: src/lib/elm_config.c:2100
 msgid "default:LTR"
 msgstr "Per defecte: LTR"
 
-#: src/lib/elm_diskselector.c:681
+#: src/lib/elm_diskselector.c:622
 msgid "diskselector item"
 msgstr "selector de disc"
 
-#: src/lib/elm_entry.c:1333
+#: src/lib/elm_entry.c:1407
 msgid "Copy"
 msgstr "Copia"
 
-#: src/lib/elm_entry.c:1338
+#: src/lib/elm_entry.c:1410
 msgid "Cut"
 msgstr "Retalla"
 
-#: src/lib/elm_entry.c:1358
+#: src/lib/elm_entry.c:1424
 msgid "Select"
 msgstr "Selecciona"
 
-#: src/lib/elm_entry.c:1342 src/lib/elm_entry.c:1365
+#: src/lib/elm_entry.c:1430
 msgid "Paste"
 msgstr "Enganxa"
 
-#: src/lib/elm_entry.c:3306
+#: src/lib/elm_entry.c:2664
 msgid "Entry"
 msgstr "Entrada"
 
-#: src/lib/elm_gengrid.c:735
+#: src/lib/elm_gengrid.c:650
 msgid "Gengrid Item"
 msgstr "Quadrícula genèrica"
 
 #: src/lib/elm_genlist.c:1321
 msgid "Genlist Item"
-msgstr "Lista genérica"
+msgstr "Element Llista general"
 
-#: src/lib/elm_label.c:408
+#: src/lib/elm_label.c:355
 msgid "Label"
 msgstr "Etiqueta"
 
-#: src/lib/elm_list.c:1400
+#: src/lib/elm_list.c:1405
 msgid "List Item"
-msgstr "Lista"
+msgstr "Element de llista"
 
-#: src/lib/elm_progressbar.c:296
+#: src/lib/elm_progressbar.c:260
 msgid "progressbar"
 msgstr "barra de progrés"
 
-#: src/lib/elm_radio.c:296
+#: src/lib/elm_radio.c:271
 msgid "Radio"
 msgstr "Opció"
 
-#: src/lib/elm_slider.c:894
+#: src/lib/elm_slider.c:778
 msgid "slider"
 msgstr "control lliscant"
 
-#: src/lib/elm_spinner.c:650
+#: src/lib/elm_spinner.c:530
 msgid "spinner increment button"
 msgstr "botó d'increment del spinner"
 
-#: src/lib/elm_spinner.c:659
+#: src/lib/elm_spinner.c:538
 msgid "spinner decrement button"
 msgstr "botó de decrement del spinner"
 
-#: src/lib/elm_spinner.c:667
+#: src/lib/elm_spinner.c:545
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1450 src/lib/elm_toolbar.c:2040
+#: src/lib/elm_toolbar.c:988
 msgid "Selected"
 msgstr "Seleccionat"
 
-#: src/lib/elm_toolbar.c:1977
+#: src/lib/elm_toolbar.c:1251
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1981
+#: src/lib/elm_toolbar.c:1255
 msgid "State: Selected"
 msgstr "Estat: Seleccionat"
 
-#: src/lib/elm_toolbar.c:1983
+#: src/lib/elm_toolbar.c:1257
 msgid "Has menu"
 msgstr "Té menú"
 
 #: src/lib/elm_toolbar.c:1322
 msgid "Tool Item"
 msgstr "Element d'eina"
+
+#~ msgid "Bubble"
+#~ msgstr "Bombolla"
+
+#~ msgid "%B"
+#~ msgstr "%B"
+
+#~ msgid "%Y"
+#~ msgstr "%Y"
+
+#~ msgid "calendar item"
+#~ msgstr "element de calendari"
+
+#~ msgid "calendar month"
+#~ msgstr "mes del calendari"
+
+#~ msgid "calendar year"
+#~ msgstr "any del calendari"
+
+#~ msgid "State: Editable"
+#~ msgstr "Estat: Editable"
+
+#~ msgid "Clock"
+#~ msgstr "Rellotge"
+
+#~ msgid "Index Item"
+#~ msgstr "Element d'índex"
+
+#~ msgid "Index"
+#~ msgstr "Índex"
+
+#~ msgid "state: opened"
+#~ msgstr "estat: obert"
+
+#~ msgid "state: closed"
+#~ msgstr "estat: tancat"
+
+#~ msgid "Toolbar Item"
+#~ msgstr "Element de barra d'eines"
+
+#~ msgid "calendar decrement month button"
+#~ msgstr "botó decrement de mes"
+
+#~ msgid "calendar decrement year button"
+#~ msgstr "botó decrement d'any"
+
+#~ msgid "calendar increment month button"
+#~ msgstr "botó increment de mes"
+
+#~ msgid "calendar increment year button"
+#~ msgstr "botó increment d'any"
+
+#~ msgid "clock increment button for am,pm"
+#~ msgstr "botó increment de rellotge per am,pm"
+
+#~ msgid "clock decrement button for am,pm"
+#~ msgstr "botó decrement de rellotge per am,pm"
+
+#~ msgid "panel button"
+#~ msgstr "botó del tauler"
+
+#~ msgid "Unselected"
+#~ msgstr "No seleccionat"
+
+#~ msgid "multi button entry label"
+#~ msgstr "etiqueta d'entrada múltiple"
+
+#~ msgid "Next"
+#~ msgstr "Següent"
+
+#~ msgid "Popup Title"
+#~ msgstr "Títol finestra emergent"
+
+#~ msgid "Popup Body Text"
+#~ msgstr "Text de la finestra emergent"
+
+#~ msgid "day selector item"
+#~ msgstr "selector de dia"
+
+#~ msgid "multi button entry item"
+#~ msgstr "element entrada múltiple"
+
+#~ msgid "multi button entry"
+#~ msgstr "entrada múltiple"
+
+#~ msgid "Title"
+#~ msgstr "Títol"
+
+#~ msgid "Back"
+#~ msgstr "Enrere"
+
+#~ msgid "State: Unselected"
+#~ msgstr "Estat: No seleccionat"
+
+#~ msgid "Segment Control Item"
+#~ msgstr "Element de control del segment"
