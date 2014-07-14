@@ -1,6 +1,13 @@
 =================
-Elementary 1.10.1
+Elementary 1.10.2
 =================
+
+Changes since 1.10.1:
+---------------------
+
+Fixes:
+
+   * fileselector: Make selected_set actually select the file
 
 Changes since 1.10.0:
 ---------------------
