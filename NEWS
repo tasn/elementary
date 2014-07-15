@@ -8,6 +8,7 @@ Changes since 1.10.1:
 Fixes:
 
    * fileselector: Make selected_set actually select the file
+   * Win: Delete "focused" and "unfocused" signals emission because they duplicate Widgets signals
 
 Changes since 1.10.0:
 ---------------------
