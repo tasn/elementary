@@ -1,0 +1,77 @@
+class Elm_View_List (Eo.Base)
+{
+    legacy_prefix: null;
+    methods {
+        constructor {
+            /*@ Constructor wrapper
+             *
+             * @def elm_view_list_constructor
+             * @since 1.11
+             */
+             params {
+                 Evas_Object * genlist; /*@ Genlist object */
+                 @in Elm_Genlist_Item_Type item_type; /*@ Item type */
+                 @in const(char)*item_style; /*@ The current item style name. @c NULL would be default. */
+             }
+        }
+        evas_object_get {
+            /*@ Return evas object
+             *
+             * @def elm_view_list_evas_object_get
+             * @since 1.11
+             */
+             params {
+                 @out Evas_Object *widget; /*@ Returned widget */
+             }
+        }
+        property_connect {
+            /*@ Connect property
+             *
+             * @def elm_view_list_property_connect
+             * @since 1.11
+             */
+             params {
+                 @in const(char)* property; /*@ Property name */
+                 @in const(char)* part; /*@ Edje's theme part */
+             }
+        }
+        model_set {
+            /*@ Set model
+             *
+             * @def elm_view_list_model_set
+             * @since 1.11
+             */
+             params {
+                 @in Emodel *model; /*@ New Emodel to set */
+             }
+        }
+        model_unset {
+            /*@ Unset model
+             *
+             * @def elm_view_list_model_unset
+             * @since 1.11
+             */
+        }
+        model_get {
+            /*@ Get model
+             *
+             * @def elm_view_list_model_get
+             * @since 1.11
+             */
+             params {
+                 @out Eo *model; /*@ Returned Emodel */
+             }
+        }
+    }
+
+    events {
+        model,selected; /*@ Event dispatch when a model is selected */
+    }
+
+    implements {
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+}

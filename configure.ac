@@ -228,11 +228,12 @@ requirement_elm_pc_only="\
     ecore-imf >= efl_version \
     ecore-con >= efl_version \
     eio >= efl_version \
+    emodel >= efl_version \
     eldbus >= efl_version \
     efreet >= efl_version \
     efreet-mime >= efl_version \
     efreet-trash >= efl_version \
-    eio >= efl_version \
+    emodel >= efl_version \
     "
 
 requirement_elm_pc="\
@@ -269,6 +270,8 @@ if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
         eo-cxx >= efl_version
         eina-cxx >= efl_version
         evas-cxx >= efl_version
+        emodel-cxx >= efl_version
+        eio-cxx >= efl_version
       ],
       [
         requirement_elm_pc="${requirement_elm_pc} \
@@ -276,6 +279,8 @@ if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
           eo-cxx >= efl_version \
           eina-cxx >= efl_version \
           evas-cxx >= efl_version \
+          emodel-cxx >= efl_version \
+          eio-cxx >= efl_version \
         "
         have_cxx11="yes"
         LDFLAGS="${LDFLAGS} -fPIC -DPIC"
