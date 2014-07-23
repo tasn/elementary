@@ -796,7 +796,9 @@ BUILT_SOURCES = \
 		elm_index_item.eo.c \
 		elm_index_item.eo.h \
 		elm_multibuttonentry_item.eo.c \
-		elm_multibuttonentry_item.eo.h
+		elm_multibuttonentry_item.eo.h \
+		elm_naviframe_item.eo.c \
+		elm_naviframe_item.eo.h
 
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
 elementaryeolianfiles_DATA = \
@@ -899,7 +901,8 @@ elementaryeolianfiles_DATA = \
 	     elm_menu_item.eo \
 	     elm_ctxpopup_item.eo \
 	     elm_index_item.eo \
-	     elm_multibuttonentry_item.eo
+	     elm_multibuttonentry_item.eo \
+	     elm_naviframe_item.eo
 
 EXTRA_DIST += \
               ${elementaryeolianfiles_DATA}
