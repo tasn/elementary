@@ -865,7 +865,9 @@ BUILT_SOURCES = \
 		elm_index_item.eo.c \
 		elm_index_item.eo.h \
 		elm_multibuttonentry_item.eo.c \
-		elm_multibuttonentry_item.eo.h
+		elm_multibuttonentry_item.eo.h \
+		elm_naviframe_item.eo.c \
+		elm_naviframe_item.eo.h
 
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
 elementaryeolianfiles_DATA = \
@@ -970,7 +972,8 @@ elementaryeolianfiles_DATA = \
 	     elm_menu_item.eo \
 	     elm_ctxpopup_item.eo \
 	     elm_index_item.eo \
-	     elm_multibuttonentry_item.eo
+	     elm_multibuttonentry_item.eo \
+	     elm_naviframe_item.eo
 
 EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
@@ -1075,6 +1078,7 @@ nodist_includesunstable_HEADERS = \
 				  elm_menu_item.eo.h \
 				  elm_index_item.eo.h \
 				  elm_multibuttonentry_item.eo.h \
+				  elm_naviframe_item.eo.h \
 				  elm_ctxpopup_item.eo.h \
 				  elm_slideshow_item.eo.h \
 				  elm_layout.eo.legacy.h \
@@ -1150,7 +1154,8 @@ nodist_includesunstable_HEADERS = \
 				  elm_menu_item.eo.legacy.h \
 				  elm_ctxpopup_item.eo.legacy.h \
 				  elm_index_item.eo.legacy.h \
-				  elm_multibuttonentry_item.eo.legacy.h
+				  elm_multibuttonentry_item.eo.legacy.h \
+				  elm_naviframe_item.eo.legacy.h
 
 if HAVE_CXX11
 
