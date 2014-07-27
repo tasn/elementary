@@ -1,0 +1,289 @@
+class Elm_Widget_Item(Eo_Base)
+{
+   legacy_prefix: null;
+   eo_prefix: elm_wdg_item;
+   properties {
+        data {
+             get {
+             }
+             set {
+                 data: const;
+             }
+             values {
+                 void *data;
+             }
+        }
+        tooltip_window_mode {
+             get {
+
+             }
+             set {
+                  return Eina_Bool;
+             }
+             values {
+                  Eina_Bool disable;
+             }
+        }
+        tooltip_style {
+             get {
+
+             }
+             set {
+
+             }
+             values {
+                  const char *style;
+             }
+        }
+        cursor {
+             get {
+
+             }
+             set {
+
+             }
+             values {
+                  const char *cursor;
+             }
+        }
+        cursor_style {
+             get {
+
+             }
+             set {
+
+             }
+             values {
+                  const char *style;
+             }
+        }
+        cursor_engine_only {
+             get {
+
+             }
+             set {
+
+             }
+             values {
+                  Eina_Bool engine_only;
+             }
+        }
+        part_content {
+             get {
+
+             }
+             set {
+
+             }
+             keys {
+                  const char *part;
+             }
+             values {
+                  Evas_Object *content;
+             }
+        }
+        part_text {
+             get {
+
+             }
+             set {
+
+             }
+             keys {
+                  const char *part;
+             }
+             values {
+                  const char *label;
+             }
+        }
+        protected part_text_custom {
+             get {
+               legacy null;
+             }
+             set {
+               legacy null;
+             }
+             keys {
+                  const char *part;
+             }
+             values {
+                  const char *label;
+             }
+        }
+        focus {
+             get {
+
+             }
+             set {
+
+             }
+             values {
+                  Eina_Bool focused;
+             }
+        }
+        style {
+             get {
+
+             }
+             set {
+
+             }
+             values {
+                  const char *style;
+             }
+        }
+        disabled {
+             get {
+
+             }
+             set {
+
+             }
+             values {
+                  Eina_Bool disable;
+             }
+        }
+        access_order {
+             get {
+                 objs: const;
+             }
+             set {
+
+             }
+             values {
+                  Eina_List *objs;
+             }
+        }
+   }
+   methods {
+      widget_get {
+             const;
+             return Evas_Object*;
+        }
+      del {
+        }
+      protected pre_notify_del {
+             legacy null;
+        }
+      tooltip_text_set {
+             params {
+                  const char *text;
+             }
+        }
+      protected tooltip_translatable_text_set {
+             legacy null;
+             params {
+                  const char *text;
+             }
+        }
+      tooltip_unset {
+        }
+      cursor_unset {
+        }
+      part_content_unset {
+             params {
+                  const char *part;
+             }
+             return Evas_Object*;
+        }
+      protected part_text_custom_update {
+             legacy null;
+        }
+      signal_callback_add {
+             params {
+                  const char *emission;
+                  const char *source;
+                  Elm_Object_Item_Signal_Cb func;
+                  void *data;
+             }
+        }
+      signal_callback_del {
+             params {
+                  const char *emission;
+                  const char *source;
+                  Elm_Object_Item_Signal_Cb func;
+             }
+             return void*;
+        }
+      signal_emit {
+             params {
+                  const char *emission;
+                  const char *source;
+             }
+        }
+      access_info_set {
+             params {
+                  const char *txt;
+             }
+        }
+      access_object_get {
+             return Evas_Object*;
+        }
+      domain_translatable_part_text_set {
+             params {
+                  const char *part;
+                  const char *domain;
+                  const char *label;
+             }
+        }
+      translatable_part_text_get {
+             const;
+             params {
+                  const char *part;
+             }
+             return const char*;
+        }
+      protected translate {
+             legacy null;
+        }
+      domain_part_text_translatable_set {
+             params {
+                  const char *part;
+                  const char *domain;
+                  Eina_Bool translatable;
+             }
+        }
+      track {
+             return Evas_Object*;
+        }
+      untrack {
+        }
+      track_get {
+             const;
+             return int;
+        }
+      protected track_cancel {
+             legacy null;
+        }
+      del_cb_set {
+             params {
+                  Evas_Smart_Cb del_cb;
+             }
+        }
+      tooltip_content_cb_set {
+             params {
+                  Elm_Tooltip_Item_Content_Cb func;
+                  const void *data;
+                  Evas_Smart_Cb del_cb;
+             }
+        }
+      access_register {
+            return Evas_Object*;
+        }
+      access_unregister {
+        }
+      access_order_unset {
+        }
+      protected disable {
+             legacy null;
+        }
+      protected del_pre {
+             legacy null;
+             return Eina_Bool;
+        }
+   }
+   implements {
+        Eo_Base::constructor;
+        Eo_Base::destructor;
+   }
+}

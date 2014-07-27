@@ -5680,7 +5680,7 @@ _item_focus_set_hook(Elm_Object_Item *it, Eina_Bool focused)
                _elm_genlist_item_unfocused((Elm_Gen_Item *)sd->focused_item);
              _elm_genlist_item_focused((Elm_Gen_Item *)it);
 
-             _elm_widget_item_highlight_in_theme(obj, (Elm_Object_Item *)it);
+             elm_widget_item_internal_highlight_in_theme(obj, (Elm_Object_Item *)it);
              _elm_widget_highlight_in_theme_update(obj);
              _elm_widget_focus_highlight_start(obj);
           }

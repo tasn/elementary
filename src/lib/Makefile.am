@@ -774,7 +774,9 @@ BUILT_SOURCES = \
 		elm_web.eo.legacy.h \
 		elm_win.eo.c \
 		elm_win.eo.h \
-		elm_win.eo.legacy.h
+		elm_win.eo.legacy.h \
+		elm_widget_item.eo.c \
+		elm_widget_item.eo.h
 
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
 elementaryeolianfiles_DATA = \
@@ -866,7 +868,8 @@ elementaryeolianfiles_DATA = \
 	     elm_toolbar.eo \
 	     elm_video.eo \
 	     elm_web.eo \
-	     elm_win.eo
+	     elm_win.eo \
+	     elm_widget_item.eo
 
 EXTRA_DIST += \
               ${elementaryeolianfiles_DATA}

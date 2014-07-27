@@ -822,7 +822,7 @@ _item_focus_set_hook(Elm_Object_Item *it, Eina_Bool focused)
           _elm_toolbar_item_unfocused(it);
      }
 
-   _elm_widget_item_highlight_in_theme(obj, (Elm_Object_Item *)it);
+   elm_widget_item_internal_highlight_in_theme(obj, (Elm_Object_Item *)it);
    _elm_widget_highlight_in_theme_update(obj);
    _elm_widget_focus_highlight_start(obj);
 }

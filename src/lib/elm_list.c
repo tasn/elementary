@@ -984,7 +984,7 @@ _items_fix(Evas_Object *obj)
    _elm_list_unwalk(obj, sd);
 
    //focus highlight in_theme is set by list item theme.
-   _elm_widget_item_highlight_in_theme(
+   elm_widget_item_internal_highlight_in_theme(
          obj, elm_list_first_item_get(obj));
 
    evas_object_unref(obj);
