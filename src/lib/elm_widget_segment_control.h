@@ -2,6 +2,9 @@
 #define ELM_WIDGET_SEGMENT_CONTROL_H
 
 #include "Elementary.h"
+#include "elm_segment_control_item.eo.h"
+
+#include "elm_object_item_migration_temp.h"
 
 /**
  * @addtogroup Widget
@@ -18,20 +21,20 @@
  * Base layout smart data extended with segment control instance data.
  */
 typedef struct _Elm_Segment_Control_Data       Elm_Segment_Control_Data;
-typedef struct _Elm_Segment_Item               Elm_Segment_Item;
+typedef struct _Elm_Segment_Control_Item_Data          Elm_Segment_Control_Item_Data;
 
 struct _Elm_Segment_Control_Data
 {
    Evas_Object          *obj;
    Eina_List            *items;
-   Elm_Segment_Item     *selected_item;
+   Elm_Widobj_Item      *selected_item;
 
    int                   item_width;
 };
 
-struct _Elm_Segment_Item
+struct _Elm_Segment_Control_Item_Data
 {
-   ELM_WIDGET_ITEM;
+   Elm_Widget_Item_Data *base;
 
    Evas_Object *icon;
    const char  *label;
@@ -63,16 +66,19 @@ struct _Elm_Segment_Item
        return val;                                              \
     }
 
-#define ELM_SEGMENT_CONTROL_CHECK(obj)                              \
+#define ELM_SEGMENT_CONTROL_CHECK(obj)                          \
   if (EINA_UNLIKELY(!eo_isa((obj), ELM_SEGMENT_CONTROL_CLASS))) \
     return
 
-#define ELM_SEGMENT_CONTROL_ITEM_CHECK(it)                  \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, ); \
-  ELM_SEGMENT_CONTROL_CHECK(it->base.widget);
+#define ELM_SEGMENT_ITEM_DATA_GET(o, sd) \
+  Elm_Segment_Control_Item_Data * sd = eo_data_scope_get(o, ELM_SEGMENT_CONTROL_ITEM_CLASS)
 
-#define ELM_SEGMENT_CONTROL_ITEM_CHECK_OR_RETURN(it, ...)              \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-  ELM_SEGMENT_CONTROL_CHECK(it->base.widget) __VA_ARGS__;
+#define ELM_SEGMENT_CONTROL_ITEM_CHECK(obj)                  \
+ if (EINA_UNLIKELY(!eo_isa((obj), ELM_SEGMENT_CONTROL_ITEM_CLASS)))   \
+    return
+
+#define ELM_SEGMENT_CONTROL_ITEM_CHECK_OR_RETURN(obj, ...)    \
+ if (EINA_UNLIKELY(!eo_isa((obj), ELM_SEGMENT_CONTROL_ITEM_CLASS)))    \
+    return __VA_ARGS__;
 
 #endif
