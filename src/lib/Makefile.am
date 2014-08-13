@@ -843,7 +843,9 @@ BUILT_SOURCES = \
 		elm_web.eo.legacy.h \
 		elm_win.eo.c \
 		elm_win.eo.h \
-		elm_win.eo.legacy.h
+		elm_win.eo.legacy.h \
+		elm_widget_item.eo.c \
+		elm_widget_item.eo.h
 
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
 elementaryeolianfiles_DATA = \
@@ -937,7 +939,8 @@ elementaryeolianfiles_DATA = \
 	     elm_toolbar.eo \
 	     elm_video.eo \
 	     elm_web.eo \
-	     elm_win.eo
+	     elm_win.eo \
+	     elm_widget_item.eo
 
 EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
@@ -1033,6 +1036,7 @@ nodist_includesunstable_HEADERS = \
 				  elm_video.eo.h \
 				  elm_web.eo.h \
 				  elm_win.eo.h \
+				  elm_widget_item.eo.h \
 				  elm_layout.eo.legacy.h \
 				  elm_frame.eo.legacy.h \
 				  elm_hover.eo.legacy.h \
@@ -1095,7 +1099,8 @@ nodist_includesunstable_HEADERS = \
 				  elm_toolbar.eo.legacy.h \
 				  elm_video.eo.legacy.h \
 				  elm_web.eo.legacy.h \
-				  elm_win.eo.legacy.h
+				  elm_win.eo.legacy.h \
+				  elm_widget_item.eo.legacy.h
 
 if HAVE_CXX11
 
