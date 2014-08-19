@@ -577,8 +577,8 @@ struct _Elm_Widget_Item_Data
 #define ELM_WIDGET_ITEM_MAGIC 0xef1e1301
    EINA_MAGIC;
 /* simple accessor macros */
-#define VIEW(X)   X->base.view
-#define WIDGET(X) X->base.widget
+#define VIEW(X)   X->base->view
+#define WIDGET(X) X->base->widget
 #define EO_OBJ(X) (Elm_Object_Item *)X->base->eo_obj
    /**< the owner widget that owns this item */
    Evas_Object                   *widget;
