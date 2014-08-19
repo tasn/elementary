@@ -846,40 +846,58 @@ BUILT_SOURCES = \
 		elm_win.eo.legacy.h \
 		elm_widget_item.eo.c \
 		elm_widget_item.eo.h \
+		elm_widget_item.eo.legacy.h \
 		elm_color_item.eo.c \
 		elm_color_item.eo.h \
+		elm_color_item.eo.legacy.h \
 		elm_dayselector_item.eo.c \
 		elm_dayselector_item.eo.h \
+		elm_dayselector_item.eo.legacy.h \
 		elm_hoversel_item.eo.c \
 		elm_hoversel_item.eo.h \
+		elm_hoversel_item.eo.legacy.h \
 		elm_segment_control_item.eo.c \
 		elm_segment_control_item.eo.h \
+		elm_segment_control_item.eo.legacy.h \
 		elm_slideshow_item.eo.c \
 		elm_slideshow_item.eo.h \
+		elm_slideshow_item.eo.legacy.h \
 		elm_flipselector_item.eo.c \
 		elm_flipselector_item.eo.h \
+		elm_flipselector_item.eo.legacy.h \
 		elm_menu_item.eo.c \
 		elm_menu_item.eo.h \
+		elm_menu_item.eo.legacy.h \
 		elm_ctxpopup_item.eo.c \
 		elm_ctxpopup_item.eo.h \
+		elm_ctxpopup_item.eo.legacy.h \
 		elm_index_item.eo.c \
 		elm_index_item.eo.h \
+		elm_index_item.eo.legacy.h \
 		elm_multibuttonentry_item.eo.c \
 		elm_multibuttonentry_item.eo.h \
+		elm_multibuttonentry_item.eo.legacy.h \
 		elm_naviframe_item.eo.c \
 		elm_naviframe_item.eo.h \
+		elm_naviframe_item.eo.legacy.h \
 		elm_genlist_item.eo.c \
 		elm_genlist_item.eo.h \
+		elm_genlist_item.eo.legacy.h \
 		elm_gengrid_item.eo.c \
 		elm_gengrid_item.eo.h \
+		elm_gengrid_item.eo.legacy.h \
 		elm_list_item.eo.c \
 		elm_list_item.eo.h \
+		elm_list_item.eo.legacy.h \
 		elm_toolbar_item.eo.c \
 		elm_toolbar_item.eo.h \
+		elm_toolbar_item.eo.legacy.h \
 		elm_diskselector_item.eo.c \
 		elm_diskselector_item.eo.h \
+		elm_diskselector_item.eo.legacy.h \
 		elm_popup_item.eo.c \
-		elm_popup_item.eo.h
+		elm_popup_item.eo.h \
+		elm_popup_item.eo.legacy.h
 
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
 elementaryeolianfiles_DATA = \

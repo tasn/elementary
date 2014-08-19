@@ -447,12 +447,6 @@ _elm_slideshow_item_sorted_insert(Eo *obj, Elm_Slideshow_Data *sd, const Elm_Sli
    return eo_item;
 }
 
-EAPI void
-elm_slideshow_item_show(Elm_Object_Item *it)
-{
-   eo_do(it, elm_obj_slideshow_item_show());
-}
-
 EOLIAN static void
 _elm_slideshow_item_show(Eo *eo_item EINA_UNUSED, Elm_Slideshow_Item_Data *item)
 {
@@ -666,14 +660,6 @@ _elm_slideshow_item_current_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
    Elm_Slideshow_Item_Data *it = sd->current;
    return it?EO_OBJ(it):NULL;
-}
-
-EAPI Evas_Object *
-elm_slideshow_item_object_get(const Elm_Object_Item *it)
-{
-   Evas_Object *ret = NULL;
-   eo_do(it, ret = elm_obj_slideshow_item_object_get());
-   return ret;
 }
 
 EOLIAN static Evas_Object *
