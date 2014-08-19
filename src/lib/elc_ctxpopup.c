@@ -56,7 +56,7 @@ _elm_ctxpopup_elm_widget_translate(Eo *obj, Elm_Ctxpopup_Data *sd)
    if (sd->auto_hide) evas_object_hide(obj);
 
    EINA_LIST_FOREACH(sd->items, l, it)
-     eo_do((Eo *)it, elm_wdg_item_translate());
+     eo_do(it, elm_wdg_item_translate());
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
 
@@ -1147,7 +1147,7 @@ _elm_ctxpopup_evas_object_smart_del(Eo *obj, Elm_Ctxpopup_Data *sd)
    ELM_SAFE_FREE(sd->bg, evas_object_del);
 
    EINA_LIST_FREE(sd->items, it)
-     eo_del((Eo *)it);
+     eo_del(it);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -1276,7 +1276,7 @@ _elm_ctxpopup_item_append(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Eva
 
    if (sd->visible) elm_layout_sizing_eval(obj);
 
-   return (Elm_Object_Item *)eo_item;
+   return eo_item;
 }
 
 EOLIAN static void
@@ -1369,13 +1369,13 @@ _elm_ctxpopup_item_prepend(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Ev
 
    if (sd->visible) elm_layout_sizing_eval(obj);
 
-   return (Elm_Object_Item *)eo_item;
+   return eo_item;
 }
 
 EAPI Elm_Object_Item *
 elm_ctxpopup_item_prev_get(const Elm_Object_Item *it)
 {
-   return eo_do((Eo *)it, elm_obj_ctxpopup_item_prev_get());
+   return eo_do(it, elm_obj_ctxpopup_item_prev_get());
 }
 
 EOLIAN static Elm_Object_Item *
@@ -1396,7 +1396,7 @@ _elm_ctxpopup_item_prev_get(Eo *eo_item EINA_UNUSED, Elm_Ctxpopup_Item_Data *ite
 EAPI Elm_Object_Item *
 elm_ctxpopup_item_next_get(const Elm_Object_Item *it)
 {
-   return eo_do((Eo *)it, elm_obj_ctxpopup_item_next_get());
+   return eo_do(it, elm_obj_ctxpopup_item_next_get());
 }
 
 EOLIAN static Elm_Object_Item *
