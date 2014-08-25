@@ -1,6 +1,15 @@
 =================
-Elementary 1.10.2
+Elementary 1.10.3
 =================
+
+Changes since 1.10.2:
+---------------------
+
+Fixes:
+
+   * elc_naviframe: Fix warning caused by elm_obj_layout_signal_emit override function in naviframe
+   * Gengrid: fix position calculation
+   * Genlist: do not segv if the user clear the list on item double-click
 
 Changes since 1.10.1:
 ---------------------
