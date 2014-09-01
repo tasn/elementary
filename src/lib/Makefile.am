@@ -877,7 +877,9 @@ BUILT_SOURCES = \
 		elm_toolbar_item.eo.c \
 		elm_toolbar_item.eo.h \
 		elm_diskselector_item.eo.c \
-		elm_diskselector_item.eo.h
+		elm_diskselector_item.eo.h \
+		elm_popup_item.eo.c \
+		elm_popup_item.eo.h
 
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
 elementaryeolianfiles_DATA = \
@@ -988,7 +990,8 @@ elementaryeolianfiles_DATA = \
 	     elm_gengrid_item.eo \
 	     elm_list_item.eo \
 	     elm_toolbar_item.eo \
-	     elm_diskselector_item.eo
+	     elm_diskselector_item.eo \
+	     elm_popup_item.eo
 
 EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
@@ -1099,6 +1102,7 @@ nodist_includesunstable_HEADERS = \
 				  elm_list_item.eo.h \
 				  elm_toolbar_item.eo.h \
 				  elm_diskselector_item.eo.h \
+				  elm_popup_item.eo.h \
 				  elm_ctxpopup_item.eo.h \
 				  elm_slideshow_item.eo.h \
 				  elm_layout.eo.legacy.h \
@@ -1180,7 +1184,8 @@ nodist_includesunstable_HEADERS = \
 				  elm_gengrid_item.eo.legacy.h \
 				  elm_list_item.eo.legacy.h \
 				  elm_toolbar_item.eo.legacy.h \
-				  elm_diskselector_item.eo.legacy.h
+				  elm_diskselector_item.eo.legacy.h \
+				  elm_popup_item.eo.legacy.h
 
 if HAVE_CXX11
 
