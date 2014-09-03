@@ -4018,6 +4018,9 @@ _elm_map_evas_smart_add(Eo *obj, Elm_Map_Data *priv)
 
    priv->mode = ELM_MAP_ZOOM_MODE_MANUAL;
 
+   if (!elm_need_efreet())
+     ERR("Efreet initialization failed!");
+
    if (!ecore_file_download_protocol_available("http://"))
      ERR("Ecore must be built with curl support for the map widget!");
 }
