@@ -1,6 +1,15 @@
 =================
-Elementary 1.11.1
+Elementary 1.11.2
 =================
+
+Changes since 1.11.1:
+---------------------
+
+Fixes:
+
+   * label: Fix size calculation for wrapped label
+   * elm examples - missing -lm link - fix
+   * elm_map: the widget use efreet cache home to save image files to, so efreet should be initialized.
 
 Changes since 1.10.0:
 ---------------------
