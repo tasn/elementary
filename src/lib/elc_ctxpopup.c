@@ -1035,9 +1035,9 @@ _list_del(Elm_Ctxpopup_Data *sd)
    ELM_SAFE_FREE(sd->list, evas_object_del);
 }
 
-EOLIAN static Eina_Bool
-_elm_ctxpopup_item_elm_widget_item_del_pre(Eo *eo_ctxpopup_it,
-                                           Elm_Ctxpopup_Item_Data *ctxpopup_it)
+EOLIAN static void
+_elm_ctxpopup_item_eo_base_destructor(Eo *eo_ctxpopup_it,
+                                      Elm_Ctxpopup_Item_Data *ctxpopup_it)
 {
    Evas_Object *list;
 
@@ -1054,7 +1054,7 @@ _elm_ctxpopup_item_elm_widget_item_del_pre(Eo *eo_ctxpopup_it,
         sd->items = eina_list_remove(sd->items, eo_ctxpopup_it);
         evas_object_hide(WIDGET(ctxpopup_it));
 
-        return EINA_TRUE;
+        goto end;
      }
 
    if (ctxpopup_it->list_item)
@@ -1062,7 +1062,8 @@ _elm_ctxpopup_item_elm_widget_item_del_pre(Eo *eo_ctxpopup_it,
    sd->items = eina_list_remove(sd->items, eo_ctxpopup_it);
    if (sd->list_visible) elm_layout_sizing_eval(WIDGET(ctxpopup_it));
 
-   return EINA_TRUE;
+end:
+   eo_do_super(eo_ctxpopup_it, ELM_CTXPOPUP_ITEM_CLASS, eo_destructor());
 }
 
 EOLIAN static Eina_Bool

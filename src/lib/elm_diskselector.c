@@ -348,8 +348,8 @@ _sizing_eval(Evas_Object *obj)
    _resize_cb(NULL, NULL, obj, NULL);
 }
 
-EOLIAN static Eina_Bool
-_elm_diskselector_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED, Elm_Diskselector_Item_Data *it)
+EOLIAN static void
+_elm_diskselector_item_eo_base_destructor(Eo *eo_it, Elm_Diskselector_Item_Data *it)
 {
    Elm_Diskselector_Item_Data *item2, *dit;
    Eina_List *l;
@@ -454,7 +454,7 @@ _elm_diskselector_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED, Elm_Diskse
 
    _sizing_eval(obj);
 
-   return EINA_TRUE;
+   eo_do_super(eo_it, ELM_DISKSELECTOR_CLASS, eo_destructor());
 }
 
 EOLIAN static void
