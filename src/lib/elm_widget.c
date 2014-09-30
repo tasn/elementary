@@ -4159,6 +4159,7 @@ EOLIAN static void
 _elm_widget_item_eo_base_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
 {
    Elm_Translate_String_Data *ts;
+   Eo *parent;
 
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
 
@@ -4184,6 +4185,10 @@ _elm_widget_item_eo_base_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
 
    if (item->description)
      eina_stringshare_del(item->description);
+
+    eo_do(eo_item, parent = elm_interface_atspi_accessible_parent_get());
+    if (parent && !eo_destructed_is(parent))
+      elm_interface_atspi_accessible_children_changed_del_signal_emit(parent, eo_item);
 
    EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
 
