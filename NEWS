@@ -1,6 +1,15 @@
 =================
-Elementary 1.11.2
+Elementary 1.11.3
 =================
+
+Changes since 1.11.2:
+---------------------
+
+Fixes:
+
+   * elm_win should not check ELM_ACCEL variable if application has overridden it
+   * remove accel_override from elm_config
+   * bg: fix the _elm_bg_elm_layout_sizing_eval bug.
 
 Changes since 1.11.1:
 ---------------------
