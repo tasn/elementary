@@ -1,6 +1,13 @@
 =================
-Elementary 1.11.3
+Elementary 1.11.4
 =================
+
+Changes since 1.11.3:
+---------------------
+
+Fixes:
+
+   * widget: fix seg fault when ts is NULL.
 
 Changes since 1.11.2:
 ---------------------
