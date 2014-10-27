@@ -42,6 +42,7 @@ void test_clock_edit2(void *data, Evas_Object *obj, void *event_info);
 void test_clock_pause(void *data, Evas_Object *obj, void *event_info);
 void test_check(void *data, Evas_Object *obj, void *event_info);
 void test_check_toggle(void *data, Evas_Object *obj, void *event_info);
+void test_combobox(void *data, Evas_Object *obj, void *event_info);
 void test_radio(void *data, Evas_Object *obj, void *event_info);
 void test_layout(void *data, Evas_Object *obj, void *event_info);
 void test_layout2(void *data, Evas_Object *obj, void *event_info);
@@ -716,6 +717,7 @@ add_tests:
    ADD_TEST(NULL, "Selectors", "FlipSelector", test_flipselector);
    ADD_TEST(NULL, "Selectors", "DaySelector", test_dayselector);
    ADD_TEST(NULL, "Selectors", "Main menu", test_main_menu);
+   ADD_TEST(NULL, "Selectors", "Combobox", test_combobox);
 
    //------------------------------//
    ADD_TEST(NULL, "Cursors", "Cursor", test_cursor);

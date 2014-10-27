@@ -1,0 +1,95 @@
+class Elm_Combobox (Elm_Button, Evas.Selectable_Interface,
+      		    Elm_Interface_Atspi_Widget_Action,
+		    Elm_Entry, Elm_Genlist, Elm_Hover)
+{
+   eo_prefix: elm_obj_combobox;
+
+   properties {
+      hover_parent {
+         set {
+            /*@
+            @brief Set the Hover parent
+
+            Sets the hover parent object, the area that will be darkened when the
+            hoversel is clicked. Should probably be the window that the hoversel is
+            in. See @ref Hover objects for more information.
+
+            @ingroup Hoversel */
+         }
+         get {
+            /*@
+            @brief Get the Hover parent
+
+            @return The used parent
+
+            Get the hover parent object.
+
+            @see elm_hoversel_hover_parent_set()
+
+            @ingroup Hoversel */
+         }
+         values {
+            Evas_Object *parent; /*@ The parent to use */
+         }
+      }
+      expanded {
+         get {
+            /*@
+            @brief Returns whether the hoversel is expanded.
+
+            @return This will return @c EINA_TRUE if the hoversel is expanded or
+            @c EINA_FALSE if it is not expanded.
+
+            @ingroup Hoversel */
+            return: bool;
+         }
+      }
+   }
+
+   methods {
+      hover_begin {
+         /*@
+         @brief This triggers the hoversel popup from code, the same as if the user
+         had clicked the button.
+
+         @ingroup Hoversel */
+
+      }
+      hover_end {
+         /*@
+         @brief This dismisses the hoversel popup as if the user had clicked
+         outside the hover.
+
+         @ingroup Hoversel */
+
+      }
+   }
+
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.hide;
+      Evas.Object_Smart.show;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Elm_Widget.parent.set;
+      Elm_Widget.part_text.set;
+      Elm_Widget.part_text.get;
+      Elm_Widget.theme_apply;
+      Elm_Widget.translate;
+      Elm_Widget.event;
+      Elm_Button.admits_autorepeat.get;
+      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
+   }
+
+   events {
+      selected;
+      dismissed;
+      expanded;
+      item,focused;
+      item,unfocused;
+      clicked;
+      language,changed;
+      access,changed;
+   }
+}

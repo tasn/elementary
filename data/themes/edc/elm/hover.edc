@@ -425,6 +425,10 @@ group { name: "elm/hover/base/popout";
 
 group { name: "elm/hover/base/hoversel_vertical/default";
    alias: "elm/hover/base/hoversel_vertical/entry";
+
+   alias: "elm/hover/base/combobox_vertical/entry";
+   alias: "elm/hover/base/combobox_vertical/default";
+
    images.image: "button_normal.png" COMP;
    images.image: "vertical_separated_bar_glow.png" COMP;
    parts {
@@ -643,6 +647,10 @@ group { name: "elm/hover/base/hoversel_vertical/default";
 
 group { name: "elm/hover/base/hoversel_horizontal/default";
    alias: "elm/hover/base/hoversel_horizontal/entry";
+
+   alias: "elm/hover/base/combobox_horizontal/default";
+   alias: "elm/hover/base/combobox_horizontal/entry";
+
    images.image: "button_normal.png" COMP;
    parts {
       part { name: "elm.swallow.offset"; type: SWALLOW;
