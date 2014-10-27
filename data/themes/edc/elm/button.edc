@@ -1372,9 +1372,9 @@ group { name: "elm/button/base/combobox_vertical/default";
             align: 0.5 0.5;
             rel1.offset: 6 5;
             rel1.to: "base";
-            rel2.relative: 1.0 1.0;
-            rel2.offset: -7 -8;
-            rel2.to: "base";
+            rel2.relative: 0.0 1.0;
+            rel2.offset: -3 -8;
+            rel2.to: "select_line";
             visible: 1;
          }
       }
