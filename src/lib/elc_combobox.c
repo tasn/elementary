@@ -252,6 +252,9 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
    sd->entry = entry = eo_add(ELM_ENTRY_CLASS, obj);
    elm_widget_mirrored_automatic_set(entry, EINA_FALSE);
    elm_widget_mirrored_set(entry, elm_widget_mirrored_get(obj));
+   elm_scroller_policy_set(entry, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_entry_scrollable_set(entry, EINA_TRUE);
+   elm_entry_single_line_set(entry, EINA_TRUE);
    elm_object_style_set(entry, buf);
    evas_object_show(entry);
 
