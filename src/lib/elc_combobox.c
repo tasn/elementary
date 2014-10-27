@@ -142,6 +142,7 @@ _activate(Evas_Object *obj)
    /* else */
    elm_object_part_content_set(sd->hover, elm_hover_best_content_location_get
                                (sd->hover, ELM_HOVER_AXIS_VERTICAL), sd->genlist);
+   evas_object_show(sd->genlist);
 
    evas_object_smart_callback_call(obj, SIG_EXPANDED, NULL);
    evas_object_show(sd->hover);
