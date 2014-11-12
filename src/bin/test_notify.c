@@ -62,7 +62,7 @@ test_notify(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    lb = elm_label_add(win);
    elm_label_line_wrap_set(lb, ELM_WRAP_MIXED);
-   elm_label_wrap_width_set(lb, ELM_SCALE_SIZE(140));
+   elm_label_wrap_width_set(lb, elm_config_scale_get() * 140);
    elm_object_text_set(lb, "This position is the default. This is multiline text.");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
