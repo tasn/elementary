@@ -1,6 +1,21 @@
 =================
-Elementary 1.11.4
+Elementary 1.11.5
 =================
+
+Changes since 1.11.4:
+---------------------
+
+Fixes:
+
+   * fileselector: Do not call _populate directly in APIs (T1663)
+   * entry/test: make scrollable entries visible
+   * Elm_Panel: forbid changing of content of "elm.swallow.event" part
+   * elm_widget: fix segfaults for _elm_widget_item_style_set/get
+   * genlist: Remove unnecessary callbacks when item loop is disabled.
+   * widget: fix the typo. Use win object instead.
+   * elm_box_align_set API fix
+   * label: Reset sd->lastw as '-1' in some elm_label APIs for ensure the sizing_eval.
+   * elm_box: inappropriate size_hint_align value usage fix
 
 Changes since 1.11.3:
 ---------------------
