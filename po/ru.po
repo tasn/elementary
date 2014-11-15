@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.11\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-11-07 09:26+0900\n"
-"PO-Revision-Date: 2014-07-31 19:14+0400\n"
+"POT-Creation-Date: 2014-11-15 13:55+0300\n"
+"PO-Revision-Date: 2014-11-15 13:55+0300\n"
 "Last-Translator: Игорь Мурзов <garik@efl.so>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
 "Language: ru\n"
@@ -223,14 +223,12 @@ msgid "state: closed"
 msgstr "состояние: закрыто"
 
 #: src/lib/elm_panel.c:110
-#, fuzzy
 msgid "A panel is open"
-msgstr "Отрисовщик открыт"
+msgstr "Панель открыта"
 
 #: src/lib/elm_panel.c:112
-#, fuzzy
 msgid "Double tap to close panel menu"
-msgstr "Двойной щелчёк, чтобы закрыть меню отрисовщика"
+msgstr "Двойной щелчок, чтобы закрыть меню панели"
 
 #: src/lib/elm_panel.c:182
 msgid "panel button"
