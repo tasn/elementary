@@ -1,117 +1,121 @@
 /**
  * @defgroup Cursors Cursors
- * @ingroup Elementary
+ * @ingroup elm_infra_group
+ * @brief The Elementary cursor is an internal smart object used to
+ *        customize the mouse cursor displayed over objects (or
+ *        widgets).
  *
- * The Elementary cursor is an internal smart object used to
- * customize the mouse cursor displayed over objects (or
- * widgets). In the most common scenario, the cursor decoration
- * comes from the graphical @b engine Elementary is running
- * on. Those engines may provide different decorations for cursors,
+ * In the most common scenario, the cursor decoration
+ * comes from the graphical @b engine Elementary that is running.
+ * Those engines may provide different decorations for cursors,
  * and Elementary provides functions to choose them (think of X11
  * cursors, as an example).
  *
  * By default, Elementary searches cursors only from engine.
  * There's also the possibility of, besides using engine provided
- * cursors, also use the ones coming from Edje theme files. Both
+ * cursors, to also use the ones coming from Edje theme files. Both
  * globally and per widget, Elementary makes it possible for one to
  * make the cursors lookup to be held on engines only or on
- * Elementary's theme file, too. To set cursor's hot spot,
- * two data items should be added to cursor's theme: "hot_x" and
- * "hot_y", that are the offset from upper-left corner of the cursor
- * (coordinates 0,0).
+ * Elementary's theme file, too. To set the cursor's hot spot,
+ * two data items should be added to the cursor's theme: "hot_x" and
+ * "hot_y", that are the offset from the upper-left corner of the cursor
+ * (coordinates (0,0)).
  *
  * @{
  */
 
 /**
- * Set the cursor to be shown when mouse is over the object
+ * @brief Sets the cursor to be shown when the mouse is over the object.
  *
- * Set the cursor that will be displayed when mouse is over the
- * object. The object can have only one cursor set to it, so if
- * this function is called twice for an object, the previous set
- * will be unset.
- * If using X cursors, a definition of all the valid cursor names
- * is listed on Elementary_Cursors.h. If an invalid name is set
- * the default cursor will be used.
+ * @details This sets the cursor that is displayed when the mouse is over the
+ *          object. The object can have only one cursor set to it, so if
+ *          this function is called twice for an object, the previous set
+ *          is unset.
  *
- * @param obj the object being set a cursor.
- * @param cursor the cursor name to be used.
+ *          If using X cursors, a definition of all the valid cursor names
+ *          is listed on Elementary_Cursors.h. If an invalid name is set
+ *          the default cursor is used.
  *
- * @ingroup Cursors
+ * @since_tizen 2.3
+ *
+ * @param[in] obj The object being set as a cursor
+ * @param[in] cursor The cursor name to be used
  */
 EAPI void        elm_object_cursor_set(Evas_Object *obj, const char *cursor);
 
 /**
- * Get the cursor to be shown when mouse is over the object
+ * @brief Gets the cursor to be shown when the mouse is over the object.
  *
- * @param obj an object with cursor already set.
- * @return the cursor name.
+ * @since_tizen 2.3
  *
- * @ingroup Cursors
+ * @param[in] obj The object with the cursor already set
+ * @return The cursor name
  */
 EAPI const char *elm_object_cursor_get(const Evas_Object *obj);
 
 /**
- * Unset cursor for object
+ * @brief Unsets the cursor for an object.
  *
- * Unset cursor for object, and set the cursor to default if the mouse
- * was over this object.
+ * @details This unsets the cursor for an object, and sets the cursor to default if the mouse
+ *          is over this object.
  *
- * @param obj Target object
+ * @since_tizen 2.3
+ *
+ * @param[in] obj The target object
  * @see elm_object_cursor_set()
- *
- * @ingroup Cursors
  */
 EAPI void        elm_object_cursor_unset(Evas_Object *obj);
 
 /**
- * Sets a different style for this object cursor.
+ * @brief Sets a different style for this object cursor.
  *
- * @note before you set a style you should define a cursor with
- *       elm_object_cursor_set()
+ * @remarks Before you set a style you should define a cursor with
+ *          elm_object_cursor_set().
  *
- * @param obj an object with cursor already set.
- * @param style the theme style to use (default, transparent, ...)
+ * @since_tizen 2.3
  *
- * @ingroup Cursors
+ * @param[in] obj An object with the cursor already set
+ * @param[in] style The theme style to use (default, transparent, ...)
  */
 EAPI void        elm_object_cursor_style_set(Evas_Object *obj, const char *style);
 
 /**
- * Get the style for this object cursor.
+ * @brief Gets the style for this object cursor.
  *
- * @param obj an object with cursor already set.
- * @return style the theme style in use, defaults to "default". If the
- *         object does not have a cursor set, then NULL is returned.
+ * @since_tizen 2.3
  *
- * @ingroup Cursors
+ * @param[in] obj An object with the cursor already set
+ * @return style The theme style in use, defaults to "default" \n
+ *               If the object does not have a cursor set, then @c NULL is returned.
  */
 EAPI const char *elm_object_cursor_style_get(const Evas_Object *obj);
 
 /**
- * Set if the cursor set should be searched on the theme or should use
- * the provided by the engine, only.
+ * @brief Sets whether the cursor set should be searched on the theme or should use
+ *        the theme provided by the engine, only.
  *
- * @note before you set theme_search you should define a cursor with
- * elm_object_cursor_set(). By default it will only look for cursors
- * provided by the engine.
+ * @remarks Before you set engine_only you should define a cursor with
+ *          elm_object_cursor_set(). By default it only looks for cursors
+ *          provided by the engine.
  *
- * @param obj an object with cursor already set.
- * @param theme_search boolean to define if cursors should be searched
- * on widget's theme.
+ * @since_tizen 2.3
  *
- * @ingroup Cursors
+ * @param[in] obj An object with the cursor already set
+ * @param[in] theme_search The boolean value to define if cursors should be looked for only
+ *                     from the theme provided by the engine or should be searched on the widget's theme as well
  */
 EAPI void elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme_search);
 
 /**
- * Get if the cursor set should be searched on the theme for this object cursor.
+ * @brief Gets the cursor engine only usage for this object cursor.
  *
- * @param obj an object with cursor already set.
- * @return @c EINA_TRUE if the cursor set should be searched on widget's theme,
- * @c EINA_FALSE otherwise.
+ * @since_tizen 2.3
  *
- * @ingroup Cursors
+ * @param[in] obj An object with the cursor already set
+ * @return engine_only A boolean value to define if cursors should be
+ *                     looked for only from the theme provided by the engine or should be searched on
+ *                     the widget's theme as well \n
+ *                     If the object does not have a cursor set, then @c EINA_FALSE is returned.
  */
 EAPI Eina_Bool elm_object_cursor_theme_search_enabled_get(const Evas_Object *obj);
 

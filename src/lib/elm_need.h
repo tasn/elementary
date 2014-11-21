@@ -1,109 +1,61 @@
 /**
- * Request that your elementary application needs Efreet
+ * @internal
+ * @brief Requests that your elementary application needs Efreet.
  *
- * This initializes the Efreet library when called and if support exists
- * it returns @c EINA_TRUE, otherwise returns @c EINA_FALSE. This must be called
- * before any efreet calls.
+ * @details This initializes the Efreet library when called and if support exists
+ *          it returns @c EINA_TRUE, otherwise it returns @c EINA_FALSE. This must be called
+ *          before any efreet calls.
  *
- * @return @c EINA_TRUE if support exists and initialization succeeded.
+ * @since_tizen 2.3
+ *
+ * @return @c EINA_TRUE if support exists and initialization succeeds,
+ *         otherwise @c EINA_FALSE
  *
  * @ingroup Efreet
  */
 EAPI Eina_Bool elm_need_efreet(void);
 
 /**
- * Request that your elementary application needs Elm_Systray
+ * @internal
  *
- * This initializes the Elm_Systray when called and, if support exists,
- * returns @c EINA_TRUE, otherwise returns @c EINA_FALSE. This must be called
- * before any elm_systray calls.
+ * @brief Requests that your elementary application needs e_dbus.
  *
- * @return @c EINA_TRUE if support exists and initialization succeeded.
+ * @details This initializes the E_dbus library when called and if support exists
+ *          it returns @c EINA_TRUE, otherwise it returns @c EINA_FALSE. This must be called
+ *          before any e_dbus calls.
  *
- * @ingroup Elm_Systray
- * @since 1.8
- */
-EAPI Eina_Bool elm_need_systray(void);
-
-/**
- * Request that your elementary application needs Elm_Sys_Notify
- *
- * This initializes the Elm_Sys_Notify when called and if support exists
- * it returns @c EINA_TRUE, otherwise returns @c EINA_FALSE. This must be called
- * before any elm_sys_notify calls.
- *
- * @return @c EINA_TRUE if support exists and initialization succeeded.
- *
- * @ingroup Elm_Sys_Notify
- * @since 1.8
- */
-EAPI Eina_Bool elm_need_sys_notify(void);
-
-/**
- * Request that your elementary application needs e_dbus
- *
- * This initializes the E_dbus library when called and if support exists
- * it returns @c EINA_TRUE, otherwise returns @c EINA_FALSE. This must be called
- * before any e_dbus calls.
- *
- * @return @c EINA_TRUE if support exists and initialization succeeded.
- *
- * @deprecated use elm_need_eldbus() for Eldbus (v2) support. Old API is
- * deprecated.
+ * @return @c EINA_TRUE if support exists and initialization succeeds,
+ *         otherwise @c EINA_FALSE
  *
  * @ingroup E_dbus
  */
-EAPI Eina_Bool elm_need_e_dbus(void) EINA_DEPRECATED;
+EAPI Eina_Bool elm_need_e_dbus(void);
 
 /**
- * Request that your elementary application needs eldbus
+ * @internal
+ * @brief Requests that your elementary application needs ethumb.
  *
- * This initializes the eldbus (aka v2) library when called and if
- * support exists it returns @c EINA_TRUE, otherwise returns
- * @c EINA_FALSE. This must be called before any eldbus calls.
+ * @details This initializes the Ethumb library when called and if support exists
+ *          it returns @c EINA_TRUE, otherwise it returns @c EINA_FALSE.
+ *          This must be called before any other function that deals with
+ *          elm_thumb objects or ethumb_client instances is called.
  *
- * @return @c EINA_TRUE if support exists and initialization succeeded.
- *
- * @since 1.8.0
- *
- * @ingroup eldbus
- */
-EAPI Eina_Bool elm_need_eldbus(void);
-
-/**
- * Request that your elementary application needs elocation
- *
- * This initializes the elocation library when called and if
- * support exists it returns @c EINA_TRUE, otherwise returns
- * @c EINA_FALSE. This must be called before any elocation usage.
- *
- * @return @c EINA_TRUE if support exists and initialization succeeded.
- *
- * @since 1.8.0
- *
- * @ingroup eldbus
- */
-EAPI Eina_Bool elm_need_elocation(void);
-
-/**
- * Request that your elementary application needs ethumb
- *
- * This initializes the Ethumb library when called and if support exists
- * it returns @c EINA_TRUE, otherwise returns @c EINA_FALSE.
- * This must be called before any other function that deals with
- * elm_thumb objects or ethumb_client instances.
+ * @since_tizen 2.3
  *
  * @ingroup Thumb
  */
 EAPI Eina_Bool elm_need_ethumb(void);
 
 /**
- * Request that your elementary application needs web support
+ * @internal
+ * @brief Requests that your elementary application needs web support.
  *
- * This initializes the Ewebkit library when called and if support exists
- * it returns @c EINA_TRUE, otherwise returns @c EINA_FALSE.
- * This must be called before any other function that deals with
- * elm_web objects or ewk_view instances.
+ * @details This initializes the Ewebkit library when called and if support exists
+ *          it returns @c EINA_TRUE, otherwise it returns @c EINA_FALSE.
+ *          This must be called before any other function that deals with
+ *          elm_web objects or ewk_view instances is called.
+ *
+ * @since_tizen 2.3
  *
  * @ingroup Web
  */

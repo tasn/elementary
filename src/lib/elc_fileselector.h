@@ -1,6 +1,7 @@
 /**
+ * @internal
  * @defgroup Fileselector File Selector
- * @ingroup Elementary
+ * @ingroup elm_widget_group
  *
  * @image html fileselector_inheritance_tree.png
  * @image latex fileselector_inheritance_tree.eps
@@ -34,47 +35,279 @@
  * library, the second form of view will display preview thumbnails
  * of files which it supports.
  *
- * This widget inherits from the Layout one, so that all the
+ * This widget inherits from the @ref Layout one, so that all the
  * functions acting on it also work for file selector objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
- * - @c "activated" - the user activated a file. This can happen by
- *      double-clicking or pressing Enter key. (@p event_info is a
- *      pointer to the activated file path)
+ * @ref Layout :
  * - @c "selected" - the user has clicked on a file (when not in
  *      folders-only mode) or directory (when in folders-only mode)
- * - @c "selected,invalid" - the user has tried to access wrong path
- *      which does not exist.
  * - @c "directory,open" - the list has been populated with new
- *      content (@p event_info is a pointer to the directory's
+ *      content (@c event_info is a pointer to the directory's
  *      path, a @b stringshared string)
  * - @c "done" - the user has clicked on the "ok" or "cancel"
- *      buttons (@p event_info is a pointer to the selection's
+ *      buttons (@c event_info is a pointer to the selection's
  *      path, a @b stringshared string)
- * - @c "focused" - When the fileselector has received focus. (since 1.9)
- * - @c "unfocused" - When the fileselector has lost focus. (since 1.9)
  *
- * For text, elm_layout_text_set() will work here on:
- * @li @c "ok" - OK button label if the ok button is set. @since 1.8
- * @li @c "cancel" - Cancel button label if the cancel button is set. @since 1.8
- *
- * Here is an example on its usage:
- * @li @ref fileselector_example
- */
-
-/**
- * @addtogroup Fileselector
  * @{
  */
 
-#include "elc_fileselector_common.h"
-#ifdef EFL_EO_API_SUPPORT
-#include "elc_fileselector_eo.h"
-#endif
-#ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elc_fileselector_legacy.h"
-#endif
+/**
+ * Defines how a file selector widget is to layout its contents
+ * (file system entries).
+ */
+typedef enum
+{
+   ELM_FILESELECTOR_LIST = 0, /**< layout as a list */
+   ELM_FILESELECTOR_GRID, /**< layout as a grid */
+   ELM_FILESELECTOR_LAST /**< sentinel (helper) value, not used */
+} Elm_Fileselector_Mode;
+
+/**
+ * Add a new file selector widget to the given parent Elementary
+ * (container) object
+ *
+ * @param[in] parent The parent object
+ * @return a new file selector widget handle or @c NULL, on errors
+ *
+ * This function inserts a new file selector widget on the canvas.
+ *
+ * @ingroup Fileselector
+ */
+EAPI Evas_Object          *elm_fileselector_add(Evas_Object *parent);
+
+/**
+ * Enable/disable the file name entry box where the user can type
+ * in a name for a file, in a given file selector widget
+ *
+ * @param[in] obj The file selector object
+ * @param[in] is_save @c EINA_TRUE to make the file selector a "saving
+ * dialog", @c EINA_FALSE otherwise
+ *
+ * Having the entry editable is useful on file saving dialogs on
+ * applications, where one gives a file name to save contents to,
+ * in a given directory in the system. This custom file name will
+ * be reported on the @c "done" smart callback.
+ *
+ * @see elm_fileselector_is_save_get()
+ *
+ * @ingroup Fileselector
+ */
+EAPI void                  elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save);
+
+/**
+ * Get whether the given file selector is in "saving dialog" mode
+ *
+ * @param[in] obj The file selector object
+ * @return @c EINA_TRUE, if the file selector is in "saving dialog"
+ * mode, @c EINA_FALSE otherwise (and on errors)
+ *
+ * @see elm_fileselector_is_save_set() for more details
+ *
+ * @ingroup Fileselector
+ */
+EAPI Eina_Bool             elm_fileselector_is_save_get(const Evas_Object *obj);
+
+/**
+ * Enable/disable folder-only view for a given file selector widget
+ *
+ * @param[in] obj The file selector object
+ * @param[in] only @c EINA_TRUE to make @p obj only display
+ * directories, @c EINA_FALSE to make files to be displayed in it
+ * too
+ *
+ * If enabled, the widget's view will only display folder items,
+ * naturally.
+ *
+ * @see elm_fileselector_folder_only_get()
+ *
+ * @ingroup Fileselector
+ */
+EAPI void                  elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only);
+
+/**
+ * Get whether folder-only view is set for a given file selector
+ * widget
+ *
+ * @param[in] obj The file selector object
+ * @return only @c EINA_TRUE if @p obj is only displaying
+ * directories, @c EINA_FALSE if files are being displayed in it
+ * too (and on errors)
+ *
+ * @see elm_fileselector_folder_only_get()
+ *
+ * @ingroup Fileselector
+ */
+EAPI Eina_Bool             elm_fileselector_folder_only_get(const Evas_Object *obj);
+
+/**
+ * Enable/disable the "ok" and "cancel" buttons on a given file
+ * selector widget
+ *
+ * @param[in] obj The file selector object
+ * @param[in] buttons @c EINA_TRUE to show buttons, @c EINA_FALSE to hide.
+ *
+ * @note A file selector without those buttons will never emit the
+ * @c "done" smart event, and is only usable if one is just hooking
+ * to the other two events.
+ *
+ * @see elm_fileselector_buttons_ok_cancel_get()
+ *
+ * @ingroup Fileselector
+ */
+EAPI void                  elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool buttons);
+
+/**
+ * Get whether the "ok" and "cancel" buttons on a given file
+ * selector widget are being shown.
+ *
+ * @param[in] obj The file selector object
+ * @return @c EINA_TRUE if they are being shown, @c EINA_FALSE
+ * otherwise (and on errors)
+ *
+ * @see elm_fileselector_buttons_ok_cancel_set() for more details
+ *
+ * @ingroup Fileselector
+ */
+EAPI Eina_Bool             elm_fileselector_buttons_ok_cancel_get(const Evas_Object *obj);
+
+/**
+ * Enable/disable a tree view in the given file selector widget,
+ * <b>if it's in @c #ELM_FILESELECTOR_LIST mode</b>
+ *
+ * @param[in] obj The file selector object
+ * @param[in] expand @c EINA_TRUE to enable tree view, @c EINA_FALSE to
+ * disable
+ *
+ * In a tree view, arrows are created on the sides of directories,
+ * allowing them to expand in place.
+ *
+ * @note If it's in other mode, the changes made by this function
+ * will only be visible when one switches back to "list" mode.
+ *
+ * @see elm_fileselector_expandable_get()
+ *
+ * @ingroup Fileselector
+ */
+EAPI void                  elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand);
+
+/**
+ * Get whether tree view is enabled for the given file selector
+ * widget
+ *
+ * @param[in] obj The file selector object
+ * @return @c EINA_TRUE if @p obj is in tree view, @c EINA_FALSE
+ * otherwise (and or errors)
+ *
+ * @see elm_fileselector_expandable_set() for more details
+ *
+ * @ingroup Fileselector
+ */
+EAPI Eina_Bool             elm_fileselector_expandable_get(const Evas_Object *obj);
+
+/**
+ * Set, programmatically, the @b directory that a given file
+ * selector widget will display contents from
+ *
+ * @param[in] obj The file selector object
+ * @param[in] path The path to display in @p obj
+ *
+ * This will change the @b directory that @p obj is displaying. It
+ * will also clear the text entry area on the @p obj object, which
+ * displays select files' names.
+ *
+ * @see elm_fileselector_path_get()
+ *
+ * @ingroup Fileselector
+ */
+EAPI void                  elm_fileselector_path_set(Evas_Object *obj, const char *path);
+
+/**
+ * Get the parent directory's path that a given file selector
+ * widget is displaying
+ *
+ * @param[in] obj The file selector object
+ * @return The (full) path of the directory the file selector is
+ * displaying, a @b stringshared string
+ *
+ * @see elm_fileselector_path_set()
+ *
+ * @ingroup Fileselector
+ */
+EAPI const char           *elm_fileselector_path_get(const Evas_Object *obj);
+
+/**
+ * Set, programmatically, the currently selected file/directory in
+ * the given file selector widget
+ *
+ * @param[in] obj The file selector object
+ * @param[in] path The (full) path to a file or directory
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure. The
+ * latter case occurs if the directory or file pointed to do not
+ * exist.
+ *
+ * @see elm_fileselector_selected_get()
+ *
+ * @ingroup Fileselector
+ */
+EAPI Eina_Bool             elm_fileselector_selected_set(Evas_Object *obj, const char *path);
+
+/**
+ * Get the currently selected item's (full) path, in the given file
+ * selector widget
+ *
+ * @param[in] obj The file selector object
+ * @return The absolute path of the selected item, a @b
+ * stringshared string
+ *
+ * @note Custom editions on @p obj object's text entry, if made,
+ * will appear on the return string of this function, naturally.
+ *
+ * @see elm_fileselector_selected_set() for more details
+ *
+ * @ingroup Fileselector
+ */
+EAPI const char           *elm_fileselector_selected_get(const Evas_Object *obj);
+
+/**
+ * Set the mode in which a given file selector widget will display
+ * (layout) file system entries in its view
+ *
+ * @param[in] obj The file selector object
+ * @param[in] mode The mode of the fileselector, being it one of #ELM_FILESELECTOR_LIST
+ * (default) or #ELM_FILESELECTOR_GRID. The first one, naturally, will display
+ * the files in a list. The latter will make the widget to display its entries
+ * in a grid form.
+ *
+ * @note By using elm_fileselector_expandable_set(), the user may
+ * trigger a tree view for that list.
+ *
+ * @note If Elementary is built with support of the Ethumb
+ * thumbnailing library, the second form of view will display
+ * preview thumbnails of files which it supports. You must have
+ * elm_need_ethumb() called in your Elementary for thumbnailing to
+ * work, though.
+ *
+ * @see elm_fileselector_expandable_set().
+ * @see elm_fileselector_mode_get().
+ *
+ * @ingroup Fileselector
+ */
+EAPI void                  elm_fileselector_mode_set(Evas_Object *obj, Elm_Fileselector_Mode mode);
+
+/**
+ * Get the mode in which a given file selector widget is displaying
+ * (layouting) file system entries in its view
+ *
+ * @param[in] obj The fileselector object
+ * @return The mode in which the fileselector is at
+ *
+ * @see elm_fileselector_mode_set() for more details
+ *
+ * @ingroup Fileselector
+ */
+EAPI Elm_Fileselector_Mode elm_fileselector_mode_get(const Evas_Object *obj);
+
 /**
  * @}
  */

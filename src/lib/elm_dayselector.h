@@ -1,4 +1,5 @@
 /**
+ * @internal
  * @defgroup Dayselector Dayselector
  * @ingroup Elementary
  *
@@ -13,27 +14,27 @@
  *"elm_dayselector" is a day selection widget. It displays all seven days of
  * the week and allows the user to select multiple days.
  *
- * The selection can be toggle by just clicking on the day.
+ * The selection can be toggled by just clicking on the day.
  *
  * Dayselector also provides the functionality to check whether a day is
  * selected or not.
  *
- * First day of the week is taken from config settings by default. It can be
- * altered by using the API elm_dayselector_week_start_set() API.
+ * First day of the week is taken from the config settings by default. It can be
+ * altered by using the elm_dayselector_week_start_set() API.
  *
  * APIs are provided for setting the duration of weekend
  * elm_dayselector_weekend_start_set() and elm_dayselector_weekend_length_set()
  * does this job.
  *
  * Two styles of weekdays and weekends are supported in Dayselector.
- * Application can emit signals on individual check objects for setting the
+ * Applications can emit signals on individual check objects for setting the
  * weekday, weekend styles.
  *
  * Once the weekend start day or weekend length changes, all the weekday &
- * weekend styles will be reset to default style. It's the application's
- * responsibility to set the styles again by sending corresponding signals.
+ * weekend styles are reset to the default style. It's the application's
+ * responsibility to set the styles again by the sending corresponding signals.
  *
- * Supported elm_object_item common APIs.
+ * Supported common elm_object_item APIs.
  *
  * @li @ref elm_object_part_text_set,
  * @li @ref elm_object_part_text_get,
@@ -58,30 +59,133 @@
  * functions acting on it also work for dayselector objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
- * @li @c "dayselector,changed" - when the user changes the state of a day.
- * @li @c "language,changed" - the program's language changed
+ * @ref Layout :
+ * @li @c "dayselector,changed" - When the user changes the state of a day.
+ * @li @c "language,changed" - The program's language is changed.
  *
  * Available styles for dayselector are:
  * @li default
  *
- * This example shows the usage of the widget.
- * @li @ref dayselector_example
- *
- */
-
-/**
- * @addtogroup Dayselector
  * @{
  */
 
-#include "elm_dayselector_common.h"
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_dayselector_eo.h"
-#endif
-#ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elm_dayselector_legacy.h"
-#endif
+/**
+ * @brief Enumeration that identifies the day of the week.
+ * @remarks This API can call the selection/unselection of a day with this as a parameter.
+ *
+ * @see elm_dayselector_day_selected_set()
+ * @see elm_dayselector_day_selected_get()
+ */
+typedef enum
+{
+   ELM_DAYSELECTOR_SUN = 0,/**< Indicates Sunday */
+   ELM_DAYSELECTOR_MON,    /**< Indicates Monday */
+   ELM_DAYSELECTOR_TUE,    /**< Indicates Tuesday */
+   ELM_DAYSELECTOR_WED,    /**< Indicates Wednesday */
+   ELM_DAYSELECTOR_THU,    /**< Indicates Thursday */
+   ELM_DAYSELECTOR_FRI,    /**< Indicates Friday */
+   ELM_DAYSELECTOR_SAT,    /**< Indicates Saturday */
+   ELM_DAYSELECTOR_MAX     /**< Sentinel value, @b don't use */
+} Elm_Dayselector_Day;
+
+/**
+ * @brief Adds the dayselector.
+ *
+ * @param[in] parent The parent object
+ * @return A new dayselector object, otherwise @c NULL if it cannot be created
+ */
+EAPI Evas_Object *elm_dayselector_add(Evas_Object *parent);
+
+/**
+ * @brief Sets the state of a given Dayselector_Day.
+ *
+ * @param[in] obj The Dayselector object
+ * @param[in] day The Dayselector_Day that the user want to set state of
+ * @param[in] selected The state of the day, @c EINA_TRUE is selected
+ *
+ * @see Elm_Dayselector_Day
+ * @see elm_dayselector_day_selected_get()
+ */
+EAPI void   elm_dayselector_day_selected_set(Evas_Object *obj, Elm_Dayselector_Day day, Eina_Bool selected);
+
+/**
+ * @brief Gets the state of a given Dayselector_Day.
+ *
+ * @param[in] obj The Dayselector object
+ * @param[in] day The Dayselector_Day that the user want to know state of
+ * @return @c EINA_TRUE if the day is selected,
+ *         otherwise @c EINA_FALSE
+ *
+ * @see Elm_Dayselector_Day
+ * @see elm_dayselector_day_selected_set()
+ */
+EAPI Eina_Bool   elm_dayselector_day_selected_get(const Evas_Object *obj, Elm_Dayselector_Day day);
+
+/**
+ * @brief Sets the starting day of Dayselector.
+ *
+ * @param[in] obj The Dayselector object
+ * @param[in] day The Dayselector_Day whose first day the user wants to display
+ *
+ * @see Elm_Dayselector_Day
+ * @see elm_dayselector_week_start_get()
+ */
+EAPI void   elm_dayselector_week_start_set(Evas_Object *obj, Elm_Dayselector_Day day);
+
+/**
+ * @brief Gets the starting day of Dayselector.
+ *
+ * @param[in] obj The Dayselector object
+ * @return The day from where the Dayselector displays all the weekdays in order
+ *
+ * @see Elm_Dayselector_Day
+ * @see elm_dayselector_week_start_set()
+ */
+EAPI Elm_Dayselector_Day   elm_dayselector_week_start_get(const Evas_Object *obj);
+
+/**
+ * @brief Sets the weekend starting day of Dayselector.
+ *
+ * @param[in] obj The Dayselector object
+ * @param[in] day The Dayselector_Day which is the first day from where weekend starts
+ *
+ * @see Elm_Dayselector_Day
+ * @see elm_dayselector_weekend_start_get()
+ */
+EAPI void   elm_dayselector_weekend_start_set(Evas_Object *obj, Elm_Dayselector_Day day);
+
+/**
+ * @brief Gets the weekend starting day of Dayselector.
+ *
+ * @param[in] obj The Dayselector object
+ * @return The Elm_Dayselector_Day Day from where the weekend starts
+ *
+ * @see Elm_Dayselector_Day
+ * @see elm_dayselector_weekend_start_set()
+ */
+EAPI Elm_Dayselector_Day   elm_dayselector_weekend_start_get(const Evas_Object *obj);
+
+/**
+ * @brief Sets the weekend length of Dayselector.
+ *
+ * @param[in] obj The Dayselector object
+ * @param[in] length The weekend length, number of days as an integer
+ *
+ * @see elm_dayselector_weekend_length_get()
+ */
+EAPI void   elm_dayselector_weekend_length_set(Evas_Object *obj, unsigned int length);
+
+/**
+ * @brief Gets the weekend length of Dayselector.
+ *
+ * @param[in] obj The Dayselector object
+ * @return The number of days marked as a weekend
+ *
+ * @see Elm_Dayselector_Day
+ * @see elm_dayselector_weekend_length_set()
+ */
+EAPI unsigned int   elm_dayselector_weekend_length_get(const Evas_Object *obj);
+
 /**
  * @}
  */

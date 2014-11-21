@@ -1,15 +1,18 @@
 /**
  * @defgroup Fonts Elementary Fonts
- * @ingroup Elementary
+ * @ingroup elm_infra_group
  *
- * These are functions dealing with font rendering, selection and the
- * like for Elementary applications. One might fetch which system
- * fonts are there to use and set custom fonts for individual classes
- * of UI items containing text (text classes).
+ * @brief These are functions dealing with font rendering, selection, and the
+ *        like for Elementary applications. One might fetch which system
+ *        fonts are there to use and set custom fonts for individual classes
+ *        of UI items containing text (text classes).
  *
  * @{
  */
 
+/**
+ * @brief Structure of Elm Font Property
+ */
 typedef struct _Elm_Font_Properties
 {
    const char *name;
@@ -17,80 +20,80 @@ typedef struct _Elm_Font_Properties
 } Elm_Font_Properties;
 
 /**
- * Translate a font (family) name string in fontconfig's font names
- * syntax into an @c Elm_Font_Properties struct.
+ * @brief Translates a font (family) name string in the fontconfig's font names
+ *        syntax into an #Elm_Font_Properties struct.
  *
- * @param font The font name and styles string
- * @return the font properties struct
+ * @since_tizen 2.3
  *
- * @ingroup Fonts
+ * @remarks The reverse translation can be achieved with
+ *          elm_font_fontconfig_name_get(), for one style only (single font
+ *          instance, not family).
  *
- * @note The reverse translation can be achieved with
- * elm_font_fontconfig_name_get(), for one style only (single font
- * instance, not family).
+ * @param[in] font The font name and styles string
+ * @return The font properties struct
  */
 EAPI Elm_Font_Properties *elm_font_properties_get(const char *font);
 
 /**
- * Free font properties return by elm_font_properties_get().
+ * @brief Frees the font properties returned by elm_font_properties_get().
  *
- * @param efp the font properties struct
+ * @since_tizen 2.3
  *
- * @ingroup Fonts
+ * @param[in] efp The font properties struct
  */
 EAPI void             elm_font_properties_free(Elm_Font_Properties *efp);
 
 /**
- * Translate a font name, bound to a style, into fontconfig's font names
- * syntax.
+ * @brief Translates a font name, bound to a style, into the fontconfig's font names
+ *        syntax.
  *
- * @param name The font (family) name
- * @param style The given style (may be @c NULL)
+ * @since_tizen 2.3
  *
- * @return the font name and style string
+ * @remarks The reverse translation can be achieved with
+ *          elm_font_properties_get(), for one style only (single font
+ *          instance, not family).
  *
- * @ingroup Fonts
+ * @param[in] name The font (family) name
+ * @param[in] style The given style (may be @c NULL)
  *
- * @note The reverse translation can be achieved with
- * elm_font_properties_get(), for one style only (single font
- * instance, not family).
+ * @return The font name and style string
  */
 EAPI char      *elm_font_fontconfig_name_get(const char *name, const char *style);
 
 /**
- * Free the font string return by elm_font_fontconfig_name_get().
+ * @brief Frees the font string returned by elm_font_fontconfig_name_get().
  *
- * @param name the font properties struct
+ * @since_tizen 2.3
  *
- * @ingroup Fonts
+ * @param[in] name The font properties struct
  */
 EAPI void             elm_font_fontconfig_name_free(char *name);
 
 /**
- * Create a font hash table of available system fonts.
+ * @brief Creates a font hash table of available system fonts.
  *
- * One must call it with @p list being the return value of
- * evas_font_available_list(). The hash will be indexed by font
- * (family) names, being its values @c Elm_Font_Properties blobs.
+ * @since_tizen 2.3
  *
- * @param list The list of available system fonts, as returned by
- * evas_font_available_list().
- * @return the font hash.
+ * @remarks One must call it with @a list being the return value of
+ *          evas_font_available_list(). The hash is indexed by font
+ *          (family) names that are its values @c Elm_Font_Properties blobs.
  *
- * @ingroup Fonts
+ * @remarks The user is supposed to get it populated at least with @c 3
+ *          default font families (Sans, Serif, Monospace), which should be
+ *          present on most systems.
  *
- * @note The user is supposed to get it populated at least with 3
- * default font families (Sans, Serif, Monospace), which should be
- * present on most systems.
+ * @param[in] list The list of available system fonts, as returned by
+ *             evas_font_available_list()
+ * @return The font hash
  */
 EAPI Eina_Hash       *elm_font_available_hash_add(Eina_List *list);
 
 /**
- * Free the hash returned by elm_font_available_hash_add().
+ * @brief Frees the hash returned by elm_font_available_hash_add().
  *
- * @param hash the hash to be freed.
+ * @since_tizen 2.3
  *
- * @ingroup Fonts
+ * @param[in] hash The hash to be freed
  */
 EAPI void             elm_font_available_hash_del(Eina_Hash *hash);
 

@@ -1,24 +1,17 @@
 /**
  * @defgroup Check Check
- * @ingroup Elementary
+ * @ingroup elm_widget_group
  *
  * @image html check_inheritance_tree.png
  * @image latex check_inheritance_tree.eps
  *
- * @image html img/widget/check/preview-00.png
- * @image latex img/widget/check/preview-00.eps
- * @image html img/widget/check/preview-01.png
- * @image latex img/widget/check/preview-01.eps
- * @image html img/widget/check/preview-02.png
- * @image latex img/widget/check/preview-02.eps
+ * @brief The check widget allows for toggling a value between @c true
+ *        and @c false.
  *
- * @brief The check widget allows for toggling a value between true
- * and false.
- *
- * Check objects are a lot like radio objects in layout and
- * functionality, except they do not work as a group, but
- * independently, and only toggle the value of a boolean between false
- * and true. elm_check_state_set() sets the boolean state and
+ * Check objects are a lot like radio objects in the layout and
+ * functionality, except that they do not work as a group, but
+ * independently, and only toggle the value of a boolean between @c false
+ * and @c true. elm_check_state_set() sets the boolean state and
  * elm_check_state_get() returns the current state. For convenience,
  * like the radio objects, you can set a pointer to a boolean directly
  * with elm_check_state_pointer_set() for it to modify.
@@ -27,22 +20,19 @@
  * functions acting on it also work for check objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Layout :
  * - @c "changed" - This is called whenever the user changes the state of
- *             the check objects (@p event_info is always @c NULL).
- * - @c "focused" - When the check has received focus. (since 1.8)
- * - @c "unfocused" - When the check has lost focus. (since 1.8)
- * - @c "language,changed" - the program's language changed (since 1.9)
+ *             the check objects (@a event_info is always @c NULL).
  *
- * Default content parts of the check widget that you can use for are:
- * @li "icon" - An icon of the check
+ * The default content parts of the check widget that you can use are:
+ * @li "icon" - An icon of the check.
  *
- * Default text parts of the check widget that you can use for are:
- * @li "default" - A label of the check
- * @li "on" - On state label of the check (only valid for "toggle" style.)
- * @li "off" - Off state label of the check (only valid for "toggle" style.)
+ * The default text parts of the check widget that you can use are:
+ * @li "default" - A label of the check.
+ * @li "on" - On state label of the check.
+ * @li "off" - Off state label of the check.
  *
- * Supported elm_object common APIs.
+ * Supported common elm_object APIs.
  * @li @ref elm_object_disabled_set
  * @li @ref elm_object_disabled_get
  * @li @ref elm_object_part_text_set
@@ -54,17 +44,60 @@
  * @li @ref elm_object_signal_callback_add
  * @li @ref elm_object_signal_callback_del
  *
- * @ref tutorial_check should give you a firm grasp of how to use this widget.
- *
  * @{
  */
 
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_check_eo.h"
-#endif
-#ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elm_check_legacy.h"
-#endif
+/**
+ * @brief Adds a new Check object.
+ *
+ * @since_tizen 2.3
+ *
+ * @param[in] parent The parent object
+ * @return The new object, otherwise @c NULL if it cannot be created
+ */
+EAPI Evas_Object *                elm_check_add(Evas_Object *parent);
+
+/**
+ * @brief Sets the on/off state of the check object.
+ *
+ * @details This sets the state of the check. If set with elm_check_state_pointer_set()
+ *          the state of that variable is also changed. Calling this @b doesn't cause
+ *          the "changed" signal to be emitted.
+ *
+ * @since_tizen 2.3
+ *
+ * @param[in] obj The check object
+ * @param[in] state The state to use (@c 1 == on, @c 0 == off)
+ */
+EAPI void                         elm_check_state_set(Evas_Object *obj, Eina_Bool state);
+
+/**
+ * @brief Gets the state of the check object.
+ *
+ * @since_tizen 2.3
+ *
+ * @param[in] obj The check object
+ * @return The boolean state
+ */
+EAPI Eina_Bool                    elm_check_state_get(const Evas_Object *obj);
+
+/**
+ * @brief Sets a convenience pointer to a boolean to change.
+ *
+ * @details This sets a pointer to a boolean, that, in addition to the check objects
+ *          state is also modified directly. To stop setting the object
+ *          to simply use @c NULL as the @a statep parameter. If @a statep is not @c NULL,
+ *          then when this is called, the check objects state is also modified to
+ *          reflect the value of the boolean that @a statep points to, just like calling
+ *          elm_check_state_set().
+ *
+ * @since_tizen 2.3
+ *
+ * @param[in] obj The check object
+ * @param[in] statep A pointer to the boolean to modify
+ */
+EAPI void                         elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep);
+
 /**
  * @}
  */
