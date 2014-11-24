@@ -1,6 +1,14 @@
 =================
-Elementary 1.12.0
+Elementary 1.12.1
 =================
+
+Changes since 1.12.0:
+---------------------
+
+Fixes:
+
+   * elm_box: inappropriate size_hint_align value usage fix
+   * transit: free the map resource.
 
 Changes since 1.11.0:
 ---------------------
