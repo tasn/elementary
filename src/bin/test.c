@@ -93,6 +93,7 @@ void test_inwin2(void *data, Evas_Object *obj, void *event_info);
 void test_scaling(void *data, Evas_Object *obj, void *event_info);
 void test_scaling2(void *data, Evas_Object *obj, void *event_info);
 void test_slider(void *data, Evas_Object *obj, void *event_info);
+void test_slider_indicator_visible_mode(void *data, Evas_Object *obj, void *event_info);
 void test_actionslider(void *data, Evas_Object *obj, void *event_info);
 void test_genlist(void *data, Evas_Object *obj, void *event_info);
 void test_genlist2(void *data, Evas_Object *obj, void *event_info);
@@ -737,6 +738,7 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Range Values", "Spinner", test_spinner);
    ADD_TEST(NULL, "Range Values", "Slider", test_slider);
+   ADD_TEST(NULL, "Range Values", "Slider Indicator Visible Mode", test_slider_indicator_visible_mode);
    ADD_TEST(NULL, "Range Values", "Progressbar", test_progressbar);
    ADD_TEST(NULL, "Range Values", "Progressbar 2", test_progressbar2);
 

@@ -309,3 +309,28 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    evas_object_show(win);
 }
+
+void
+test_slider_indicator_visible_mode(void *data EINA_UNUSED,
+                                   Evas_Object *obj EINA_UNUSED,
+                                   void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = NULL, *bx = NULL, *fr = NULL, *bx2 = NULL, *sl = NULL;
+
+   win = elm_win_util_standard_add("slider-indicator-visible-mode",
+                                   "Slider Indicator Visible Mode");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   fr = elm_frame_add(bx);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   evas_object_show(win);
+}
