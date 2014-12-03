@@ -107,9 +107,12 @@ typedef enum
 {
    ELM_POLICY_QUIT_NONE = 0, /**< never quit the application
                               * automatically */
-   ELM_POLICY_QUIT_LAST_WINDOW_CLOSED /**< quit when the
-                                       * application's last
-                                       * window is closed */
+   ELM_POLICY_QUIT_LAST_WINDOW_CLOSED, /**< quit when the
+                                        * application's last
+                                        * window is closed */
+   ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN /**< quit when the
+                                        * application's last
+                                        * window is hidden */
 } Elm_Policy_Quit;
 
 /**
