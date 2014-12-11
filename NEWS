@@ -1,6 +1,15 @@
 =================
-Elementary 1.12.1
+Elementary 1.12.2
 =================
+
+Changes since 1.12.1:
+---------------------
+
+Fixes:
+   * tooltip windows now set shape input rect in elm_win
+   * tooltip windows now show themselves offscreen to force size calc before appearing
+   * tooltip now calcs position more effectively during ADJUST(FLIP)
+   * tooltips in windows make more attempts to not overlap with pointer
 
 Changes since 1.12.0:
 ---------------------
