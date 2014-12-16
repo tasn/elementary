@@ -20,6 +20,10 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 @ELEMENTARY_CFLAGS@
 
+AM_CXXFLAGS = \
+@ELEMENTARY_CFLAGS@ \
+@ELEMENTARY_CXX_CFLAGS@
+
 LDADD = \
 @ELEMENTARY_LIBS@ \
 $(top_builddir)/src/lib/libelementary.la
@@ -143,7 +147,8 @@ track_example_01.c
 
 if HAVE_CXX11
 SRCS += \
-box_cxx_example_02.cc
+box_cxx_example_02.cc \
+bg_cxx_example_01.cc
 endif
 
 .edc.edj:
@@ -292,7 +297,8 @@ track_example_01
 
 if HAVE_CXX11
 examples_PROGRAMS += \
-box_cxx_example_02
+box_cxx_example_02 \
+bg_cxx_example_01
 endif
 
 if ELEMENTARY_WINDOWS_BUILD
@@ -309,9 +315,7 @@ endif
 
 if HAVE_CXX11
 box_cxx_example_02_SOURCES = box_cxx_example_02.cc
-box_cxx_example_02_CXXFLAGS = \
-@ELEMENTARY_CFLAGS@ \
-@ELEMENTARY_CXX_CFLAGS@
+bg_cxx_example_01_SOURCES = bg_cxx_example_01.cc
 endif
 
 # This variable will hold the list of screenshots that will be made
