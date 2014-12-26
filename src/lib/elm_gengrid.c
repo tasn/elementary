@@ -2941,8 +2941,6 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *it)
    evas_object_geometry_get(sd->pan_obj, &vx, &vy, &vw, &vh);
    evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih); // FIXME: check if the item is realized or not
 
-   item_list = elm_gengrid_realized_items_get(obj);
-
    if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, ix, iy, iw, ih))
      {
         if (!elm_object_item_disabled_get(it))
@@ -2951,6 +2949,8 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *it)
           search_next = EINA_TRUE;
      }
 
+   item_list = elm_gengrid_realized_items_get(obj);
+
    if ((iy < vy) || search_next)
      {
         EINA_LIST_FOREACH(item_list, l, item)
@@ -2958,7 +2958,10 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *it)
              evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
              if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch) &&
                  !elm_object_item_disabled_get(item))
-               return item;
+               {
+                  eina_list_free(item_list);
+                  return item;
+               }
           }
      }
    else
@@ -2968,7 +2971,10 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *it)
              evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
              if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch) &&
                  !elm_object_item_disabled_get(item))
-               return item;
+               {
+                  eina_list_free(item_list);
+                  return item;
+               }
           }
      }
    return it;

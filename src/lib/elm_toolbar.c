@@ -679,18 +679,15 @@ _elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *it)
    evas_object_geometry_get(obj, &vx, &vy, &vw, &vh);
    evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih);
 
-   item_list = evas_object_box_children_get(sd->bx);
-
    if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, ix, iy, iw, ih))
      {
         if (!elm_object_item_disabled_get(it))
-          {
-             eina_list_free(item_list);
-             return it;
-          }
+          return it;
         else
           search_next = EINA_TRUE;
      }
+
+   item_list = evas_object_box_children_get(sd->bx);
 
    if ((sd->vertical && (iy < vy)) ||
        (!sd->vertical && (iw < vw)) ||
