@@ -2325,7 +2325,7 @@ _item_multi_select_up(Elm_Genlist_Data *sd)
    while (prev)
      {
         if ((((Elm_Gen_Item*)prev)->generation == sd->generation) &&
-            (!_is_no_select((Elm_Gen_Item*)prev))) &&
+            (!_is_no_select((Elm_Gen_Item*)prev)) &&
             (!elm_object_item_disabled_get(prev)))
           break;
         prev = (Elm_Object_Item *)ELM_GEN_ITEM_FROM_INLIST(
@@ -2357,7 +2357,7 @@ _item_multi_select_down(Elm_Genlist_Data *sd)
    while ((next))
      {
         if ((((Elm_Gen_Item *)next)->generation == sd->generation) &&
-            (!_is_no_select((Elm_Gen_Item*)next))) &&
+            (!_is_no_select((Elm_Gen_Item*)next)) &&
             (!elm_object_item_disabled_get(next)))
           break;
         next = (Elm_Object_Item *)ELM_GEN_ITEM_FROM_INLIST(
@@ -2409,7 +2409,7 @@ _item_single_select_up(Elm_Genlist_Data *sd)
    while (prev)
      {
         if ((prev->generation == sd->generation) &&
-            (!_is_no_select((Elm_Gen_Item*)prev))) &&
+            (!_is_no_select((Elm_Gen_Item*)prev)) &&
             (!elm_object_item_disabled_get((Elm_Object_Item *)prev)))
           break;
         prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
@@ -2439,7 +2439,7 @@ _item_single_select_down(Elm_Genlist_Data *sd)
    while ((next))
      {
         if ((next->generation == sd->generation) &&
-            (!_is_no_select((Elm_Gen_Item*)next))) &&
+            (!_is_no_select((Elm_Gen_Item*)next)) &&
             (!elm_object_item_disabled_get((Elm_Object_Item *)next)))
           break;
         next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
