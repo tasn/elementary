@@ -2977,6 +2977,8 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *it)
                }
           }
      }
+   eina_list_free(item_list);
+
    return it;
 }
 
