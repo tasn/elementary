@@ -147,8 +147,30 @@ track_example_01.c
 
 if HAVE_CXX11
 SRCS += \
-box_cxx_example_02.cc \
-bg_cxx_example_01.cc
+thumb_cxx_example_01.cc \
+table_cxx_example_02.cc \
+spinner_cxx_example.cc \
+slider_cxx_example.cc \
+separator_cxx_example_01.cc \
+radio_cxx_example_01.cc \
+popup_cxx_example_01.cc \
+location_cxx_example_01.cc \
+icon_cxx_example_01.cc \
+hoversel_cxx_example_01.cc \
+glview_cxx_example_01.cc \
+datetime_cxx_example.cc \
+clock_cxx_example.cc \
+calendar_cxx_example_05.cc \
+calendar_cxx_example_04.cc \
+calendar_cxx_example_03.cc \
+calendar_cxx_example_02.cc \
+calendar_cxx_example_01.cc \
+button_cxx_example_01.cc \
+button_cxx_example_00.cc \
+bg_cxx_example_02.cc \
+bg_cxx_example_01.cc \
+menu_cxx_example_01.cc \
+box_cxx_example_02.cc
 endif
 
 .edc.edj:
@@ -297,8 +319,30 @@ track_example_01
 
 if HAVE_CXX11
 examples_PROGRAMS += \
-box_cxx_example_02 \
-bg_cxx_example_01
+thumb_cxx_example_01 \
+table_cxx_example_02 \
+spinner_cxx_example \
+slider_cxx_example \
+separator_cxx_example_01 \
+radio_cxx_example_01 \
+popup_cxx_example_01 \
+location_cxx_example_01 \
+icon_cxx_example_01 \
+hoversel_cxx_example_01 \
+glview_cxx_example_01 \
+datetime_cxx_example \
+clock_cxx_example \
+calendar_cxx_example_05 \
+calendar_cxx_example_04 \
+calendar_cxx_example_03 \
+calendar_cxx_example_02 \
+calendar_cxx_example_01 \
+button_cxx_example_01 \
+button_cxx_example_00 \
+bg_cxx_example_02 \
+bg_cxx_example_01 \
+menu_cxx_example_01 \
+box_cxx_example_02
 endif
 
 if ELEMENTARY_WINDOWS_BUILD
@@ -314,8 +358,30 @@ efl_thread_4_SOURCES = efl_thread_4.c
 endif
 
 if HAVE_CXX11
-box_cxx_example_02_SOURCES = box_cxx_example_02.cc
+thumb_cxx_example_01_SOURCES = thumb_cxx_example_01.cc
+table_cxx_example_02_SOURCES = table_cxx_example_02.cc
+spinner_cxx_example_SOURCES = spinner_cxx_example.cc
+slider_cxx_example_SOURCES = slider_cxx_example.cc
+separator_cxx_example_01_SOURCES = separator_cxx_example_01.cc
+radio_cxx_example_01_SOURCES = radio_cxx_example_01.cc
+popup_cxx_example_01_SOURCES = popup_cxx_example_01.cc
+location_cxx_example_01_SOURCES = location_cxx_example_01.cc
+icon_cxx_example_01_SOURCES = icon_cxx_example_01.cc
+hoversel_cxx_example_01_SOURCES = hoversel_cxx_example_01.cc
+glview_cxx_example_01_SOURCES = glview_cxx_example_01.cc
+datetime_cxx_example_SOURCES = datetime_cxx_example.cc
+clock_cxx_example_SOURCES = clock_cxx_example.cc
+calendar_cxx_example_05_SOURCES = calendar_cxx_example_05.cc
+calendar_cxx_example_04_SOURCES = calendar_cxx_example_04.cc
+calendar_cxx_example_03_SOURCES = calendar_cxx_example_03.cc
+calendar_cxx_example_02_SOURCES = calendar_cxx_example_02.cc
+calendar_cxx_example_01_SOURCES = calendar_cxx_example_01.cc
+button_cxx_example_01_SOURCES = button_cxx_example_01.cc
+button_cxx_example_00_SOURCES = button_cxx_example_00.cc
+bg_cxx_example_02_SOURCES = bg_cxx_example_02.cc
 bg_cxx_example_01_SOURCES = bg_cxx_example_01.cc
+menu_cxx_example_01_SOURCES = menu_cxx_example_01.cc
+box_cxx_example_02_SOURCES = box_cxx_example_02.cc
 endif
 
 # This variable will hold the list of screenshots that will be made
