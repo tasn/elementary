@@ -27,17 +27,36 @@ extern "C"
 }
 
 #include <Elementary.hh>
-
 #include <Eina.hh>
+
+#include <sstream>
 
 EAPI_MAIN int
 elm_main (int argc, char *argv[])
 {
+  // char buf[PATH_MAX];
+
   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
-  ::elm_win win(elm_win_util_standard_add("bg-plain", "Bg Plain"));
+
+  elm_app_info_set(reinterpret_cast<void*>(elm_main), "elementary", "images/plant_01.jpg");
+
+  ::elm_win win(elm_win_add(NULL, "bg-image", ELM_WIN_BASIC));
+  win.title_set("Bg Image");
   win.autohide_set(true);
 
-  win.size_set(320,320);
+  ::elm_bg bg(efl::eo::parent = win);
+  bg.load_size_set(20, 20);
+  bg.option_set(ELM_BG_OPTION_CENTER);
+  // snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
+  // elm_bg_file_set(bg, buf, NULL);
+  std::stringstream ss;
+  ss << elm_app_data_dir_get() << "/images/plant_01.jpg";
+  bg.file_set(ss.str(), "image");
+  bg.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+  win.resize_object_add(bg);
+  bg.visibility_set(true);
+
+  win.size_set(320, 320);
   win.visibility_set(true);
 
   elm_run();

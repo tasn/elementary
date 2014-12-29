@@ -22,8 +22,6 @@ extern "C"
 
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_widget_action.h"
-#include "elm_interface_atspi_text.h"
-#include "elm_interface_scrollable.h"
 }
 
 #include <Elementary.hh>
@@ -34,10 +32,22 @@ EAPI_MAIN int
 elm_main (int argc, char *argv[])
 {
   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
-  ::elm_win win(elm_win_util_standard_add("bg-plain", "Bg Plain"));
+   
+  ::elm_win win(elm_win_util_standard_add("Greetings", "Hello, World!"));
   win.autohide_set(true);
 
-  win.size_set(320,320);
+  ::elm_button btn(efl::eo::parent = win);
+  btn.text_set("elm.text","Good-Bye, World!");
+  btn.callback_clicked_add(std::bind([] () {
+	std::cout << "TEST" << std::endl;
+	elm_exit(); }));
+  btn.size_set(120, 30);
+  btn.position_set(60, 15);
+  btn.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+  btn.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
+  btn.visibility_set(true);
+
+  win.size_set(240, 60);
   win.visibility_set(true);
 
   elm_run();

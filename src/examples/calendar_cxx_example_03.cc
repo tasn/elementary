@@ -26,18 +26,31 @@ extern "C"
 #include "elm_interface_scrollable.h"
 }
 
-#include <Elementary.hh>
-
 #include <Eina.hh>
+
+#include <elm_win.eo.hh>
+#include <elm_calendar.eo.hh>
 
 EAPI_MAIN int
 elm_main (int argc, char *argv[])
 {
+
   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
-  ::elm_win win(elm_win_util_standard_add("bg-plain", "Bg Plain"));
+ 
+  const char *weekdays[] =
+    {
+      "S", "M", "T", "W", "T", "F", "S"
+    };
+  
+  ::elm_win win(elm_win_util_standard_add("calendar", "Calendar Min/Max Year Example"));
   win.autohide_set(true);
 
-  win.size_set(320,320);
+  ::elm_calendar cal(efl::eo::parent = win);
+  cal.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+  win.resize_object_add(cal);
+  cal.min_max_year_set(2020, 2022);
+  cal.visibility_set(true);
+
   win.visibility_set(true);
 
   elm_run();
