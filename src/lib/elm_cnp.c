@@ -253,6 +253,7 @@ typedef struct _X11_Cnp_Atom      X11_Cnp_Atom;
 typedef Eina_Bool (*X11_Converter_Fn_Cb)     (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 typedef int       (*X11_Response_Handler_Cb) (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
 typedef int       (*X11_Notify_Handler_Cb)   (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
+typedef int       (*X11_Clear_Handler_Cb)   (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Clear *);
 
 struct _X11_Cnp_Selection
 {
@@ -285,6 +286,7 @@ struct _X11_Cnp_Atom
    X11_Converter_Fn_Cb      converter;
    X11_Response_Handler_Cb  response;
    X11_Notify_Handler_Cb    notify;
+   X11_Clear_Handler_Cb     clear;
    /* Atom */
    Ecore_X_Atom             atom;
 };
@@ -304,6 +306,7 @@ static int            _x11_notify_handler_targets   (X11_Cnp_Selection *sel, Eco
 static int            _x11_notify_handler_text      (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
 static int            _x11_notify_handler_image     (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
 static int            _x11_notify_handler_uri       (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
+static int            _x11_clear_handler_text       (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Clear *clear);
 //static int            _x11_notify_handler_html      (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
 static int            _x11_vcard_receive            (X11_Cnp_Selection *sed, Ecore_X_Event_Selection_Notify *notify);
 static Eina_Bool      _x11_dnd_enter                (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
@@ -338,6 +341,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_targets_converter,
       _x11_response_handler_targets,
       _x11_notify_handler_targets,
+      NULL,
       0
    },
    [CNP_ATOM_ATOM] = {
@@ -346,12 +350,14 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_targets_converter,
       _x11_response_handler_targets,
       _x11_notify_handler_targets,
+      NULL,
       0
    },
    [CNP_ATOM_XELM] =  {
       "application/x-elementary-markup",
       ELM_SEL_FORMAT_MARKUP,
       _x11_general_converter,
+      NULL,
       NULL,
       NULL,
       0
@@ -362,6 +368,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_general_converter,
       NULL,
       _x11_notify_handler_uri,
+      NULL,
       0
    },
    [CNP_ATOM_text_urilist] = {
@@ -370,13 +377,17 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_general_converter,
       NULL,
       _x11_notify_handler_uri,
+      NULL,
       0
    },
    [CNP_ATOM_text_x_vcard] = {
       "text/x-vcard",
       ELM_SEL_FORMAT_VCARD,
-      _x11_vcard_send, NULL,
-      _x11_vcard_receive, 0
+      _x11_vcard_send,
+      NULL,
+      _x11_vcard_receive,
+      NULL,
+      0
    },
    [CNP_ATOM_image_png] = {
       "image/png",
@@ -384,6 +395,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_image_converter,
       NULL,
       _x11_notify_handler_image,
+      NULL,
       0
    },
    [CNP_ATOM_image_jpeg] = {
@@ -392,6 +404,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_image_converter,
       NULL,
       _x11_notify_handler_image,/* Raw image data is the same */
+      NULL,
       0
    },
    [CNP_ATOM_image_bmp] = {
@@ -400,6 +413,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_image_converter,
       NULL,
       _x11_notify_handler_image,/* Raw image data is the same */
+      NULL,
       0
    },
    [CNP_ATOM_image_gif] = {
@@ -408,6 +422,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_image_converter,
       NULL,
       _x11_notify_handler_image,/* Raw image data is the same */
+      NULL,
       0
    },
    [CNP_ATOM_image_tiff] = {
@@ -416,6 +431,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_image_converter,
       NULL,
       _x11_notify_handler_image,/* Raw image data is the same */
+      NULL,
       0
    },
    [CNP_ATOM_image_svg] = {
@@ -424,6 +440,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_image_converter,
       NULL,
       _x11_notify_handler_image,/* Raw image data is the same */
+      NULL,
       0
    },
    [CNP_ATOM_image_xpm] = {
@@ -432,6 +449,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_image_converter,
       NULL,
       _x11_notify_handler_image,/* Raw image data is the same */
+      NULL,
       0
    },
    [CNP_ATOM_image_tga] = {
@@ -440,6 +458,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_image_converter,
       NULL,
       _x11_notify_handler_image,/* Raw image data is the same */
+      NULL,
       0
    },
    [CNP_ATOM_image_ppm] = {
@@ -448,6 +467,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_image_converter,
       NULL,
       _x11_notify_handler_image,/* Raw image data is the same */
+      NULL,
       0
    },
 /*
@@ -474,6 +494,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_text_converter,
       NULL,
       _x11_notify_handler_text,
+      _x11_clear_handler_text,
       0
    },
    [CNP_ATOM_STRING] = {
@@ -482,6 +503,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_text_converter,
       NULL,
       _x11_notify_handler_text,
+      _x11_clear_handler_text,
       0
    },
    [CNP_ATOM_COMPOUND_TEXT] = {
@@ -490,6 +512,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_text_converter,
       NULL,
       _x11_notify_handler_text,
+      _x11_clear_handler_text,
       0
    },
    [CNP_ATOM_TEXT] = {
@@ -498,6 +521,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_text_converter,
       NULL,
       _x11_notify_handler_text,
+      _x11_clear_handler_text,
       0
    },
    [CNP_ATOM_text_plain_utf8] = {
@@ -506,6 +530,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_text_converter,
       NULL,
       _x11_notify_handler_text,
+      _x11_clear_handler_text,
       0
    },
    [CNP_ATOM_text_plain] = {
@@ -514,6 +539,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_text_converter,
       NULL,
       _x11_notify_handler_text,
+      _x11_clear_handler_text,
       0
    },
 };
@@ -586,6 +612,16 @@ _x11_selection_clear(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (sel->requestwidget)
      evas_object_event_callback_del_full(sel->requestwidget, EVAS_CALLBACK_DEL,
                                          _x11_sel_obj_del2, sel);
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        if (_x11_atoms[i].clear)
+          {
+             cnp_debug("Found something: %s\n", _x11_atoms[i].name);
+             _x11_atoms[i].clear(sel, ev);
+          }
+        else cnp_debug("Ignored: No handler!\n");
+     }
+   return ECORE_CALLBACK_PASS_ON;
    sel->widget = NULL;
    sel->requestwidget = NULL;
 
@@ -871,6 +907,13 @@ _x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify 
 end:
    if (sel == (_x11_selections + ELM_SEL_TYPE_XDND))
      ecore_x_dnd_send_finished();
+   return 0;
+}
+
+static int
+_x11_clear_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Clear *clear EINA_UNUSED)
+{
+   elm_entry_select_none(sel->widget);
    return 0;
 }
 
