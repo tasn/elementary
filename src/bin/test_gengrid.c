@@ -349,7 +349,7 @@ static Evas_Object *
 create_gengrid(Evas_Object *obj, int items)
 {
    Evas_Object *grid = NULL;
-   static Item_Data id[144];
+   static Item_Data id[5000];
    int i, n;
    char buf[PATH_MAX];
 
