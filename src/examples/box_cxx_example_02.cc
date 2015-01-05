@@ -135,7 +135,7 @@ elm_main(int argc, char *argv[])
        elm_button btn = efl::eo::downcast<elm_button>(obj);
        tdata.box.lock()->unpack(btn);
        btn.position_set(0, 50);
-       btn.color_set(128, 64, 0, 128);
+       btn.object_smart::color_set(128, 64, 0, 128);
      }, std::placeholders::_1)
    ;
 
