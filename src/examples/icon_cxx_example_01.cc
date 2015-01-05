@@ -35,7 +35,7 @@ EAPI_MAIN int
 elm_main (int argc, char *argv[])
 {
   const char *path, *group;
-  std::string name;
+  efl::eina::optional<std::string> name;
   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
   ::elm_win win(elm_win_util_standard_add("icon", "Icon"));
@@ -47,7 +47,7 @@ elm_main (int argc, char *argv[])
  	
   icon.file_get(&path, &group);
   name = icon.standard_get();
-  std::cout << "path = " << path << ", group = " << group <<  ", name = " << name << std::endl;
+  std::cout << "path = " << path << ", group = " << group <<  ", name = " << *name << std::endl;
 
   icon.no_scale_set(true);
   icon.resizable_set(false, true);

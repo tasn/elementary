@@ -107,10 +107,10 @@ elm_main(int argc, char *argv[])
         {
           elm_button btn ( efl::eo::parent = *box );
           btn.text_set("elm.text", "I do nothing");
-          efl::eina::list<evas::object> childrens(box->children_get());
-          if (!childrens.empty())
+          efl::eina::optional<efl::eina::list<evas::object> > childrens(box->children_get());
+          if (childrens && !childrens->empty())
             {
-              box->pack_after(btn, childrens.front());
+              box->pack_after(btn, childrens->front());
             }
           else
             box->pack_end(btn);
@@ -135,7 +135,7 @@ elm_main(int argc, char *argv[])
        elm_button btn = efl::eo::downcast<elm_button>(obj);
        tdata.box.lock()->unpack(btn);
        btn.position_set(0, 50);
-       btn.color_set(128, 64, 0, 128);
+       btn.object::color_set(128, 64, 0, 128);
      }, std::placeholders::_1)
    ;
 

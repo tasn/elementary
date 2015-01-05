@@ -64,20 +64,20 @@ elm_main(int argc, char *argv[])
     {
       ::elm_button b(eo_ref(ci._eo_ptr()));
       std::string::size_type ptr;
-      std::string lbl = b.text_get("elm.text");
+      efl::eina::optional<std::string> lbl = b.text_get("elm.text");
       
-      ptr = lbl.find(":");
+      ptr = lbl->find(":");
       ptr += 2;
-      double t = std::stod(lbl.substr(ptr));
+      double t = std::stod(lbl->substr(ptr));
 
-      if (lbl.compare(0,7,"Initial") != 0)
+      if (lbl->compare(0,7,"Initial") != 0)
 	{
 	  up.autorepeat_initial_timeout_set(t);
 	  down.autorepeat_initial_timeout_set(t);
 	  left.autorepeat_initial_timeout_set(t);
 	  right.autorepeat_initial_timeout_set(t);
 	}
-      else if (lbl.compare(0,3,"Gap") != 0)
+      else if (lbl->compare(0,3,"Gap") != 0)
 	{
 	  up.autorepeat_gap_timeout_set(t);
 	  down.autorepeat_gap_timeout_set(t);
@@ -140,8 +140,8 @@ elm_main(int argc, char *argv[])
       if (!icon_still)
 	{
 	  ::elm_icon obj(efl::eo::parent = mid);
-	  evas::object icon_still = mid.content_unset("icon");
-	  icon_still.visibility_set(false);
+	  efl::eina::optional<evas::object> icon_still = mid.content_unset("icon");
+	  icon_still->visibility_set(false);
 	  obj.standard_set("chat");
 	  mid.content_set("icon", obj);
 	}
