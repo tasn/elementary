@@ -119,7 +119,7 @@ _print_items(void *data, Evas_Object *obj, void *event_info)
   for (auto i : items)
     try
       {
-	std::cout << i.part_text_get("elm.text") << std::endl;
+	std::cout << *(i.part_text_get("elm.text")) << std::endl;
       }
     catch (std::logic_error const&) {}
 }
