@@ -444,9 +444,12 @@ _item_del_pre_hook(Elm_Object_Item *item)
           }
      }
 
-   sd->string_check_idle_enterer =
-      ecore_idle_enterer_before_add(_string_check_idle_enterer_cb,
-                                    obj);
+   if (!sd->string_check_idle_enterer)
+     {
+        sd->string_check_idle_enterer =
+           ecore_idle_enterer_before_add(_string_check_idle_enterer_cb,
+                                         obj);
+     }
 
    _sizing_eval(obj);
 
