@@ -397,6 +397,7 @@ _item_text_set_hook(Elm_Object_Item *it,
           edje_object_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
         else
           edje_object_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
+        edje_object_part_text_escaped_set(VIEW(item), "elm.text", label);
      }
    else
      {
@@ -410,11 +411,10 @@ _item_text_set_hook(Elm_Object_Item *it,
              snprintf(buf, sizeof(buf), "elm,state,%s,hidden", part);
              edje_object_signal_emit(VIEW(item), buf, "elm");
           }
+        edje_object_part_text_escaped_set(VIEW(item), part, label);
      }
 
    edje_object_message_signal_process(VIEW(item));
-   //label can be NULL also.
-   edje_object_part_text_escaped_set(VIEW(item), part, label);
 }
 
 static const char *
