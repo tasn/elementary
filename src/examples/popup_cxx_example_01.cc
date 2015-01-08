@@ -27,9 +27,6 @@ extern "C"
 #include <Elementary.hh>
 #include <Eina.hh>
 
-// void _block_clicked(::elm_popup obj, Eo_Event_Description const& desc, void *info);
-// void _timeout(::elm_popup obj, Eo_Event_Description const& desc, void *info);
-
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
@@ -47,7 +44,7 @@ elm_main(int argc, char **argv)
   auto popup_hide = std::bind ( [] (::elm_popup obj) { obj.visibility_set(false); } , std::placeholders::_1 );
 
   popup.callback_timeout_add(popup_hide);
-  popup.content_set("elm.text", content);
+  popup.content_set(nullptr, content);
   popup.text_set("elm.text", "Title");
   popup.visibility_set(true);
   popup.callback_block_clicked_add(popup_hide);
@@ -59,17 +56,5 @@ elm_main(int argc, char **argv)
   return 0;
 }
 ELM_MAIN()
-
-// void
-// _block_clicked(::elm_popup obj, Eo_Event_Description const& desc, void *info)
-// {
-//   obj.visibility_set(false);
-// }
-
-// void
-// _timeout(::elm_popup obj, Eo_Event_Description const& desc, void *info)
-// {
-//   obj.visibility_set(false);
-// }
 
 

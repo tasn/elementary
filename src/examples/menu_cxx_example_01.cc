@@ -57,29 +57,29 @@ elm_main (int argc, char *argv[])
   rect.visibility_set(true);
 
   ::elm_menu menu(efl::eo::parent = win);
-  menu.item_add(NULL, "", "first item", NULL, NULL);
+  menu.item_add(NULL, nullptr, "first item", NULL, NULL);
   menu_it = menu.item_add(NULL, "mail-reply-all", "second item", NULL, NULL);
 
   menu.item_add(menu_it, "object-rotate-left", "menu 1", NULL, NULL);
   ::elm_button button(efl::eo::parent = win);
   button.text_set("elm.text", "button - delete items");
-  menu_it1 = menu.item_add(menu_it, "", "", NULL, NULL);
+  menu_it1 = menu.item_add(menu_it, nullptr, nullptr, NULL, NULL);
   elm_object_item_content_set(menu_it1, eo_ref(button._eo_ptr()));      // YYYY
 
   auto del_it = std::bind([&] ()
-    {  
-      const Eina_List *l = elm_menu_item_subitems_get(menu_it);
-      elm_object_item_del(static_cast<Elm_Widget_Item*>(eina_list_data_get(l)));
-      std::cout << "TEST" << std::endl;
-    });
+			  {  
+			    const Eina_List *l = elm_menu_item_subitems_get(menu_it);
+			    elm_object_item_del(static_cast<Elm_Widget_Item*>(eina_list_data_get(l)));
+			    std::cout << "TEST" << std::endl;
+			  });
 
   button.callback_clicked_add(del_it);
   menu.item_separator_add(menu_it);
-  menu.item_add(menu_it, "", "third item", NULL, NULL);
-  menu.item_add(menu_it, "", "fourth item", NULL, NULL);
+  menu.item_add(menu_it, nullptr, "third item", NULL, NULL);
+  menu.item_add(menu_it, nullptr, "fourth item", NULL, NULL);
   menu.item_add(menu_it, "window-new", "sub menu", NULL, NULL);
 
-  menu_it = menu.item_add(NULL, "", "third item", NULL, NULL);
+  menu_it = menu.item_add(NULL, nullptr, "third item", NULL, NULL);
   elm_object_item_disabled_set(menu_it, EINA_TRUE);
 
   auto show = std::bind([&] (void *event_info) 
@@ -96,7 +96,6 @@ elm_main (int argc, char *argv[])
   win.visibility_set(true);
 
   elm_run();
-
   return 0;
 }
 ELM_MAIN()

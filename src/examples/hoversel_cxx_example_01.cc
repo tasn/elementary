@@ -43,7 +43,6 @@ namespace efl { namespace evas {
 
 static void _print_items(void *data, Evas_Object *obj, void *event_info);
 static void _free(void *data, Evas_Object *obj, void *event_info);
-//static void _add_item(void *data, Evas_Object *obj, void *event_info);
 
 static void
 _clear_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info)
@@ -63,15 +62,15 @@ elm_main (int argc, char *argv[])
   win.autohide_set(true);
 
   efl::evas::rectangle rect(efl::eo::parent = win);
-  rect.color_set( 255, 0, 0, 255);
+  rect.color_set(255, 0, 0, 255);
   rect.visibility_set(true);
 
   ::elm_hoversel hoversel(efl::eo::parent = win);
   hoversel.horizontal_set(false);
   hoversel.text_set("elm.text", "Add an item to Hoversel");
-  hoversel.content_set("icon", rect);
+  hoversel.content_set(nullptr, rect);
 
-  hoversel.item_add("Print items", "", ELM_ICON_NONE, &_print_items, NULL);
+  hoversel.item_add("Print items", nullptr, ELM_ICON_NONE, &_print_items, NULL);
   hoversel.item_add( "Option 2", "home", ELM_ICON_STANDARD, NULL,NULL);
 
   auto add_item = std::bind([] (::elm_hoversel obj) 
@@ -82,7 +81,7 @@ elm_main (int argc, char *argv[])
       
       snprintf(str, 10, "item %d", ++num);
       
-      hoversel_it = obj.item_add(str, "", ELM_ICON_NONE, NULL, str);
+      hoversel_it = obj.item_add(str, nullptr, ELM_ICON_NONE, NULL, str);
       elm_object_item_del_cb_set(hoversel_it, &_free);
     }, std::placeholders::_1);
 
@@ -95,7 +94,7 @@ elm_main (int argc, char *argv[])
   ::elm_button btn(efl::eo::parent = win);		
   btn.text_set("elm.text", "Clear all Items");
 
-  auto clear_btn_clicked = std::bind([&] () { hoversel.clear();  });
+  auto clear_btn_clicked = std::bind([&] () { hoversel.clear(); });
     
   btn.callback_clicked_add(clear_btn_clicked);
   btn.size_set(180, 30);
@@ -119,7 +118,7 @@ _print_items(void *data, Evas_Object *obj, void *event_info)
   for (auto i : items)
     try
       {
-	std::cout << *(i.part_text_get("elm.text")) << std::endl;
+	std::cout << *(i.part_text_get(nullptr)) << std::endl;
       }
     catch (std::logic_error const&) {}
 }

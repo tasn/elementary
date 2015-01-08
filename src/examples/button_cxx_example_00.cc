@@ -38,9 +38,7 @@ elm_main (int argc, char *argv[])
 
   ::elm_button btn(efl::eo::parent = win);
   btn.text_set("elm.text","Good-Bye, World!");
-  btn.callback_clicked_add(std::bind([] () {
-	std::cout << "TEST" << std::endl;
-	elm_exit(); }));
+  btn.callback_clicked_add(std::bind([] () { elm_exit(); }));
   btn.size_set(120, 30);
   btn.position_set(60, 15);
   btn.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

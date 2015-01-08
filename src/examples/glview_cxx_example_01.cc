@@ -53,6 +53,8 @@ load_shader( GLData *gld, GLenum type, const char *shader_src )
   GLuint shader;
   GLint compiled;
 
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
+
   shader = gl->glCreateShader(type);
   if (shader==0)
     return 0;
@@ -83,6 +85,8 @@ load_shader( GLData *gld, GLenum type, const char *shader_src )
 static int
 init_shaders(GLData *gld)
 {
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
+
   Evas_GL_API *gl = gld->glapi;
   GLbyte vShaderStr[] =
     "attribute vec4 vPosition;    \n"
@@ -137,6 +141,8 @@ init_shaders(GLData *gld)
 static void
 _init_gl(Evas_Object *obj)
 {
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
+    
   GLData *gld = static_cast<GLData*>(evas_object_data_get(obj, "gld"));
   ::elm_glview glv(eo_ref(obj));
   Evas_GL_API *gl = glv.gl_api_get();
@@ -153,8 +159,9 @@ _init_gl(Evas_Object *obj)
 static void
 _del_gl(Evas_Object *obj)
 {
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
+
   GLData *gld = static_cast<GLData*>(evas_object_data_get(obj, "gld"));
-  //GLData *gld = obj->data_get("gld");
   if (!gld)
     {
       std::cout << "Unable to get GLData. " << std::endl;
@@ -162,22 +169,22 @@ _del_gl(Evas_Object *obj)
     }
   ::elm_glview glv(eo_ref(obj));
   Evas_GL_API *gl = glv.gl_api_get();
-  //Evas_GL_API *gl = gld->glapi;
 
   gl->glDeleteShader(gld->vtx_shader);
   gl->glDeleteShader(gld->fgmt_shader);
   gl->glDeleteProgram(gld->program);
   gl->glDeleteBuffers(1, &gld->vbo);
 
-  //glv.smart_data_del("..gld");
+  evas_object_data_del(obj, "..gld");
   free(gld);
 }
 
 static void
 _resize_gl(Evas_Object *obj)
 {
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
+  
   int w, h;
-  //GLData *gld = obj->data_get("gld");
   ::elm_glview glv(eo_ref(obj));
   Evas_GL_API *gl = glv.gl_api_get();
 
@@ -189,10 +196,12 @@ _resize_gl(Evas_Object *obj)
 static void
 _draw_gl(Evas_Object *obj)
 {
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
+  
   GLData *gld = static_cast<GLData*>(evas_object_data_get(obj, "gld"));
   ::elm_glview glv(eo_ref(obj));
   Evas_GL_API *gl = glv.gl_api_get();
-  // GLData *gld = obj.data_get( "gld");
+
   if (!gld) return;
   int w, h;
 
@@ -222,8 +231,10 @@ _draw_gl(Evas_Object *obj)
 static Eina_Bool
 _anim(void* data)
 {
-  //::elm_glview gl(static_cast<Eo*>(data));
   static_cast<elm_glview*>(data)->changed_set();
+
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
+  
   return EINA_TRUE;
 }
 
@@ -239,6 +250,8 @@ elm_main (int argc, char *argv[])
   ::elm_win win(elm_win_util_standard_add("glview simple", "GLView Simple"));
   win.autohide_set(true);
 
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
+
   ::elm_box bx(efl::eo::parent = win);
   bx.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
   win.resize_object_add(bx);
@@ -252,8 +265,8 @@ elm_main (int argc, char *argv[])
 
   int gl_mode = ELM_GLVIEW_ALPHA | ELM_GLVIEW_DEPTH;
   gl.mode_set(static_cast<Elm_GLView_Mode>(gl_mode));
-  gl.resize_policy_set( ELM_GLVIEW_RESIZE_POLICY_RECREATE);
-  gl.render_policy_set( ELM_GLVIEW_RENDER_POLICY_ON_DEMAND);
+  gl.resize_policy_set(ELM_GLVIEW_RESIZE_POLICY_RECREATE);
+  gl.render_policy_set(ELM_GLVIEW_RENDER_POLICY_ON_DEMAND);
   gl.init_func_set(_init_gl);
   gl.del_func_set(_del_gl);
   gl.resize_func_set(_resize_gl);
@@ -268,15 +281,12 @@ elm_main (int argc, char *argv[])
 
   gl.data_set(ani);
   gl.data_set(gld);
-  gl.object::callback_del_add(std::bind([&] ()
-				 {
-				   ecore_animator_del(ani);
-				 }));
+  gl.object::callback_del_add(std::bind([&] () { ecore_animator_del(ani); }));
 
   ::elm_button bt(efl::eo::parent = win);
   bt.text_set("elm.text", "OK");
   bt.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
-  bt.size_hint_align_set(EVAS_HINT_EXPAND, 0.0);
+  bt.size_hint_weight_set(EVAS_HINT_EXPAND, 0.0);
   bx.pack_end(bt);
   bt.visibility_set(true);
   bt.callback_clicked_add(std::bind([] () { elm_exit(); }));
@@ -285,7 +295,6 @@ elm_main (int argc, char *argv[])
   win.visibility_set(true);
 
   elm_run();
-
   return 0;
 }
 ELM_MAIN()
