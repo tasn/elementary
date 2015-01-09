@@ -149,27 +149,39 @@ if HAVE_CXX11
 SRCS += \
 thumb_cxx_example_01.cc \
 table_cxx_example_02.cc \
+table_cxx_example_01.cc \
 spinner_cxx_example.cc \
 slider_cxx_example.cc \
 separator_cxx_example_01.cc \
 radio_cxx_example_01.cc \
+popup_cxx_example_02.cc \
 popup_cxx_example_01.cc \
+panes_cxx_example.cc \
+panel_cxx_example_01.cc \
+notify_cxx_example_01.cc \
+menu_cxx_example_01.cc \
 location_cxx_example_01.cc \
+label_cxx_example_01.cc \
+image_cxx_example_01.cc \
 icon_cxx_example_01.cc \
 hoversel_cxx_example_01.cc \
 glview_cxx_example_01.cc \
+frame_cxx_example_01.cc \
 datetime_cxx_example.cc \
+conformant_cxx_example_02.cc \
+conformant_cxx_example_01.cc \
 clock_cxx_example.cc \
+check_cxx_example_01.cc \
 calendar_cxx_example_05.cc \
 calendar_cxx_example_04.cc \
 calendar_cxx_example_03.cc \
 calendar_cxx_example_02.cc \
 calendar_cxx_example_01.cc \
+bubble_cxx_example_01.cc \
 button_cxx_example_01.cc \
 button_cxx_example_00.cc \
 bg_cxx_example_02.cc \
 bg_cxx_example_01.cc \
-menu_cxx_example_01.cc \
 box_cxx_example_02.cc
 endif
 
@@ -321,27 +333,39 @@ if HAVE_CXX11
 examples_PROGRAMS += \
 thumb_cxx_example_01 \
 table_cxx_example_02 \
+table_cxx_example_01 \
 spinner_cxx_example \
 slider_cxx_example \
 separator_cxx_example_01 \
 radio_cxx_example_01 \
+popup_cxx_example_02 \
 popup_cxx_example_01 \
+panes_cxx_example \
+panel_cxx_example_01 \
+notify_cxx_example_01 \
+menu_cxx_example_01 \
 location_cxx_example_01 \
+label_cxx_example_01 \
+image_cxx_example_01 \
 icon_cxx_example_01 \
 hoversel_cxx_example_01 \
 glview_cxx_example_01 \
+frame_cxx_example_01 \
 datetime_cxx_example \
+conformant_cxx_example_02 \
+conformant_cxx_example_01 \
 clock_cxx_example \
+check_cxx_example_01 \
 calendar_cxx_example_05 \
 calendar_cxx_example_04 \
 calendar_cxx_example_03 \
 calendar_cxx_example_02 \
 calendar_cxx_example_01 \
+bubble_cxx_example_01 \
 button_cxx_example_01 \
 button_cxx_example_00 \
 bg_cxx_example_02 \
 bg_cxx_example_01 \
-menu_cxx_example_01 \
 box_cxx_example_02
 endif
 
@@ -360,27 +384,39 @@ endif
 if HAVE_CXX11
 thumb_cxx_example_01_SOURCES = thumb_cxx_example_01.cc
 table_cxx_example_02_SOURCES = table_cxx_example_02.cc
+table_cxx_example_01_SOURCES = table_cxx_example_01.cc
 spinner_cxx_example_SOURCES = spinner_cxx_example.cc
 slider_cxx_example_SOURCES = slider_cxx_example.cc
 separator_cxx_example_01_SOURCES = separator_cxx_example_01.cc
 radio_cxx_example_01_SOURCES = radio_cxx_example_01.cc
+panes_cxx_example_SOURCES = panes_cxx_example.cc
+panel_cxx_example_01_SOURCES = panel_cxx_example_01.cc
+popup_cxx_example_02_SOURCES = popup_cxx_example_02.cc
 popup_cxx_example_01_SOURCES = popup_cxx_example_01.cc
+notify_cxx_example_01_SOURCES = notify_cxx_example_01.cc
+menu_cxx_example_01_SOURCES = menu_cxx_example_01.cc
 location_cxx_example_01_SOURCES = location_cxx_example_01.cc
+label_cxx_example_01_SOURCES = label_cxx_example_01.cc
+image_cxx_example_01_SOURCES = image_cxx_example_01.cc
 icon_cxx_example_01_SOURCES = icon_cxx_example_01.cc
 hoversel_cxx_example_01_SOURCES = hoversel_cxx_example_01.cc
 glview_cxx_example_01_SOURCES = glview_cxx_example_01.cc
+frame_cxx_example_01_SOURCES = frame_cxx_example_01.cc
 datetime_cxx_example_SOURCES = datetime_cxx_example.cc
+conformant_cxx_example_02_SOURCES = conformant_cxx_example_02.cc
+conformant_cxx_example_01_SOURCES = conformant_cxx_example_01.cc
 clock_cxx_example_SOURCES = clock_cxx_example.cc
+check_cxx_example_01_SOURCES = check_cxx_example_01.cc
 calendar_cxx_example_05_SOURCES = calendar_cxx_example_05.cc
 calendar_cxx_example_04_SOURCES = calendar_cxx_example_04.cc
 calendar_cxx_example_03_SOURCES = calendar_cxx_example_03.cc
 calendar_cxx_example_02_SOURCES = calendar_cxx_example_02.cc
 calendar_cxx_example_01_SOURCES = calendar_cxx_example_01.cc
+bubble_cxx_example_01_SOURCES = bubble_cxx_example_01.cc
 button_cxx_example_01_SOURCES = button_cxx_example_01.cc
 button_cxx_example_00_SOURCES = button_cxx_example_00.cc
 bg_cxx_example_02_SOURCES = bg_cxx_example_02.cc
 bg_cxx_example_01_SOURCES = bg_cxx_example_01.cc
-menu_cxx_example_01_SOURCES = menu_cxx_example_01.cc
 box_cxx_example_02_SOURCES = box_cxx_example_02.cc
 endif
 
@@ -471,6 +507,7 @@ menu_example_01:menu_example_01.png:0.5
 
 if HAVE_CXX11
 SCREENSHOTS += \
+calendar_cxx_example_01:calendar_cxx_example_01.png:1.3 \
 box_cxx_example_02:box_cxx_example_02.png:1.3
 endif
 

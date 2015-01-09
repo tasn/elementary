@@ -85,9 +85,8 @@ load_shader( GLData *gld, GLenum type, const char *shader_src )
 static int
 init_shaders(GLData *gld)
 {
-  std::cout << __func__ << ":" << __LINE__ << std::endl;
-
   Evas_GL_API *gl = gld->glapi;
+
   GLbyte vShaderStr[] =
     "attribute vec4 vPosition;    \n"
     "void main()                  \n"
@@ -151,9 +150,21 @@ _init_gl(Evas_Object *obj)
     -0.5f, -0.5f, 0.0f,
     0.5f, -0.5f, 0.0f };
 
-  gl->glGenBuffers(1, &gld->vbo);
-  gl->glBindBuffer(GL_ARRAY_BUFFER, gld->vbo);
-  gl->glBufferData(GL_ARRAY_BUFFER, 3 * 3 * 4, vVertices, GL_STATIC_DRAW);
+  if (!init_shaders(gld))
+	{
+	  std::cout << "Error Initializing Shaders" << std::endl;
+	  return;
+	}
+      
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
+      
+      gl->glGenBuffers(1, &gld->vbo);
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
+      gl->glBindBuffer(GL_ARRAY_BUFFER, gld->vbo);
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
+      gl->glBufferData(GL_ARRAY_BUFFER, 3 * 3 * 4, vVertices, GL_STATIC_DRAW);
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
+
 }
 
 static void
@@ -268,7 +279,7 @@ elm_main (int argc, char *argv[])
   gl.resize_policy_set(ELM_GLVIEW_RESIZE_POLICY_RECREATE);
   gl.render_policy_set(ELM_GLVIEW_RENDER_POLICY_ON_DEMAND);
   gl.init_func_set(_init_gl);
-  gl.del_func_set(_del_gl);
+  // gl.del_func_set(_del_gl);
   gl.resize_func_set(_resize_gl);
   gl.render_func_set(_draw_gl);
 
