@@ -56,7 +56,7 @@ elm_main (int argc, char *argv[])
   icon.color_set( 0, 0, 255, 255);
   icon.visibility_set(true);
 
-  elm_bubble bubble1(efl::eo::parent = win);
+  ::elm_bubble bubble1(efl::eo::parent = win);
   bubble1.content_set("icon", icon);
   bubble1.text_set("info", "INFO");
   bubble1.text_set(nullptr, "LABEL");  
@@ -65,12 +65,12 @@ elm_main (int argc, char *argv[])
   bubble1.visibility_set(true);
 
   auto bla = std::bind([&] () { static unsigned char corner = 0;
-		     ++corner;
-		     if (corner > 3)
-		       bubble1.pos_set(ELM_BUBBLE_POS_TOP_LEFT);
-		     else
-		       bubble1.pos_set(static_cast<Elm_Bubble_Pos>(corner));
-                      });
+		                ++corner;
+				if (corner > 3)
+				  bubble1.pos_set(ELM_BUBBLE_POS_TOP_LEFT);
+				else
+				  bubble1.pos_set(static_cast<Elm_Bubble_Pos>(corner));
+    });
   
   bubble1.callback_clicked_add(bla);
 

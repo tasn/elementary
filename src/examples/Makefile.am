@@ -180,9 +180,10 @@ calendar_cxx_example_01.cc \
 bubble_cxx_example_01.cc \
 button_cxx_example_01.cc \
 button_cxx_example_00.cc \
+box_cxx_example_02.cc \
 bg_cxx_example_02.cc \
 bg_cxx_example_01.cc \
-box_cxx_example_02.cc
+bg_cxx_example_03.cc
 endif
 
 .edc.edj:
@@ -364,9 +365,10 @@ calendar_cxx_example_01 \
 bubble_cxx_example_01 \
 button_cxx_example_01 \
 button_cxx_example_00 \
+box_cxx_example_02 \
 bg_cxx_example_02 \
 bg_cxx_example_01 \
-box_cxx_example_02
+bg_cxx_example_03
 endif
 
 if ELEMENTARY_WINDOWS_BUILD
@@ -415,9 +417,10 @@ calendar_cxx_example_01_SOURCES = calendar_cxx_example_01.cc
 bubble_cxx_example_01_SOURCES = bubble_cxx_example_01.cc
 button_cxx_example_01_SOURCES = button_cxx_example_01.cc
 button_cxx_example_00_SOURCES = button_cxx_example_00.cc
+box_cxx_example_02_SOURCES = box_cxx_example_02.cc
 bg_cxx_example_02_SOURCES = bg_cxx_example_02.cc
 bg_cxx_example_01_SOURCES = bg_cxx_example_01.cc
-box_cxx_example_02_SOURCES = box_cxx_example_02.cc
+bg_cxx_example_03_SOURCES = bg_cxx_example_03.cc
 endif
 
 # This variable will hold the list of screenshots that will be made
@@ -507,7 +510,6 @@ menu_example_01:menu_example_01.png:0.5
 
 if HAVE_CXX11
 SCREENSHOTS += \
-calendar_cxx_example_01:calendar_cxx_example_01.png:1.3 \
 box_cxx_example_02:box_cxx_example_02.png:1.3
 endif
 

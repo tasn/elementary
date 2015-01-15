@@ -26,16 +26,12 @@ extern "C"
 #include "elm_interface_scrollable.h"
 }
 
+#include <Elementary.hh>
 #include <Eina.hh>
-
-#include <elm_win.eo.hh>
-#include <elm_calendar.eo.hh>
-
 
 EAPI_MAIN int
 elm_main (int argc, char *argv[])
 {
-
   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
  
   ::elm_win win(elm_win_util_standard_add("calendar", "Calendar Creation Example"));
@@ -49,7 +45,6 @@ elm_main (int argc, char *argv[])
   win.visibility_set(true);
 
   elm_run();
-  
   return 0;
 }
 ELM_MAIN()

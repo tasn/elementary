@@ -62,7 +62,6 @@ elm_main (int argc, char *argv[])
   win.visibility_set(true);
 
   elm_run();
- 
   return 0;
 }
 ELM_MAIN()

@@ -47,13 +47,11 @@ struct _GLData
 static float red = 1.0;
 
 static GLuint
-load_shader( GLData *gld, GLenum type, const char *shader_src )
+load_shader(GLData *gld, GLenum type, const char *shader_src )
 {
   Evas_GL_API *gl = gld->glapi;
   GLuint shader;
   GLint compiled;
-
-  std::cout << __func__ << ":" << __LINE__ << std::endl;
 
   shader = gl->glCreateShader(type);
   if (shader==0)
@@ -85,7 +83,9 @@ load_shader( GLData *gld, GLenum type, const char *shader_src )
 static int
 init_shaders(GLData *gld)
 {
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
   Evas_GL_API *gl = gld->glapi;
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
 
   GLbyte vShaderStr[] =
     "attribute vec4 vPosition;    \n"
@@ -151,19 +151,18 @@ _init_gl(Evas_Object *obj)
     0.5f, -0.5f, 0.0f };
 
   if (!init_shaders(gld))
-	{
-	  std::cout << "Error Initializing Shaders" << std::endl;
-	  return;
-	}
+    {
+      std::cout << "Error Initializing Shaders" << std::endl;
+      return;
+    }
       
-      std::cout << __func__ << ":" << __LINE__ << std::endl;
-      
-      gl->glGenBuffers(1, &gld->vbo);
-      std::cout << __func__ << ":" << __LINE__ << std::endl;
-      gl->glBindBuffer(GL_ARRAY_BUFFER, gld->vbo);
-      std::cout << __func__ << ":" << __LINE__ << std::endl;
-      gl->glBufferData(GL_ARRAY_BUFFER, 3 * 3 * 4, vVertices, GL_STATIC_DRAW);
-      std::cout << __func__ << ":" << __LINE__ << std::endl;
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
+  gl->glGenBuffers(1, &gld->vbo);
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
+  gl->glBindBuffer(GL_ARRAY_BUFFER, gld->vbo);
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
+  gl->glBufferData(GL_ARRAY_BUFFER, 3 * 3 * 4, vVertices, GL_STATIC_DRAW);
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
 
 }
 
@@ -268,8 +267,8 @@ elm_main (int argc, char *argv[])
   win.resize_object_add(bx);
   bx.visibility_set(true);
 
-  ::elm_glview gl( gl.elm_obj_glview_version_constructor(EVAS_GL_GLES_2_X),
-		    efl::eo::parent = win);
+  ::elm_glview gl(gl.elm_obj_glview_version_constructor(EVAS_GL_GLES_2_X),
+		  efl::eo::parent = win);
   gld->glapi = gl.gl_api_get();
   gl.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
   gl.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -279,7 +278,7 @@ elm_main (int argc, char *argv[])
   gl.resize_policy_set(ELM_GLVIEW_RESIZE_POLICY_RECREATE);
   gl.render_policy_set(ELM_GLVIEW_RENDER_POLICY_ON_DEMAND);
   gl.init_func_set(_init_gl);
-  // gl.del_func_set(_del_gl);
+  gl.del_func_set(_del_gl);
   gl.resize_func_set(_resize_gl);
   gl.render_func_set(_draw_gl);
 
