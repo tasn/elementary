@@ -1287,7 +1287,9 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
    if (!it) return;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   if (it->item->decorate_all_item_realized) return;
+   if ((it->item->decorate_all_item_realized) ||
+       (it->generation < sd->generation))
+     return;
 
    it->deco_all_view = edje_object_add(evas_object_evas_get(WIDGET(it)));
    edje_object_scale_set(it->deco_all_view, elm_widget_scale_get(WIDGET(it)) *
@@ -1622,6 +1624,7 @@ _item_realize(Elm_Gen_Item *it,
    int tsize = 20;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
+   if (it->generation < sd->generation) return;
    if (it->realized)
      {
         if (it->item->order_num_in != in)
@@ -2155,7 +2158,9 @@ _item_block_position(Item_Block *itb,
    EINA_LIST_FOREACH(itb->items, l, it)
      {
         sd = GL_IT(it)->wsd;
-        if (sd->reorder_it == it) continue;
+        if (it->generation < sd->generation) continue;
+        else if (sd->reorder_it == it)
+          continue;
 
         it->x = 0;
         it->y = y;
@@ -2382,7 +2387,9 @@ _item_multi_select_up(Elm_Genlist_Data *sd)
    while (eo_prev)
      {
         ELM_GENLIST_ITEM_DATA_GET(eo_prev, prev);
-        if ((!_is_no_select(prev)) && (!elm_object_item_disabled_get(eo_prev)))
+        if ((prev->generation == sd->generation) &&
+            (!_is_no_select(prev)) &&
+            (!elm_object_item_disabled_get(eo_prev)))
           break;
         eo_prev = EO_OBJ(ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev));
      }
@@ -2414,7 +2421,9 @@ _item_multi_select_down(Elm_Genlist_Data *sd)
    while ((eo_next))
      {
         ELM_GENLIST_ITEM_DATA_GET(eo_next, next);
-        if ((_is_no_select(next)) && (!elm_object_item_disabled_get(eo_next)))
+        if ((next->generation == sd->generation) &&
+            (!_is_no_select(next)) &&
+            (!elm_object_item_disabled_get(eo_next)))
           break;
         eo_next = EO_OBJ(ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next));
      }
@@ -2468,7 +2477,8 @@ _item_single_select_up(Elm_Genlist_Data *sd)
 
    while (prev)
      {
-        if ((!_is_no_select(prev)) &&
+        if ((prev->generation == sd->generation) &&
+            (!_is_no_select(prev)) &&
             (!elm_object_item_disabled_get(EO_OBJ(prev))))
           break;
         prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
@@ -2499,7 +2509,8 @@ _item_single_select_down(Elm_Genlist_Data *sd)
 
    while ((next))
      {
-        if ((!_is_no_select(next)) &&
+        if ((next->generation == sd->generation) &&
+            (!_is_no_select(next)) &&
             (!elm_object_item_disabled_get(EO_OBJ(next))))
           break;
         next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
@@ -2522,6 +2533,9 @@ _elm_genlist_item_focused(Elm_Object_Item *eo_it)
    Evas_Object *obj = WIDGET(it);
    ELM_GENLIST_DATA_GET(obj, sd);
    const char *focus_raise;
+
+   if (it->generation < sd->generation)
+     return;
 
    if (_is_no_select(it) ||
        (eo_it == sd->focused_item) ||
@@ -2562,6 +2576,9 @@ _elm_genlist_item_unfocused(Elm_Object_Item *eo_it)
    Evas_Object *obj = WIDGET(it);
    ELM_GENLIST_DATA_GET(obj, sd);
 
+   if (it->generation < sd->generation)
+     return;
+
    if (_is_no_select(it))
      return;
 
@@ -2598,6 +2615,7 @@ _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
           return EINA_FALSE;
 
         while ((next) &&
+               (next->generation < sd->generation) &&
                (!eo_do(EO_OBJ(next), elm_wdg_item_disabled_get())))
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
      }
@@ -3330,6 +3348,7 @@ _item_highlight(Elm_Gen_Item *it)
 
    if (_is_no_select(it) ||
        (!sd->highlight) ||
+       (it->generation < sd->generation) ||
        (it->highlighted) || eo_do(EO_OBJ(it), elm_wdg_item_disabled_get()) ||
        (it->item->deco_it_view))
      return;
@@ -3355,7 +3374,8 @@ _item_unhighlight(Elm_Gen_Item *it)
 {
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   if (!it->highlighted) return;
+   if ((it->generation < GL_IT(it)->wsd->generation) || (!it->highlighted))
+     return;
 
    edje_object_signal_emit(VIEW(it), SIGNAL_UNSELECTED, "elm");
    evas_object_smart_callback_call(WIDGET(it), SIG_UNHIGHLIGHTED, EO_OBJ(it));
@@ -3542,6 +3562,7 @@ _elm_genlist_item_del_not_serious(Elm_Gen_Item *it)
    Elm_Object_Item *eo_it = EO_OBJ(it);
 
    eo_do(eo_it, elm_wdg_item_pre_notify_del());
+   it->generation = sd->generation - 1; // This means that the item is deleted
 
    if (it->selected)
      {
@@ -3642,7 +3663,8 @@ _item_unselect(Elm_Gen_Item *it)
 {
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   _item_unhighlight(it); /* unhighlight the item first */
+   if ((it->generation < sd->generation)) return;
+   _item_unhighlight(it);     /* unhighlight the item first */
    if (!it->selected) return; /* then check whether the item is selected */
 
   if (GL_IT(it)->wsd->focus_on_selection_enabled)
@@ -4920,7 +4942,8 @@ _decorate_item_finished_signal_cb(void *data,
 
    te = evas_object_evas_get(obj);
 
-   if ((!it->realized) || (!it->item->deco_it_view)) return;
+   if ((it->generation < sd->generation) || (!it->realized)
+       || (!it->item->deco_it_view)) return;
 
    evas_event_freeze(te);
    it->item->nocache_once = EINA_FALSE;
@@ -4987,6 +5010,7 @@ _item_block_recalc(Item_Block *itb,
    EINA_LIST_FOREACH(itb->items, l, it)
      {
         sd = GL_IT(it)->wsd;
+        if (it->generation < sd->generation) continue;
         show_me |= it->item->show_me;
         if (!itb->realized)
           {
@@ -5266,7 +5290,8 @@ _decorate_item_realize(Elm_Gen_Item *it)
    Evas_Object *obj = sd->obj;
    char buf[1024];
 
-   if (GL_IT(it)->deco_it_view) return;
+   if (it->generation < sd->generation) return;
+   if (it->item->deco_it_view) return;
 
    evas_event_freeze(evas_object_evas_get(obj));
    it->item->deco_it_view = _view_create(it, it->itc->decorate_item_style);
@@ -5435,6 +5460,8 @@ _elm_genlist_evas_object_smart_add(Eo *obj, Elm_Genlist_Data *priv)
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_on_show_region_hook_set(obj, _show_region_hook, NULL);
 
+   priv->generation = 1;
+
    if (!elm_layout_theme_set
        (obj, "genlist", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
@@ -5600,6 +5627,9 @@ _internal_elm_genlist_clear(Evas_Object *obj)
 {
    ELM_GENLIST_DATA_GET(obj, sd);
    Elm_Gen_Item *it;
+   Eina_Inlist *l, *next;
+
+   sd->generation++;
 
    _elm_genlist_item_unfocused(sd->focused_item);
    if (sd->mode_item) sd->mode_item = NULL;
@@ -5613,7 +5643,8 @@ _internal_elm_genlist_clear(Evas_Object *obj)
    while (sd->items)
      {
         it = EINA_INLIST_CONTAINER_GET(sd->items->last, Elm_Gen_Item);
-        eo_do(EO_OBJ(it), elm_wdg_item_del());
+        if (it->generation < sd->generation)
+          eo_do(EO_OBJ(it), elm_wdg_item_del());
      }
    sd->pan_changed = EINA_TRUE;
    if (!sd->queue)
@@ -5659,6 +5690,7 @@ _item_select(Elm_Gen_Item *it)
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Elm_Object_Item *eo_it = EO_OBJ(it);
 
+   if (it->generation < sd->generation) return EINA_FALSE;
    if (eo_do(eo_it, elm_wdg_item_disabled_get())) return EINA_FALSE;
    if (_is_no_select(it) || (it->decorate_it_set)) return EINA_FALSE;
    if ((sd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS) &&
@@ -5765,6 +5797,8 @@ _elm_genlist_item_elm_widget_item_disable(Eo *eo_it, Elm_Gen_Item *it)
 {
    Eina_List *l;
    Evas_Object *obj;
+
+   if (it->generation < GL_IT(it)->wsd->generation) return;
 
    _item_unselect(it);
    if (eo_it == GL_IT(it)->wsd->focused_item)
@@ -5878,6 +5912,7 @@ _elm_genlist_item_new(Elm_Genlist_Data *sd,
    if (!eo_it) return NULL;
    ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
 
+   it->generation = sd->generation;
    it->itc = itc;
    elm_genlist_item_class_ref((Elm_Genlist_Item_Class *)itc);
 
@@ -6399,7 +6434,15 @@ _elm_genlist_at_xy_item_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Evas_Coor
 EOLIAN static Elm_Object_Item*
 _elm_genlist_first_item_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
 {
-   return EO_OBJ(ELM_GEN_ITEM_FROM_INLIST(sd->items));
+   Elm_Gen_Item *it;
+
+   if (!sd->items) return NULL;
+
+   it = ELM_GEN_ITEM_FROM_INLIST(sd->items);
+   while ((it) && (it->generation < sd->generation))
+     it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
+
+   return EO_OBJ(it);
 }
 
 EOLIAN static Elm_Object_Item*
@@ -6410,6 +6453,8 @@ _elm_genlist_last_item_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
    if (!sd->items) return NULL;
 
    it = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
+   while ((it) && (it->generation < sd->generation))
+     it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
 
    return EO_OBJ(it);
 }
@@ -6420,7 +6465,7 @@ _elm_genlist_item_next_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
    while (it)
      {
         it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
-        if (it) break;
+        if ((it) && (it->generation == GL_IT(it)->wsd->generation)) break;
      }
 
    if (it) return EO_OBJ(it);
@@ -6433,7 +6478,7 @@ _elm_genlist_item_prev_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
    while (it)
      {
         it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
-        if (it) break;
+        if ((it) && (it->generation == GL_IT(it)->wsd->generation)) break;
      }
 
    if (it) return EO_OBJ(it);
@@ -6494,8 +6539,10 @@ _elm_genlist_item_selected_set(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
       Eina_Bool selected)
 {
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   if (eo_do(EO_OBJ(it), elm_wdg_item_disabled_get())) return;
+   if ((it->generation < sd->generation) ||
+       eo_do(EO_OBJ(it), elm_wdg_item_disabled_get())) return;
 
    selected = !!selected;
    if (it->selected == selected) return;
@@ -6663,6 +6710,7 @@ _elm_genlist_item_coordinates_calc(Elm_Gen_Item *it,
    Evas_Coord gith = 0;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
+   if (it->generation < sd->generation) return EINA_FALSE;
    if ((sd->queue) ||
        (!((sd->homogeneous) &&
           (sd->mode == ELM_LIST_COMPRESS))))
@@ -6717,6 +6765,7 @@ _elm_genlist_item_promote(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 {
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
 
+   if (it->generation < GL_IT(it)->wsd->generation) return;
    Elm_Object_Item *eo_first_item = elm_genlist_first_item_get(WIDGET(it));
    ELM_GENLIST_ITEM_DATA_GET(eo_first_item, first_item);
    _item_move_before(it, first_item);
@@ -6726,6 +6775,7 @@ EOLIAN static void
 _elm_genlist_item_demote(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 {
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
+   if (it->generation < GL_IT(it)->wsd->generation) return;
    Elm_Object_Item *eo_last_item = elm_genlist_last_item_get(WIDGET(it));
    ELM_GENLIST_ITEM_DATA_GET(eo_last_item, last_item);
    _item_move_after(it, last_item);
@@ -6779,6 +6829,7 @@ _elm_genlist_item_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it)
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    if (!it->item->block) return;
+   if (it->generation < sd->generation) return;
    it->item->mincalcd = EINA_FALSE;
    it->item->updateme = EINA_TRUE;
    it->item->block->updateme = EINA_TRUE;
@@ -6794,6 +6845,7 @@ _elm_genlist_item_fields_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
 
    if (!it->item->block) return;
+   if (it->generation < GL_IT(it)->wsd->generation) return;
 
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_TEXT))
      {
@@ -6848,6 +6900,7 @@ _elm_genlist_item_item_class_update(Eo *eo_it, Elm_Gen_Item *it,
    EINA_SAFETY_ON_NULL_RETURN(itc);
    it->itc = itc;
    if (!it->item->block) return;
+   if (it->generation < GL_IT(it)->wsd->generation) return;
    it->item->nocache_once = EINA_TRUE;
 
    ELM_SAFE_FREE(it->texts, elm_widget_stringlist_free);
@@ -6861,6 +6914,7 @@ EOLIAN static const Elm_Genlist_Item_Class *
 _elm_genlist_item_item_class_get(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it)
 {
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it, NULL);
+   if (it->generation < GL_IT(it)->wsd->generation) return NULL;
 
    return it->itc;
 }
@@ -7263,7 +7317,8 @@ _elm_genlist_item_decorate_mode_set(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it,
    sd = GL_IT(it)->wsd;
 
    if (!decorate_it_type) return;
-   if (eo_do(eo_it, elm_wdg_item_disabled_get())) return;
+   if ((it->generation < sd->generation) ||
+       eo_do(eo_it, elm_wdg_item_disabled_get())) return;
    if (sd->decorate_all_mode) return;
 
    if ((sd->mode_item == it) &&
@@ -7580,6 +7635,8 @@ _elm_genlist_item_select_mode_set(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it,
 {
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+
+   if (it->generation < sd->generation) return;
 
    if ((mode >= ELM_OBJECT_SELECT_MODE_MAX) || (it->select_mode == mode))
      return;
