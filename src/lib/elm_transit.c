@@ -1080,6 +1080,7 @@ _transit_effect_zoom_op(Elm_Transit_Effect *effect, Elm_Transit *transit , doubl
    Elm_Transit_Effect_Zoom *zoom = effect;
    Evas_Map *map;
    Evas_Coord x, y, w, h;
+   double zoom_rate = (zoom->from * (1.0 - progress)) + (zoom->to * progress);
 
    map = evas_map_new(4);
    if (!map) return;
@@ -1090,8 +1091,7 @@ _transit_effect_zoom_op(Elm_Transit_Effect *effect, Elm_Transit *transit , doubl
         evas_map_util_points_populate_from_object_full(map, obj, zoom->from +
                                                        (progress * zoom->to));
         _recover_image_uv(obj, map, EINA_FALSE, EINA_FALSE);
-        evas_map_util_3d_perspective(map, x + (w / 2), y + (h / 2), 0,
-                                     _TRANSIT_FOCAL);
+        evas_map_util_zoom(map, zoom_rate, zoom_rate, x + (w / 2), y + (h / 2));
         if (!transit->smooth) evas_map_smooth_set(map, EINA_FALSE);
         evas_object_map_set(obj, map);
         evas_object_map_enable_set(obj, EINA_TRUE);
@@ -1107,8 +1107,8 @@ _transit_effect_zoom_context_new(float from_rate, float to_rate)
    zoom = ELM_NEW(Elm_Transit_Effect_Zoom);
    if (!zoom) return NULL;
 
-   zoom->from = (_TRANSIT_FOCAL - (from_rate * _TRANSIT_FOCAL)) * (1 / from_rate);
-   zoom->to = ((_TRANSIT_FOCAL - (to_rate * _TRANSIT_FOCAL)) * (1 / to_rate)) - zoom->from;
+   zoom->from = from_rate;
+   zoom->to = to_rate;
 
    return zoom;
 }
