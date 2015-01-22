@@ -1,6 +1,32 @@
 =================
-Elementary 1.12.2
+Elementary 1.12.3
 =================
+
+Changes since 1.12.2:
+---------------------
+
+Fixes:
+
+   * genlist: Fix genlist crash issue when clearing genlist on item focus callback.
+   * test_external.edc: pulse value have to be true for put in pulsing mode.
+   * win: Fix wrong return value of window theme apply.
+   * elm/image: Fix an unclipped issue about image bigger than object size
+   * elm_colorselector: fix not intended duplication
+   * elm_colorselector: Fix layout broken in ELM_COLORSELECTOR_ALL mode
+   * add clipper for gadget popup shine
+   * genlist should ignore no-select items when moving with the keyboard
+   * elm_toolbar: fix memory leak in _elm_toolbar_nearest_visible_item_get
+   * gengrid, genlist, list, toolbar: Fix memory leak and enhance performance.
+   * elm_colorselector: Fixed to get proper min size with picker only mode
+   * test_gengrid.c: Fixed Item_Data array size for prevent buffer overflow.
+   * elm_diskselector.c: idle enterer add condition changed.
+   * elm_segment_control: Fix elm_object_item_text_set bug.
+   * colorselector: memory leak fix  in _color_bars_add
+   * theme: fix misprint in popup style alias name
+   * elm_image: Fixed to have exact size using elm_image_fill_outside_set()
+   * box layout should not silently fail when size is less than min size hint
+   * elm_transit: Fix to support zoom rate zero.
+   * Elm_Entry: Fix dropped text data insertion
 
 Changes since 1.12.1:
 ---------------------
