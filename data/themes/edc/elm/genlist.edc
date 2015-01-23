@@ -2511,6 +2511,47 @@ ODD("elm/genlist/tree_odd/double_label/default", "elm/genlist/tree/double_label/
 COMPRESS_SUB("elm/genlist/tree_compress/double_label/default", "elm/genlist/tree/double_label/default")
 COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genlist/tree/double_label/default")
 
+group { "elm/genlist/item/double_label_unblock/default"; nomouse;
+   inherit: "elm/genlist/item/double_label/default";
+   parts {
+      text { "elm.text.sub";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            fixed: 0 1;
+            rel1.offset: 2 -3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -3 -3;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "elm.swallow.end";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_sub";
+            align: 0.0 1.0;
+            text { font: FN; size: 8;
+               min: 0 1;
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+   }
+}
+ODD("elm/genlist/item_odd/double_label_unblock/default", "elm/genlist/item/double_label_unblock/default")
+COMPRESS_SUB("elm/genlist/item_compress/double_label_unblock/default", "elm/genlist/item/double_label_unblock/default")
+COMPRESS_SUB_ODD("elm/genlist/item_compress_odd/double_label_unblock/default", "elm/genlist/item/double_label_unblock/default")
 #define COMPRESS_T1T2(_NAME, _SRC) \
    group { name: _NAME; \
       inherit: _SRC; \
