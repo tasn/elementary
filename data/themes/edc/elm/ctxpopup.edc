@@ -199,7 +199,25 @@ group { name: "elm/ctxpopup/base/default";
 
    }
 }
-
+group { name: "elm/ctxpopup/base/clean";
+   inherit: "elm/ctxpopup/base/default";
+   parts {
+   part{ name: "elm.swallow.arrow_down";
+      description { state: "default" 0.0;
+         visible:0;
+      }
+   }
+   part{ name: "elm.swallow.arrow_up";
+      inherit: "elm.swallow.arrow_down";
+   }
+   part{ name: "elm.swallow.arrow_right";
+      inherit: "elm.swallow.arrow_down";
+   }
+   part{ name: "elm.swallow.arrow_left";
+      inherit: "elm.swallow.arrow_down";
+   }
+   }
+}
 group { name: "elm/ctxpopup/arrow/default";
    images.image: "tooltip-edge-left-tip.png" COMP;
    images.image: "tooltip-edge-right-tip.png" COMP;

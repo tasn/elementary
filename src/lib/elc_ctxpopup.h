@@ -56,6 +56,10 @@
  * @li @ref elm_object_item_focus_set
  * @li @ref elm_object_item_focus_get
  *
+ * Supported Styles:
+ * @li clean - No arrows at the borders of the ctxpopup
+ * @li default - The default ctxpopup
+ *
  * @ref tutorial_ctxpopup shows the usage of a good deal of the API.
  * @{
  */
