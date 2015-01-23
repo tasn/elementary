@@ -70,7 +70,7 @@ collections {
 #include "edc/elm/gengrid.edc"
 #include "edc/elm/hover.edc"
 #include "edc/elm/cursor.edc"
-
+#include "edc/elm/settingspane.edc"
 // desktop in general
 #include "edc/wallpaper.edc"
 #include "edc/comp.edc"

@@ -147,6 +147,7 @@ edc/elm/toolbar.edc \
 edc/elm/tooltip.edc \
 edc/elm/video.edc \
 edc/elm/win.edc \
+edc/elm/settingspane.edc \
 \
 edc/O/efm_icons.edc \
 edc/O/icons.edc \

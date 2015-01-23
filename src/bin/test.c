@@ -267,6 +267,7 @@ void test_application_server_phone(void *data, Evas_Object *obj, void *event_inf
 void test_win_dialog(void *data, Evas_Object *obj, void *event_info);
 void test_box_disable(void *data, Evas_Object *obj, void *event_info);
 void test_layout_disable(void *data, Evas_Object *obj, void *event_info);
+void test_settingspane(void *data, Evas_Object *obj, void *event_info);
 
 void test_colorclass();
 
@@ -865,6 +866,7 @@ add_tests:
    ADD_TEST(NULL, "Miscellaneous", "Accessibility", test_access);
    ADD_TEST(NULL, "Miscellaneous", "Accessibility2", test_access2);
    ADD_TEST(NULL, "Miscellaneous", "Accessibility3", test_access3);
+   ADD_TEST(NULL, "Miscellaneous", "Settingspane", test_settingspane);
 
    //------------------------------//
    ADD_TEST(NULL, "Application client/server", "Task switcher", test_task_switcher);

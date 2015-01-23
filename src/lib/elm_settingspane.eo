@@ -1,0 +1,107 @@
+class Elm_Settingspane(Elm_Layout)
+{
+   eo_prefix: elm_obj_settingspane;
+   properties {
+   }
+   methods {
+      item_get {
+        /*@
+        Return the Item from this path
+
+        This will search the item of the given paths.
+        If the path is "settings/monitor/resolution"
+        The Item resolution in the parent "monitor" in the parent "settings" will be searched.
+        If the item is found, it will be retured, if it isnt, NULL is returned
+
+        @see elm_settingspane_item_focus
+
+        @ingroup Elm_Settingspane*/
+        return: Elm_Settingspane_Item* ;
+        params {
+          @in const(char) *paths;
+        }
+      }
+      item_append {
+        /*@
+        Append a item.
+
+        This will append a item with the given name, description and icon to the widget,
+        if par is not NULL it will be placed as a child of par. If par is NULL it will be placed in the 0 level.
+
+        @note *data will be passed as data to the specific callbacks.
+
+        @see elm_settingspane_item_append_relative
+
+        @ingroup Elm_Settingspane*/
+         return: Elm_Settingspane_Item *;
+         params {
+            @in void *data;
+            @in const(char) *name;
+            @in const(char) *description;
+            @in Evas_Object *icon;
+            @in Elm_Settingspane_Item *par;
+         }
+      }
+      item_append_relative {
+        /*@
+        Append a item relative
+
+        This will append a item like item_append, with the only difference that it will be appended to rel,
+        The parent of rel will be took as parent.
+
+        @note This will fail if rel is NULL
+
+        @see item_append
+
+        @ingroup Elm_Settingspane
+
+        */
+         return: Elm_Settingspane_Item *;
+         params {
+            @in void *data;
+            @in const(char) *name;
+            @in const(char) *description;
+            @in Evas_Object *icon;
+            @in Elm_Settingspane_Item *rel;
+         }
+      }
+      save_quit {
+        /*@
+        Check if everything is saved
+
+        With the internal stack of the widget it is possible that multiple panels are opened above each other.
+        If the changed flag is set to one of this panels the apply/reset buttons are enabled,
+        and you cannot close this page before you clicked reset or apply.
+        If there are panels with the change flag set this function will return EINA_FALSE,
+        if no change flag is set on the opened panel it will return EINA_TRUE
+
+        @see raise_unsaved
+
+        @return EINA_TRUE if no change flag is set on the opened panels.
+        @ingroup Elm_Settingspane
+
+         */
+        return: Eina_Bool;
+      }
+      raise_unsaved {
+         /*@
+         Raise unsaved panels in the internal stack
+
+         This will raise internal panels which have the changed flag set.
+         The panels are raised with a error highlighting.
+
+         The lowest unsaved panel will later be the lowest unsaved panel. The highest at the top.
+         All panels with unsaved changes will be infront of those without unsaved changes.
+
+         @see save_quit
+
+         @ingroup Elm_Settingspane
+         */
+      }
+   }
+   implements {
+     Eo.Base.constructor;
+     Eo.Base.destructor;
+     Evas.Object_Smart.add;
+   }
+}
