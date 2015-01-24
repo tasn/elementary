@@ -1291,6 +1291,17 @@ _history_menu_show_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *emis
    _history_menu_show(obj, x, y);
 }
 
+EOLIAN static Elm_Settingspane_Item*
+_elm_settingspane_focused_get(Eo *obj, Elm_Settingspane_Data *pd EINA_UNUSED)
+{
+   Elm_Settingspane_Item *current = _history_stack_current(obj);
+
+   if (current == pd->zero) /* we dont want to return our internal item */
+     return NULL;
+   else
+     return current;
+}
+
 EOLIAN static void
 _elm_settingspane_evas_object_smart_add(Eo *obj, Elm_Settingspane_Data *pd)
 {

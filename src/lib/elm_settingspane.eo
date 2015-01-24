@@ -4,6 +4,14 @@ class Elm_Settingspane(Elm_Layout)
    properties {
    }
    methods {
+      focused_get{
+        /*@
+        Returns the currently focused item
+
+        Returns the item which is currently displayed.
+        */
+        return: Elm_Settingspane_Item* ;
+      }
       item_get {
         /*@
         Return the Item from this path
