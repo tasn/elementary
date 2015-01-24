@@ -525,6 +525,26 @@ _menu_layout_show(Evas_Object *w, Elm_Settingspane_Item *item, Elm_Settingspane_
    evas_object_data_set(w, DK_MAIN_MENU_HIDDEN, shown);
    evas_object_data_set(w, DK_MAIN_MENU_BEHIND, hidden);
 }
+
+static void
+_menu_layout_del_ref(Evas_Object *w, Elm_Settingspane_Item *it_ref)
+{
+   Elm_Settingspane_Item *it;
+   Evas_Object *layouts[3];
+   int i = 0;
+
+   layouts[0] = evas_object_data_get(w, DK_MAIN_MENU_SHOWED);
+   layouts[1] = evas_object_data_get(w, DK_MAIN_MENU_HIDDEN);
+   layouts[2] = evas_object_data_get(w, DK_MAIN_MENU_BEHIND);
+
+   for (i = 0; i< 3; i++)
+     {
+        it = evas_object_data_get(layouts[i], DK_MENU_ITEM_SHOWN);
+        if (it == it_ref)
+          evas_object_data_del(layouts[i], DK_MENU_ITEM_SHOWN);
+     }
+}
+
 static void
 _menu_layout_refresh(Evas_Object *w)
 {
@@ -892,6 +912,8 @@ _item_del(Elm_Settingspane_Item *del, Eina_Bool full)
         id_par = IC_DATA_L(id->par);
         id_par->childs = eina_list_remove(id_par->childs, del);
      }
+   if (!full)
+     _menu_layout_del_ref(id->sw, del);
    if (!full)
      _menu_layout_refresh(id->sw);
    //if we have the item somewhere in the stack, remove it!
