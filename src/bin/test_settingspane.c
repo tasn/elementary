@@ -251,7 +251,7 @@ test_settingspane(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    it = elm_settingspane_item_append(sw, ic, "Complex",
-                                    "No we are not going to jump here into complex numbers, this is just a complex menu item, this means it has childrens!",
+                                    "No we are not going to jump here into<br>complex numbers,<br>this is just a complex menu item,<br>this means it has childrens!",
                                     ic, NULL);
    elm_settingspane_item_keyword_add(it, eina_stringshare_add("Hardone"));
    elm_settingspane_item_keyword_add(it, eina_stringshare_add("second"));
