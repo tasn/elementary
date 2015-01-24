@@ -181,7 +181,6 @@ group { name: "elm/settingspane/base/default";
  }
  group { name: "elm/settingspane/panel/default";
     images.image: "bevel_out.png" COMP;
-    images.image: "error_hover.png" COMP;
     parts {
        part { name: "base"; type: RECT;
           description { state: "default" 0.0;
@@ -211,13 +210,6 @@ group { name: "elm/settingspane/base/default";
             color: 255 255 255 75;
             visible: 1;
           }
-       }
-       part { name: "error_hover"; type: IMAGE;
-         clip_to: "error";
-         description {
-           image.normal: "error_hover.png";
-           image.scale_hint: STATIC;
-         }
        }
        part { name: "bevel"; mouse_events: 0;
           description { state: "default" 0.0;
@@ -282,20 +274,6 @@ group { name: "elm/settingspane/base/default";
           action: STATE_SET "visible" 0.0;
           transition: DECELERATE 0.6;
           target: "base";
-       }
-       program {
-          name: "error";
-          signal: "elm,state,highlight"; source: "elm";
-          action: STATE_SET "visible" 0.0;
-          target: "error";
-          after: "error_cleanup";
-          transition: BOUNCE 1.5 0.0 2.0;
-       }
-       program {
-         name: "error_cleanup";
-         action: STATE_SET "default" 0.0;
-         target: "error";
-         transition: LINEAR 0.75;
        }
        program {
           signal: "elm,state,default"; source: "elm";
