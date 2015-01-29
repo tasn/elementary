@@ -48,6 +48,7 @@ typedef struct
 
    Eina_List *childs; //list of Elm_Settingspane_Item*
 
+   const char *key_word; //< the original string which was given
    Eina_List *key_words; //< list of strdup´ed strings to match searching
 
    const char *name;
@@ -1515,17 +1516,43 @@ _elm_settingspane_item_eo_base_destructor(Eo *obj EINA_UNUSED, Elm_Settingspane_
 
 
 EOLIAN static void
-_elm_settingspane_item_keyword_add(Elm_Settingspane_Item *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd, Eina_Stringshare *str)
+_elm_settingspane_item_keywords_set(Elm_Settingspane_Item *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd, Eina_Stringshare *str)
 {
+  char **splits;
+  char *split;
+  const char *word;
+  int i = 0;
+
+  /* save the original string */
   eina_stringshare_ref(str);
+  if (pd->key_word)
+    eina_stringshare_del(pd->key_word);
+
+  pd->key_word = str;
+
+  /* free the existing list */
+  EINA_LIST_FREE(pd->key_words, word)
+    {
+       eina_stringshare_del(word);
+    }
+  /* parse out the single words */
+  splits = eina_str_split(pd->key_word, ",", -1);
+
+  if (!splits) return;
+
+  for(i = 0; splits[i]; i++)
+    {
+       split = splits[i];
+       pd->key_words = eina_list_append(pd->key_words, eina_stringshare_add(split));
+    }
+
   pd->key_words = eina_list_append(pd->key_words, str);
 }
 
-EOLIAN static void
-_elm_settingspane_item_keyword_delete(Elm_Settingspane_Item *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd, Eina_Stringshare *str)
+EOLIAN static Eina_Stringshare *
+_elm_settingspane_item_keywords_get(Elm_Settingspane_Item *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd)
 {
-  eina_stringshare_del(str);
-  pd->key_words = eina_list_remove(pd->key_words, str);
+  return pd->key_word;
 }
 
 /* widget api calls */

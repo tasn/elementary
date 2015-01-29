@@ -91,25 +91,28 @@ class Elm_Settingspane_Item(Eo.Base){
                Eina_Bool changed;
              }
           }
+          keywords {
+             get {
+               /*@
+               Returns the keywords
+               */
+             }
+             set {
+               /*@
+               Set the keywords
+
+               This is the string for the search of a item
+
+               The string should be from the form word[,word2]
+               The value of the searchentry will be compared against the values seperated by a ","
+               */
+             }
+             values {
+               Eina_Stringshare *word;
+             }
+          }
      }
       methods {
-        keyword_add {
-          /*@
-          Append a string to the internal search list.
-          If items are searched the keyword is checked against the elements of this stringlist.
-           */
-          params {
-            @in Eina_Stringshare* str; /*@ The String to append to the list*/
-          }
-        }
-        keyword_delete {
-          /*@
-          Delete a string from the internal search list.
-           */
-          params {
-            @in Eina_Stringshare* str; /*@ The String to remove from the internal list*/
-          }
-        }
         attach_panel {
           /*@
           Attach a panel to the item
