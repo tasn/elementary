@@ -1514,6 +1514,31 @@ _elm_settingspane_item_eo_base_destructor(Eo *obj EINA_UNUSED, Elm_Settingspane_
    eo_do_super(obj, ELM_SETTINGSPANE_ITEM_CLASS, eo_destructor());
 }
 
+EOLIAN static void
+_elm_settingspane_item_recreate(Elm_Settingspane_Item *obj, Elm_Settingspane_Item_Data *pd)
+{
+   Evas_Object *shown = evas_object_data_get(pd->sw, DK_MAIN_PANEL_SHOWED);
+   Evas_Object *tmp;
+   Elm_Settingspane_Item *cf;
+
+   cf = eo_do(pd->sw, elm_obj_settingspane_focused_get());
+
+   if (cf != obj) return;
+
+   tmp = elm_scroller_add(pd->sw);
+   eo_ref(tmp);
+   evas_object_size_hint_weight_set(tmp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(tmp);
+   elm_object_content_set(tmp, _item_content_get(obj, pd->sw));
+
+   elm_layout_content_unset(shown, POS_PANEL_CONTENT);
+   elm_object_part_content_set(shown, POS_PANEL_CONTENT, tmp);
+
+   if (pd->panel.tmp_content)
+     _content_del(obj);
+
+   pd->panel.tmp_content = tmp;
+}
 
 EOLIAN static void
 _elm_settingspane_item_keywords_set(Elm_Settingspane_Item *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd, Eina_Stringshare *str)

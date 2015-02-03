@@ -113,6 +113,11 @@ class Elm_Settingspane_Item(Eo.Base){
           }
      }
       methods {
+        recreate {
+          /*@
+          Recreates the content of a item when the item is currently displayed
+           */
+        }
         attach_panel {
           /*@
           Attach a panel to the item
