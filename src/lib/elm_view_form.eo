@@ -30,7 +30,6 @@ class Elm_View_Form (Eo.Base)
     }
     implements {
         Eo.Base.destructor;
-        Eo.Base.constructor;
     }
     constructors {
         .constructor;

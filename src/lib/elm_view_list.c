@@ -57,16 +57,22 @@ static void
 _item_del(void *data, Evas_Object *obj EINA_UNUSED)
 {
    View_List_ItemData *idata = data;
-   if (idata) {
-     eo_do(idata->model, eo_event_callback_del(EMODEL_EVENT_PROPERTIES_CHANGED, _emodel_properties_change_cb, idata));
-     eo_do(idata->model, eo_event_callback_del(EMODEL_EVENT_LOAD_STATUS, _emodel_load_status_change_cb, idata));
-     eo_do(idata->model, eo_event_callback_del(EMODEL_EVENT_CHILDREN_COUNT_CHANGED, _emodel_children_count_change_cb, idata));
-     eo_unref(idata->model);
-     idata->model = NULL;
-     idata->item = NULL;
-     idata->parent = NULL;
-     idata->priv = NULL;
-   }
+   if (!idata)
+      return;
+
+   eo_do(idata->model, eo_event_callback_del(EMODEL_EVENT_PROPERTIES_CHANGED,
+                           _emodel_properties_change_cb, idata));
+   eo_do(idata->model, eo_event_callback_del(EMODEL_EVENT_LOAD_STATUS,
+                           _emodel_load_status_change_cb, idata));
+   eo_do(idata->model, eo_event_callback_del(EMODEL_EVENT_CHILDREN_COUNT_CHANGED,
+                           _emodel_children_count_change_cb, idata));
+
+   eo_unref(idata->model);
+   idata->model = NULL;
+   idata->item = NULL;
+   idata->parent = NULL;
+   idata->priv = NULL;
+
    free(idata);
 }
 
@@ -136,10 +142,7 @@ _item_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 
    eina_value_setup(&value, EINA_VALUE_TYPE_STRING);
    eo_do(idata->model, emodel_property_get(prop, &value));
-   if (eina_value_type_get(&value) == EINA_VALUE_TYPE_STRING)
-     {
-         text = eina_value_to_string(&value);
-     }
+   text = eina_value_to_string(&value);
    eina_value_flush(&value);
 
    return text;
@@ -150,14 +153,19 @@ _expand_request_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 {
    Elm_Object_Item *item = event_info;
    View_List_ItemData *idata = elm_object_item_data_get(item);
-   Emodel_Load_Status st;
+   Emodel_Load_Status st = EMODEL_LOAD_STATUS_ERROR;
+
+   EINA_SAFETY_ON_NULL_RETURN(idata);
 
    eo_do(idata->model, st = emodel_load_status_get());
-   eo_do(idata->model, eo_event_callback_add(EMODEL_EVENT_LOAD_STATUS, _emodel_load_status_change_cb, idata));
-   eo_do(idata->model, eo_event_callback_add(EMODEL_EVENT_CHILDREN_COUNT_CHANGED, _emodel_children_count_change_cb, idata));
+   eo_do(idata->model, eo_event_callback_add(EMODEL_EVENT_LOAD_STATUS,
+                           _emodel_load_status_change_cb, idata));
+   eo_do(idata->model, eo_event_callback_add(EMODEL_EVENT_CHILDREN_COUNT_CHANGED,
+                           _emodel_children_count_change_cb, idata));
+
    if (st & EMODEL_LOAD_STATUS_LOADED_CHILDREN)
      {
-         _emodel_load_children(idata);
+        _emodel_load_children(idata);
      }
    else
      {
@@ -171,8 +179,10 @@ _contract_request_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    Elm_Object_Item *item = event_info;
    View_List_ItemData *idata = elm_object_item_data_get(item);
 
-   eo_do(idata->model, eo_event_callback_del(EMODEL_EVENT_LOAD_STATUS, _emodel_load_status_change_cb, idata));
-   eo_do(idata->model, eo_event_callback_del(EMODEL_EVENT_CHILDREN_COUNT_CHANGED, _emodel_children_count_change_cb, idata));
+   eo_do(idata->model, eo_event_callback_del(EMODEL_EVENT_LOAD_STATUS,
+                           _emodel_load_status_change_cb, idata));
+   eo_do(idata->model, eo_event_callback_del(EMODEL_EVENT_CHILDREN_COUNT_CHANGED,
+                           _emodel_children_count_change_cb, idata));
    elm_genlist_item_expanded_set(item, EINA_FALSE);
 }
 
@@ -201,7 +211,8 @@ _genlist_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_
 
 /* --- Emodel Callbacks --- */
 static Eina_Bool
-_emodel_properties_change_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_emodel_properties_change_cb(void *data, Eo *obj EINA_UNUSED,
+                const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    View_List_ItemData *idata = data;
    Emodel_Property_Event *evt = event_info;
@@ -210,7 +221,7 @@ _emodel_properties_change_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Des
    EINA_SAFETY_ON_NULL_RETURN_VAL(evt, EINA_TRUE);
 
    if (idata->item)
-    elm_genlist_item_update(idata->item);
+     elm_genlist_item_update(idata->item);
 
    return EINA_TRUE;
 }
@@ -219,9 +230,11 @@ static void
 _emodel_load_children(View_List_ItemData *pdata)
 {
    Eo *child;
-   Eina_Accessor *accessor;
+   Eina_Accessor *accessor = NULL;
+   EINA_SAFETY_ON_NULL_RETURN(pdata);
+
    Elm_View_List_Data *priv = pdata->priv;
-   unsigned int total, i;
+   unsigned int i, total = 0;
 
    eo_do(pdata->model, emodel_children_count_get(&total));
    if (total == 0)
@@ -240,27 +253,27 @@ _emodel_load_children(View_List_ItemData *pdata)
         idata->parent = pdata;
         idata->model = child;
         eo_ref(child);
-        eo_do(child, eo_event_callback_add(EMODEL_EVENT_PROPERTIES_CHANGED, _emodel_properties_change_cb, idata));
+        eo_do(child, eo_event_callback_add(EMODEL_EVENT_PROPERTIES_CHANGED,
+                                _emodel_properties_change_cb, idata));
         eo_do(child, emodel_properties_load());
         idata->item = elm_genlist_item_append(priv->genlist, priv->itc, idata, pdata->item,
                                                        priv->itype, _item_sel_cb, idata);
      }
 
    if (pdata->item)
-     {
-        elm_genlist_item_expanded_set(pdata->item, EINA_TRUE);
-     }
+     elm_genlist_item_expanded_set(pdata->item, EINA_TRUE);
 }
 
 static Eina_Bool
-_emodel_children_count_change_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_emodel_children_count_change_cb(void *data, Eo *obj EINA_UNUSED,
+                const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    View_List_ItemData *idata = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(idata, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(idata->priv, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(idata->priv->genlist, EINA_FALSE);
 
-   eo_do(idata->priv->genlist, elm_obj_genlist_clear());
+   elm_genlist_item_subitems_clear(idata->item);
 
    _emodel_load_children(idata);
 
@@ -268,18 +281,12 @@ _emodel_children_count_change_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event
 }
 
 static Eina_Bool
-_emodel_load_status_change_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_emodel_load_status_change_cb(void *data, Eo *obj EINA_UNUSED,
+                const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    View_List_ItemData *idata = data;
    Emodel_Load *load = event_info;
 
-/*   if ((load->status & EMODEL_LOAD_STATUS_LOADED_CHILDREN)
-                   && !(data->status & EMODEL_LOAD_STATUS_LOADED_CHILDREN))
-     {
-         _emodel_load_children(idata);
-     }
-   else
-*/
    if (load->status & EMODEL_LOAD_STATUS_UNLOADED)
      {
         if (idata->item)
@@ -328,10 +335,9 @@ _priv_model_set(Elm_View_List_Data *priv, Eo *model)
  * @brief Elm View List Class impl.
  */
 static void
-_elm_view_list_constructor(Eo *obj, Elm_View_List_Data *priv, Evas_Object *genlist, Elm_Genlist_Item_Type itype, const char *istyle)
+_elm_view_list_constructor(Eo *obj, Elm_View_List_Data *priv, Evas_Object *genlist,
+                Elm_Genlist_Item_Type itype, const char *istyle)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
-
    priv->view = obj;
    priv->genlist = genlist;
    priv->itype = itype;
@@ -342,7 +348,8 @@ _elm_view_list_constructor(Eo *obj, Elm_View_List_Data *priv, Evas_Object *genli
    priv->rootdata->priv = priv;
 
    priv->itc = elm_genlist_item_class_new();
-   priv->itc->item_style = strdup(istyle);
+   if (istyle)
+     priv->itc->item_style = strdup(istyle);
    priv->itc->func.text_get = _item_text_get;
    priv->itc->func.content_get = _item_content_get;
    priv->itc->func.state_get = NULL;
@@ -397,7 +404,8 @@ _elm_view_list_evas_object_get(Eo *obj, Elm_View_List_Data *priv, Evas_Object **
 }
 
 static void
-_elm_view_list_property_connect(Eo *obj EINA_UNUSED, Elm_View_List_Data *priv, const char *property, const char *part)
+_elm_view_list_property_connect(Eo *obj EINA_UNUSED, Elm_View_List_Data *priv,
+                const char *property, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN(priv);
 

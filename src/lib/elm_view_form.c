@@ -43,24 +43,24 @@ _emodel_properties_change_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Des
 {
    const Emodel_Property_Event *evt = event_info;
    Elm_View_Form_Data *priv = data;
-   Emodel_Property_Pair *pair = NULL;
-   Eina_List *l, *fe = NULL;
+   Eina_Value value;
+   Eina_List *l = NULL;
    Elm_View_Form_Widget *w = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(priv, EINA_TRUE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(evt, EINA_TRUE);
 
-   //update all widgets with this property
-   EINA_LIST_FOREACH(priv->l, l, w)
+   if (evt->changed_properties && eina_value_type_get(evt->changed_properties) == EINA_VALUE_TYPE_STRUCT)
      {
-        EINA_LIST_FOREACH(evt->changed_properties, fe, pair)
-          {
-              if(w->widget_propname == pair->property)
-                {
-                    w->widget_obj_set_cb(priv->model_obj, w->widget_obj, &pair->value, pair->property);
-                    break;
-                }
-          }
+       //update all widgets with this property
+       EINA_LIST_FOREACH(priv->l, l, w)
+         {
+            if (eina_value_struct_value_get(evt->changed_properties, w->widget_propname, &value) == EINA_TRUE)
+              {
+                 w->widget_obj_set_cb(priv->model_obj, w->widget_obj, &value, w->widget_propname);
+                 eina_value_flush(&value);
+              }
+         }
      }
 
    return EINA_TRUE;
@@ -188,10 +188,9 @@ _elm_view_widget_add(Elm_View_Form_Data *priv, const char *propname, Evas_Object
  * @brief constructor
  */
 static void
-_elm_view_form_constructor(Eo *obj, Elm_View_Form_Data *_pd, Eo *model)
+_elm_view_form_constructor(Eo *obj EINA_UNUSED, Elm_View_Form_Data *_pd, Eo *model)
 {
    Elm_View_Form_Data *priv = (Elm_View_Form_Data *)_pd;
-   eo_do_super(obj, MY_CLASS, eo_constructor());
    priv->model_obj = model;
    if (priv->model_obj != NULL)
      {
@@ -203,16 +202,13 @@ _elm_view_form_constructor(Eo *obj, Elm_View_Form_Data *_pd, Eo *model)
 static void
 _elm_view_form_eo_base_constructor(Eo *obj, Elm_View_Form_Data *_pd EINA_UNUSED)
 {
-   eo_error_set(obj);
-   fprintf(stderr, "only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
-
 
 /**
  * @brief destructor
  */
 static void
-_elm_view_form_eo_base_destructor(Eo *obj, Elm_View_Form_Data *priv)
+_elm_view_form_eo_base_destructor(Eo *obj EINA_UNUSED, Elm_View_Form_Data *priv)
 {
    Elm_View_Form_Widget *w = NULL;
    EINA_LIST_FREE(priv->l, w)
