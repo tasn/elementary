@@ -84,7 +84,8 @@ WGT_PREVIEW = \
 	thumb:preview-00.png:widget_preview_thumb:100:100 \
 	toolbar:preview-00.png:widget_preview_toolbar:300:100 \
 	web:preview-00.png:widget_preview_web:300:300 \
-	win:preview-00.png:widget_preview_win:200:200
+	win:preview-00.png:widget_preview_win:200:200 \
+	settingspane:preview-00.png:widget_preview_settingspane:200:200
 
 # put in here every elm widget, so that it gets its hierarchy tree built
 # then, make a reference to the generated image, in the form

@@ -11,6 +11,8 @@ class Elm_Settingspane_Item(Eo.Base){
                   This is the string displayed in the item.
 
                   @return The name of the item
+
+                  @ingroup Settingspane
                   */
                }
                values {
@@ -27,6 +29,7 @@ class Elm_Settingspane_Item(Eo.Base){
                  This is the string displayed lower of the name.
 
                  @return The description of the item
+                 @ingroup Settingspane
                  */
                }
                values {
@@ -41,6 +44,7 @@ class Elm_Settingspane_Item(Eo.Base){
                  This will return the parent item of this item. If there is none it will return NULL.
 
                  @return The Elm_Settingspane_Item of the parent.
+                 @ingroup Settingspane
                  */
                }
                values {
@@ -68,6 +72,7 @@ class Elm_Settingspane_Item(Eo.Base){
                the panel will be highlighted with an error.
 
                @return EINA_TRUE if the flag is set, EINA_FALSE if not
+               @ingroup Settingspane
                */
              }
              set {
@@ -85,16 +90,19 @@ class Elm_Settingspane_Item(Eo.Base){
                the panel will be highlighted with an error.
 
                @note if this item doesnt have a attached panel settings this is useless
+
+               @ingroup Settingspane
                */
              }
              values {
-               Eina_Bool changed;
+               Eina_Bool changed; /*@ set this item to changed*/
              }
           }
           keywords {
              get {
                /*@
                Returns the keywords
+               @ingroup Settingspane
                */
              }
              set {
@@ -105,10 +113,12 @@ class Elm_Settingspane_Item(Eo.Base){
 
                The string should be from the form word[,word2]
                The value of the searchentry will be compared against the values seperated by a ","
+
+               @ingroup Settingspane
                */
              }
              values {
-               Eina_Stringshare *word;
+               Eina_Stringshare *word; /*@ set the current keywords to look up */
              }
           }
      }
@@ -116,6 +126,7 @@ class Elm_Settingspane_Item(Eo.Base){
         recreate {
           /*@
           Recreates the content of a item when the item is currently displayed
+          @ingroup Settingspane
            */
         }
         attach_panel {
@@ -134,7 +145,7 @@ class Elm_Settingspane_Item(Eo.Base){
           @note The panel can just be attached if this node doenst have childs.
           @note Once the panel has a panel it cannot be used as a parent node anymore.
 
-          @ingroup Elm_Settingspane
+          @ingroup Settingspane
            */
            params {
              @in Content_Get_Cb content_get; /*@ Callback to call when the content is requested
@@ -151,7 +162,7 @@ class Elm_Settingspane_Item(Eo.Base){
           This will focus the item in the widget, this means its children will be displayed in the menu,
           or the attached panel will be shown, this item will be the highest on the stack.
 
-          @ingroup Elm_Settingspane
+          @ingroup Settingspane
           */
         }
         delete {
@@ -165,7 +176,7 @@ class Elm_Settingspane_Item(Eo.Base){
           the state after this item is deleted.
           If this item is the current focused item the stack will go back to a not deleted item.
 
-          @ingroup Elm_Settingspane
+          @ingroup Settingspane
           */
         }
       }

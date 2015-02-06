@@ -9,6 +9,8 @@ class Elm_Settingspane(Elm_Layout)
         Returns the currently focused item
 
         Returns the item which is currently displayed.
+
+        @ingroup Settingspane
         */
         return: Elm_Settingspane_Item* ;
       }
@@ -23,10 +25,10 @@ class Elm_Settingspane(Elm_Layout)
 
         @see elm_settingspane_item_focus
 
-        @ingroup Elm_Settingspane*/
+        @ingroup Settingspane */
         return: Elm_Settingspane_Item* ;
         params {
-          @in const(char) *paths;
+          @in const(char) *paths; /*@ the path of the item to return*/
         }
       }
       item_append {
@@ -36,18 +38,17 @@ class Elm_Settingspane(Elm_Layout)
         This will append a item with the given name, description and icon to the widget,
         if par is not NULL it will be placed as a child of par. If par is NULL it will be placed in the 0 level.
 
-        @note *data will be passed as data to the specific callbacks.
-
         @see elm_settingspane_item_append_relative
 
-        @ingroup Elm_Settingspane*/
+        @ingroup Settingspane*/
          return: Elm_Settingspane_Item *;
          params {
-            @in void *data;
-            @in const(char) *name;
-            @in const(char) *description;
-            @in Evas_Object *icon;
-            @in Elm_Settingspane_Item *par;
+            @in void *data; /*@ data to attach to the item which gets passed to the callback */
+
+            @in const(char) *name; /*@ name of the item */
+            @in const(char) *description; /*@ the description of the item */
+            @in Evas_Object *icon; /*@ the icon to show in the menu */
+            @in Elm_Settingspane_Item *par; /*@ parent of this item, it will be shown when the parent item is selected. If NULL it will be appended to the 0 lvl */
          }
       }
       item_append_relative {
@@ -61,16 +62,16 @@ class Elm_Settingspane(Elm_Layout)
 
         @see item_append
 
-        @ingroup Elm_Settingspane
+        @ingroup Settingspane
 
         */
          return: Elm_Settingspane_Item *;
          params {
-            @in void *data;
-            @in const(char) *name;
-            @in const(char) *description;
-            @in Evas_Object *icon;
-            @in Elm_Settingspane_Item *rel;
+            @in void *data; /*@  data to attach to the item which gets passed to the callback */
+            @in const(char) *name; /*@ name of the item */
+            @in const(char) *description; /*@ the description of the item */
+            @in Evas_Object *icon; /*@ the icon to show in the menu */
+            @in Elm_Settingspane_Item *rel; /*@ the item after which the current one will be appended, if NULL the call will fail!*/
          }
       }
       save_quit {
@@ -86,7 +87,7 @@ class Elm_Settingspane(Elm_Layout)
         @see raise_unsaved
 
         @return EINA_TRUE if no change flag is set on the opened panels.
-        @ingroup Elm_Settingspane
+        @ingroup Settingspane
 
          */
         return: Eina_Bool;
@@ -103,7 +104,7 @@ class Elm_Settingspane(Elm_Layout)
 
          @see save_quit
 
-         @ingroup Elm_Settingspane
+         @ingroup Settingspane
          */
       }
    }

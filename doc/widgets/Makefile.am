@@ -87,6 +87,7 @@ widget_preview_radio \
 widget_preview_scroller \
 widget_preview_segment_control \
 widget_preview_separator \
+widget_preview_settingspane \
 widget_preview_slider \
 widget_preview_slideshow \
 widget_preview_spinner \
@@ -152,6 +153,7 @@ EXTRA_DIST = \
 	widget_preview_segment_control.c \
 	widget_preview_popup.c \
 	widget_preview_separator.c \
+	widget_preview_settingspane.c \
 	widget_preview_radio.c \
 	widget_preview_panel.c \
 	widget_preview_gengrid.c \

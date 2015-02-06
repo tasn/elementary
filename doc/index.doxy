@@ -239,6 +239,11 @@
  * @image html img/widget/win/preview-00.png
  * @image latex img/widget/win/preview-00.eps
  *
+ * @li @ref Settingspane
+ *
+ * @image html img/widget/settingspane/preview-00.png
+ * @image latex img/widget/settingspane/preview-00.eps
+ *
  * The other two main groups in Elementary are:
  * @li @ref infralist - These are modules that deal with Elementary as a whole.
  * @li @ref containerslist - These are the containers which will hold the widgets.
