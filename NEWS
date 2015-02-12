@@ -1,6 +1,16 @@
 =================
-Elementary 1.12.3
+Elementary 1.12.4
 =================
+
+Changes since 1.12.3:
+---------------------
+
+Fixes:
+
+   [Widgets]
+   * panes: Fix elm_panes_fixed_set.
+   * gengrid: Fix memory leak in elm_gengrid_realized_items_update
+   * label: Fixed to prevent slide's autostart before calling elm_label_slide_go()
 
 Changes since 1.12.2:
 ---------------------
