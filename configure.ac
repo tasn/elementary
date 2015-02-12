@@ -184,6 +184,8 @@ EFL_ENABLE_BIN([elementary-config])
 
 requirement_elm_pc=""
 
+m4_define([efl_version], [1.2.3])
+
 case "$host_os" in
    mingw*)
       requirement_elm_pc="evil >= efl_version"
