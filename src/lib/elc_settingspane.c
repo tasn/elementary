@@ -5,6 +5,7 @@
 #include <Elementary.h>
 
 #include <elm_priv.h>
+#include "elm_widget_layout.h"
 
 /**
  * This widget has a internal stack for displaying panels.
@@ -155,6 +156,12 @@ static void _search_panel_stop(Evas_Object *w);
 #define IC_DATA(v) Elm_Settingspane_Item_Data *id = eo_data_scope_get(v, ELM_SETTINGSPANE_ITEM_CLASS)
 #define IC_DATA_L(v) eo_data_scope_get(v, ELM_SETTINGSPANE_ITEM_CLASS)
 #define C_DATA(v) Elm_Settingspane_Data *wd = eo_data_scope_get(v, ELM_SETTINGSPANE_CLASS)
+
+static const Elm_Layout_Part_Alias_Description _content_aliases[] =
+{
+   {"options", "elm.swallow.options"},
+   {NULL, NULL}
+};
 
 static void
 conf_menu_back_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
@@ -1313,6 +1320,14 @@ _history_menu_show_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *emis
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    _history_menu_show(obj, x, y);
 }
+
+
+EOLIAN static const Elm_Layout_Part_Alias_Description*
+_elm_settingspane_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Settingspane_Data *_pd EINA_UNUSED)
+{
+   return _content_aliases;
+}
+
 
 EOLIAN static Elm_Settingspane_Item*
 _elm_settingspane_focused_get(Eo *obj, Elm_Settingspane_Data *pd EINA_UNUSED)

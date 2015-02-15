@@ -217,7 +217,7 @@ recreate_focused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
 void
 test_settingspane(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *o, *box, *sw, *btnbox, *ic;
+   Evas_Object *win, *o, *box, *sw, *btnbox, *ic, *swallow;
    Elm_Settingspane_Item *it, *it2;
    char buf[PATH_MAX];
 
@@ -231,9 +231,14 @@ test_settingspane(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
+   swallow = elm_button_add(win);
+   elm_object_text_set(swallow, "I am the options part");
+   evas_object_show(swallow);
+
    sw = elm_settingspane_add(win);
    evas_object_size_hint_weight_set(sw, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sw, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_part_content_set(sw, "options", swallow);
    elm_box_pack_end(box, sw);
 
    int i = 0;

@@ -102,6 +102,18 @@ group { name: "elm/settingspane/base/default";
              fixed: 0 1;
           }
        }
+       part { name: "elm.swallow.options"; type: SWALLOW;
+          description { state: "default" 0.0;
+             align: 1.0 0.5;
+             rel1.to_x: "elm.swallow.search";
+             rel1.to_y: "title_base";
+             rel1.relative: 1.0 0.0;
+             rel2.to_x: "elm.swallow.search";
+             rel2.to_y: "title_base";
+             rel2.relative: 0.0 1.0;
+             fixed: 1 1;
+          }
+       }
        part { name: "back"; type: RECT; scale: 1;
           description { state: "default" 0.0;
              aspect: 1.0 1.0; aspect_preference: VERTICAL;
