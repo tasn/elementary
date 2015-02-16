@@ -217,7 +217,7 @@ recreate_focused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
 void
 test_settingspane(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *o, *box, *sw, *btnbox, *ic, *swallow;
+   Evas_Object *win, *o, *box, *sw, *btnbox, *swallow;
    Elm_Settingspane_Item *it, *it2;
    char buf[PATH_MAX];
 
@@ -246,37 +246,25 @@ test_settingspane(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
      {
         snprintf(buf, sizeof(buf), "%s/images/%s",
                  elm_app_data_dir_get(), simple_menu[i][2]);
-        ic = elm_icon_add(win);
-        elm_image_file_set(ic, buf, NULL);
-        evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-        it = elm_settingspane_item_append(sw, ic, simple_menu[i][0],
-                                          simple_menu[i][1], ic, NULL);
+        it = elm_settingspane_item_append(sw, buf, simple_menu[i][0],
+                                          simple_menu[i][1], buf, NULL, NULL);
         elm_settingspane_item_attach_panel(it, content_cb[i], reset_cb, apply_cb);
      }
 
    /* A complex item! */
-   ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/%s",
             elm_app_data_dir_get(), "icon_09.png");
-   elm_image_file_set(ic, buf, NULL);
-   evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   it = elm_settingspane_item_append(sw, ic, "Complex",
+   it = elm_settingspane_item_append(sw, NULL, "Complex",
                                     "No we are not going to jump here into<br>complex numbers,<br>this is just a complex menu item,<br>this means it has childrens!",
-                                    ic, NULL);
+                                    buf, NULL, NULL);
    elm_settingspane_item_keywords_set(it, eina_stringshare_add("Hardone,second"));
-   ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/%s",
             elm_app_data_dir_get(), "bubble.png");
-   elm_image_file_set(ic, buf, NULL);
-   evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   it2 = elm_settingspane_item_append(sw, ic, "Child",
+   it2 = elm_settingspane_item_append(sw, NULL, "Child",
                                 "This is a children entry",
-                                ic, it);
+                                buf, NULL, it);
    elm_settingspane_item_keywords_set(it2, eina_stringshare_add("Heavyone,Third,"));
    elm_settingspane_item_attach_panel(it2, content_cb[3], reset_cb, apply_cb);
 

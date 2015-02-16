@@ -1409,14 +1409,49 @@ _elm_settingspane_eo_base_constructor(Eo *obj, Elm_Settingspane_Data *pd)
    pd->itcc->func.content_get = _elm_settingspane_ii_content_cb;
 }
 
+static Evas_Object*
+_elm_settingspane_icon_gen(Evas_Object *par, const char *file, const char *group)
+{
+  Evas_Object *ic;
+
+  ic = elm_icon_add(par);
+
+  if (group && file)
+    {
+       //we have a edje file
+       elm_image_file_set(ic, file, group);
+    }
+  else if (!group && file)
+    {
+      //we have a normal file
+      elm_image_file_set(ic, file, group);
+    }
+  else if (group && !file)
+    {
+      //we have a standart icon
+      elm_icon_standard_set(ic, group);
+    }
+  else
+    {
+      evas_object_del(ic);
+      return NULL;
+    }
+  evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+  evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
+  return ic;
+}
+
 static Elm_Settingspane_Item *
 _elm_settingspane_item_append_full(Eo *obj, Elm_Settingspane_Data *pd, void *data,
                                    const char *name, const char *description,
-                                   Evas_Object *icon, Elm_Settingspane_Item *par,
-                                   Elm_Settingspane_Item *rel)
+                                   const char *file, const char *group,
+                                   Elm_Settingspane_Item *par, Elm_Settingspane_Item *rel)
 {
    Elm_Settingspane_Item *new_child = NULL;
    Elm_Settingspane_Item_Data *data_par;
+   Evas_Object *icon;
+
+   icon = _elm_settingspane_icon_gen(obj, file, group);
 
    /*
     * Append to the zero level
@@ -1445,17 +1480,17 @@ _elm_settingspane_item_append_full(Eo *obj, Elm_Settingspane_Data *pd, void *dat
 }
 
 EOLIAN static Elm_Settingspane_Item *
-_elm_settingspane_item_append(Eo *obj, Elm_Settingspane_Data *pd, void *data, const char *name, const char *description, Evas_Object *icon, Elm_Settingspane_Item *par)
+_elm_settingspane_item_append(Eo *obj, Elm_Settingspane_Data *pd, void *data, const char *name, const char *description, const char *file, const char *group, Elm_Settingspane_Item *par)
 {
-   return _elm_settingspane_item_append_full(obj, pd, data, name, description, icon, par, NULL);
+   return _elm_settingspane_item_append_full(obj, pd, data, name, description, file, group, par, NULL);
 }
 
 EOLIAN static Elm_Settingspane_Item *
-_elm_settingspane_item_append_relative(Eo *obj, Elm_Settingspane_Data *pd, void *data, const char *name, const char *description, Evas_Object *icon, Elm_Settingspane_Item *rel)
+_elm_settingspane_item_append_relative(Eo *obj, Elm_Settingspane_Data *pd, void *data, const char *name, const char *description, const char *file, const char *group, Elm_Settingspane_Item *rel)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(rel, NULL);
    Elm_Settingspane_Item_Data *id = eo_data_scope_get(rel, ELM_SETTINGSPANE_ITEM_CLASS);
-   return _elm_settingspane_item_append_full(obj, pd, data, name, description, icon, id->par, rel);
+   return _elm_settingspane_item_append_full(obj, pd, data, name, description, file, group, id->par, rel);
 }
 
 /* Item implement */
