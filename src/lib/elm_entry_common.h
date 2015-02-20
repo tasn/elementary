@@ -5,6 +5,22 @@
  */
 
 /**
+ * @defgroup elm-entry-text-format Text Format String Arguments
+ *
+ * String arguments to be used as the second argument of @ref efl_file_set.
+ *
+ * @see efl_file_set
+ * @see efl_file_get
+ *
+ * @{
+ */
+extern const char * const ELM_ENTRY_TEXT_FORMAT_PLAIN_UTF8; /**< Plain UTF8 type */
+extern const char * const ELM_ENTRY_TEXT_FORMAT_MARKUP_UTF8; /**< Markup UTF8 type */
+/**
+ * @}
+ */
+
+/**
  * Text Format types.
  *
  * @see elm_entry_file_set()

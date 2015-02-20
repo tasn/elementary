@@ -1,5 +1,5 @@
 class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
-                 Elm_Interface_Atspi_Text, Elm_Interface_Atspi_Editable_Text)
+                 Elm_Interface_Atspi_Text, Elm_Interface_Atspi_Editable_Text, Efl.File)
 {
    eo_prefix: elm_obj_entry;
    properties {
@@ -294,36 +294,6 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          }
          values {
             bool password; /*@ If true, password mode is enabled. */
-         }
-      }
-      file {
-         set {
-            /*@
-            This sets the file (and implicitly loads it) for the text to display and
-            then edit. All changes are written back to the file after a short delay if
-            the entry object is set to autosave (which is the default).
-
-            If the entry had any other file set previously, any changes made to it
-            will be saved if the autosave feature is enabled, otherwise, the file
-            will be silently discarded and any non-saved changes will be lost.
-
-            @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
-
-            @ingroup Entry */
-            return: bool;
-         }
-         get {
-            /*@
-            Get the file being edited by the entry.
-
-            This function can be used to retrieve any file set on the entry for
-            edition, along with the format used to load and save it.
-
-            @ingroup Entry */
-         }
-         values {
-            const(char)* file; /*@ The path to the file to load and save */
-            Elm_Text_Format format; /*@ The file format */
          }
       }
       input_panel_return_key_disabled {
@@ -1226,6 +1196,8 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
       Elm_Interface_Atspi_Editable_Text.cut;
       Elm_Interface_Atspi_Editable_Text.delete;
       Elm_Interface_Atspi_Editable_Text.paste;
+      Efl.File.file.set;
+      Efl.File.file.get;
    }
    events {
       language,changed;

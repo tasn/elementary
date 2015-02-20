@@ -51,7 +51,7 @@ struct _Elm_Entry_Data
    const char                           *cut_sel;
    const char                           *text;
    const char                           *file;
-   Elm_Text_Format                       format;
+   const char                           *format;
    Evas_Coord                            last_w, ent_mw, ent_mh;
    Evas_Coord                            downx, downy;
    Evas_Coord                            ox, oy;

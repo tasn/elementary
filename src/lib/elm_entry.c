@@ -59,6 +59,9 @@
 
 ELM_PRIV_ENTRY_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
+const char * const ELM_ENTRY_TEXT_FORMAT_PLAIN_UTF8 = "plain";
+const char * const ELM_ENTRY_TEXT_FORMAT_MARKUP_UTF8 = "markup";
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    ELM_PRIV_ENTRY_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
@@ -168,20 +171,12 @@ _load_do(Evas_Object *obj)
         return EINA_TRUE;
      }
 
-   switch (sd->format)
-     {
-      case ELM_TEXT_FORMAT_PLAIN_UTF8:
-        text = _plain_load(sd->file);
-        break;
-
-      case ELM_TEXT_FORMAT_MARKUP_UTF8:
-        text = _file_load(sd->file);
-        break;
-
-      default:
-        text = NULL;
-        break;
-     }
+   if (!strcmp(sd->format, ELM_ENTRY_TEXT_FORMAT_PLAIN_UTF8))
+     text = _plain_load(sd->file);
+   else if (!strcmp(sd->format, ELM_ENTRY_TEXT_FORMAT_MARKUP_UTF8))
+     text = _file_load(sd->file);
+   else
+     text = NULL;
 
    if (text)
      {
@@ -242,19 +237,10 @@ _save_do(Evas_Object *obj)
    ELM_ENTRY_DATA_GET(obj, sd);
 
    if (!sd->file) return;
-   switch (sd->format)
-     {
-      case ELM_TEXT_FORMAT_PLAIN_UTF8:
-        _utf8_plain_save(sd->file, elm_object_text_get(obj));
-        break;
-
-      case ELM_TEXT_FORMAT_MARKUP_UTF8:
-        _utf8_markup_save(sd->file, elm_object_text_get(obj));
-        break;
-
-      default:
-        break;
-     }
+   if (!strcmp(sd->format, ELM_ENTRY_TEXT_FORMAT_PLAIN_UTF8))
+     _utf8_plain_save(sd->file, elm_object_text_get(obj));
+   else if (!strcmp(sd->format, ELM_ENTRY_TEXT_FORMAT_MARKUP_UTF8))
+     _utf8_markup_save(sd->file, elm_object_text_get(obj));
 }
 
 static Eina_Bool
@@ -3570,6 +3556,7 @@ _elm_entry_evas_object_smart_del(Eo *obj, Elm_Entry_Data *sd)
    evas_event_freeze(evas_object_evas_get(obj));
 
    eina_stringshare_del(sd->file);
+   eina_stringshare_del(sd->format);
 
    ecore_job_del(sd->hov_deljob);
    if ((sd->api) && (sd->api->obj_unhook))
@@ -4541,19 +4528,47 @@ inserting:
      evas_object_smart_callback_call(entry, SIG_REJECTED, NULL);
 }
 
+EAPI Eina_Bool
+elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
+{
+   const char *fmt = NULL;
+   if (format == ELM_TEXT_FORMAT_PLAIN_UTF8)
+     fmt = ELM_ENTRY_TEXT_FORMAT_PLAIN_UTF8;
+   else if (format == ELM_TEXT_FORMAT_MARKUP_UTF8)
+     fmt = ELM_ENTRY_TEXT_FORMAT_MARKUP_UTF8;
+
+   Eina_Bool r;
+   eo_do(obj, r = efl_file_set(file, fmt));
+   return r;
+}
+
 EOLIAN static Eina_Bool
-_elm_entry_file_set(Eo *obj, Elm_Entry_Data *sd, const char *file, Elm_Text_Format format)
+_elm_entry_efl_file_file_set(Eo *obj, Elm_Entry_Data *sd, const char *file, const char *format)
 {
    ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
    if (sd->auto_save) _save_do(obj);
    eina_stringshare_replace(&sd->file, file);
-   sd->format = format;
+   eina_stringshare_replace(&sd->format, format);
    Eina_Bool int_ret = _load_do(obj);
    return int_ret;
 }
 
+EAPI void
+elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format)
+{
+   const char *fmt = NULL;
+   eo_do(obj, efl_file_get(file, &fmt));
+   if (!format)
+        return;
+
+   if (!strcmp(fmt, ELM_ENTRY_TEXT_FORMAT_PLAIN_UTF8))
+     *format = ELM_TEXT_FORMAT_PLAIN_UTF8;
+   else if (!strcmp(fmt, ELM_ENTRY_TEXT_FORMAT_PLAIN_UTF8))
+     *format = ELM_TEXT_FORMAT_MARKUP_UTF8;
+}
+
 EOLIAN static void
-_elm_entry_file_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char **file, Elm_Text_Format *format)
+_elm_entry_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char **file, const char **format)
 {
    if (file) *file = sd->file;
    if (format) *format = sd->format;
