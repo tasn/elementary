@@ -1459,16 +1459,30 @@ _elm_image_aspect_fixed_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
    return sd->aspect_fixed;
 }
 
+EAPI Eina_Bool
+elm_image_animated_available_get(const Evas_Object *obj)
+{
+   Eina_Bool ret;
+   eo_do(obj, ret = efl_image_animated_get());
+   return ret;
+}
+
 EOLIAN static Eina_Bool
-_elm_image_animated_available_get(Eo *obj, Elm_Image_Data *sd)
+_elm_image_efl_image_animated_get(Eo *obj, Elm_Image_Data *sd)
 {
    if (sd->edje) return EINA_FALSE;
 
    return evas_object_image_animated_get(elm_image_object_get(obj));
 }
 
+EAPI void
+elm_image_animated_set(Evas_Object *obj, Eina_Bool anim)
+{
+   eo_do(obj, elm_obj_image_animated_enable_set(anim));
+}
+
 EOLIAN static void
-_elm_image_animated_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool anim)
+_elm_image_animated_enable_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool anim)
 {
    anim = !!anim;
    if (sd->anim == anim) return;
@@ -1502,8 +1516,16 @@ _elm_image_animated_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool anim)
    return;
 }
 
+EAPI Eina_Bool
+elm_image_animated_get(const Evas_Object *obj)
+{
+   Eina_Bool ret;
+   eo_do(obj, ret = elm_obj_image_animated_enable_get());
+   return ret;
+}
+
 EOLIAN static Eina_Bool
-_elm_image_animated_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
+_elm_image_animated_enable_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
    if (sd->edje)
      return edje_object_animation_get(sd->img);

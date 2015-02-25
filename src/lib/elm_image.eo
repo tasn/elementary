@@ -182,7 +182,7 @@ class Elm_Image (Elm_Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             otherwise. Default is @c EINA_FALSE. */
          }
       }
-      animated {
+      animated_enable {
          set {
             /*@
             Set whether an image object (which supports animation) is to
@@ -470,26 +470,6 @@ class Elm_Image (Elm_Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             image loader (eg. if @p img is a memory-mapped EET file) */
          }
       }
-      animated_available {
-         get {
-            /*@
-            Get whether an image object supports animation or not.
-
-            @return @c EINA_TRUE if the image supports animation,
-            @c EINA_FALSE otherwise.
-
-            This function returns if this Elementary image object's internal
-            image can be animated. Currently Evas only supports GIF
-            animation. If the return value is @b EINA_FALSE, other
-            @c elm_image_animated_xxx API calls won't work.
-
-            @see elm_image_animated_set()
-
-            @ingroup Image
-            @since 1.7 */
-            return: bool;
-         }
-      }
       object {
          get {
             /*@
@@ -546,6 +526,7 @@ class Elm_Image (Elm_Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
       Efl.Image.load_size.get;
       Efl.Image.smooth_scale.set;
       Efl.Image.smooth_scale.get;
+      Efl.Image.animated.get;
       Edje.Object.signal_emit;
       Edje.Object.size_min.get;
       Edje.Object.size_max.get;
