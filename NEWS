@@ -1,6 +1,16 @@
 =================
-Elementary 1.13.0
+Elementary 1.13.1
 =================
+
+Changes since 1.13.0:
+---------------------
+
+Fixes:
+
+   * elm engine: Restore explicit use of ELM_ENGNE env var
+   * entry: Don't unlink empty files when saving @fix T2122.
+   * datetime: Fix elm_datetime_field_limit_set.
+   * genlist/gengrid: Add upadating 'focus' state in item realized function.
 
 Changes since 1.12.0:
 ---------------------
