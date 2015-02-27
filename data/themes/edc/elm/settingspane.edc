@@ -291,7 +291,13 @@ group { name: "elm/settingspane/base/default";
           signal: "elm,state,default"; source: "elm";
           action: STATE_SET "default" 0.0;
           transition: DECELERATE 0.8;
+          after: "trans_done";
           target: "base";
+       }
+       program {
+          name: "trans_done";
+          action: SIGNAL_EMIT "elm,state,default,reached" "elm";
+          target: "";
        }
     }
  }

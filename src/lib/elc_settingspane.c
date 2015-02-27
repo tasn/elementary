@@ -70,6 +70,8 @@ typedef struct
       Evas_Smart_Cb reset;
       Content_Get_Cb content_get;
    } panel;
+   Eina_Bool keep;
+   Eina_Bool scheduled;
 } Elm_Settingspane_Item_Data;
 
 typedef struct _Search_Run
@@ -273,7 +275,49 @@ _content_layout_reset_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event E
    _item_content_reset(displayed);
 }
 
+static void
+_content_del(Elm_Settingspane_Item *it)
+{
+   Evas_Object *shown_content;
+   IC_DATA(it);
 
+   shown_content = id->panel.tmp_content;
+   id->panel.tmp_content = NULL;
+   eo_unref(shown_content);
+   evas_object_del(shown_content);
+   if (it)
+     _item_content_del(it);
+}
+static void
+_content_layout_hide(Evas_Object *obj, Elm_Object_Item *item)
+{
+   evas_object_data_del(obj, DK_PANEL_ITEM_SHOWN);
+   IC_DATA(item);
+
+   if (!id->keep)
+     _content_del(item);
+   else
+     {
+        Evas_Object *cnt;
+
+        cnt = elm_object_part_content_unset(obj, POS_PANEL_CONTENT);
+        evas_object_hide(cnt);
+     }
+}
+static void
+_default_reached_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+{
+   Elm_Object_Item *item;
+
+   item = evas_object_data_get(obj, DK_PANEL_ITEM_SHOWN);
+   IC_DATA(item);
+
+   if (!id->scheduled)
+     return;
+
+   DBG("schedule del %s => panel %p", id->name, obj);
+   _content_layout_hide(obj, item);
+}
 
 static void
 _content_layout_content_init(Evas_Object *w)
@@ -289,6 +333,7 @@ _content_layout_content_init(Evas_Object *w)
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_layout_theme_set(o, "settingspane", "panel", "default");
+        elm_layout_signal_callback_add(o, "elm,state,default,reached", EMITTER, _default_reached_cb, o);
         evas_object_show(o);
 
         pad = evas_object_rectangle_add(evas_object_evas_get(w));
@@ -333,38 +378,19 @@ _content_layout_content_init(Evas_Object *w)
 }
 
 static void
-_content_del(Elm_Settingspane_Item *it)
-{
-   Evas_Object *shown_content;
-   IC_DATA(it);
-
-   shown_content = id->panel.tmp_content;
-   id->panel.tmp_content = NULL;
-   eo_unref(shown_content);
-   evas_object_del(shown_content);
-   if (it)
-     _item_content_del(it);
-
-}
-
-static void
-_content_layout_content_hide(Evas_Object *w, Eina_Bool keep)
+_content_layout_schedule_hide(Evas_Object *w, Eina_Bool keep)
 {
    Evas_Object *shown = evas_object_data_get(w, DK_MAIN_PANEL_SHOWED);
    Elm_Object_Item *item = evas_object_data_get(shown, DK_PANEL_ITEM_SHOWN);
+   IC_DATA(item);
 
-   evas_object_data_del(shown, DK_PANEL_ITEM_SHOWN);
+   if (!item) //nothing to hide
+     return;
+
+   id->keep = keep;
+   id->scheduled = EINA_TRUE;
+   DBG("set to true %s => panel %p", id->name, shown);
    elm_layout_signal_emit(shown, EMIT_CONTENT_DEFAULT);
-
-   if (!keep && item)
-     _content_del(item);
-   else
-     {
-        Evas_Object *cnt;
-
-        cnt = elm_object_part_content_unset(shown, POS_PANEL_CONTENT);
-        evas_object_hide(cnt);
-     }
 }
 
 static void
@@ -404,6 +430,7 @@ _content_layout_display(Evas_Object *w, Evas_Object *content)
 static void
 _content_layout_content_set(Evas_Object *w, Elm_Settingspane_Item *it)
 {
+   Elm_Object_Item *oitem;
    IC_DATA(it);
 
    Evas_Object *hidden = evas_object_data_get(w, DK_MAIN_PANEL_HIDDEN);
@@ -417,6 +444,16 @@ _content_layout_content_set(Evas_Object *w, Elm_Settingspane_Item *it)
         evas_object_show(id->panel.tmp_content);
         elm_object_content_set(id->panel.tmp_content, _item_content_get(it, w));
 
+     }
+   oitem = evas_object_data_get(hidden, DK_PANEL_ITEM_SHOWN);
+
+   if (oitem && oitem != it)
+     {
+       Elm_Settingspane_Item_Data *oid = IC_DATA_L(oitem);
+
+       oid->scheduled = EINA_FALSE;
+       DBG("pre del %s => panel %p", oid->name, hidden);
+       _content_layout_hide(hidden, oitem);
      }
 
    _content_layout_display(w, id->panel.tmp_content);
@@ -781,7 +818,7 @@ _history_stack_push(Evas_Object *w, Elm_Object_Item *it)
 
    if (old && HAS_PANEL(ido))
      {
-        _content_layout_content_hide(w, ido->changed);
+        _content_layout_schedule_hide(w, ido->changed);
      }
 
    if (HAS_PANEL(id))
@@ -824,19 +861,19 @@ _history_stack_pop(Evas_Object *w)
      {
         IC_DATA(current);
         _menu_layout_fill(id->par);
-        _content_layout_content_hide(w, keep);
+        _content_layout_schedule_hide(w, keep);
         _content_layout_content_set(w, current);
      }
    else if (_item_has_panel(current) && !_item_has_panel(poped))
      {
         IC_DATA(current);
         _menu_layout_fill(id->par);
-        _content_layout_content_hide(w, keep);
+        _content_layout_schedule_hide(w, keep);
         _content_layout_content_set(w, current);
      }
    else if (!_item_has_panel(current) && _item_has_panel(poped))
      {
-        _content_layout_content_hide(w, keep);
+        _content_layout_schedule_hide(w, keep);
         _menu_layout_fill(current);
      }
    else
@@ -975,7 +1012,7 @@ _search_panel_display(Evas_Object *w)
    evas_object_show(g);
 
    evas_object_data_set(w, DK_MAIN_SEARCH_OBJECTS, o);
-   _content_layout_content_hide(w, EINA_TRUE);
+   _content_layout_schedule_hide(w, EINA_TRUE);
    _content_layout_display(w, o);
    _menu_layout_hide(w);
 }
@@ -996,7 +1033,7 @@ _search_panel_hide(Evas_Object *w)
 
    if (_item_has_panel(item))
      {
-        _content_layout_content_hide(w, EINA_TRUE);
+        _content_layout_schedule_hide(w, EINA_TRUE);
         _content_layout_content_set(w, item);
         if (id->par)
           {
@@ -1006,7 +1043,7 @@ _search_panel_hide(Evas_Object *w)
      }
    else
      {
-        _content_layout_content_hide(w, EINA_TRUE);
+        _content_layout_schedule_hide(w, EINA_TRUE);
         _menu_layout_restore(w);
         _menu_layout_fill(item);
      }
