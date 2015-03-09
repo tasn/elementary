@@ -1608,7 +1608,7 @@ _elm_settingspane_item_recreate(Elm_Settingspane_Item *obj, Elm_Settingspane_Ite
    Evas_Object *tmp;
    Elm_Settingspane_Item *cf;
 
-   cf = eo_do(pd->sw, elm_obj_settingspane_focused_get());
+   eo_do(pd->sw, cf = elm_obj_settingspane_focused_get());
 
    if (cf != obj) return;
 
