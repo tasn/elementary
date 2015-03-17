@@ -118,7 +118,7 @@ class Elm_Settingspane_Item(Eo.Base){
                */
              }
              values {
-               Eina_Stringshare *word; /*@ set the current keywords to look up */
+               char *word; /*@ set the current keywords to look up */
              }
           }
      }

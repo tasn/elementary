@@ -1628,15 +1628,15 @@ _elm_settingspane_item_recreate(Elm_Settingspane_Item *obj, Elm_Settingspane_Ite
 }
 
 EOLIAN static void
-_elm_settingspane_item_keywords_set(Elm_Settingspane_Item *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd, Eina_Stringshare *str)
+_elm_settingspane_item_keywords_set(Elm_Settingspane_Item *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd, char *v)
 {
   char **splits;
   char *split;
-  const char *word;
+  const char *word, *str;
   int i = 0;
 
   /* save the original string */
-  eina_stringshare_ref(str);
+  str = eina_stringshare_add(v);
   if (pd->key_word)
     eina_stringshare_del(pd->key_word);
 
@@ -1661,10 +1661,10 @@ _elm_settingspane_item_keywords_set(Elm_Settingspane_Item *obj EINA_UNUSED, Elm_
   pd->key_words = eina_list_append(pd->key_words, str);
 }
 
-EOLIAN static Eina_Stringshare *
+EOLIAN static char *
 _elm_settingspane_item_keywords_get(Elm_Settingspane_Item *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd)
 {
-  return pd->key_word;
+  return ((char*)pd->key_word);
 }
 
 /* widget api calls */
