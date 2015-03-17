@@ -984,97 +984,6 @@ _status_config(Evas_Object *win,
    evas_object_show(bx);
 }
 
-static void
-_flip_to(Evas_Object *win,
-         const char  *name)
-{
-   Evas_Object *wid, *naviframe;
-   wid = evas_object_data_get(win, name);
-   naviframe = evas_object_data_get(win, "naviframe");
-   if (!naviframe) return;
-   elm_naviframe_item_simple_promote(naviframe, wid);
-}
-
-static void
-_cf_sizing(void            *data,
-           Evas_Object *obj EINA_UNUSED,
-           void *event_info EINA_UNUSED)
-{
-   _flip_to(data, "sizing");
-}
-
-static void
-_cf_themes(void            *data,
-           Evas_Object *obj EINA_UNUSED,
-           void *event_info EINA_UNUSED)
-{
-   _flip_to(data, "themes");
-}
-
-static void
-_cf_fonts(void            *data,
-          Evas_Object *obj EINA_UNUSED,
-          void *event_info EINA_UNUSED)
-{
-   _flip_to(data, "fonts");
-}
-
-static void
-_cf_profiles(void            *data,
-             Evas_Object *obj EINA_UNUSED,
-             void *event_info EINA_UNUSED)
-{
-   _flip_to(data, "profiles");
-}
-
-static void
-_cf_scrolling(void            *data,
-              Evas_Object *obj EINA_UNUSED,
-              void *event_info EINA_UNUSED)
-{
-   _flip_to(data, "scrolling");
-}
-
-static void
-_cf_rendering(void            *data,
-              Evas_Object *obj EINA_UNUSED,
-              void *event_info EINA_UNUSED)
-{
-   _flip_to(data, "rendering");
-}
-
-static void
-_cf_caches(void            *data,
-           Evas_Object *obj EINA_UNUSED,
-           void *event_info EINA_UNUSED)
-{
-   _flip_to(data, "caches");
-}
-
-static void
-_cf_audio(void *data,
-        Evas_Object *obj EINA_UNUSED,
-        void *event_info EINA_UNUSED)
-{
-   _flip_to(data,"audio");
-}
-
-static void
-_cf_focus(void *data,
-          Evas_Object *obj EINA_UNUSED,
-          void *event_info EINA_UNUSED)
-{
-   _flip_to(data, "focus");
-}
-
-static void
-_cf_etc(void *data,
-        Evas_Object *obj EINA_UNUSED,
-        void *event_info EINA_UNUSED)
-{
-   _flip_to(data,"etc");
-}
-
 const char *
 _elm_theme_current_get(const char *theme_search_order)
 {
@@ -1513,9 +1422,8 @@ _theme_sel(void            *data EINA_UNUSED,
    printf("not implemented\n");
    }*/
 
-static void
-_status_config_sizing(Evas_Object *win,
-                      Evas_Object *naviframe)
+static Evas_Object*
+_status_config_sizing(Evas_Object *win, Eo *item EINA_UNUSED, void *data EINA_UNUSED)
 {
    Evas_Object *lb, *pd, *bx, *sl, *sp;
 
@@ -1564,9 +1472,7 @@ _status_config_sizing(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", fs_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", fs_change, NULL);
 
-   evas_object_data_set(win, "sizing", bx);
-
-   elm_naviframe_item_simple_push(naviframe, bx);
+   return bx;
 }
 
 #define MUTE_CB(_cb, _chan) \
@@ -1591,9 +1497,8 @@ MUTE_CB(mute_input_change, EDJE_CHANNEL_INPUT)
 MUTE_CB(mute_alert_change, EDJE_CHANNEL_ALERT)
 MUTE_CB(mute_all_change, EDJE_CHANNEL_ALL)
 
-static void
-_status_config_audio(Evas_Object *win,
-                     Evas_Object *naviframe)
+static Evas_Object*
+_status_config_audio(Evas_Object *win, Eo *item EINA_UNUSED, void *data EINA_UNUSED)
 {
    Evas_Object *bx, *ck;
 
@@ -1614,9 +1519,7 @@ _status_config_audio(Evas_Object *win,
    MUTE_CHECK("Mute Alert", EDJE_CHANNEL_ALERT, mute_alert_change);
    MUTE_CHECK("Mute Everything", EDJE_CHANNEL_ALL, mute_all_change);
 
-   evas_object_data_set(win, "audio", bx);
-
-   elm_naviframe_item_simple_push(naviframe, bx);
+   return bx;
 }
 
 static void
@@ -1700,9 +1603,8 @@ _config_focus_auto_animate_cb(void *data EINA_UNUSED, Evas_Object *obj,
    elm_config_all_flush();
 }
 
-static void
-_status_config_focus(Evas_Object *win,
-                     Evas_Object *naviframe)
+static Evas_Object*
+_status_config_focus(Evas_Object *win, Eo *item EINA_UNUSED, void *data EINA_UNUSED)
 {
    Evas_Object *bx, *ck, *fr;
 
@@ -1801,14 +1703,11 @@ _status_config_focus(Evas_Object *win,
         elm_radio_value_set(rdg, elm_config_focus_autoscroll_mode_get());
      }
 
-   evas_object_data_set(win, "focus", bx);
-
-   elm_naviframe_item_simple_push(naviframe, bx);
+   return bx;
 }
 
-static void
-_status_config_etc(Evas_Object *win,
-                   Evas_Object *naviframe)
+static Evas_Object*
+_status_config_etc(Evas_Object *win, Eo *item EINA_UNUSED, void *data EINA_UNUSED)
 {
    Evas_Object *bx, *ck, *sl, *fr, *bx2;
 
@@ -1858,9 +1757,7 @@ _status_config_etc(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", sc_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", transition_duration_change, NULL);
 
-   evas_object_data_set(win, "etc", bx);
-
-   elm_naviframe_item_simple_push(naviframe, bx);
+   return bx;
 }
 
 static Evas_Object *
@@ -1949,9 +1846,8 @@ _sample_theme_new(Evas_Object *win)
    return base;
 }
 
-static void
-_status_config_themes(Evas_Object *win,
-                      Evas_Object *naviframe)
+static Evas_Object*
+_status_config_themes(Evas_Object *win, Eo *item EINA_UNUSED, void *data EINA_UNUSED)
 {
    Evas_Object *tb, *rc, *sc, *sp, *li, *pd, *fr, *bt, *sample;
    Eina_List *list, *l;
@@ -2125,8 +2021,7 @@ _status_config_themes(Evas_Object *win,
    elm_object_content_set(pd, bt);
    evas_object_show(bt);
 
-   evas_object_data_set(win, "themes", tb);
-   elm_naviframe_item_simple_push(naviframe, tb);
+   return tb;
 }
 
 static void
@@ -2587,9 +2482,8 @@ _font_names_list_load(Evas_Object *flist)
    evas_event_thaw(evas);
 }
 
-static void
-_status_config_fonts(Evas_Object *win,
-                     Evas_Object *naviframe)
+static Evas_Object*
+_status_config_fonts(Evas_Object *win, Eo *item EINA_UNUSED, void *data EINA_UNUSED)
 {
    Evas_Object *base, *fr, *li, *rc, *preview, *sp, *pd, *bt, *bx;
    char buf[PATH_MAX];
@@ -2756,9 +2650,7 @@ _status_config_fonts(Evas_Object *win,
 
    elm_object_content_set(pd, bx);
 
-   evas_object_data_set(win, "fonts", base);
-
-   elm_naviframe_item_simple_push(naviframe, base);
+   return base;
 }
 
 static void
@@ -2934,9 +2826,8 @@ _profiles_list_unselect_cb(void *data       EINA_UNUSED,
                            EINA_TRUE);
 }
 
-static void
-_status_config_profiles(Evas_Object *win,
-                        Evas_Object *naviframe)
+static Evas_Object*
+_status_config_profiles(Evas_Object *win, Eo *item EINA_UNUSED, void *data EINA_UNUSED)
 {
    Evas_Object *li, *bx, *fr_bx1, *fr_bx2, *btn_bx, *fr, *lb, *en, *sp, *pd,
    *bt;
@@ -3072,8 +2963,7 @@ _status_config_profiles(Evas_Object *win,
    edje_thaw();
    evas_event_thaw(evas);
 
-   evas_object_data_set(win, "profiles", bx);
-   elm_naviframe_item_simple_push(naviframe, bx);
+   return bx;
 }
 
 static void
@@ -3427,9 +3317,8 @@ _status_config_scrolling_acceleration(Evas_Object *win, Evas_Object *box)
    evas_object_smart_callback_add(sl, "delay,changed", tsaw_change, NULL);
 }
 
-static void
-_status_config_scrolling(Evas_Object *win,
-                         Evas_Object *naviframe)
+static Evas_Object*
+_status_config_scrolling(Evas_Object *win, Eo *item EINA_UNUSED, void *data EINA_UNUSED)
 {
    Evas_Object *lb, *pd, *bx, *sl, *sc, *ck;
 
@@ -3567,7 +3456,7 @@ _status_config_scrolling(Evas_Object *win,
 
    evas_object_data_set(win, "scrolling", sc);
 
-   elm_naviframe_item_simple_push(naviframe, sc);
+   return sc;
 }
 
 static void
@@ -3612,9 +3501,8 @@ _cb_vsync(void *data EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
      }
 }
 
-static void
-_status_config_rendering(Evas_Object *win,
-                         Evas_Object *naviframe)
+static Evas_Object*
+_status_config_rendering(Evas_Object *win, Eo *item EINA_UNUSED, void *data EINA_UNUSED)
 {
    Evas_Object *li, *bx, *ck, *sp;
    Elm_Object_Item *it;
@@ -3680,13 +3568,11 @@ _status_config_rendering(Evas_Object *win,
              _cb_vsync, NULL);
    elm_check_state_set(ck, elm_config_vsync_get());
 
-   evas_object_data_set(win, "rendering", bx);
-   elm_naviframe_item_simple_push(naviframe, bx);
+   return bx;
 }
 
-static void
-_status_config_caches(Evas_Object *win,
-                      Evas_Object *naviframe)
+static Evas_Object*
+_status_config_caches(Evas_Object *win, Eo *item EINA_UNUSED, void *data EINA_UNUSED)
 {
    Evas_Object *lb, *pd, *bx, *sl, *sp, *ck;
 
@@ -3812,72 +3698,54 @@ _status_config_caches(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", ecc_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", ecc_change, NULL);
 
-   evas_object_data_set(win, "caches", bx);
-
-   elm_naviframe_item_simple_push(naviframe, bx);
+   return bx;
 }
 
 static void
 _status_config_full(Evas_Object *win,
                     Evas_Object *bx0)
 {
-   Evas_Object *tb, *naviframe;
-   Elm_Object_Item *tb_sizing, *tb_it;
+   Evas_Object *settings;
+   Elm_Settingspane_Item *it;
 
-   tb = elm_toolbar_add(win);
-   elm_toolbar_select_mode_set(tb, ELM_OBJECT_SELECT_MODE_ALWAYS);
-   elm_toolbar_menu_parent_set(tb, win);
-   elm_toolbar_homogeneous_set(tb, EINA_FALSE);
-   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   settings = elm_settingspane_add(win);
+   evas_object_size_hint_weight_set(settings, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(settings, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   tb_sizing = elm_toolbar_item_append(tb, "zoom-fit-best", "Sizing",
-                                    _cf_sizing, win);
-   elm_toolbar_item_priority_set(tb_sizing, 100);
+   it = elm_settingspane_item_append(settings, NULL, "Sizing", "Set the scale of elementary widgets", NULL, "zoom-fit-best", NULL);
+   elm_settingspane_item_attach_panel(it, _status_config_sizing, NULL, NULL);
+   elm_settingspane_item_keywords_set(it, "size, scale");
 
-   tb_it = elm_toolbar_item_append(tb, "preferences-desktop-theme", "Theme",
-                                _cf_themes, win);
-   elm_toolbar_item_priority_set(tb_it, 90);
+   it = elm_settingspane_item_append(settings, NULL, "Theme", "Choose from your installed themes", NULL, "preferences-desktop-theme", NULL);
+   elm_settingspane_item_attach_panel(it, _status_config_themes, NULL, NULL);
 
-   elm_toolbar_item_append(tb, "preferences-desktop-font", "Fonts",
-                           _cf_fonts, win);
+   it = elm_settingspane_item_append(settings, NULL, "Fonts", "Fonts to use for elm widgets", NULL, "preferences-desktop-font", NULL);
+   elm_settingspane_item_attach_panel(it, _status_config_fonts, NULL, NULL);
 
-   tb_it = elm_toolbar_item_append(tb, "system-users", "Profiles",
-                                _cf_profiles, win);
-   elm_toolbar_item_priority_set(tb_it, 90);
+   it = elm_settingspane_item_append(settings, NULL, "Profiles", "The config profile to use", NULL, "system-users", NULL);
+   elm_settingspane_item_attach_panel(it, _status_config_profiles, NULL, NULL);
 
-   elm_toolbar_item_append(tb, "system-run", "Scrolling", _cf_scrolling, win);
-   elm_toolbar_item_append(tb, "video-display", "Rendering",
-                           _cf_rendering, win);
-   elm_toolbar_item_append(tb, "appointment-new", "Caches", _cf_caches, win);
-   elm_toolbar_item_append(tb, "sound", "Audio", _cf_audio, win);
-   elm_toolbar_item_append(tb, NULL, "Focus", _cf_focus, win);
-   elm_toolbar_item_append(tb, NULL, "Etc", _cf_etc, win);
+   it = elm_settingspane_item_append(settings, NULL, "Scrolling", "Scrollings", NULL, "system-run", NULL);
+   elm_settingspane_item_attach_panel(it, _status_config_scrolling, NULL, NULL);
 
-   elm_box_pack_end(bx0, tb);
-   evas_object_show(tb);
+   it = elm_settingspane_item_append(settings, NULL, "Rendering", "The engine to use to render", NULL, "video-display", NULL);
+   elm_settingspane_item_attach_panel(it, _status_config_rendering, NULL, NULL);
+   elm_settingspane_item_keywords_set(it, "3D, gl, vsync");
 
-   naviframe = elm_naviframe_add(win);
-   evas_object_size_hint_align_set(naviframe, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_data_set(win, "naviframe", naviframe);
+   it = elm_settingspane_item_append(settings, NULL, "Caches", "Sizes and flushing of the caches", NULL, "appointment-new", NULL);
+   elm_settingspane_item_attach_panel(it, _status_config_caches, NULL, NULL);
 
-   _status_config_themes(win, naviframe);
-   _status_config_fonts(win, naviframe);
-   _status_config_profiles(win, naviframe);
-   _status_config_rendering(win, naviframe);
-   _status_config_scrolling(win, naviframe);
-   _status_config_caches(win, naviframe);
-   _status_config_audio(win, naviframe);
-   _status_config_focus(win, naviframe);
-   _status_config_etc(win, naviframe);
-   _status_config_sizing(win, naviframe); // Note: call this at the end.
+   it = elm_settingspane_item_append(settings, NULL, "Audio", "Configure which sounds should be played", NULL, "sound", NULL);
+   elm_settingspane_item_attach_panel(it, _status_config_audio, NULL, NULL);
+   elm_settingspane_item_keywords_set(it, "sound, volume");
 
-   // FIXME uncomment after flip style fix, please
-   //elm_object_style_set(naviframe, "flip");
-   elm_toolbar_item_selected_set(tb_sizing, EINA_TRUE);
-   elm_box_pack_end(bx0, naviframe);
-   evas_object_show(naviframe);
+   it = elm_settingspane_item_append(settings, NULL, "Focus", "Settings for the widget focus", NULL, NULL, NULL);
+   elm_settingspane_item_attach_panel(it, _status_config_focus, NULL, NULL);
+
+   it = elm_settingspane_item_append(settings, NULL, "Etc", "Miscellaneous", NULL, NULL, NULL);
+   elm_settingspane_item_attach_panel(it, _status_config_etc, NULL, NULL);
+   elm_box_pack_end(bx0, settings);
+   evas_object_show(settings);
 }
 
 static void
