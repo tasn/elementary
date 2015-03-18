@@ -3955,12 +3955,7 @@ _elm_win_fullscreen_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
         // these engines... can ONLY be fullscreen
         return EINA_TRUE;
      }
-   else
-     {
-        return sd->fullscreen;
-     }
-
-   return EINA_FALSE;
+   return sd->fullscreen;
 }
 
 static void
