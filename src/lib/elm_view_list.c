@@ -79,8 +79,7 @@ _item_del(void *data, Evas_Object *obj EINA_UNUSED)
 static Evas_Object *
 _item_content_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 {
-   //XXX: Add a Custon content function??
-   Eina_Value value;
+   const Eina_Value *value = NULL;
    const Eina_Value_Type *vtype;
    Evas_Object *content = NULL;
    View_List_ItemData *idata = data;
@@ -91,13 +90,15 @@ _item_content_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
    const char *prop = eina_hash_find(priv->prop_con, part);
    if (prop == NULL) prop = part;
 
-   eina_value_setup(&value, EINA_VALUE_TYPE_STRING);
    eo_do(idata->model, emodel_property_get(prop, &value));
-   vtype = eina_value_type_get(&value);
+   if (value == NULL)
+     return content;
+
+   vtype = eina_value_type_get(value);
    if (vtype == EINA_VALUE_TYPE_STRING || vtype == EINA_VALUE_TYPE_STRINGSHARE)
      {
-         char *content_s;
-         eina_value_get(&value, &content_s);
+         char *content_s = NULL;
+         content_s = eina_value_to_string(value);
          content = elm_icon_add(obj);
          if (elm_icon_standard_set(content, content_s))
            {
@@ -108,19 +109,20 @@ _item_content_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
                evas_object_del(content);
                content = NULL;
            }
-     } else
-   if (vtype == EINA_VALUE_TYPE_BLOB)
+         free(content_s);
+     }
+   else if (vtype == EINA_VALUE_TYPE_BLOB)
      {
          Eina_Value_Blob out;
-         eina_value_get(&value, &out);
+         eina_value_get(value, &out);
          if (out.memory != NULL)
            {
               content = elm_image_add(obj);
 
+              //XXX: need copy memory??
               elm_image_memfile_set(content, out.memory, out.size, NULL, NULL);
            }
      }
-   eina_value_flush(&value);
 
    return content;
 }
@@ -128,7 +130,7 @@ _item_content_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 static char *
 _item_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 {
-   Eina_Value value;
+   const Eina_Value *value = NULL;
    char *text = NULL;
    View_List_ItemData *idata = data;
 
@@ -140,10 +142,9 @@ _item_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
    const char *prop = eina_hash_find(priv->prop_con, part);
    if (prop == NULL) prop = part;
 
-   eina_value_setup(&value, EINA_VALUE_TYPE_STRING);
    eo_do(idata->model, emodel_property_get(prop, &value));
-   text = eina_value_to_string(&value);
-   eina_value_flush(&value);
+   if (value)
+     text = eina_value_to_string(value);
 
    return text;
 }

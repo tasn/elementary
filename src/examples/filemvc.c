@@ -59,16 +59,15 @@ _tree_selected_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *d
    printf("TREE selected model\n");
    Emodel_Test_Filemvc_Data *priv = data;
    Eo *child = event_info;
-   Eina_Value vpath;
+   const Eina_Value *vpath;
    Eo *model;
    char *path;
 
    eo_do(child, emodel_property_get("path", &vpath));
-   eina_value_get(&vpath, &path);
+   eina_value_get(vpath, &path);
    model = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(path));
    eo_do(model, emodel_load());
    eo_do(priv->fileview, elm_view_list_model_set(model));
-   eina_value_flush(&vpath);
 //   eo_unref(model);
    return EINA_TRUE;
 }
