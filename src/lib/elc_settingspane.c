@@ -26,6 +26,11 @@
 
 typedef struct
 {
+  Evas_Object *o;
+} Menu;
+
+typedef struct
+{
    Elm_Settingspane_Item *zero;
 
    // list of all Elm_Item_Object
@@ -37,10 +42,13 @@ typedef struct
    struct
    {
       Eina_Bool on;
-      Evas_Object *display;
+      Evas_Object *display, *grid, *obj;
       Ecore_Thread *run;
       const char* keyword;
    } search;
+   Evas_Object *title_box, *search_label, *search_results, *unsaved_opened;
+   Evas_Object *table_panel;
+   Evas_Object *table_menu;
 } Elm_Settingspane_Data;
 
 typedef struct
@@ -96,28 +104,19 @@ static void _search_panel_stop(Evas_Object *w);
 #define HAS_PANEL(id) (id->panel.content_get)
 /* Data Keys in the layouts, DK = Data Key */
 
-#define DK_MAIN_MENU_TABLE "__menu_table"
 #define DK_MAIN_MENU_SHOWED "__menu_layout_show"
 #define DK_MAIN_MENU_HIDDEN "__menu_layout_hidden"
 #define DK_MAIN_MENU_BEHIND "__menu_layout_behind"
 
-#define DK_MAIN_PANEL_TABLE "__panel_table"
 #define DK_MAIN_PANEL_SHOWED "__panel_layout_show"
 #define DK_MAIN_PANEL_HIDDEN "__panel_layout_hidden"
 
-#define DK_MAIN_TITLE_BOX "__panel_title"
-
-#define DK_MAIN_SEARCH_OBJECTS "__panel_search"
 #define DK_PANEL_APPLY_BUTTON "__apply_btn"
 #define DK_PANEL_RESET_BUTTON "__reset_btn"
 #define DK_PANEL_ITEM_SHOWN "__showed_item"
 
 #define DK_MENU_GENLIST "__menu_genlist"
 #define DK_MENU_ITEM_SHOWN "__showed_item"
-
-#define DK_SEARCH_LABEL "__search_label"
-#define DK_SEARCH_GRID "__search_results"
-#define DK_UNSAVED_OPENED "__unsaved_opened"
 
 /* Layout positions */
 
@@ -188,22 +187,24 @@ _title_bar_refresh(Evas_Object *w)
 {
    Elm_Object_Item *it, *walker;
    Elm_Settingspane_Item_Data *id = NULL;
-   Evas_Object *bt, *bx;
-   it = _history_stack_current(w);
-   bx = evas_object_data_get(w, DK_MAIN_TITLE_BOX);
+   Evas_Object *bt;
 
-   elm_box_clear(bx);
+   C_DATA(w);
+
+   it = _history_stack_current(w);
+
+   elm_box_clear(wd->title_box);
 
    do {
         walker = id ? id->par : it;
         id = IC_DATA_L(walker);
 
-        bt = elm_button_add(bx);
+        bt = elm_button_add(wd->title_box);
         elm_object_style_set(bt, "navlink");
         elm_object_text_set(bt, id->name);
         evas_object_show(bt);
 
-        elm_box_pack_start(bx, bt);
+        elm_box_pack_start(wd->title_box, bt);
    } while(id->par);
 }
 
@@ -322,10 +323,10 @@ _default_reached_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *emissi
 static void
 _content_layout_content_init(Evas_Object *w)
 {
-   Evas_Object *o, *pad, *table, *bx, *apply, *reset;
+   Evas_Object *o, *pad, *bx, *apply, *reset;
    int i = 0;
+   C_DATA(w);
 
-   table = evas_object_data_get(w, DK_MAIN_PANEL_TABLE);
 
    for (i = 0; i < 2; i++)
      {
@@ -342,7 +343,7 @@ _content_layout_content_init(Evas_Object *w)
         elm_object_part_content_set(o, POS_PANEL_PAD, pad);
         evas_object_show(pad);
 
-        elm_table_pack(table, o, 0, 0, 1, 1);
+        elm_table_pack(wd->table_panel, o, 0, 0, 1, 1);
 
         bx = elm_box_add(w);
         evas_object_size_hint_weight_set(bx, 0, 0);
@@ -468,10 +469,9 @@ _content_layout_content_set(Evas_Object *w, Elm_Settingspane_Item *it)
 static void
 _menu_layout_init(Evas_Object *w)
 {
-   Evas_Object *o, *table, *list;
+   Evas_Object *o, *list;
    int i = 0;
-
-   table = evas_object_data_get(w, DK_MAIN_MENU_TABLE);
+   C_DATA(w);
 
    for (i = 0; i < 3; i++)
      {
@@ -491,7 +491,7 @@ _menu_layout_init(Evas_Object *w)
         evas_object_data_set(o, DK_MENU_GENLIST, list);
         elm_object_part_content_set(o, POS_MENU_CONTENT, list);
         evas_object_show(list);
-        elm_table_pack(table, o, 0, 0, 1, 1);
+        elm_table_pack(wd->table_menu, o, 0, 0, 1, 1);
 
         if (i == 0)
           evas_object_data_set(w, DK_MAIN_MENU_HIDDEN, o);
@@ -999,7 +999,7 @@ _search_panel_display(Evas_Object *w)
    l = elm_label_add(w);
    evas_object_size_hint_weight_set(l, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(l, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_data_set(o, DK_SEARCH_LABEL, l);
+   wd->search_label = l;
    elm_box_pack_end(o, l);
    evas_object_show(l);
 
@@ -1007,11 +1007,11 @@ _search_panel_display(Evas_Object *w)
    elm_gengrid_item_size_set(g, 150, 150);
    evas_object_size_hint_weight_set(g, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(g, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_data_set(o, DK_SEARCH_GRID, g);
+   wd->search.grid = g;
    elm_box_pack_end(o, g);
    evas_object_show(g);
 
-   evas_object_data_set(w, DK_MAIN_SEARCH_OBJECTS, o);
+   wd->search.obj = o;
    _content_layout_schedule_hide(w, EINA_TRUE);
    _content_layout_display(w, o);
    _menu_layout_hide(w);
@@ -1023,11 +1023,12 @@ _search_panel_hide(Evas_Object *w)
    Elm_Settingspane_Item *item;
    Elm_Settingspane_Item_Data *id;
    Evas_Object *o;
+   C_DATA(w);
 
    item = _history_stack_current(w);
    id = IC_DATA_L(item);
 
-   o = evas_object_data_get(w, DK_MAIN_SEARCH_OBJECTS);
+   o = wd->search.obj;
    if (!o)
      return;
 
@@ -1049,7 +1050,7 @@ _search_panel_hide(Evas_Object *w)
      }
 
    evas_object_del(o);
-   evas_object_data_del(w, DK_MAIN_SEARCH_OBJECTS);
+   wd->search.obj = NULL;
 }
 
 static void
@@ -1113,10 +1114,8 @@ _search_display_items(void *data)
    Eina_List *node;
    Elm_Settingspane_Item *it;
    Elm_Gengrid_Item_Class *gic = NULL;
-   Evas_Object *grid = evas_object_data_get(sr->data->search.display,
-                                            DK_SEARCH_GRID);
 
-   elm_gengrid_clear(grid);
+   elm_gengrid_clear(sr->data->search.grid);
 
    gic = elm_gengrid_item_class_new();
    gic->item_style = "thumb";
@@ -1126,7 +1125,7 @@ _search_display_items(void *data)
 
    EINA_LIST_FOREACH(sr->results, node, it)
      {
-        elm_gengrid_item_append(grid, gic, it, _search_grid_item_sel, it);
+        elm_gengrid_item_append(sr->data->search.grid, gic, it, _search_grid_item_sel, it);
      }
 
    return NULL;
@@ -1202,14 +1201,13 @@ _search_panel_search_string_update(Evas_Object *w, const char *word)
    char buf[PATH_MAX];
    Search_Run *sr;
    C_DATA(w);
-   Evas_Object *l = evas_object_data_get(wd->search.display, DK_SEARCH_LABEL);
 
    sr = calloc(1, sizeof(Search_Run));
    sr->keyword = word;
    sr->data = wd;
 
    snprintf(buf, sizeof(buf), "Search results for \"%s\": ", word);
-   elm_object_text_set(l, buf);
+   elm_object_text_set(wd->search_label, buf);
 
    if (wd->search.run)
      ecore_thread_cancel(wd->search.run);
@@ -1246,8 +1244,9 @@ _conf_unsaved_item_click_cb(void *data, Evas_Object *obj, void *event EINA_UNUSE
 {
    Elm_Object_Item *it = data;
    IC_DATA(it);
+   C_DATA(id->sw);
 
-   evas_object_data_del(id->sw, DK_UNSAVED_OPENED);
+   wd->unsaved_opened = NULL;
 
    eo_do(it, elm_obj_settingspane_item_focus());
    evas_object_hide(obj);
@@ -1274,8 +1273,9 @@ _conf_unsaved_menu_ctx_item_add(Evas_Object *ctx, Elm_Object_Item *it)
 static void
 _conf_unsaved_dismissed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-   Evas_Object *par = data;
-   evas_object_data_del(par, DK_UNSAVED_OPENED);
+   C_DATA(data);
+
+   wd->unsaved_opened = NULL;
 }
 
 static void
@@ -1286,12 +1286,11 @@ _conf_unsaved_menu_show(Evas_Object *par, int x, int y, char *style )
    Evas_Object *ctx;
    C_DATA(par);
 
-   if (eina_list_count(wd->unsaved_changes) == 0 || evas_object_data_get(par, DK_UNSAVED_OPENED))
+   if (eina_list_count(wd->unsaved_changes) == 0 || wd->unsaved_opened)
      return;
 
-   evas_object_data_set(par, DK_UNSAVED_OPENED, (void*)1);
-
    ctx = elm_ctxpopup_add(par);
+   wd->unsaved_opened = ctx;
    elm_object_style_set(ctx, style);
    evas_object_smart_callback_add(ctx, "dismissed", _conf_unsaved_dismissed_cb, par);
 
@@ -1401,7 +1400,7 @@ _elm_settingspane_evas_object_smart_add(Eo *obj, Elm_Settingspane_Data *pd)
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_part_content_set(obj, POS_MAIN_TITLE, bx);
-   evas_object_data_set(obj, DK_MAIN_TITLE_BOX, bx);
+   pd->title_box = bx;
    evas_object_show(bx);
 
    en = elm_entry_add(obj);
@@ -1417,14 +1416,14 @@ _elm_settingspane_evas_object_smart_add(Eo *obj, Elm_Settingspane_Data *pd)
    evas_object_size_hint_align_set(tb1, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_part_content_set(obj, POS_MAIN_PANEL, tb1);
    evas_object_show(tb1);
-   evas_object_data_set(obj, DK_MAIN_PANEL_TABLE, tb1);
+   pd->table_panel = tb1;
 
    tb2 = elm_table_add(obj);
    evas_object_size_hint_weight_set(tb2, 0.0, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(tb2, 0.0, EVAS_HINT_FILL);
    elm_object_part_content_set(obj, POS_MAIN_MENU, tb2);
    evas_object_show(tb2);
-   evas_object_data_set(obj, DK_MAIN_MENU_TABLE, tb2);
+   pd->table_menu = tb2;
 
 
    _content_layout_content_init(obj);
