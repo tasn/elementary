@@ -26,8 +26,18 @@
 
 typedef struct
 {
-  Evas_Object *o;
+  Evas_Object *list; //the genlist
+  Evas_Object *layout;
+  Eina_Bool visible_hidden; //the menu is there but hidden
 } Menu;
+
+typedef struct
+{
+  Evas_Object *apply; //< apply button
+  Evas_Object *reset; //< reset button
+  Evas_Object *layout; //< The layout where everything is displayed
+  Eina_Bool hidden; //< true if it is realized but hidden
+} Panel;
 
 typedef struct
 {
@@ -43,12 +53,16 @@ typedef struct
    {
       Eina_Bool on;
       Evas_Object *display, *grid, *obj;
+      Panel *p;
       Ecore_Thread *run;
       const char* keyword;
    } search;
    Evas_Object *title_box, *search_label, *search_results, *unsaved_opened;
    Evas_Object *table_panel;
    Evas_Object *table_menu;
+   Elm_Settingspane_Item *menu_hidden;
+   Elm_Settingspane_Item *menu_visible;
+   Elm_Settingspane_Item *panel_visible;
 } Elm_Settingspane_Data;
 
 typedef struct
@@ -64,7 +78,7 @@ typedef struct
    const char *description;
    void *data;
 
-   Evas_Object *sw;
+   Evas_Object *sw; //< widget where this is created
    Eina_Bool changed;
 
    Elm_Widget_Item *it;
@@ -72,14 +86,12 @@ typedef struct
 
    struct
    {
-      Evas_Object *tmp_content; //obejct of a hiden content will be held here.
-
       Evas_Smart_Cb apply;
       Evas_Smart_Cb reset;
       Content_Get_Cb content_get;
-   } panel;
-   Eina_Bool keep;
-   Eina_Bool scheduled;
+   } event;
+   Panel *panel; //< if this item is realized its not NULL
+   Menu *menu;
 } Elm_Settingspane_Item_Data;
 
 typedef struct _Search_Run
@@ -88,6 +100,9 @@ typedef struct _Search_Run
    Elm_Settingspane_Data *data;
    const char *keyword;
 } Search_Run;
+
+
+static void _item_menu_refresh(Eo *obj, Elm_Settingspane_Item_Data *pd);
 
 static void _unsaved_changes_add(Evas_Object *w, Elm_Object_Item *item);
 static void _unsaved_changes_remove(Evas_Object *w, Elm_Object_Item *item);
@@ -101,19 +116,12 @@ static void _history_stack_remove(Evas_Object *w, Elm_Object_Item *it);
 static void _item_sel_cb(void *data, Evas_Object *obj, void *event_info);
 static void _search_panel_stop(Evas_Object *w);
 
-#define HAS_PANEL(id) (id->panel.content_get)
+#define HAS_PANEL(id) (id->event.content_get)
 /* Data Keys in the layouts, DK = Data Key */
 
 #define DK_MAIN_MENU_SHOWED "__menu_layout_show"
 #define DK_MAIN_MENU_HIDDEN "__menu_layout_hidden"
 #define DK_MAIN_MENU_BEHIND "__menu_layout_behind"
-
-#define DK_MAIN_PANEL_SHOWED "__panel_layout_show"
-#define DK_MAIN_PANEL_HIDDEN "__panel_layout_hidden"
-
-#define DK_PANEL_APPLY_BUTTON "__apply_btn"
-#define DK_PANEL_RESET_BUTTON "__reset_btn"
-#define DK_PANEL_ITEM_SHOWN "__showed_item"
 
 #define DK_MENU_GENLIST "__menu_genlist"
 #define DK_MENU_ITEM_SHOWN "__showed_item"
@@ -158,6 +166,8 @@ static void _search_panel_stop(Evas_Object *w);
 #define IC_DATA_L(v) eo_data_scope_get(v, ELM_SETTINGSPANE_ITEM_CLASS)
 #define C_DATA(v) Elm_Settingspane_Data *wd = eo_data_scope_get(v, ELM_SETTINGSPANE_CLASS)
 
+static Panel* _item_panel_realize(Eo *obj, Evas_Object *w, Evas_Object *content);
+
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
    {"options", "elm.swallow.options"},
@@ -180,7 +190,9 @@ conf_menu_back_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *emission
 }
 
 /*
- * Titlebar stuff
+ * =================================
+ *        Titlebar stuff
+ * =================================
  */
 static void
 _title_bar_refresh(Evas_Object *w)
@@ -208,16 +220,19 @@ _title_bar_refresh(Evas_Object *w)
    } while(id->par);
 }
 
-/*
- * Elm_Settingspane_Item event funktions
+/**
+ * =============================
+ *   Events of a item
+ * =============================
  */
+
 static void
 _item_content_reset(Elm_Settingspane_Item *it)
 {
    IC_DATA(it);
 
-   if (id->panel.reset)
-     id->panel.reset(id->data, id->sw, it);
+   if (id->event.reset)
+     id->event.reset(id->data, id->sw, it);
 }
 
 static void
@@ -225,17 +240,8 @@ _item_content_apply(Elm_Settingspane_Item *it)
 {
    IC_DATA(it);
 
-   if (id->panel.apply)
-     id->panel.apply(id->data, id->sw, it);
-}
-
-static void
-_item_content_del(Elm_Settingspane_Item *it EINA_UNUSED)
-{
-/*   Elm_Settingspane_Item_Data *id = eo_data_scope_get(it,
-                                     ELM_SETTINGSPANE_ITEM_CLASS);
-   if (id->class->content_del)
-     id->class->content_del(id->data);*/
+   if (id->event.apply)
+     id->event.apply(id->data, id->sw, it);
 }
 
 static Evas_Object*
@@ -243,444 +249,29 @@ _item_content_get(Elm_Settingspane_Item *it, Evas_Object *obj)
 {
    IC_DATA(it);
 
-   if (id->panel.content_get)
-     return id->panel.content_get(obj, it, id->data);
+   if (id->event.content_get)
+     return id->event.content_get(obj, it, id->data);
    else
      return NULL;
 }
 
 
 /*
- * content_layout section
+ * =====================================
+ *     apply and reset of the items
+ * =====================================
  */
 
 static void
 _content_layout_apply_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-   Evas_Object *l = data;
-   Elm_Settingspane_Item *displayed = evas_object_data_get(l, DK_PANEL_ITEM_SHOWN);
-
-   if (!displayed) return;
-
-   _item_content_apply(displayed);
+   _item_content_apply(data);
 }
 
 static void
 _content_layout_reset_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-   Evas_Object *l = data;
-   Elm_Settingspane_Item *displayed = evas_object_data_get(l, DK_PANEL_ITEM_SHOWN);
-
-   if (!displayed) return;
-
-   _item_content_reset(displayed);
-}
-
-static void
-_content_del(Elm_Settingspane_Item *it)
-{
-   Evas_Object *shown_content;
-   IC_DATA(it);
-
-   shown_content = id->panel.tmp_content;
-   id->panel.tmp_content = NULL;
-   eo_unref(shown_content);
-   evas_object_del(shown_content);
-   if (it)
-     _item_content_del(it);
-}
-static void
-_content_layout_hide(Evas_Object *obj, Elm_Object_Item *item)
-{
-   evas_object_data_del(obj, DK_PANEL_ITEM_SHOWN);
-   IC_DATA(item);
-
-   if (!id->keep)
-     _content_del(item);
-   else
-     {
-        Evas_Object *cnt;
-
-        cnt = elm_object_part_content_unset(obj, POS_PANEL_CONTENT);
-        evas_object_hide(cnt);
-     }
-}
-static void
-_default_reached_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
-{
-   Elm_Object_Item *item;
-
-   item = evas_object_data_get(obj, DK_PANEL_ITEM_SHOWN);
-   IC_DATA(item);
-
-   if (!id->scheduled)
-     return;
-
-   DBG("schedule del %s => panel %p", id->name, obj);
-   _content_layout_hide(obj, item);
-}
-
-static void
-_content_layout_content_init(Evas_Object *w)
-{
-   Evas_Object *o, *pad, *bx, *apply, *reset;
-   int i = 0;
-   C_DATA(w);
-
-
-   for (i = 0; i < 2; i++)
-     {
-        o = elm_layout_add(w);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_layout_theme_set(o, "settingspane", "panel", "default");
-        elm_layout_signal_callback_add(o, "elm,state,default,reached", EMITTER, _default_reached_cb, o);
-        evas_object_show(o);
-
-        pad = evas_object_rectangle_add(evas_object_evas_get(w));
-        evas_object_size_hint_weight_set(pad, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(pad, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_object_part_content_set(o, POS_PANEL_PAD, pad);
-        evas_object_show(pad);
-
-        elm_table_pack(wd->table_panel, o, 0, 0, 1, 1);
-
-        bx = elm_box_add(w);
-        evas_object_size_hint_weight_set(bx, 0, 0);
-        evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_box_horizontal_set(bx, EINA_TRUE);
-        elm_object_part_content_set(o, POS_PANEL_CONTROLS, bx);
-
-        apply = elm_button_add(w);
-        evas_object_size_hint_weight_set(apply, 0.0, 0.0);
-        evas_object_size_hint_align_set(apply, 0.0, 0.0);
-        evas_object_smart_callback_add(apply, "clicked", _content_layout_apply_cb, o);
-        elm_object_text_set(apply, "Apply");
-        evas_object_data_set(o, DK_PANEL_APPLY_BUTTON, apply);
-        elm_box_pack_end(bx, apply);
-
-        reset = elm_button_add(w);
-        evas_object_size_hint_weight_set(reset, 0, 0);
-        evas_object_size_hint_align_set(reset, 0.0, 0.0);
-        elm_object_text_set(reset, "Reset");
-        evas_object_smart_callback_add(reset, "clicked", _content_layout_reset_cb, o);
-        evas_object_data_set(o, DK_PANEL_RESET_BUTTON, reset);
-        elm_box_pack_end(bx, reset);
-
-        evas_object_show(bx);
-        evas_object_show(reset);
-        evas_object_show(apply);
-
-        if (i < 1)
-          evas_object_data_set(w, DK_MAIN_PANEL_SHOWED, o);
-        else
-          evas_object_data_set(w, DK_MAIN_PANEL_HIDDEN, o);
-     }
-}
-
-static void
-_content_layout_schedule_hide(Evas_Object *w, Eina_Bool keep)
-{
-   Evas_Object *shown = evas_object_data_get(w, DK_MAIN_PANEL_SHOWED);
-   Elm_Object_Item *item = evas_object_data_get(shown, DK_PANEL_ITEM_SHOWN);
-   IC_DATA(item);
-
-   if (!item) //nothing to hide
-     return;
-
-   id->keep = keep;
-   id->scheduled = EINA_TRUE;
-   DBG("set to true %s => panel %p", id->name, shown);
-   elm_layout_signal_emit(shown, EMIT_CONTENT_DEFAULT);
-}
-
-static void
-_content_layout_content_controls_refresh(Evas_Object *w, Elm_Settingspane_Item *it)
-{
-   IC_DATA(it);
-
-   Evas_Object *shown = evas_object_data_get(w, DK_MAIN_PANEL_SHOWED);
-   Evas_Object *apply_btn = evas_object_data_get(shown, DK_PANEL_APPLY_BUTTON);
-   Evas_Object *reset_btn = evas_object_data_get(shown, DK_PANEL_RESET_BUTTON);
-
-   if (!id->changed)
-     elm_layout_signal_emit(shown, EMIT_CONTENT_CONTROLS_HIDE);
-   else
-     elm_layout_signal_emit(shown, EMIT_CONTENT_CONTROLS_SHOW);
-
-   elm_object_disabled_set(apply_btn, !id->changed);
-   elm_object_disabled_set(reset_btn, !id->changed);
-}
-
-static void
-_content_layout_display(Evas_Object *w, Evas_Object *content)
-{
-   Evas_Object *shown = evas_object_data_get(w, DK_MAIN_PANEL_SHOWED);
-   Evas_Object *hidden = evas_object_data_get(w, DK_MAIN_PANEL_HIDDEN);
-
-   elm_layout_content_unset(hidden, POS_PANEL_CONTENT);
-   elm_object_part_content_set(hidden, POS_PANEL_CONTENT, content);
-
-   elm_layout_signal_emit(hidden, EMIT_CONTENT_VISIBLE);
-
-   evas_object_data_set(w, DK_MAIN_PANEL_SHOWED, hidden);
-   evas_object_raise(hidden);
-   evas_object_data_set(w, DK_MAIN_PANEL_HIDDEN, shown);
-}
-
-static void
-_content_layout_content_set(Evas_Object *w, Elm_Settingspane_Item *it)
-{
-   Elm_Object_Item *oitem;
-   IC_DATA(it);
-
-   Evas_Object *hidden = evas_object_data_get(w, DK_MAIN_PANEL_HIDDEN);
-
-   if (!id->panel.tmp_content)
-     {
-        id->panel.tmp_content = elm_scroller_add(w);
-        eo_ref(id->panel.tmp_content);
-        evas_object_size_hint_weight_set(id->panel.tmp_content,
-                            EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_show(id->panel.tmp_content);
-        elm_object_content_set(id->panel.tmp_content, _item_content_get(it, w));
-
-     }
-   oitem = evas_object_data_get(hidden, DK_PANEL_ITEM_SHOWN);
-
-   if (oitem && oitem != it)
-     {
-       Elm_Settingspane_Item_Data *oid = IC_DATA_L(oitem);
-
-       oid->scheduled = EINA_FALSE;
-       DBG("pre del %s => panel %p", oid->name, hidden);
-       _content_layout_hide(hidden, oitem);
-     }
-
-   _content_layout_display(w, id->panel.tmp_content);
-   evas_object_data_set(hidden, DK_PANEL_ITEM_SHOWN, it);
-
-   _content_layout_content_controls_refresh(w, it);
-}
-
-/*
- * menu_layout section
- */
-static void
-_menu_layout_init(Evas_Object *w)
-{
-   Evas_Object *o, *list;
-   int i = 0;
-   C_DATA(w);
-
-   for (i = 0; i < 3; i++)
-     {
-        o = elm_layout_add(w);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_layout_theme_set(o, "settingspane", "menu", "default");
-//        elm_layout_signal_callback_add(w, "action,back", "conf", conf_menu_back_cb, w);
-        evas_object_show(o);
-
-        list = elm_genlist_add(w);
-        elm_scroller_bounce_set(list, EINA_FALSE, EINA_FALSE);
-        elm_object_style_set(list, "flatedge");
-        evas_object_size_hint_weight_set(list, 0.0, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_genlist_mode_set(list, ELM_LIST_LIMIT);
-        evas_object_data_set(o, DK_MENU_GENLIST, list);
-        elm_object_part_content_set(o, POS_MENU_CONTENT, list);
-        evas_object_show(list);
-        elm_table_pack(wd->table_menu, o, 0, 0, 1, 1);
-
-        if (i == 0)
-          evas_object_data_set(w, DK_MAIN_MENU_HIDDEN, o);
-        else if (i == 1)
-          evas_object_data_set(w, DK_MAIN_MENU_SHOWED, o);
-        else if (i == 2)
-          evas_object_data_set(w, DK_MAIN_MENU_BEHIND, o);
-     }
-}
-
-static void
-_list_fill(Evas_Object *list, Elm_Settingspane_Item *item)
-{
-   IC_DATA(item);
-   C_DATA(id->sw);
-
-   Eina_List *node;
-   Elm_Settingspane_Item *child;
-
-   elm_genlist_clear(list);
-
-   EINA_LIST_FOREACH(id->childs, node, child)
-     {
-        Elm_Settingspane_Item_Data *cid = IC_DATA_L(child);
-        Elm_Object_Item *it;
-
-        it = elm_genlist_item_append(list, wd->itcc, child,
-                                NULL, ELM_GENLIST_ITEM_NONE,
-                                _item_sel_cb, child);
-        elm_genlist_item_select_mode_set(it, ELM_OBJECT_SELECT_MODE_ALWAYS);
-         elm_genlist_item_tooltip_text_set(it, cid->description);
-     }
-}
-
-static void
-_menu_layout_show(Evas_Object *w, Elm_Settingspane_Item *item, Elm_Settingspane_Item *item_h)
-{
-   Evas_Object *shown = evas_object_data_get(w, DK_MAIN_MENU_SHOWED);
-   Evas_Object *hidden = evas_object_data_get(w, DK_MAIN_MENU_HIDDEN);
-   Evas_Object *behind = evas_object_data_get(w, DK_MAIN_MENU_BEHIND);
-   Evas_Object *shownlist = evas_object_data_get(shown, DK_MENU_GENLIST);
-   Evas_Object *behindlist = evas_object_data_get(behind, DK_MENU_GENLIST);
-   Elm_Settingspane_Item *shown_h, *shown_l;
-
-   shown_h = evas_object_data_get(hidden, DK_MENU_ITEM_SHOWN);
-   shown_l = evas_object_data_get(shown, DK_MENU_ITEM_SHOWN);
-
-   if (shown_l == item && shown_h == item_h)
-     return;
-
-   _list_fill(behindlist, item);
-   evas_object_data_set(behind, DK_MENU_ITEM_SHOWN, item);
-
-   //showed item has not changed
-   if (!item_h)
-     {
-        elm_layout_signal_emit(shown, EMIT_MENU_DEFAULT);
-        elm_layout_signal_emit(behind, EMIT_MENU_VISIBLE);
-        evas_object_data_del(shown, DK_MENU_ITEM_SHOWN);
-      }
-   else
-     {
-        _list_fill(shownlist, item_h);
-        elm_layout_signal_emit(shown, EMIT_MENU_HIDDEN);
-        elm_layout_signal_emit(behind, EMIT_MENU_VISIBLE_HIDDEN);
-        evas_object_data_set(shown, DK_MENU_ITEM_SHOWN, item_h);
-     }
-   evas_object_raise(shown);
-
-   evas_object_stack_below(hidden, behind);
-   elm_layout_signal_emit(hidden, EMIT_MENU_DEFAULT);
-   evas_object_data_del(hidden, DK_MENU_ITEM_SHOWN);
-
-   //reorder the use
-   evas_object_data_set(w, DK_MAIN_MENU_SHOWED, behind);
-   evas_object_data_set(w, DK_MAIN_MENU_HIDDEN, shown);
-   evas_object_data_set(w, DK_MAIN_MENU_BEHIND, hidden);
-}
-
-static void
-_menu_layout_del_ref(Evas_Object *w, Elm_Settingspane_Item *it_ref)
-{
-   Elm_Settingspane_Item *it;
-   Evas_Object *layouts[3];
-   int i = 0;
-
-   layouts[0] = evas_object_data_get(w, DK_MAIN_MENU_SHOWED);
-   layouts[1] = evas_object_data_get(w, DK_MAIN_MENU_HIDDEN);
-   layouts[2] = evas_object_data_get(w, DK_MAIN_MENU_BEHIND);
-
-   for (i = 0; i< 3; i++)
-     {
-        it = evas_object_data_get(layouts[i], DK_MENU_ITEM_SHOWN);
-        if (it == it_ref)
-          evas_object_data_del(layouts[i], DK_MENU_ITEM_SHOWN);
-     }
-}
-
-static void
-_menu_layout_refresh(Evas_Object *w)
-{
-   Evas_Object *layouts[3];
-   int i = 0;
-
-   layouts[0] = evas_object_data_get(w, DK_MAIN_MENU_SHOWED);
-   layouts[1] = evas_object_data_get(w, DK_MAIN_MENU_HIDDEN);
-   layouts[2] = evas_object_data_get(w, DK_MAIN_MENU_BEHIND);
-
-   for (i = 0; i< 3; i++)
-     {
-        Elm_Settingspane_Item *it;
-        Evas_Object *list;
-
-        it = evas_object_data_get(layouts[i], DK_MENU_ITEM_SHOWN);
-        if (!it)
-          continue;
-
-        list = evas_object_data_get(layouts[i], DK_MENU_GENLIST);
-
-        _list_fill(list, it);
-     }
-}
-
-static void
-_menu_layout_fill(Elm_Settingspane_Item *it)
-{
-   IC_DATA(it);
-   if (id->par)
-     _menu_layout_show(id->sw, it, id->par);
-   else
-     _menu_layout_show(id->sw, it, NULL);
-}
-
-static void
-_menu_layout_hide(Evas_Object *w)
-{
-   Evas_Object *shown = evas_object_data_get(w, DK_MAIN_MENU_SHOWED);
-   Evas_Object *hidden = evas_object_data_get(w, DK_MAIN_MENU_HIDDEN);
-   Evas_Object *behind = evas_object_data_get(w, DK_MAIN_MENU_BEHIND);
-
-   elm_layout_signal_emit(hidden, EMIT_MENU_DEFAULT);
-   evas_object_data_del(hidden, DK_MENU_ITEM_SHOWN);
-   elm_layout_signal_emit(shown, EMIT_MENU_DEFAULT);
-   evas_object_data_del(shown, DK_MENU_ITEM_SHOWN);
-   elm_layout_signal_emit(behind, EMIT_MENU_DEFAULT);
-   evas_object_data_del(behind, DK_MENU_ITEM_SHOWN);
-
-   elm_layout_signal_emit(w, EMIT_MENU_SEARCHMODE_ENABLE);
-}
-static void
-_menu_layout_restore(Evas_Object *w)
-{
-   elm_layout_signal_emit(w, EMIT_MENU_SEARCHMODE_DISABLE);
-}
-
-static void
-_menu_layout_hidden_to_show(Evas_Object *w, Elm_Settingspane_Item *new, Elm_Settingspane_Item *lower_new)
-{
-   Evas_Object *shown = evas_object_data_get(w, DK_MAIN_MENU_SHOWED);
-   Evas_Object *hidden = evas_object_data_get(w, DK_MAIN_MENU_HIDDEN);
-   Evas_Object *behind = evas_object_data_get(w, DK_MAIN_MENU_BEHIND);
-   Evas_Object *behindlist = evas_object_data_get(behind, DK_MENU_GENLIST);
-   Evas_Object *hiddenlist = evas_object_data_get(hidden, DK_MENU_GENLIST);
-
-   Elm_Settingspane_Item *item_shown = evas_object_data_get(shown, DK_MENU_ITEM_SHOWN);
-   Elm_Settingspane_Item *item_hidden = evas_object_data_get(hidden, DK_MENU_ITEM_SHOWN);
-
-   if ((item_hidden == lower_new) && (item_shown == new))
-     return;
-
-
-   if (lower_new)
-     {
-        elm_layout_signal_emit(behind, EMIT_MENU_DEFAULT);
-        _list_fill(behindlist, lower_new);
-        evas_object_raise(behind);
-        elm_layout_signal_emit(behind, EMIT_MENU_HIDDEN);
-     }
-
-   //I guess in the hidden one the items should be the correct one
-   _list_fill(hiddenlist, new);
-   elm_layout_signal_emit(hidden, EMIT_MENU_VISIBLE);
-   evas_object_stack_below(shown, hidden);
-
-   elm_layout_signal_emit(shown, EMIT_MENU_DEFAULT);
-
-   evas_object_data_set(w, DK_MAIN_MENU_SHOWED, hidden);
-   evas_object_data_set(w, DK_MAIN_MENU_HIDDEN, behind);
-   evas_object_data_set(w, DK_MAIN_MENU_BEHIND, shown);
+   _item_content_reset(data);
 }
 
 /*
@@ -739,26 +330,6 @@ _item_new(Evas_Object *obj, Elm_Settingspane_Item *par, void *usr_data, const ch
    return item;
 }
 
-static Eina_Bool
-_item_has_panel(Elm_Settingspane_Item *item)
-{
-   IC_DATA(item);
-   return HAS_PANEL(id) ? EINA_TRUE : EINA_FALSE;
-}
-
-/*static void
-_item_stack_dump(Elm_Settingspane_Data *wd)
-{
-   Eina_List *node;
-   Elm_Settingspane_Item *it;
-
-   EINA_LIST_FOREACH(wd->stack, node, it)
-   {
-      Elm_Settingspane_Item_Data *id = eo_data_scope_get(it, ELM_SETTINGSPANE_ITEM_CLASS);
-      ERR("item %p:%s", id, id->class->style);
-   }
-}*/
-
 static void
 _back_check(Evas_Object *w)
 {
@@ -802,32 +373,14 @@ _unsaved_changes_remove(Evas_Object *w, Elm_Object_Item *item)
 }
 
 static void
-_history_stack_push(Evas_Object *w, Elm_Object_Item *it)
+_history_stack_push(Evas_Object *w, Elm_Settingspane *it)
 {
    C_DATA(w);
-   IC_DATA(it);
-   Elm_Object_Item *old;
-   Elm_Settingspane_Item_Data *ido;
 
    /* we just want one item to be on the stack */
    _history_stack_remove(w, it);
 
-   old = _history_stack_current(w);
-   ido = IC_DATA_L(old);
    wd->history_stack = eina_list_append(wd->history_stack, it);
-
-   if (old && HAS_PANEL(ido))
-     {
-        _content_layout_schedule_hide(w, ido->changed);
-     }
-
-   if (HAS_PANEL(id))
-     {
-        _content_layout_content_set(id->sw, it);
-     }
-   else
-     _menu_layout_show(id->sw, it, old);
-
    /* check if back is still valid */
    _back_check(w);
    /* refresh tiltlebar */
@@ -838,55 +391,27 @@ static Elm_Object_Item*
 _history_stack_pop(Evas_Object *w)
 {
    C_DATA(w);
-   Elm_Object_Item *current, *poped;
-   Elm_Settingspane_Item_Data *poped_id;
-   Eina_Bool keep = EINA_FALSE;
+   Elm_Object_Item *it;
 
    if (_history_stack_end(w))
      return NULL;
 
-   poped = _history_stack_current(w);
-   poped_id = IC_DATA_L(poped);
+   it = _history_stack_current(w);
 
-   /* check for unsaved changes */
-   if (poped_id->changed)
-     keep = EINA_TRUE;
+   eo_do(it, elm_obj_settingspane_item_unrealize());
+
    /* pop the item */
-   wd->history_stack = eina_list_remove(wd->history_stack, poped);
-   /* new top item */
-   current = _history_stack_current(w);
+   wd->history_stack = eina_list_remove(wd->history_stack, it);
 
-   /* make animations and display the new panels */
-   if (_item_has_panel(current) && _item_has_panel(poped))
-     {
-        IC_DATA(current);
-        _menu_layout_fill(id->par);
-        _content_layout_schedule_hide(w, keep);
-        _content_layout_content_set(w, current);
-     }
-   else if (_item_has_panel(current) && !_item_has_panel(poped))
-     {
-        IC_DATA(current);
-        _menu_layout_fill(id->par);
-        _content_layout_schedule_hide(w, keep);
-        _content_layout_content_set(w, current);
-     }
-   else if (!_item_has_panel(current) && _item_has_panel(poped))
-     {
-        _content_layout_schedule_hide(w, keep);
-        _menu_layout_fill(current);
-     }
-   else
-     {
-        IC_DATA(current);
-        _menu_layout_hidden_to_show(w, current, id->par);
-     }
+   /* new top item */
+   it = _history_stack_current(w);
+   eo_do(it, elm_obj_settingspane_item_realize());
 
    /* check if back is still valid */
    _back_check(w);
    /* refresh tiltlebar */
    _title_bar_refresh(w);
-   return poped;
+   return it;
 }
 
 static Elm_Object_Item*
@@ -924,7 +449,7 @@ _item_append(Elm_Settingspane_Item *root, Elm_Settingspane_Item *toadd, Elm_Sett
    id->childs = eina_list_append_relative(id->childs, toadd, rel);
 
    if (_history_stack_current(id->sw) == root)
-     _menu_layout_refresh(id->sw);
+     _item_menu_refresh(root, id);
 }
 
 static void
@@ -935,10 +460,13 @@ _item_del(Elm_Settingspane_Item *del, Eina_Bool full)
    Eina_List *node, *nnode;
    Elm_Settingspane_Item *ci;
 
+   eo_do(del, elm_obj_settingspane_item_unrealize());
+
    if (id->changed)
      {
         ERR("This page has unsaved changes, you have lost all the data!");
      }
+
    if (!full)
      {
         Elm_Settingspane_Item *top = _history_stack_current(id->sw);
@@ -956,11 +484,10 @@ _item_del(Elm_Settingspane_Item *del, Eina_Bool full)
      {
         id_par = IC_DATA_L(id->par);
         id_par->childs = eina_list_remove(id_par->childs, del);
+        if (!full)
+          _item_menu_refresh(id->par, id_par);
      }
-   if (!full)
-     _menu_layout_del_ref(id->sw, del);
-   if (!full)
-     _menu_layout_refresh(id->sw);
+
    //if we have the item somewhere in the stack, remove it!
    _history_stack_remove(id->sw, del);
    //unref the content, if there is one
@@ -1012,45 +539,24 @@ _search_panel_display(Evas_Object *w)
    evas_object_show(g);
 
    wd->search.obj = o;
-   _content_layout_schedule_hide(w, EINA_TRUE);
-   _content_layout_display(w, o);
-   _menu_layout_hide(w);
+   Panel *p = _item_panel_realize(NULL, w, o);
+   wd->search.p = p;
+   elm_table_pack(wd->table_panel, p->layout, 0, 0, 1, 1);
+
+   elm_layout_signal_emit(w, EMIT_MENU_SEARCHMODE_ENABLE);
+   elm_layout_signal_emit(p->layout, EMIT_CONTENT_VISIBLE);
+   evas_object_raise(p->layout);
 }
 
 static void
 _search_panel_hide(Evas_Object *w)
 {
-   Elm_Settingspane_Item *item;
-   Elm_Settingspane_Item_Data *id;
-   Evas_Object *o;
    C_DATA(w);
 
-   item = _history_stack_current(w);
-   id = IC_DATA_L(item);
-
-   o = wd->search.obj;
-   if (!o)
-     return;
-
-   if (_item_has_panel(item))
-     {
-        _content_layout_schedule_hide(w, EINA_TRUE);
-        _content_layout_content_set(w, item);
-        if (id->par)
-          {
-              _menu_layout_restore(w);
-              _menu_layout_fill(id->par);
-          }
-     }
-   else
-     {
-        _content_layout_schedule_hide(w, EINA_TRUE);
-        _menu_layout_restore(w);
-        _menu_layout_fill(item);
-     }
-
-   evas_object_del(o);
-   wd->search.obj = NULL;
+   elm_layout_signal_emit(wd->search.p->layout, EMIT_CONTENT_DEFAULT);
+   elm_layout_signal_emit(w, EMIT_MENU_SEARCHMODE_DISABLE);
+   free(wd->search.p);
+   wd->search.p = NULL;
 }
 
 static void
@@ -1134,8 +640,6 @@ _search_display_items(void *data)
 /*
  * !!!This code runs in a seperated thread!!!
  */
-
-
 static Eina_Bool
 _item_found(Elm_Settingspane_Item_Data *id, const char* keyword)
 {
@@ -1425,14 +929,22 @@ _elm_settingspane_evas_object_smart_add(Eo *obj, Elm_Settingspane_Data *pd)
    evas_object_show(tb2);
    pd->table_menu = tb2;
 
-
-   _content_layout_content_init(obj);
-   _menu_layout_init(obj);
-
    pd->zero = _item_new(obj, NULL, NULL, eina_stringshare_add("root"), eina_stringshare_add(""), NULL);
-   _history_stack_push(obj, pd->zero);
-   _title_bar_refresh(obj);
  }
+
+EOLIAN static void
+_elm_settingspane_evas_object_smart_show(Eo *obj, Elm_Settingspane_Data *pd)
+{
+   Elm_Settingspane_Item *it;
+
+   it = _history_stack_current(obj);
+   if (!it)
+     eo_do(pd->zero, elm_obj_settingspane_item_focus());
+
+   _title_bar_refresh(obj);
+   eo_do_super(obj, ELM_SETTINGSPANE_CLASS, evas_obj_smart_show());
+}
+
 
 EOLIAN static void
 _elm_settingspane_eo_base_constructor(Eo *obj, Elm_Settingspane_Data *pd)
@@ -1533,7 +1045,282 @@ _elm_settingspane_item_append_relative(Eo *obj, Elm_Settingspane_Data *pd, void 
 EOLIAN static void
 _elm_settingspane_item_focus(Eo *obj, Elm_Settingspane_Item_Data *pd)
 {
+   eo_do(obj, elm_obj_settingspane_item_realize());
    _history_stack_push(pd->sw, obj);
+}
+
+static void
+_default_reached_cb(void *data, Evas_Object *obj, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+{
+   Panel *p;
+   if (!data)
+     {
+        evas_object_del(obj);
+        return;
+     }
+
+   IC_DATA(data);
+   p = id->panel;
+
+   if (id->changed)
+     {
+        p->hidden = EINA_TRUE;
+        evas_object_hide(p->layout);
+        DBG("keep item %p", data);
+     }
+   else
+     {
+        evas_object_del(p->layout);
+        free(p);
+        id->panel = NULL;
+        DBG("delete item %p", data);
+     }
+}
+
+static Panel*
+_item_panel_realize(Eo *obj, Evas_Object *w, Evas_Object *content)
+{
+   Panel *p;
+   Evas_Object *bx, *sc;
+
+   p = calloc(1, sizeof(Panel));
+
+   p->layout = elm_layout_add(w);
+   evas_object_size_hint_weight_set(p->layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(p->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_layout_theme_set(p->layout, "settingspane", "panel", "default");
+   elm_layout_signal_callback_add(p->layout, "elm,state,default,reached", EMITTER, _default_reached_cb, obj);
+
+   bx = elm_box_add(w);
+   evas_object_size_hint_weight_set(bx, 0, 0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   elm_object_part_content_set(p->layout, POS_PANEL_CONTROLS, bx);
+
+   p->apply = elm_button_add(w);
+   evas_object_size_hint_weight_set(p->apply, 0.0, 0.0);
+   evas_object_size_hint_align_set(p->apply, 0.0, 0.0);
+   evas_object_smart_callback_add(p->apply, "clicked", _content_layout_apply_cb, obj);
+   elm_object_text_set(p->apply, "Apply");
+   elm_box_pack_end(bx, p->apply);
+   evas_object_show(p->apply);
+
+   p->reset = elm_button_add(w);
+   evas_object_size_hint_weight_set(p->reset, 0, 0);
+   evas_object_size_hint_align_set(p->reset, 0.0, 0.0);
+   elm_object_text_set(p->reset, "Reset");
+   evas_object_smart_callback_add(p->reset, "clicked", _content_layout_reset_cb, obj);
+   elm_box_pack_end(bx, p->reset);
+   evas_object_show(p->reset);
+
+   sc = elm_scroller_add(w);
+   evas_object_size_hint_weight_set(sc,
+                       EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_object_content_set(sc, content);
+   evas_object_show(sc);
+
+   elm_object_part_content_set(p->layout, POS_PANEL_CONTENT, sc);
+   return p;
+}
+
+static inline void
+_item_panel_show(Eo *obj, Elm_Settingspane_Item_Data *pd)
+{
+   Panel *p = pd->panel;
+   elm_layout_signal_emit(p->layout, EMIT_CONTENT_VISIBLE);
+   evas_object_raise(p->layout);
+   evas_object_show(p->layout);
+}
+
+static void
+_item_menu_realize(Eo *obj, Elm_Settingspane_Item_Data *pd, Elm_Settingspane_Data *wd)
+{
+   Menu *m;
+   Evas_Object *o, *list;
+
+   m = calloc(1, sizeof(Menu));
+
+   m->layout = o = elm_layout_add(pd->sw);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_layout_theme_set(o, "settingspane", "menu", "default");
+
+   m->list = list = elm_genlist_add(pd->sw);
+   elm_scroller_bounce_set(list, EINA_FALSE, EINA_FALSE);
+   elm_object_style_set(list, "flatedge");
+   evas_object_size_hint_weight_set(list, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_genlist_mode_set(list, ELM_LIST_LIMIT);
+   evas_object_data_set(o, DK_MENU_GENLIST, list);
+   elm_object_part_content_set(o, POS_MENU_CONTENT, list);
+   evas_object_show(list);
+
+   pd->menu = m;
+   elm_table_pack(wd->table_menu, m->layout, 0, 0, 1, 1);
+
+   _item_menu_refresh(obj, pd);
+}
+static inline void
+_item_menu_show(Eo *obj, Elm_Settingspane_Item_Data *pd, Eina_Bool hidden)
+{
+   Menu *m;
+
+   m = pd->menu;
+   if (hidden)
+     elm_layout_signal_emit(m->layout, EMIT_MENU_VISIBLE_HIDDEN);
+   else
+     elm_layout_signal_emit(m->layout, EMIT_MENU_VISIBLE);
+   evas_object_show(m->layout);
+}
+
+static inline void
+_item_menu_visible_hide(Eo *obj)
+{
+   IC_DATA(obj);
+   Menu *m;
+
+   m = id->menu;
+   if (!m) return;
+
+   elm_layout_signal_emit(m->layout, EMIT_MENU_HIDDEN);
+   evas_object_raise(m->layout);
+}
+
+
+EOLIAN static void
+_elm_settingspane_item_realize(Eo *obj, Elm_Settingspane_Item_Data *pd)
+{
+  C_DATA(pd->sw);
+  DBG("realize %p", obj);
+  if (pd->event.content_get) //this is a panel
+    {
+       if (!pd->panel)
+         {
+            Panel *p;
+
+            p =_item_panel_realize(obj, pd->sw, _item_content_get(obj, pd->sw));
+            elm_table_pack(wd->table_panel, p->layout, 0, 0, 1, 1);
+            pd->panel = p;
+         }
+       /* show its menu */
+       if (pd->par)
+         eo_do(pd->par, elm_obj_settingspane_item_realize());
+       /* show this panel */
+       _item_panel_show(obj, pd);
+       /* if another one is open close it */
+       if (wd->panel_visible)
+         eo_do(wd->panel_visible, elm_obj_settingspane_item_unrealize());
+       /* set us as visible */
+       wd->panel_visible = obj;
+    }
+  else
+    {
+       /* dont do the work if this is the current menu */
+       if (wd->menu_visible == obj)
+         return;
+       /* if we are realizing a menu and a panel is open, close it*/
+       if (wd->panel_visible)
+         eo_do(wd->panel_visible, elm_obj_settingspane_item_unrealize());
+       /* if this is the hidden object */
+       if (wd->menu_hidden == obj)
+         {
+            if (wd->menu_visible)
+              eo_do(wd->menu_visible, elm_obj_settingspane_item_unrealize());
+            wd->menu_hidden = NULL;
+            if (pd->par)
+              {
+                 Elm_Settingspane_Item_Data *ido;
+                 ido = IC_DATA_L(pd->par);
+                 _item_menu_realize(pd->par, ido, wd);
+                 wd->menu_hidden = pd->par;
+                _item_menu_visible_hide(wd->menu_hidden);
+              }
+            _item_menu_show(obj, pd, (!!wd->menu_hidden));
+         }
+       else
+         {
+            /* if this is not realized realize the object */
+            if (!pd->menu)
+              _item_menu_realize(obj, pd, wd);
+
+            if (wd->menu_hidden)
+              eo_do(wd->menu_hidden, elm_obj_settingspane_item_unrealize());
+            if (wd->menu_visible)
+              _item_menu_visible_hide(wd->menu_visible);
+
+            wd->menu_hidden = wd->menu_visible;
+            wd->menu_visible = obj;       /* show the menu */
+            _item_menu_show(obj, pd, (!!wd->menu_hidden));
+         }
+       DBG("Hidden : %p visible: %p", wd->menu_hidden, wd->menu_visible);
+    }
+}
+
+static void
+_item_panel_unrealize(Eo *obj, Elm_Settingspane_Item_Data *pd)
+{
+   Panel *p = pd->panel;
+   elm_layout_signal_emit(p->layout, EMIT_CONTENT_DEFAULT);
+}
+
+static void
+_item_menu_unrealize(Eo *obj, Elm_Settingspane_Item_Data *pd)
+{
+   Menu *m;
+
+   m = pd->menu;
+   elm_layout_signal_emit(m->layout, EMIT_CONTENT_DEFAULT);
+   evas_object_del(m->layout);
+   free(m);
+   pd->menu = NULL;
+}
+
+static void
+_item_menu_refresh(Eo *obj, Elm_Settingspane_Item_Data *pd)
+{
+   Eina_List *node;
+   Elm_Settingspane_Item *child;
+   C_DATA(pd->sw);
+
+   if (!pd->menu) return;
+
+   elm_genlist_clear(pd->menu->list);
+
+   EINA_LIST_FOREACH(pd->childs, node, child)
+     {
+        Elm_Settingspane_Item_Data *cid = IC_DATA_L(child);
+        Elm_Object_Item *it;
+
+        it = elm_genlist_item_append(pd->menu->list, wd->itcc, child,
+                                NULL, ELM_GENLIST_ITEM_NONE,
+                                _item_sel_cb, child);
+        elm_genlist_item_select_mode_set(it, ELM_OBJECT_SELECT_MODE_ALWAYS);
+        elm_genlist_item_tooltip_text_set(it, cid->description);
+     }
+}
+
+EOLIAN static void
+_elm_settingspane_item_unrealize(Eo *obj, Elm_Settingspane_Item_Data *pd)
+{
+  C_DATA(pd->sw);
+  DBG("unrealize %p", obj);
+  if (!pd->panel && !pd->menu)
+    return;
+
+  if (pd->event.content_get) //this is a panel
+    {
+       _item_panel_unrealize(obj, pd);
+       if (wd->panel_visible == obj)
+         wd->panel_visible = NULL;
+    }
+  else
+    {
+       _item_menu_unrealize(obj, pd);
+       if (wd->menu_visible == obj)
+         wd->menu_visible = NULL;
+       if (wd->menu_hidden == obj)
+         wd->menu_hidden = NULL;
+    }
 }
 
 EOLIAN static void
@@ -1552,11 +1339,19 @@ EOLIAN static void
 _elm_settingspane_item_changed_set(Eo *obj, Elm_Settingspane_Item_Data *pd, Eina_Bool changed)
 {
    pd->changed = changed;
+
    if (changed)
      _unsaved_changes_add(pd->sw, obj);
    else
      _unsaved_changes_remove(pd->sw, obj);
-   _content_layout_content_controls_refresh(pd->sw, obj);
+
+   if (!pd->panel) return;
+
+    if (!pd->changed)
+      elm_layout_signal_emit(pd->panel->layout, EMIT_CONTENT_CONTROLS_HIDE);
+    else
+      elm_layout_signal_emit(pd->panel->layout, EMIT_CONTENT_CONTROLS_SHOW);
+
 }
 
 EOLIAN static Eina_Bool
@@ -1585,45 +1380,19 @@ _elm_settingspane_item_attach_panel(Eo *obj EINA_UNUSED, Elm_Settingspane_Item_D
         ERR("You cannot add a panel to a item with childs!");
         return;
      }
-   pd->panel.content_get = content_get;
-   pd->panel.reset = reset;
-   pd->panel.apply = apply;
+   pd->event.content_get = content_get;
+   pd->event.reset = reset;
+   pd->event.apply = apply;
 }
 
 EOLIAN static void
 _elm_settingspane_item_eo_base_destructor(Eo *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd)
 {
-   if (pd->panel.tmp_content)
-     eo_unref(pd->panel.tmp_content);
+   if (pd->panel)
+     eo_unref(pd->panel->layout);
    //unref the icon,
    eo_unref(pd->icon);
    eo_do_super(obj, ELM_SETTINGSPANE_ITEM_CLASS, eo_destructor());
-}
-
-EOLIAN static void
-_elm_settingspane_item_recreate(Elm_Settingspane_Item *obj, Elm_Settingspane_Item_Data *pd)
-{
-   Evas_Object *shown = evas_object_data_get(pd->sw, DK_MAIN_PANEL_SHOWED);
-   Evas_Object *tmp;
-   Elm_Settingspane_Item *cf;
-
-   eo_do(pd->sw, cf = elm_obj_settingspane_focused_get());
-
-   if (cf != obj) return;
-
-   tmp = elm_scroller_add(pd->sw);
-   eo_ref(tmp);
-   evas_object_size_hint_weight_set(tmp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(tmp);
-   elm_object_content_set(tmp, _item_content_get(obj, pd->sw));
-
-   elm_layout_content_unset(shown, POS_PANEL_CONTENT);
-   elm_object_part_content_set(shown, POS_PANEL_CONTENT, tmp);
-
-   if (pd->panel.tmp_content)
-     _content_del(obj);
-
-   pd->panel.tmp_content = tmp;
 }
 
 EOLIAN static void

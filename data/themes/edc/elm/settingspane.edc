@@ -314,14 +314,6 @@ group { name: "elm/settingspane/base/default";
        }
        part { name: "elm.swallow.content"; type: SWALLOW;
           description { state: "default" 0.0;
-             rel1.relative: 0.0 0.0;
-             rel2.relative: 0.0 1.0;
-             align: 1.0 0.0;
-             fixed: 1 1;
-          }
-          /* Only visible without display hidden */
-          description { state: "visible" 0.0;
-             inherit: "default" 0.0;
              rel1.offset: 0 0;
              rel2.offset: -1 -1;
              rel2.relative: 1.0 1.0;
@@ -330,15 +322,15 @@ group { name: "elm/settingspane/base/default";
           /* part gets this state when there is hidden */
           /* otherwise it will overlap the hidden part */
           description { state: "visible_hidden" 0.0;
-             inherit: "visible" 0.0;
+             inherit: "default" 0.0;
              rel1.offset: 15 0;
              rel2.offset: 0 -1;
-             align: 0.0 0.0;
+             align: 1.0 0.0;
           }
           /* just a tiny bit on the left side from the old list */
           description { state: "hidden" 0.0;
-             inherit: "visible" 0.0;
-             rel1.offset: 0 0;
+             inherit: "default" 0.0;
+             rel1.offset: -135 0;
              rel2.offset: 15 -1;
              rel2.relative: 0.0 1.0;
              align: 1.0 0.0;
@@ -373,7 +365,7 @@ group { name: "elm/settingspane/base/default";
    programs {
        program {
           signal: "elm,state,visible"; source: "elm";
-          action: STATE_SET "visible" 0.0;
+          action: STATE_SET "default" 0.0;
           transition: DECELERATE 0.4;
           target: "elm.swallow.content";
           target: "back_cover";
@@ -389,13 +381,6 @@ group { name: "elm/settingspane/base/default";
           signal: "elm,state,hidden"; source: "elm";
           action: STATE_SET "hidden" 0.0;
           transition: DECELERATE 0.5;
-          target: "elm.swallow.content";
-          target: "back_cover";
-       }
-       program {
-          signal: "elm,state,default"; source: "elm";
-          action: STATE_SET "default" 0.0;
-          transition: DECELERATE 0.2;
           target: "elm.swallow.content";
           target: "back_cover";
        }

@@ -123,11 +123,15 @@ class Elm_Settingspane_Item(Eo.Base){
           }
      }
       methods {
-        recreate {
+        realize {
           /*@
-          Recreates the content of a item when the item is currently displayed
-          @ingroup Settingspane
-           */
+          This will realize this item, means display it if it does not exists yet, or raise it
+          */
+        }
+        unrealize {
+          /*@
+          Will delete or just hide this item depending if there are unsaved changes or not
+          */
         }
         attach_panel {
           /*@

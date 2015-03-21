@@ -204,16 +204,6 @@ del_focused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_U
   elm_settingspane_item_delete(item);
 }
 
-static void
-recreate_focused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-  Elm_Settingspane_Item *item;
-
-  item = elm_settingspane_focused_get(data);
-
-  elm_settingspane_item_recreate(item);
-}
-
 void
 test_settingspane(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -298,14 +288,6 @@ test_settingspane(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(o, "clicked", del_focused_cb, sw);
-   elm_box_pack_end(btnbox, o);
-   evas_object_show(o);
-
-   o = elm_button_add(win);
-   elm_object_text_set(o, "recreate current item");
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_smart_callback_add(o, "clicked", recreate_focused_cb, sw);
    elm_box_pack_end(btnbox, o);
    evas_object_show(o);
 

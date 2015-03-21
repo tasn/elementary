@@ -114,6 +114,7 @@ class Elm_Settingspane(Elm_Layout)
      Eo.Base.constructor;
      Eo.Base.destructor;
      Evas.Object_Smart.add;
+     Evas.Object_Smart.show;
      Elm_Layout.content_aliases.get;
    }
 }
