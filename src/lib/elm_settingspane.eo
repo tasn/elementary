@@ -46,9 +46,6 @@ class Elm_Settingspane(Elm_Layout)
             @in void *data; /*@ data to attach to the item which gets passed to the callback */
 
             @in const(char) *name; /*@ name of the item */
-            @in const(char) *description; /*@ the description of the item */
-            @in const(char) *file; /*@ The file of the icon to display, NULL if it is a standart fdo icon.*/
-            @in const(char) *group; /*@ The group of the icon to display, NULL if it is a png file, or the name of a standart fdo icon to use. */
             @in Elm_Settingspane_Item *par; /*@ parent of this item, it will be shown when the parent item is selected. If NULL it will be appended to the 0 lvl */
          }
       }
@@ -70,9 +67,6 @@ class Elm_Settingspane(Elm_Layout)
          params {
             @in void *data; /*@  data to attach to the item which gets passed to the callback */
             @in const(char) *name; /*@ name of the item */
-            @in const(char) *description; /*@ the description of the item */
-            @in const(char) *file; /*@ The file of the icon to display, NULL if it is a standart fdo icon.*/
-            @in const(char) *group; /*@ The group of the icon to display, NULL if it is a png file, or the name of a standart fdo icon to use. */
             @in Elm_Settingspane_Item *rel; /*@ the item after which the current one will be appended, if NULL the call will fail!*/
          }
       }

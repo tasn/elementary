@@ -76,6 +76,8 @@ typedef struct
 
    const char *name;
    const char *description;
+   const char *group;
+   const char *file;
    void *data;
 
    Evas_Object *sw; //< widget where this is created
@@ -312,7 +314,9 @@ _elm_settingspane_ii_content_cb(void *data, Evas_Object *obj, const char *part)
 }
 
 static Elm_Settingspane_Item*
-_item_new(Evas_Object *obj, Elm_Settingspane_Item *par, void *usr_data, const char *name, const char *description, Evas_Object *icon)
+_item_new(Evas_Object *obj, Elm_Settingspane_Item *par,
+                            void *usr_data,
+                            const char *name)
 {
    Elm_Settingspane_Item *item = eo_add(ELM_SETTINGSPANE_ITEM_CLASS, obj);
    Elm_Settingspane_Item_Data *data = eo_data_scope_get(item, ELM_SETTINGSPANE_ITEM_CLASS);
@@ -321,12 +325,8 @@ _item_new(Evas_Object *obj, Elm_Settingspane_Item *par, void *usr_data, const ch
    data->sw = obj;
    data->par = par;
    data->name = name;
-   data->description = description;
-   data->icon = icon;
    data->key_words = NULL;
    data->key_words = eina_list_append(data->key_words, eina_stringshare_add(name));
-   //we need to ref this item, so elm_genlist_clear will not delete it!
-   eo_ref(icon);
    return item;
 }
 
@@ -929,7 +929,7 @@ _elm_settingspane_evas_object_smart_add(Eo *obj, Elm_Settingspane_Data *pd)
    evas_object_show(tb2);
    pd->table_menu = tb2;
 
-   pd->zero = _item_new(obj, NULL, NULL, eina_stringshare_add("root"), eina_stringshare_add(""), NULL);
+   pd->zero = _item_new(obj, NULL, NULL, eina_stringshare_add("root"));
  }
 
 EOLIAN static void
@@ -991,22 +991,18 @@ _elm_settingspane_icon_gen(Evas_Object *par, const char *file, const char *group
 
 static Elm_Settingspane_Item *
 _elm_settingspane_item_append_full(Eo *obj, Elm_Settingspane_Data *pd, void *data,
-                                   const char *name, const char *description,
-                                   const char *file, const char *group,
+                                   const char *name,
                                    Elm_Settingspane_Item *par, Elm_Settingspane_Item *rel)
 {
    Elm_Settingspane_Item *new_child = NULL;
    Elm_Settingspane_Item_Data *data_par;
-   Evas_Object *icon;
-
-   icon = _elm_settingspane_icon_gen(obj, file, group);
 
    /*
     * Append to the zero level
     */
    if (!par)
      {
-        new_child = _item_new(obj, pd->zero, data, name, description, icon);
+        new_child = _item_new(obj, pd->zero, data, name);
         _item_append(pd->zero, new_child, rel);
         return new_child;
      }
@@ -1021,24 +1017,55 @@ _elm_settingspane_item_append_full(Eo *obj, Elm_Settingspane_Data *pd, void *dat
      }
    else
      {
-        new_child = _item_new(obj, par, data, name, description, icon);
+        new_child = _item_new(obj, par, data, name);
         _item_append(par, new_child, rel);
      }
    return new_child;
 }
 
-EOLIAN static Elm_Settingspane_Item *
-_elm_settingspane_item_append(Eo *obj, Elm_Settingspane_Data *pd, void *data, const char *name, const char *description, const char *file, const char *group, Elm_Settingspane_Item *par)
+EOLIAN static void
+_elm_settingspane_item_description_set(Eo *obj, Elm_Settingspane_Item_Data *pd, const char *description)
 {
-   return _elm_settingspane_item_append_full(obj, pd, data, name, description, file, group, par, NULL);
+  pd->description = description;
+  _item_menu_refresh(obj, pd);
+}
+
+EOLIAN static void
+_elm_settingspane_item_image_set(Eo *obj, Elm_Settingspane_Item_Data *pd, const char *file, const char *group)
+{
+  pd->file = file;
+  pd->group = group;
+
+  if (pd->icon)
+    {
+       eo_unref(pd->icon);
+       evas_object_del(pd->icon);
+    }
+
+  pd->icon = _elm_settingspane_icon_gen(pd->sw, file, group);
+  eo_ref(pd->icon);
+  _item_menu_refresh(obj, pd);
+}
+
+EOLIAN static void
+_elm_settingspane_item_image_get(Eo *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd, const char **file, const char **group)
+{
+  *file = pd->file;
+  *group = pd->group;
 }
 
 EOLIAN static Elm_Settingspane_Item *
-_elm_settingspane_item_append_relative(Eo *obj, Elm_Settingspane_Data *pd, void *data, const char *name, const char *description, const char *file, const char *group, Elm_Settingspane_Item *rel)
+_elm_settingspane_item_append(Eo *obj, Elm_Settingspane_Data *pd, void *data, const char *name, Elm_Settingspane_Item *par)
+{
+   return _elm_settingspane_item_append_full(obj, pd, data, name, par, NULL);
+}
+
+EOLIAN static Elm_Settingspane_Item *
+_elm_settingspane_item_append_relative(Eo *obj, Elm_Settingspane_Data *pd, void *data, const char *name, Elm_Settingspane_Item *rel)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(rel, NULL);
    Elm_Settingspane_Item_Data *id = eo_data_scope_get(rel, ELM_SETTINGSPANE_ITEM_CLASS);
-   return _elm_settingspane_item_append_full(obj, pd, data, name, description, file, group, id->par, rel);
+   return _elm_settingspane_item_append_full(obj, pd, data, name, id->par, rel);
 }
 
 /* Item implement */
@@ -1390,8 +1417,8 @@ _elm_settingspane_item_eo_base_destructor(Eo *obj EINA_UNUSED, Elm_Settingspane_
 {
    if (pd->panel)
      eo_unref(pd->panel->layout);
-   //unref the icon,
-   eo_unref(pd->icon);
+   if (pd->icon)
+     eo_unref(pd->icon);
    eo_do_super(obj, ELM_SETTINGSPANE_ITEM_CLASS, eo_destructor());
 }
 

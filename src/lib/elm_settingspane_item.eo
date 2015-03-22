@@ -20,6 +20,14 @@ class Elm_Settingspane_Item(Eo.Base){
                }
            }
            description{
+               set {
+                 /*@
+                 Will set the desrciption for the item.
+
+                 It will be displayed when you hover the item.
+                 @ingroup Settingspane
+                 */
+               }
                get {
                  /*@
                  Return the description of the item
@@ -35,6 +43,16 @@ class Elm_Settingspane_Item(Eo.Base){
                values {
                  const (char) *description;
                }
+           }
+           image {
+             set {
+             }
+             get {
+             }
+             values {
+               const (char) *file;
+               const (char) *group;
+             }
            }
            parent {
                get {

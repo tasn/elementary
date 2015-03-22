@@ -237,8 +237,9 @@ test_settingspane(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
         snprintf(buf, sizeof(buf), "%s/images/%s",
                  elm_app_data_dir_get(), simple_menu[i][2]);
 
-        it = elm_settingspane_item_append(sw, buf, simple_menu[i][0],
-                                          simple_menu[i][1], buf, NULL, NULL);
+        it = elm_settingspane_item_append(sw, buf, simple_menu[i][0], NULL);
+        elm_settingspane_item_description_set(it, simple_menu[i][1]);
+        elm_settingspane_item_image_set(it, buf, NULL);
         elm_settingspane_item_attach_panel(it, content_cb[i], reset_cb, apply_cb);
      }
 
@@ -246,15 +247,18 @@ test_settingspane(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    snprintf(buf, sizeof(buf), "%s/images/%s",
             elm_app_data_dir_get(), "icon_09.png");
 
-   it = elm_settingspane_item_append(sw, NULL, "Complex",
-                                    "No we are not going to jump here into<br>complex numbers,<br>this is just a complex menu item,<br>this means it has childrens!",
-                                    buf, NULL, NULL);
+   it = elm_settingspane_item_append(sw, NULL, "Complex", NULL);
+   elm_settingspane_item_description_set(it,
+                                          "No we are not going to jump here into<br>complex numbers,<br>this is just a complex menu item,<br>this means it has childrens!");
+   elm_settingspane_item_image_set(it, buf, NULL);
    elm_settingspane_item_keywords_set(it, "Hardone,second");
    snprintf(buf, sizeof(buf), "%s/images/%s",
             elm_app_data_dir_get(), "bubble.png");
-   it2 = elm_settingspane_item_append(sw, NULL, "Child",
-                                "This is a children entry",
-                                buf, NULL, it);
+   it2 = elm_settingspane_item_append(sw, NULL, "Child", it);
+   elm_settingspane_item_description_set(it2,
+                                         "This is a children entry");
+   elm_settingspane_item_image_set(it2, buf, NULL);
+
    elm_settingspane_item_keywords_set(it2, "Heavyone,Third,");
    elm_settingspane_item_attach_panel(it2, content_cb[3], reset_cb, apply_cb);
 
