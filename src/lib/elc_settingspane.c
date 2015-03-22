@@ -197,6 +197,12 @@ conf_menu_back_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *emission
  * =================================
  */
 static void
+_title_bar_cb(void *data , Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   eo_do(data, elm_obj_settingspane_item_focus());
+}
+
+static void
 _title_bar_refresh(Evas_Object *w)
 {
    Elm_Object_Item *it, *walker;
@@ -216,6 +222,7 @@ _title_bar_refresh(Evas_Object *w)
         bt = elm_button_add(wd->title_box);
         elm_object_style_set(bt, "navlink");
         elm_object_text_set(bt, id->name);
+        evas_object_smart_callback_add(bt, "clicked", _title_bar_cb, walker);
         evas_object_show(bt);
 
         elm_box_pack_start(wd->title_box, bt);
