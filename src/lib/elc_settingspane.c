@@ -1209,8 +1209,15 @@ _elm_settingspane_item_realize(Eo *obj, Elm_Settingspane_Item_Data *pd)
 {
   C_DATA(pd->sw);
   DBG("realize %p", obj);
+
+  if (wd->panel_visible)
+    eo_do(wd->panel_visible, elm_obj_settingspane_item_unrealize());
+
   if (pd->event.content_get) //this is a panel
     {
+       if (wd->panel_visible == obj)
+         return;
+
        if (!pd->panel)
          {
             Panel *p;
@@ -1224,9 +1231,6 @@ _elm_settingspane_item_realize(Eo *obj, Elm_Settingspane_Item_Data *pd)
          eo_do(pd->par, elm_obj_settingspane_item_realize());
        /* show this panel */
        _item_panel_show(obj, pd);
-       /* if another one is open close it */
-       if (wd->panel_visible)
-         eo_do(wd->panel_visible, elm_obj_settingspane_item_unrealize());
        /* set us as visible */
        wd->panel_visible = obj;
     }
@@ -1235,9 +1239,6 @@ _elm_settingspane_item_realize(Eo *obj, Elm_Settingspane_Item_Data *pd)
        /* dont do the work if this is the current menu */
        if (wd->menu_visible == obj)
          return;
-       /* if we are realizing a menu and a panel is open, close it*/
-       if (wd->panel_visible)
-         eo_do(wd->panel_visible, elm_obj_settingspane_item_unrealize());
        /* if this is the hidden object */
        if (wd->menu_hidden == obj)
          {
