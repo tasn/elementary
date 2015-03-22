@@ -3712,39 +3712,60 @@ _status_config_full(Evas_Object *win,
    evas_object_size_hint_weight_set(settings, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(settings, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   it = elm_settingspane_item_append(settings, NULL, "Sizing", "Set the scale of elementary widgets", NULL, "zoom-fit-best", NULL);
+   it = elm_settingspane_item_append(settings, NULL, "Sizing", NULL);
+   elm_settingspane_item_image_set(it, NULL, "zoom-fit-best");
+   elm_settingspane_item_description_set(it, "Set the scale of elementary widgets");
    elm_settingspane_item_attach_panel(it, _status_config_sizing, NULL, NULL);
    elm_settingspane_item_keywords_set(it, "size, scale");
 
-   it = elm_settingspane_item_append(settings, NULL, "Theme", "Choose from your installed themes", NULL, "preferences-desktop-theme", NULL);
+   it = elm_settingspane_item_append(settings, NULL, "Theme", NULL);
    elm_settingspane_item_attach_panel(it, _status_config_themes, NULL, NULL);
+   elm_settingspane_item_image_set(it, NULL, "preferences-desktop-theme");
+   elm_settingspane_item_description_set(it, "Choose from your installed themes");
 
-   it = elm_settingspane_item_append(settings, NULL, "Fonts", "Fonts to use for elm widgets", NULL, "preferences-desktop-font", NULL);
+   it = elm_settingspane_item_append(settings, NULL, "Fonts", NULL);
    elm_settingspane_item_attach_panel(it, _status_config_fonts, NULL, NULL);
+   elm_settingspane_item_image_set(it, NULL, "preferences-desktop-font");
+   elm_settingspane_item_description_set(it, "Fonts to use for elm widgets");
 
-   it = elm_settingspane_item_append(settings, NULL, "Profiles", "The config profile to use", NULL, "system-users", NULL);
+   it = elm_settingspane_item_append(settings, NULL, "Profiles", NULL);
    elm_settingspane_item_attach_panel(it, _status_config_profiles, NULL, NULL);
+   elm_settingspane_item_image_set(it, NULL, "system-users");
+   elm_settingspane_item_description_set(it, "The config profile to use");
 
-   it = elm_settingspane_item_append(settings, NULL, "Scrolling", "Scrollings", NULL, "system-run", NULL);
+   it = elm_settingspane_item_append(settings, NULL, "Scrolling", NULL);
    elm_settingspane_item_attach_panel(it, _status_config_scrolling, NULL, NULL);
+   elm_settingspane_item_image_set(it, NULL, "Scrollings");
+   elm_settingspane_item_description_set(it, "system-run");
 
-   it = elm_settingspane_item_append(settings, NULL, "Rendering", "The engine to use to render", NULL, "video-display", NULL);
+   it = elm_settingspane_item_append(settings, NULL, "Rendering", NULL);
    elm_settingspane_item_attach_panel(it, _status_config_rendering, NULL, NULL);
    elm_settingspane_item_keywords_set(it, "3D, gl, vsync");
+   elm_settingspane_item_image_set(it, NULL, "video-display");
+   elm_settingspane_item_description_set(it, "The engine to use to render");
 
-   it = elm_settingspane_item_append(settings, NULL, "Caches", "Sizes and flushing of the caches", NULL, "appointment-new", NULL);
+   it = elm_settingspane_item_append(settings, NULL, "Caches", NULL);
    elm_settingspane_item_attach_panel(it, _status_config_caches, NULL, NULL);
+   elm_settingspane_item_image_set(it, NULL, "appointment-new");
+   elm_settingspane_item_description_set(it, "Sizes and flushing of the caches");
 
-   it = elm_settingspane_item_append(settings, NULL, "Audio", "Configure which sounds should be played", NULL, "sound", NULL);
+   it = elm_settingspane_item_append(settings, NULL, "Audio", NULL);
    elm_settingspane_item_attach_panel(it, _status_config_audio, NULL, NULL);
    elm_settingspane_item_keywords_set(it, "sound, volume");
+   elm_settingspane_item_image_set(it, NULL, "sound");
+   elm_settingspane_item_description_set(it, "Configure which sounds should be played");
 
-   it = elm_settingspane_item_append(settings, NULL, "Focus", "Settings for the widget focus", NULL, NULL, NULL);
+   it = elm_settingspane_item_append(settings, NULL, "Focus", NULL);
    elm_settingspane_item_attach_panel(it, _status_config_focus, NULL, NULL);
+   //elm_settingspane_item_image_set(it, NULL, -fit-best");
+   elm_settingspane_item_description_set(it, "Settings for the widget focus");
 
-   it = elm_settingspane_item_append(settings, NULL, "Etc", "Miscellaneous", NULL, NULL, NULL);
+   it = elm_settingspane_item_append(settings, NULL, "Etc", NULL);
    elm_settingspane_item_attach_panel(it, _status_config_etc, NULL, NULL);
-   elm_box_pack_end(bx0, settings);
+   elm_settingspane_item_image_set(it, NULL, "zoom-fit-best");
+   elm_settingspane_item_description_set(it, "Miscellaneous");
+
+  elm_box_pack_end(bx0, settings);
    evas_object_show(settings);
 }
 
