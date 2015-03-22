@@ -1124,7 +1124,7 @@ _item_panel_realize(Eo *obj, Evas_Object *w, Evas_Object *content)
 }
 
 static inline void
-_item_panel_show(Eo *obj, Elm_Settingspane_Item_Data *pd)
+_item_panel_show(Eo *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd)
 {
    Panel *p = pd->panel;
    elm_layout_signal_emit(p->layout, EMIT_CONTENT_VISIBLE);
@@ -1161,7 +1161,7 @@ _item_menu_realize(Eo *obj, Elm_Settingspane_Item_Data *pd, Elm_Settingspane_Dat
    _item_menu_refresh(obj, pd);
 }
 static inline void
-_item_menu_show(Eo *obj, Elm_Settingspane_Item_Data *pd, Eina_Bool hidden)
+_item_menu_show(Eo *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd, Eina_Bool hidden)
 {
    Menu *m;
 
@@ -1257,14 +1257,14 @@ _elm_settingspane_item_realize(Eo *obj, Elm_Settingspane_Item_Data *pd)
 }
 
 static void
-_item_panel_unrealize(Eo *obj, Elm_Settingspane_Item_Data *pd)
+_item_panel_unrealize(Eo *obj  EINA_UNUSED, Elm_Settingspane_Item_Data *pd)
 {
    Panel *p = pd->panel;
    elm_layout_signal_emit(p->layout, EMIT_CONTENT_DEFAULT);
 }
 
 static void
-_item_menu_unrealize(Eo *obj, Elm_Settingspane_Item_Data *pd)
+_item_menu_unrealize(Eo *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd)
 {
    Menu *m;
 
@@ -1276,7 +1276,7 @@ _item_menu_unrealize(Eo *obj, Elm_Settingspane_Item_Data *pd)
 }
 
 static void
-_item_menu_refresh(Eo *obj, Elm_Settingspane_Item_Data *pd)
+_item_menu_refresh(Eo *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd)
 {
    Eina_List *node;
    Elm_Settingspane_Item *child;
