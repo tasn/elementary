@@ -1026,8 +1026,13 @@ _elm_settingspane_item_description_set(Eo *obj, Elm_Settingspane_Item_Data *pd, 
 EOLIAN static void
 _elm_settingspane_item_image_set(Eo *obj, Elm_Settingspane_Item_Data *pd, const char *file, const char *group)
 {
-  pd->file = file;
-  pd->group = group;
+  if (pd->file)
+    eina_stringshare_del(pd->file);
+  if (pd->group)
+    eina_stringshare_del(pd->group);
+
+  pd->file = eina_stringshare_add(file);
+  pd->group = eina_stringshare_add(group);
 
   _item_menu_refresh(obj, pd);
 }
@@ -1042,7 +1047,7 @@ _elm_settingspane_item_image_get(Eo *obj EINA_UNUSED, Elm_Settingspane_Item_Data
 EOLIAN static Elm_Settingspane_Item *
 _elm_settingspane_item_append(Eo *obj, Elm_Settingspane_Data *pd, void *data, const char *name, Elm_Settingspane_Item *par)
 {
-   return _elm_settingspane_item_append_full(obj, pd, data, name, par, NULL);
+   return _elm_settingspane_item_append_full(obj, pd, data, eina_stringshare_add(name), par, NULL);
 }
 
 EOLIAN static Elm_Settingspane_Item *
@@ -1050,7 +1055,7 @@ _elm_settingspane_item_append_relative(Eo *obj, Elm_Settingspane_Data *pd, void 
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(rel, NULL);
    Elm_Settingspane_Item_Data *id = eo_data_scope_get(rel, ELM_SETTINGSPANE_ITEM_CLASS);
-   return _elm_settingspane_item_append_full(obj, pd, data, name, id->par, rel);
+   return _elm_settingspane_item_append_full(obj, pd, data, eina_stringshare_add(name), id->par, rel);
 }
 
 /* Item implement */
