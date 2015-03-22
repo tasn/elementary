@@ -84,7 +84,6 @@ typedef struct
    Eina_Bool changed;
 
    Elm_Widget_Item *it;
-   Evas_Object *icon;
 
    struct
    {
@@ -117,6 +116,7 @@ static void _history_stack_remove(Evas_Object *w, Elm_Object_Item *it);
 
 static void _item_sel_cb(void *data, Evas_Object *obj, void *event_info);
 static void _search_panel_stop(Evas_Object *w);
+static Evas_Object* _elm_settingspane_icon_gen(Evas_Object *par, const char *file, const char *group);
 
 #define HAS_PANEL(id) (id->event.content_get)
 /* Data Keys in the layouts, DK = Data Key */
@@ -302,7 +302,7 @@ _elm_settingspane_ii_content_cb(void *data, Evas_Object *obj, const char *part)
 
    if (!strcmp(part, "elm.swallow.icon"))
      {
-          res = id->icon;
+          res = _elm_settingspane_icon_gen(obj, id->file, id->group);
      }
    else
      {
@@ -542,6 +542,7 @@ _search_panel_display(Evas_Object *w)
    Panel *p = _item_panel_realize(NULL, w, o);
    wd->search.p = p;
    elm_table_pack(wd->table_panel, p->layout, 0, 0, 1, 1);
+   evas_object_show(p->layout);
 
    elm_layout_signal_emit(w, EMIT_MENU_SEARCHMODE_ENABLE);
    elm_layout_signal_emit(p->layout, EMIT_CONTENT_VISIBLE);
@@ -582,12 +583,12 @@ _search_grid_label_get(void *data, Evas_Object *obj EINA_UNUSED, const char *par
 
 
 static Evas_Object*
-_search_grid_content_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+_search_grid_content_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
 {
    IC_DATA(data);
 
    if (!strcmp(part, "elm.swallow.icon"))
-     return id->icon;
+     return _elm_settingspane_icon_gen(obj, id->file, id->group);
    else
      return NULL;
 }
@@ -599,18 +600,6 @@ _search_grid_item_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
 
    _search_panel_stop(id->sw);
    eo_do(data, elm_obj_settingspane_item_focus());
-}
-
-static void
-_search_grid_del(void *data, Evas_Object *obj EINA_UNUSED)
-{
-   IC_DATA(data);
-
-   /* Also called when the widget is deleted, but then the item is allready freed.
-    * This would result in a crash.
-    */
-   if (!id) return;
-   evas_object_hide(id->icon);
 }
 
 static void *
@@ -627,7 +616,6 @@ _search_display_items(void *data)
    gic->item_style = "thumb";
    gic->func.text_get = _search_grid_label_get;
    gic->func.content_get = _search_grid_content_get;
-   gic->func.del = _search_grid_del;
 
    EINA_LIST_FOREACH(sr->results, node, it)
      {
@@ -761,14 +749,12 @@ _conf_unsaved_menu_ctx_item_add(Evas_Object *ctx, Elm_Object_Item *it)
 {
    IC_DATA(it);
    char buf[PATH_MAX];
-   const char *group, *file;
    Evas_Object *ic;
 
    snprintf(buf, sizeof(buf), "*%s", id->name);
 
    ic = elm_icon_add(ctx);
-   elm_image_file_get(id->icon, &file, &group);
-   elm_image_file_set(ic, file, group);
+   elm_image_file_set(ic, id->file, id->group);
    evas_object_show(ic);
 
    elm_ctxpopup_item_append(ctx, buf, ic, _conf_unsaved_item_click_cb, it);
@@ -1036,14 +1022,6 @@ _elm_settingspane_item_image_set(Eo *obj, Elm_Settingspane_Item_Data *pd, const 
   pd->file = file;
   pd->group = group;
 
-  if (pd->icon)
-    {
-       eo_unref(pd->icon);
-       evas_object_del(pd->icon);
-    }
-
-  pd->icon = _elm_settingspane_icon_gen(pd->sw, file, group);
-  eo_ref(pd->icon);
   _item_menu_refresh(obj, pd);
 }
 
@@ -1417,8 +1395,6 @@ _elm_settingspane_item_eo_base_destructor(Eo *obj EINA_UNUSED, Elm_Settingspane_
 {
    if (pd->panel)
      eo_unref(pd->panel->layout);
-   if (pd->icon)
-     eo_unref(pd->icon);
    eo_do_super(obj, ELM_SETTINGSPANE_ITEM_CLASS, eo_destructor());
 }
 
