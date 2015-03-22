@@ -249,13 +249,13 @@ test_settingspane(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    it = elm_settingspane_item_append(sw, NULL, "Complex",
                                     "No we are not going to jump here into<br>complex numbers,<br>this is just a complex menu item,<br>this means it has childrens!",
                                     buf, NULL, NULL);
-   elm_settingspane_item_keywords_set(it, eina_stringshare_add("Hardone,second"));
+   elm_settingspane_item_keywords_set(it, "Hardone,second");
    snprintf(buf, sizeof(buf), "%s/images/%s",
             elm_app_data_dir_get(), "bubble.png");
    it2 = elm_settingspane_item_append(sw, NULL, "Child",
                                 "This is a children entry",
                                 buf, NULL, it);
-   elm_settingspane_item_keywords_set(it2, eina_stringshare_add("Heavyone,Third,"));
+   elm_settingspane_item_keywords_set(it2, "Heavyone,Third,");
    elm_settingspane_item_attach_panel(it2, content_cb[3], reset_cb, apply_cb);
 
    evas_object_show(sw);

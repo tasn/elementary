@@ -845,7 +845,7 @@ _history_menu_show(Evas_Object *par, int x, int y)
      {
         if (it == wd->zero) continue;
         IC_DATA(it);
-        elm_ctxpopup_item_append(ctx, id->name, NULL, _history_menu_item_sel_cb, it); //< FIXME
+        elm_ctxpopup_item_append(ctx, id->name, NULL, _history_menu_item_sel_cb, it);
      }
 
    evas_object_move(ctx, x, y);
