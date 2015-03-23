@@ -70,7 +70,7 @@ _test_box_transition_change(void *data)
         box->layout_set(elm_box_layout_transition, layout_data,
                         elm_box_transition_free);
         tdata->last_layout = next_layout;
-       
+
         tdata->transitions.push_back(tdata->transitions[0]);
         tdata->transitions.pop_front();
      }
@@ -107,10 +107,10 @@ elm_main(int argc, char *argv[])
         {
           elm_button btn ( efl::eo::parent = *box );
           btn.text_set("elm.text", "I do nothing");
-          efl::eina::list<evas::object> childrens(box->children_get());
-          if (!childrens.empty())
+          auto childrens(box->children_get());
+          if (!childrens->empty())
             {
-              box->pack_after(btn, childrens.front());
+              box->pack_after(btn, childrens->front());
             }
           else
             box->pack_end(btn);
