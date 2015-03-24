@@ -60,6 +60,61 @@ class Elm.Prefs (Elm.Widget, Efl.File)
             autosave: bool; [[$true to save automatically, $false otherwise.]]
          }
       }
+      model_set {
+         [[Set user model for a given prefs widget
+
+           Once a prefs widget is created, after elm_prefs_file_set() is
+           issued on it, all of its UI elements will get default values, when
+           declared on that file. To fetch an user's own, personal set of
+           those values, one gets to pair a <b>model</b> handle to the
+           prefs widget. This is what this call is intended for.
+
+           Model property values from $model model with names matching the ones
+           present on the file passed on elm_prefs_file_set() to $model obj will
+           have their values applied to the respective UI elements of the
+           widget.
+
+           When $model obj dies, the values of the elements declared on its 
+           .epb file (the one set on elm_prefs_file_set()) marked as permanent
+           <b>will be written back</b> to $model model, if it is writable.
+           One is also able to make this writing event to take place
+           automatically after each UI element modification by using
+           elm_prefs_autosave_set().
+
+           Note: $model obj will keep a reference of its own for $model model,
+           but you should still unreference it by yourself, after the widget
+           is gone.
+
+           see elm_prefs_model_get()
+
+           @since 1.16]]
+
+         return: bool; [[$true, on success, $false otherwise]]
+         params {
+           @in model: Efl.Model.Base*; [[A valid model handle]]
+         }
+         legacy: null;
+      }
+      model_get @const {
+       [[Get user model for a given prefs widget
+
+         see elm_prefs_model_set() for more details
+
+         @since 1.16]]
+
+         return: Efl.Model.Base *; [[A pointer to the user model of a given prefs widget on success.]]
+         legacy: null;
+      }
+      property_connect {
+          [[Connect property
+
+            @since 1.16]]
+         params {
+            @in property: const(char)*; [[Property name]]
+            @in part: const(char)*;     [[Prefs page:item layout part]]
+         }
+         legacy: null;
+      }
       reset {
          [[Reset the values of a given prefs widget to a previous state.
 

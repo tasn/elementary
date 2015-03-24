@@ -71,6 +71,7 @@
  * @li @ref prefs_example_01
  * @li @ref prefs_example_02
  * @li @ref prefs_example_03
+ * @li @ref prefs_example_04
  */
 
 #include "elm_prefs_common.h"
