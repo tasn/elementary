@@ -10,7 +10,9 @@
 #include "elm_widget_prefs.h"
 #include "elm_prefs_edd.x"
 
-#include "Eo.h"
+#include <Eo.h>
+
+#include <stdbool.h>
 
 #define MY_CLASS ELM_PREFS_CLASS
 
@@ -40,10 +42,11 @@ static Eina_Hash *_elm_prefs_item_widgets_map = NULL;
 static Eina_Hash *_elm_prefs_item_type_widgets_map = NULL;
 static const Elm_Prefs_Item_Iface *_elm_prefs_item_default_widget = NULL;
 
-static void _elm_prefs_values_get_default(Elm_Prefs_Page_Node *,
-                                          Eina_Bool);
-static Eina_Bool _prefs_item_widget_value_from_self(Elm_Prefs_Item_Node *,
-                                                    Eina_Bool);
+static void _elm_prefs_values_get_default(Elm_Prefs_Page_Node *, Eina_Bool);
+static Eina_Bool _prefs_item_widget_value_from_self(Elm_Prefs_Item_Node *, Eina_Bool);
+static Eina_Bool _elm_prefs_value_get(Elm_Prefs_Data *, const char *, Eina_Value *);
+static Eina_Bool _elm_prefs_value_set(Elm_Prefs_Data *, const char *, const Elm_Prefs_Item_Type, const Eina_Value *);
+static Eina_Bool _elm_prefs_item_changed(Eo *, Elm_Prefs_Data *, const char *);
 
 EOLIAN static void
 _elm_prefs_evas_object_smart_add(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
@@ -245,19 +248,10 @@ _prefs_item_widget_value_from_data(Elm_Prefs_Data *sd,
    if (!_prefs_data_types_match(t, it->type))
      {
         if (!_prefs_data_type_fix(it, value)) return EINA_FALSE;
-        else
-          {
-             Eina_Bool v_set;
 
-             sd->changing_from_ui = EINA_TRUE;
-
-             v_set = elm_prefs_data_value_set(sd->prefs_data,
-                                              buf, it->type, value);
-
-             sd->changing_from_ui = EINA_FALSE;
-
-             if (!v_set) return EINA_FALSE;
-          }
+        // write-back the type fix only if prefs_data
+        if (sd->prefs_data && !_elm_prefs_value_set(sd, buf, it->type, value))
+          return EINA_FALSE;
      }
 
    if (!it->available)
@@ -362,33 +356,78 @@ _elm_prefs_item_list_node_by_name(Elm_Prefs_Data *sd,
 static void
 _prefs_data_item_changed_cb(void *cb_data,
                             Elm_Prefs_Data_Event_Type type EINA_UNUSED,
-                            Elm_Prefs_Data *prefs_data,
+                            Elm_Prefs_Data *prefs_data EINA_UNUSED,
                             void *event_info)
 {
    Elm_Prefs_Data_Event_Changed *evt = event_info;
    Eo *obj = cb_data;
-   Elm_Prefs_Item_Node *it;
-   Eina_Value value;
 
    ELM_PREFS_DATA_GET(obj, sd);
    if (sd->changing_from_ui) return;
 
-   it = _elm_prefs_item_node_by_name(sd, evt->key);
-   if (!it) return;
+   if (_elm_prefs_item_changed(obj, sd, evt->key))
+     _elm_prefs_mark_as_dirty(obj);
+}
 
-   if (elm_prefs_data_value_get(prefs_data, evt->key, NULL, &value))
+static Eina_Bool
+_elm_prefs_item_changed(Eo *obj,
+                        Elm_Prefs_Data *sd,
+                        const char *key)
+{
+   Elm_Prefs_Item_Node *item = _elm_prefs_item_node_by_name(sd, key);
+   if (!item) return EINA_FALSE;
+
+   Eina_Value value;
+   if (!_elm_prefs_value_get(sd, key, &value))
      {
-        if (!_prefs_item_widget_value_from_data(sd, it, &value)) goto end;
-
-        _elm_prefs_item_changed_report(obj, it);
-        _elm_prefs_mark_as_dirty(obj);
+        ERR("failed to fetch value from data after changed event: %s", key);
+        return EINA_FALSE;
      }
-   else
-     ERR("failed to fetch value from data after changed event");
 
-end:
+   Eina_Bool changed = _prefs_item_widget_value_from_data(sd, item, &value);
+   if (changed)
+     _elm_prefs_item_changed_report(obj, item);
+
    eina_value_flush(&value);
-   return;
+   return changed;
+}
+
+static Eina_Bool
+_elm_prefs_properties_changed(Eo *obj,
+                              Elm_Prefs_Data *sd,
+                              const Eina_Array *properties)
+{
+   bool changed = EINA_FALSE;
+
+   size_t i;
+   const char *property;
+   Eina_Array_Iterator it;
+   EINA_ARRAY_ITER_NEXT(properties, i, property, it)
+     changed = _elm_prefs_item_changed(obj, sd, property) || changed;
+
+   return changed;
+}
+
+static Eina_Bool
+_model_property_changed_cb(void *data,
+                           Eo *model EINA_UNUSED,
+                           const Eo_Event_Description *desc EINA_UNUSED,
+                           void *event_info)
+{
+   const Emodel_Property_Event *evt = (Emodel_Property_Event*)event_info;
+   Eo *obj = (Eo*)data;
+
+   ELM_PREFS_DATA_GET(obj, sd);
+   if (sd->changing_from_ui) return EO_CALLBACK_CONTINUE;
+
+   Eina_Bool changed = _elm_prefs_properties_changed
+     (obj, sd, evt->changed_properties);
+   changed = _elm_prefs_properties_changed
+     (obj, sd, evt->invalidated_properties) || changed;
+   if (changed)
+     _elm_prefs_mark_as_dirty(obj);
+
+   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -446,6 +485,25 @@ _elm_prefs_data_cbs_del(Eo *obj)
          "prefs data handle");
 }
 
+static Eina_Bool
+_elm_prefs_model_cbs_add(Eo *obj, Emodel *model)
+{
+   eo_do(model, eo_event_callback_add(EMODEL_EVENT_PROPERTIES_CHANGED,
+                                      _model_property_changed_cb, obj));
+   return EINA_TRUE;
+}
+
+static void
+_elm_prefs_model_cbs_del(Eo *obj)
+{
+   ELM_PREFS_DATA_GET(obj, sd);
+
+   if (!sd->model) return;
+
+   eo_do(sd->model, eo_event_callback_del(EMODEL_EVENT_PROPERTIES_CHANGED,
+                                          _model_property_changed_cb, obj));
+}
+
 EOLIAN static void
 _elm_prefs_evas_object_smart_del(Eo *obj, Elm_Prefs_Data *sd)
 {
@@ -454,17 +512,21 @@ _elm_prefs_evas_object_smart_del(Eo *obj, Elm_Prefs_Data *sd)
    if (sd->saving_poller) ecore_poller_del(sd->saving_poller);
 
    _elm_prefs_data_cbs_del(obj);
+   _elm_prefs_model_cbs_del(obj);
 
    if (sd->root)
      {
-        elm_prefs_data_version_set(sd->prefs_data, sd->root->version);
-
-        _elm_prefs_save(obj);
+        if (sd->prefs_data)
+          {
+             elm_prefs_data_version_set(sd->prefs_data, sd->root->version);
+             _elm_prefs_save(obj);
+          }
 
         _root_node_free(sd);
      }
 
    if (sd->prefs_data) elm_prefs_data_unref(sd->prefs_data);
+   if (sd->model) eo_unref(sd->model);
 
    eina_stringshare_del(sd->file);
    eina_stringshare_del(sd->page);
@@ -581,18 +643,18 @@ _item_changed_cb(Evas_Object *it_obj)
    if (it->w_impl->value_validate &&
        !it->w_impl->value_validate(it->w_obj))
      {
-        if (sd->prefs_data)
+        if (sd->prefs_data || sd->model)
           {
              Eina_Value value;
 
              // Restoring to the last valid value.
-             if (!elm_prefs_data_value_get(sd->prefs_data, buf, NULL, &value))
+             if (!_elm_prefs_value_get(sd, buf, &value))
                goto restore_fail;
-             if (!it->w_impl->value_set(it->w_obj, &value))
-               {
-                  eina_value_flush(&value);
-                  goto restore_fail;
-               }
+
+             Eina_Bool ret = it->w_impl->value_set(it->w_obj, &value);
+             eina_value_flush(&value);
+             if (!ret)
+               goto restore_fail;
           }
         else
           {
@@ -604,7 +666,7 @@ _item_changed_cb(Evas_Object *it_obj)
      }
 
 end:
-   if (sd->prefs_data)
+   if (sd->prefs_data || sd->model)
      {
         Eina_Value value;
 
@@ -612,10 +674,8 @@ end:
           ERR("failed to fetch value from widget of item %s", buf);
         else
           {
-             sd->changing_from_ui = EINA_TRUE;
-             elm_prefs_data_value_set(sd->prefs_data, buf, it->type, &value);
+             _elm_prefs_value_set(sd, buf, it->type, &value);
              eina_value_flush(&value);
-             sd->changing_from_ui = EINA_FALSE;
           }
      }
 
@@ -1059,26 +1119,18 @@ _elm_prefs_values_get_user(Elm_Prefs_Data *sd,
 
    EINA_LIST_FOREACH(p->items, l, it)
      {
-        Eina_Bool get_err = EINA_FALSE, set_err = EINA_FALSE;
-
         if (it->type == ELM_PREFS_TYPE_PAGE)
           {
              Elm_Prefs_Page_Node *subp = it->subpage;
 
-             if (!elm_prefs_data_value_get
-                 (sd->prefs_data, subp->name, NULL, &value))
+             if (!_elm_prefs_value_get(sd, subp->name, &value))
                {
                   INF("failed to fetch value for item %s on user data, "
                       "writing UI value back on it", it->name);
 
                   if (eina_value_setup(&value, EINA_VALUE_TYPE_STRINGSHARE) &&
                       eina_value_set(&value, subp->name))
-                    {
-                       sd->changing_from_ui = EINA_TRUE;
-                       elm_prefs_data_value_set
-                          (sd->prefs_data, subp->name, it->type, &value);
-                       sd->changing_from_ui = EINA_FALSE;
-                    }
+                    _elm_prefs_value_set(sd, subp->name, it->type, &value);
                }
 
              _elm_prefs_values_get_user(sd, subp);
@@ -1092,10 +1144,14 @@ _elm_prefs_values_get_user(Elm_Prefs_Data *sd,
 
         snprintf(buf, sizeof(buf), "%s:%s", p->name, it->name);
 
-        if (!elm_prefs_data_value_get(sd->prefs_data, buf, NULL, &value))
+        Eina_Bool get_err = EINA_FALSE, set_err = EINA_FALSE;
+        if (!_elm_prefs_value_get(sd, buf, &value))
           get_err = EINA_TRUE;
         else if (!_prefs_item_widget_value_from_data(sd, it, &value))
           set_err = EINA_TRUE;
+
+        if (!get_err)
+          eina_value_flush(&value);
 
         if (get_err || set_err)
           {
@@ -1111,15 +1167,11 @@ _elm_prefs_values_get_user(Elm_Prefs_Data *sd,
                         it->name);
                   else
                     {
-                       sd->changing_from_ui = EINA_TRUE;
-                       elm_prefs_data_value_set
-                          (sd->prefs_data, buf, it->type, &value);
-                       sd->changing_from_ui = EINA_FALSE;
+                       _elm_prefs_value_set(sd, buf, it->type, &value);
+                       eina_value_flush(&value);
                     }
                }
           }
-
-        eina_value_flush(&value);
      }
 }
 
@@ -1187,6 +1239,9 @@ _elm_prefs_data_set(Eo *obj, Elm_Prefs_Data *sd, Elm_Prefs_Data *prefs_data)
 {
    if (!sd->root) return EINA_FALSE;
 
+   Eina_Bool ret = eo_do_ret(obj, ret, elm_obj_prefs_model_set(NULL));
+   if (!ret) return EINA_FALSE;
+
    if (prefs_data && !_elm_prefs_data_cbs_add(obj, prefs_data))
       return EINA_FALSE;
 
@@ -1225,6 +1280,55 @@ _elm_prefs_data_get(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd)
 {
    if (!sd->root) return NULL;
    else return sd->prefs_data;
+}
+
+EOLIAN static Eina_Bool
+_elm_prefs_model_set(Eo *obj, Elm_Prefs_Data *sd, Emodel *model)
+{
+   if (!sd->root) return EINA_FALSE;
+
+   Eina_Bool ret = eo_do_ret(obj, ret, elm_obj_prefs_data_set(NULL));
+   if (!ret) return EINA_FALSE;
+
+   if (model && !_elm_prefs_model_cbs_add(obj, model))
+      return EINA_FALSE;
+
+   if (sd->model)
+     {
+        _elm_prefs_model_cbs_del(obj);
+        eo_unref(sd->model);
+     }
+
+   sd->model = model;
+
+   if (!sd->model)
+     {
+        INF("resetting prefs to default values");
+        _elm_prefs_values_get_default(sd->root, EINA_FALSE);
+
+        goto end;
+     }
+
+   eo_ref(sd->model);
+
+   sd->values_fetching = EINA_TRUE;
+   _elm_prefs_values_get_user(sd, sd->root);
+   sd->values_fetching = EINA_FALSE;
+
+end:
+   evas_object_smart_callback_call
+     (obj, SIG_PAGE_CHANGED, (char *)sd->root->name);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Emodel*
+_elm_prefs_model_get(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd)
+{
+   if (!sd->root)
+     return NULL;
+
+   return sd->model;
 }
 
 EOLIAN static void
@@ -1882,6 +1986,51 @@ elm_prefs_file_get(const Eo *obj, const char **file, const char **page)
    eo_do((Eo *) obj, efl_file_get(file, page));
 
    return EINA_TRUE;
+}
+
+static Eina_Bool
+_elm_prefs_value_get(Elm_Prefs_Data *sd, const char *key, Eina_Value *value)
+{
+   if (sd->prefs_data)
+     return elm_prefs_data_value_get(sd->prefs_data, key, NULL, value);
+
+   if (sd->model)
+     {
+        Emodel_Load_Status status;
+        const Eina_Value *prop_value;
+        eo_do(sd->model, status = emodel_property_get(key, &prop_value));
+        if (EMODEL_LOAD_STATUS_ERROR == status)
+          return EINA_FALSE;
+
+        return eina_value_copy(prop_value, value);
+     }
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_elm_prefs_value_set(Elm_Prefs_Data *sd,
+                     const char *key,
+                     const Elm_Prefs_Item_Type type,
+                     const Eina_Value *value)
+{
+   sd->changing_from_ui = EINA_TRUE;
+
+   Eina_Bool result = EINA_FALSE;
+   if (sd->prefs_data)
+     result = elm_prefs_data_value_set(sd->prefs_data, key, type, value);
+   else
+   if (sd->model)
+     {
+        // TODO: Convert the value
+        Emodel_Load_Status status;
+        eo_do(sd->model, status = emodel_property_set(key, value));
+        result = EMODEL_LOAD_STATUS_ERROR != status;
+        // TODO: The property changed event could be delayed for Emodel
+     }
+
+   sd->changing_from_ui = EINA_FALSE;
+   return result;
 }
 
 #include "elm_prefs.eo.c"

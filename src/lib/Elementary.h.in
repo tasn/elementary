@@ -84,6 +84,8 @@
 #include <Efreet_Mime.h>
 #include <Efreet_Trash.h>
 #include <Ethumb_Client.h>
+#include <Eo.h>
+#include <Emodel.h>
 
 #ifdef ELM_ELOCATION
 #include <Elocation.h>

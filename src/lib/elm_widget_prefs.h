@@ -76,6 +76,7 @@ struct _Elm_Prefs_Data
    Elm_Prefs_Page_Node  *root;
 
    Elm_Prefs_Data       *prefs_data;
+   Emodel               *model;
    const char           *file;
    const char           *page;
 
