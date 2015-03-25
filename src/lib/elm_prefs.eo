@@ -138,6 +138,17 @@ class Elm_Prefs (Elm_Widget, Efl.File) {
       }
    }
    methods {
+      property_connect {
+         /*@ Connect property
+          *
+          * @def elm_prefs_property_connect
+          * @since 1.13
+          */
+         params {
+            @in const(char)* property; /*@ Property name */
+            @in const(char)* part; /*@ Prefs page:item layout part */
+         }
+      }
       reset {
          /*@
          Reset the values of a given prefs widget to a previous state.

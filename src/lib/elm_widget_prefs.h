@@ -75,6 +75,7 @@ struct _Elm_Prefs_Data
 {
    Elm_Prefs_Page_Node  *root;
 
+   Eina_Hash            *prop_con;
    Elm_Prefs_Data       *prefs_data;
    Emodel               *model;
    const char           *file;

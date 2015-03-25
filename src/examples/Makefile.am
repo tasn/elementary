@@ -114,6 +114,7 @@ photocam_example_01.c \
 prefs_example_01.c \
 prefs_example_02.c \
 prefs_example_03.c \
+prefs_example_04.c \
 popup_example_01.c \
 popup_example_02.c \
 popup_example_03.c \
@@ -171,6 +172,7 @@ files_DATA += \
 	prefs_example_02.epb \
 	prefs_example_03.epb \
 	prefs_example_03.edj \
+	prefs_example_04.epb \
 	theme_example.edj \
 	layout_example.edj\
 	codegen_example.edj \
@@ -268,6 +270,7 @@ photocam_example_01 \
 prefs_example_01 \
 prefs_example_02 \
 prefs_example_03 \
+prefs_example_04 \
 popup_example_01 \
 popup_example_02 \
 popup_example_03 \

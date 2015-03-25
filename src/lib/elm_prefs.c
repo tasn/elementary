@@ -525,6 +525,7 @@ _elm_prefs_evas_object_smart_del(Eo *obj, Elm_Prefs_Data *sd)
         _root_node_free(sd);
      }
 
+   eina_hash_free(sd->prop_con);
    if (sd->prefs_data) elm_prefs_data_unref(sd->prefs_data);
    if (sd->model) eo_unref(sd->model);
 
@@ -575,13 +576,14 @@ elm_prefs_add(Evas_Object *parent)
 }
 
 EOLIAN static void
-_elm_prefs_eo_base_constructor(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
+_elm_prefs_eo_base_constructor(Eo *obj, Elm_Prefs_Data *pd)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_elm_prefs_smart_callbacks),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_REDUNDANT_OBJECT));
+   pd->prop_con = eina_hash_string_superfast_new(free);
 }
 
 static Eina_Bool
@@ -1239,8 +1241,11 @@ _elm_prefs_data_set(Eo *obj, Elm_Prefs_Data *sd, Elm_Prefs_Data *prefs_data)
 {
    if (!sd->root) return EINA_FALSE;
 
-   Eina_Bool ret = eo_do_ret(obj, ret, elm_obj_prefs_model_set(NULL));
-   if (!ret) return EINA_FALSE;
+   if (sd->model)
+     {
+        Eina_Bool ret = eo_do_ret(obj, ret, elm_obj_prefs_model_set(NULL));
+        if (!ret) return EINA_FALSE;
+     }
 
    if (prefs_data && !_elm_prefs_data_cbs_add(obj, prefs_data))
       return EINA_FALSE;
@@ -1287,8 +1292,11 @@ _elm_prefs_model_set(Eo *obj, Elm_Prefs_Data *sd, Emodel *model)
 {
    if (!sd->root) return EINA_FALSE;
 
-   Eina_Bool ret = eo_do_ret(obj, ret, elm_obj_prefs_data_set(NULL));
-   if (!ret) return EINA_FALSE;
+   if (sd->prefs_data)
+     {
+        Eina_Bool ret = eo_do_ret(obj, ret, elm_obj_prefs_data_set(NULL));
+        if (!ret) return EINA_FALSE;
+     }
 
    if (model && !_elm_prefs_model_cbs_add(obj, model))
       return EINA_FALSE;
@@ -1991,14 +1999,18 @@ elm_prefs_file_get(const Eo *obj, const char **file, const char **page)
 static Eina_Bool
 _elm_prefs_value_get(Elm_Prefs_Data *sd, const char *key, Eina_Value *value)
 {
+   const char *property = eina_hash_find(sd->prop_con, key);
+   if (!property)
+     property = key;
+
    if (sd->prefs_data)
-     return elm_prefs_data_value_get(sd->prefs_data, key, NULL, value);
+     return elm_prefs_data_value_get(sd->prefs_data, property, NULL, value);
 
    if (sd->model)
      {
         Emodel_Load_Status status;
         const Eina_Value *prop_value;
-        eo_do(sd->model, status = emodel_property_get(key, &prop_value));
+        eo_do(sd->model, status = emodel_property_get(property, &prop_value));
         if (EMODEL_LOAD_STATUS_ERROR == status)
           return EINA_FALSE;
 
@@ -2014,23 +2026,40 @@ _elm_prefs_value_set(Elm_Prefs_Data *sd,
                      const Elm_Prefs_Item_Type type,
                      const Eina_Value *value)
 {
+   const char *property = eina_hash_find(sd->prop_con, key);
+   if (!property)
+     property = key;
+
    sd->changing_from_ui = EINA_TRUE;
 
    Eina_Bool result = EINA_FALSE;
    if (sd->prefs_data)
-     result = elm_prefs_data_value_set(sd->prefs_data, key, type, value);
+     result = elm_prefs_data_value_set(sd->prefs_data, property, type, value);
    else
    if (sd->model)
      {
         // TODO: Convert the value
         Emodel_Load_Status status;
-        eo_do(sd->model, status = emodel_property_set(key, value));
+        eo_do(sd->model, status = emodel_property_set(property, value));
         result = EMODEL_LOAD_STATUS_ERROR != status;
         // TODO: The property changed event could be delayed for Emodel
      }
 
    sd->changing_from_ui = EINA_FALSE;
    return result;
+}
+
+static void
+_elm_prefs_property_connect(Eo *obj EINA_UNUSED,
+                            Elm_Prefs_Data *sd,
+                            const char *property,
+                            const char *part)
+{
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   EINA_SAFETY_ON_NULL_RETURN(property);
+   EINA_SAFETY_ON_NULL_RETURN(part);
+
+   free(eina_hash_set(sd->prop_con, part, strdup(property)));
 }
 
 #include "elm_prefs.eo.c"

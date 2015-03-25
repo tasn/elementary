@@ -1,0 +1,49 @@
+collection
+{
+   page
+   {
+      name: "main";
+      version: 1;
+      title: "Preferences Widget";
+      subtitle: "Example 01";
+      widget: "elm/vertical_box";
+
+      items {
+
+         item {
+            name: "label";
+            type: LABEL;
+            label: "Filename";
+         }
+
+         item {
+            name: "text";
+            type: TEXT;
+            editable: 1;
+
+            text {
+               placeholder: "test.txt";
+               default: "test.txt";
+               deny: "/";
+            }
+         }
+
+         item {
+            name: "sep";
+            type: SEPARATOR;
+         }
+
+         item {
+            name: "save";
+            type: SAVE;
+            label: "Save";
+         }
+
+         item {
+            name: "reset";
+            type: RESET;
+            label: "Reset";
+         }
+      }
+   }
+}
