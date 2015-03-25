@@ -60,12 +60,12 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(prefs, "page,loaded", _page_loaded_cb, NULL);
    evas_object_smart_callback_add(prefs, "item,changed", _item_changed_cb, win);
 
-   Emodel *model = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set("."));
+   Emodel *model = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set("test"));
    eo_do(model, eio_model_children_filter_set(_filter_cb, NULL));
    eo_do(model, emodel_load());
 
    elm_prefs_file_set(prefs, "prefs_example_04.epb", NULL);
-   eo_do(prefs, elm_obj_prefs_property_connect("filename", "main:filename"),
+   eo_do(prefs, elm_obj_prefs_property_connect("path", "main:text"),
                 elm_obj_prefs_model_set(model));
 
    evas_object_resize(win, 320, 320);

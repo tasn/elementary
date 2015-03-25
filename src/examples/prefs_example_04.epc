@@ -22,8 +22,8 @@ collection
             editable: 1;
 
             text {
-               placeholder: "test.txt";
-               default: "test.txt";
+               placeholder: "test";
+               default: "test";
                deny: "/";
             }
          }

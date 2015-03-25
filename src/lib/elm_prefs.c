@@ -47,6 +47,8 @@ static Eina_Bool _prefs_item_widget_value_from_self(Elm_Prefs_Item_Node *, Eina_
 static Eina_Bool _elm_prefs_value_get(Elm_Prefs_Data *, const char *, Eina_Value *);
 static Eina_Bool _elm_prefs_value_set(Elm_Prefs_Data *, const char *, const Elm_Prefs_Item_Type, const Eina_Value *);
 static Eina_Bool _elm_prefs_item_changed(Eo *, Elm_Prefs_Data *, const char *);
+static void _elm_prefs_values_get_user(Elm_Prefs_Data *, Elm_Prefs_Page_Node *);
+static void _elm_prefs_values_fetch(Eo *, Elm_Prefs_Data *, bool);
 
 EOLIAN static void
 _elm_prefs_evas_object_smart_add(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
@@ -397,6 +399,8 @@ _elm_prefs_properties_changed(Eo *obj,
                               Elm_Prefs_Data *sd,
                               const Eina_Array *properties)
 {
+   if (!properties) return EINA_FALSE;
+
    bool changed = EINA_FALSE;
 
    size_t i;
@@ -429,6 +433,23 @@ _model_property_changed_cb(void *data,
 
    return EO_CALLBACK_CONTINUE;
 }
+
+static Eina_Bool
+_model_load_status_change_cb(void *data,
+                             Eo *model EINA_UNUSED,
+                             const Eo_Event_Description *desc EINA_UNUSED,
+                             void *event_info)
+{
+   const Emodel_Load *load = (Emodel_Load*)event_info;
+   Eo *obj = (Eo*)data;
+   ELM_PREFS_DATA_GET(obj, sd);
+
+   bool reset_values = !(load->status & EMODEL_LOAD_STATUS_LOADED_PROPERTIES);
+   _elm_prefs_values_fetch(obj, sd, reset_values);
+
+   return EO_CALLBACK_CONTINUE;
+}
+
 
 static void
 _prefs_data_autosaved_cb(void *cb_data,
@@ -490,6 +511,8 @@ _elm_prefs_model_cbs_add(Eo *obj, Emodel *model)
 {
    eo_do(model, eo_event_callback_add(EMODEL_EVENT_PROPERTIES_CHANGED,
                                       _model_property_changed_cb, obj));
+   eo_do(model, eo_event_callback_add(EMODEL_EVENT_LOAD_STATUS,
+                                      _model_load_status_change_cb, obj));
    return EINA_TRUE;
 }
 
@@ -502,6 +525,8 @@ _elm_prefs_model_cbs_del(Eo *obj)
 
    eo_do(sd->model, eo_event_callback_del(EMODEL_EVENT_PROPERTIES_CHANGED,
                                           _model_property_changed_cb, obj));
+   eo_do(sd->model, eo_event_callback_del(EMODEL_EVENT_LOAD_STATUS,
+                                          _model_load_status_change_cb, obj));
 }
 
 EOLIAN static void
@@ -1259,24 +1284,14 @@ _elm_prefs_data_set(Eo *obj, Elm_Prefs_Data *sd, Elm_Prefs_Data *prefs_data)
 
    sd->prefs_data = prefs_data;
 
-   if (!sd->prefs_data)
+   bool reset_values = true;
+   if (sd->prefs_data)
      {
-        INF("resetting prefs to default values");
-        _elm_prefs_values_get_default(sd->root, EINA_FALSE);
-
-        goto end;
+        elm_prefs_data_ref(sd->prefs_data);
+        reset_values = false;
      }
 
-   elm_prefs_data_ref(sd->prefs_data);
-
-   sd->values_fetching = EINA_TRUE;
-   _elm_prefs_values_get_user(sd, sd->root);
-   sd->values_fetching = EINA_FALSE;
-
-end:
-   evas_object_smart_callback_call
-     (obj, SIG_PAGE_CHANGED, (char *)sd->root->name);
-
+   _elm_prefs_values_fetch(obj, sd, reset_values);
    return EINA_TRUE;
 }
 
@@ -1309,24 +1324,16 @@ _elm_prefs_model_set(Eo *obj, Elm_Prefs_Data *sd, Emodel *model)
 
    sd->model = model;
 
-   if (!sd->model)
+   bool reset_values = true;
+   if (sd->model)
      {
-        INF("resetting prefs to default values");
-        _elm_prefs_values_get_default(sd->root, EINA_FALSE);
-
-        goto end;
+        eo_ref(sd->model);
+        Emodel_Load_Status status;
+        eo_do(sd->model, status = emodel_load_status_get());
+        reset_values = !(status & EMODEL_LOAD_STATUS_LOADED_PROPERTIES);
      }
 
-   eo_ref(sd->model);
-
-   sd->values_fetching = EINA_TRUE;
-   _elm_prefs_values_get_user(sd, sd->root);
-   sd->values_fetching = EINA_FALSE;
-
-end:
-   evas_object_smart_callback_call
-     (obj, SIG_PAGE_CHANGED, (char *)sd->root->name);
-
+   _elm_prefs_values_fetch(obj, sd, reset_values);
    return EINA_TRUE;
 }
 
@@ -2011,7 +2018,7 @@ _elm_prefs_value_get(Elm_Prefs_Data *sd, const char *key, Eina_Value *value)
         Emodel_Load_Status status;
         const Eina_Value *prop_value;
         eo_do(sd->model, status = emodel_property_get(property, &prop_value));
-        if (EMODEL_LOAD_STATUS_ERROR == status)
+        if (EMODEL_LOAD_STATUS_ERROR == status || !prop_value)
           return EINA_FALSE;
 
         return eina_value_copy(prop_value, value);
@@ -2060,6 +2067,24 @@ _elm_prefs_property_connect(Eo *obj EINA_UNUSED,
    EINA_SAFETY_ON_NULL_RETURN(part);
 
    free(eina_hash_set(sd->prop_con, part, strdup(property)));
+}
+
+static void
+_elm_prefs_values_fetch(Eo *obj, Elm_Prefs_Data *sd, bool reset_values)
+{
+   if (reset_values)
+     {
+        INF("resetting prefs to default values");
+        _elm_prefs_values_get_default(sd->root, EINA_FALSE);
+     }
+   else
+     {
+        sd->values_fetching = EINA_TRUE;
+        _elm_prefs_values_get_user(sd, sd->root);
+        sd->values_fetching = EINA_FALSE;
+     }
+   evas_object_smart_callback_call
+     (obj, SIG_PAGE_CHANGED, (char *)sd->root->name);
 }
 
 #include "elm_prefs.eo.c"
