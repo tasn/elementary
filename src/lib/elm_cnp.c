@@ -258,9 +258,14 @@ typedef struct _Wl_Cnp_Selection Wl_Cnp_Selection;
 typedef Eina_Bool (*Wl_Converter_Fn_Cb)     (char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
 static Eina_Bool _wl_targets_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
 static Eina_Bool _wl_general_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
-static Eina_Bool _wl_image_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
 static Eina_Bool _wl_text_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
-static Eina_Bool _wl_vcard_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+
+typedef Eina_Bool       (*Wl_Notify_Handler_Cb)   (Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev);
+static Eina_Bool _wl_notify_handler_targets(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev);
+static Eina_Bool _wl_notify_handler_uri(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev);
+static Eina_Bool _wl_vcard_receive(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev);
+static Eina_Bool _wl_notify_handler_image(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev);
+static Eina_Bool _wl_notify_handler_text(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev);
 #endif
 
 struct _Cnp_Atom
@@ -277,6 +282,7 @@ struct _Cnp_Atom
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
    Wl_Converter_Fn_Cb       wl_converter;
+   Wl_Notify_Handler_Cb     wl_notify;
 #endif
 
    void                    *_term;
@@ -461,6 +467,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
         .wl_converter = _wl_targets_converter,
+        .wl_notify = _wl_notify_handler_targets,
 #endif
    },
    ARRAYINIT(CNP_ATOM_ATOM) {
@@ -473,6 +480,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
         .wl_converter = _wl_targets_converter,
+        .wl_notify = _wl_notify_handler_targets,
 #endif
    },
    ARRAYINIT(CNP_ATOM_XELM)  {
@@ -494,6 +502,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
         .wl_converter = _wl_general_converter,
+        .wl_notify = _wl_notify_handler_uri,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_urilist) {
@@ -505,6 +514,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
         .wl_converter = _wl_general_converter,
+        .wl_notify = _wl_notify_handler_uri,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_x_vcard) {
@@ -515,7 +525,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_notify = _x11_vcard_receive,
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-        .wl_converter = _wl_vcard_converter,
+        .wl_notify = _wl_vcard_receive,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_png) {
@@ -526,7 +536,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_notify = _x11_notify_handler_image,
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-        .wl_converter = _wl_image_converter,
+        .wl_notify = _wl_notify_handler_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_jpeg) {
@@ -537,7 +547,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_notify = _x11_notify_handler_image,
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-        .wl_converter = _wl_image_converter,
+        .wl_notify = _wl_notify_handler_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_bmp) {
@@ -548,7 +558,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_notify = _x11_notify_handler_image,
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-        .wl_converter = _wl_image_converter,
+        .wl_notify = _wl_notify_handler_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_gif) {
@@ -559,7 +569,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_notify = _x11_notify_handler_image,
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-        .wl_converter = _wl_image_converter,
+        .wl_notify = _wl_notify_handler_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_tiff) {
@@ -570,7 +580,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_notify = _x11_notify_handler_image,
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-        .wl_converter = _wl_image_converter,
+        .wl_notify = _wl_notify_handler_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_svg) {
@@ -581,7 +591,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_notify = _x11_notify_handler_image,
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-        .wl_converter = _wl_image_converter,
+        .wl_notify = _wl_notify_handler_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_xpm) {
@@ -592,7 +602,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_notify = _x11_notify_handler_image,
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-        .wl_converter = _wl_image_converter,
+        .wl_notify = _wl_notify_handler_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_tga) {
@@ -603,7 +613,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_notify = _x11_notify_handler_image,
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-        .wl_converter = _wl_image_converter,
+        .wl_notify = _wl_notify_handler_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_ppm) {
@@ -614,7 +624,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_notify = _x11_notify_handler_image,
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-        .wl_converter = _wl_image_converter,
+        .wl_notify = _wl_notify_handler_image,
 #endif
    },
 /*
@@ -627,6 +637,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
         .wl_converter = _wl_general_converter,
+        .wl_notify = _wl_notify_handler_html,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_html) {
@@ -638,6 +649,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
         .wl_converter = _wl_general_converter,
+        .wl_notify = _wl_notify_handler_html,
 #endif
    },
  */
@@ -650,6 +662,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
         .wl_converter = _wl_text_converter,
+        .wl_notify = _wl_notify_handler_text,
 #endif
    },
    ARRAYINIT(CNP_ATOM_STRING) {
@@ -661,6 +674,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
         .wl_converter = _wl_text_converter,
+        .wl_notify = _wl_notify_handler_text,
 #endif
    },
    ARRAYINIT(CNP_ATOM_COMPOUND_TEXT) {
@@ -672,6 +686,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
         .wl_converter = _wl_text_converter,
+        .wl_notify = _wl_notify_handler_text,
 #endif
    },
    ARRAYINIT(CNP_ATOM_TEXT) {
@@ -683,6 +698,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
         .wl_converter = _wl_text_converter,
+        .wl_notify = _wl_notify_handler_text,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_plain_utf8) {
@@ -694,6 +710,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
         .wl_converter = _wl_text_converter,
+        .wl_notify = _wl_notify_handler_text,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_plain) {
@@ -705,6 +722,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
         .wl_converter = _wl_text_converter,
+        .wl_notify = _wl_notify_handler_text,
 #endif
    },
 };
@@ -2509,6 +2527,7 @@ struct _Wl_Cnp_Selection
    Elm_Xdnd_Action action;
 
    Eina_Bool active : 1;
+   Eina_Bool requestfinished : 1;
 };
 
 static Eina_Bool
@@ -2596,13 +2615,6 @@ _wl_general_converter(char *target, Wl_Cnp_Selection *sel EINA_UNUSED, void *dat
 }
 
 static Eina_Bool
-_wl_image_converter(char *target EINA_UNUSED, Wl_Cnp_Selection *sel EINA_UNUSED, void *data EINA_UNUSED, int size EINA_UNUSED, void **data_ret EINA_UNUSED, int *size_ret EINA_UNUSED)
-{
-   cnp_debug("in\n");
-   return EINA_TRUE;
-}
-
-static Eina_Bool
 _wl_text_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret)
 {
    cnp_debug("in\n");
@@ -2652,13 +2664,392 @@ _wl_text_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, vo
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_wl_vcard_converter(char *target EINA_UNUSED, Wl_Cnp_Selection *sel EINA_UNUSED, void *data, int size EINA_UNUSED, void **data_ret, int *size_ret)
+static void
+_wl_selection_parser(void *_data,
+                        int size,
+                        char ***ret_data,
+                        int *ret_count)
 {
-   cnp_debug("in\n");
-   if (data_ret) *data_ret = strdup(data);
-   if (size_ret) *size_ret = strlen(data);
+   char **files = NULL;
+   int num_files = 0;
+   char *data = _data;
+
+   if (data && (size > 0))
+     {
+        int i, is;
+        char *tmp;
+        char **t2;
+
+        if (data[size - 1])
+          {
+             char *t;
+
+             /* Isn't nul terminated */
+             size++;
+             t = realloc(data, size);
+             if (!t) goto done;
+             data = t;
+             data[size - 1] = 0;
+          }
+
+        tmp = malloc(size);
+        if (!tmp) goto done;
+        i = 0;
+        is = 0;
+        while ((is < size) && (data[is]))
+          {
+             if ((i == 0) && (data[is] == '#'))
+               for (; ((data[is]) && (data[is] != '\n')); is++) ;
+             else
+               {
+                  if ((data[is] != '\r') &&
+                      (data[is] != '\n'))
+                    tmp[i++] = data[is++];
+                  else
+                    {
+                       while ((data[is] == '\r') || (data[is] == '\n'))
+                         is++;
+                       tmp[i] = 0;
+                       num_files++;
+                       t2 = realloc(files, num_files * sizeof(char *));
+                       if (t2)
+                         {
+                            files = t2;
+                            files[num_files - 1] = strdup(tmp);
+                         }
+                       tmp[0] = 0;
+                       i = 0;
+                    }
+               }
+          }
+        if (i > 0)
+          {
+             tmp[i] = 0;
+             num_files++;
+             t2 = realloc(files, num_files * sizeof(char *));
+             if (t2)
+               {
+                  files = t2;
+                  files[num_files - 1] = strdup(tmp);
+               }
+          }
+
+        free(tmp);
+     }
+done:
+   if (ret_data) *ret_data = files;
+   if (ret_count) *ret_count = num_files;
+}
+
+static Eina_Bool
+_wl_dnd_drag_get_timer_cb(void *data)
+{
+   char *type = data;
+
+   ecore_wl_dnd_drag_get(ecore_wl_input_get(), type);
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static Eina_Bool
+_wl_notify_handler_targets(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev)
+{
+   cnp_debug("In\n");
+   if (!ev) return EINA_FALSE;
+   char *data = ev->data;
+   int len = ev->len;
+   int count = 0;
+   int i = 0, j = 0;
+   char **data_arr = NULL;
+
+   _wl_selection_parser(data, len, &data_arr, &count);
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        Eina_Bool found = EINA_FALSE;
+        for (j = 2; j < count; j++)
+          {
+             if (!strcmp(_atoms[i].name, data_arr[j]))
+               {
+                  printf("\n%d: Match found: %s\n", __LINE__, _atoms[i].name);
+                  sel->requestfinished = EINA_FALSE;
+                  /* Since we cannot call ecore_wl_dnd_drag_get in here (it causes
+                     ecore callbacks circular dependency and makes drag_send cannot
+                     be called), we use ecore_timer to call it */
+                  ecore_timer_add(0.001, _wl_dnd_drag_get_timer_cb, _atoms[i].name);
+                  found = EINA_TRUE;
+                  break;
+               }
+          }
+        if (found) break;
+     }
+   free(data_arr);
    return EINA_TRUE;
+}
+
+static Eina_Bool
+_wl_notify_handler_uri(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev)
+{
+   cnp_debug("In\n");
+
+   char *p, *s, *stripstr = NULL;
+   char *data = ev->data;
+   Dropable *drop;
+   const char *type = NULL;
+   Dropable *dropable;
+   Eina_List *l;
+   Dropable_Cbs *cbs;
+   Eina_Inlist *itr;
+   Elm_Selection_Data ddata;
+
+   eo_do(sel->requestwidget, drop = eo_key_data_get("__elm_dropable"));
+   if (drop)
+     type = drop->last.type;
+   if (!strcmp(type, "text/uri-list"))
+     {
+        int num_files = 0;
+        char **files = NULL;
+        int i, len = 0;
+        Efreet_Uri **uri;
+
+        _wl_selection_parser(ev->data, ev->len, &files, &num_files);
+        cnp_debug("got a files list\n");
+        //files = ev->data;
+        /*
+        if (files->num_files > 1)
+          {
+             // Don't handle many items <- this makes mr bigglesworth sad :(
+             cnp_debug("more then one file: Bailing\n");
+             return 0;
+          }
+        stripstr = p = strdup(files->files[0]);
+         */
+
+        uri = calloc(1, sizeof(*uri) * num_files);
+        if (!uri) return 0;
+
+        for (i = 0; i < num_files ; i++)
+          {
+             uri[i] = efreet_uri_decode(files[i]);
+             if (!uri[i])
+               {
+                  /* Is there any reason why we care of URI without scheme? */
+                  if (files[i][0] != '/') continue;
+                  len += strlen(files[i]) + 1;
+               }
+             else
+               {
+                  if (strcmp(uri[i]->protocol, "file"))
+                    {
+                       efreet_uri_free(uri[i]);
+                       uri[i] = NULL;
+                       continue;
+                    }
+                  len += strlen(uri[i]->path) + 1;
+               }
+          }
+        p = NULL;
+        if (len > 0)
+          {
+             s = stripstr = malloc(len + 1);
+             for (i = 0; i < num_files ; i++)
+               {
+                  if (uri[i])
+                    p = (char *)uri[i]->path;
+                  else
+                    p = files[i];
+
+                  len = strlen(p);
+                  strcpy(s, p);
+                  if (i < (num_files - 1))
+                    {
+                       s[len] = '\n';
+                       s[len + 1] = 0;
+                       s += len + 1;
+                    }
+                  else
+                    {
+                       s[len] = 0;
+                       s += len;
+                    }
+
+                  if (uri[i])
+                    efreet_uri_free(uri[i]);
+               }
+          }
+        free(uri);
+     }
+   else
+     {
+        Efreet_Uri *uri;
+        int len = 0;
+
+        p = (char *)data;
+        uri = efreet_uri_decode(p);
+        if (!uri)
+          {
+             /* Is there any reason why we care of URI without scheme? */
+             if (p[0] == '/')
+               len = ev->len;
+          }
+        else
+          {
+             p = (char *)uri->path;
+             len = strlen(p);
+          }
+        if (len > 0)
+          {
+             stripstr = malloc(len + 1);
+             if (!stripstr) return 0;
+             memcpy(stripstr, p, len);
+             stripstr[len] = 0;
+          }
+     }
+
+   if (!stripstr)
+     {
+        cnp_debug("Couldn't find a file\n");
+        return 0;
+     }
+   free(savedtypes.imgfile);
+
+   /* FIXME: this needs to be generic: Used for all receives */
+   EINA_LIST_FOREACH(drops, l, dropable)
+     {
+        if (dropable->obj == sel->requestwidget) break;
+     }
+   if (!dropable)
+     {
+        cnp_debug("Unable to find drop object");
+        ecore_wl_dnd_drag_end(ecore_wl_input_get());
+        return 0;
+     }
+   dropable = eina_list_data_get(l);
+   ddata.x = savedtypes.x;
+   ddata.y = savedtypes.y;
+   ddata.data = stripstr;
+   ddata.len = strlen(stripstr);
+   ddata.action = sel->action;
+   ddata.format = sel->requestformat;
+   EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+      if ((cbs->types & dropable->last.format) && cbs->dropcb)
+        cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+   ecore_wl_dnd_drag_end(ecore_wl_input_get());
+   return 0;
+}
+
+static Eina_Bool
+_wl_vcard_receive(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev)
+{
+   cnp_debug("In\n");
+   return EINA_TRUE;
+
+   Dropable *dropable;
+   Eina_List *l;
+
+   cnp_debug("vcard receive\n");
+   Dropable_Cbs *cbs;
+   Eina_Inlist *itr;
+   Elm_Selection_Data ddata;
+
+   /* FIXME: this needs to be generic: Used for all receives */
+   EINA_LIST_FOREACH(drops, l, dropable)
+     {
+        if (dropable->obj == sel->requestwidget) break;
+     }
+   if (!dropable)
+     {
+        cnp_debug("Unable to find drop object");
+        ecore_wl_dnd_drag_end(ecore_wl_input_get());
+        return 0;
+     }
+   dropable = eina_list_data_get(l);
+   ddata.x = savedtypes.x;
+   ddata.y = savedtypes.y;
+   ddata.format = ELM_SEL_FORMAT_VCARD;
+   ddata.data = ev->data;
+   ddata.len = ev->len;
+   ddata.action = sel->action;
+   EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+      if ((cbs->types & dropable->last.format) && cbs->dropcb)
+        cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+   ecore_wl_dnd_drag_end(ecore_wl_input_get());
+   return 0;
+}
+
+static Eina_Bool
+_wl_notify_handler_image(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev)
+{
+   cnp_debug("In\n");
+   Tmp_Info *tmp;
+   Eina_List *l;
+   Dropable *dropable;
+
+   Elm_Selection_Data ddata;
+
+   tmp = _tempfile_new(ev->len);
+   if (!tmp) goto end;
+   memcpy(tmp->map, ev->data, ev->len);
+   munmap(tmp->map, ev->len);
+
+   /* FIXME: this needs to be generic: Used for all receives */
+   EINA_LIST_FOREACH(drops, l, dropable)
+     {
+        if (dropable->obj == sel->requestwidget) break;
+        dropable = NULL;
+     }
+   if (dropable)
+     {
+        Dropable_Cbs *cbs;
+        Eina_Inlist *itr;
+        ddata.x = savedtypes.x;
+        ddata.y = savedtypes.y;
+        ddata.format = ELM_SEL_FORMAT_IMAGE;
+        ddata.data = tmp->filename;
+        ddata.len = strlen(tmp->filename);
+        ddata.action = sel->action;
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+           if ((cbs->types & dropable->last.format) && cbs->dropcb)
+             cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+     }
+   _tmpinfo_free(tmp);
+
+end:
+   ecore_wl_dnd_drag_end(ecore_wl_input_get());
+   return 0;
+}
+
+static Eina_Bool
+_wl_notify_handler_text(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev)
+{
+   cnp_debug("In\n");
+
+   Eina_List *l;
+   Dropable *dropable;
+
+   Elm_Selection_Data ddata;
+
+   cnp_debug("drag & drop\n");
+   /* FIXME: this needs to be generic: Used for all receives */
+   EINA_LIST_FOREACH(drops, l, dropable)
+     {
+        if (dropable->obj == sel->requestwidget) break;
+        dropable = NULL;
+     }
+   if (dropable)
+     {
+        Dropable_Cbs *cbs;
+        Eina_Inlist *itr;
+        ddata.x = savedtypes.x;
+        ddata.y = savedtypes.y;
+        ddata.format = ELM_SEL_FORMAT_TEXT;
+        ddata.data = ev->data;
+        ddata.len = ev->len;
+        ddata.action = sel->action;
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+           if ((cbs->types & dropable->last.format) && cbs->dropcb)
+             cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+     }
+   ecore_wl_dnd_drag_end(ecore_wl_input_get());
+   return 0;
 }
 
 static Eina_Bool _wl_elm_cnp_init(void);
@@ -2696,7 +3087,7 @@ static Eina_Bool _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void
 static Eina_Bool _wl_dnd_send(void *data, int type EINA_UNUSED, void *event);
 static Eina_Bool _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event);
 static Eina_Bool _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
-static void _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data);
+static void _wl_dropable_data_handle(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready  *data);
 
 static Dropable *_wl_dropable_find(unsigned int win);
 static void _wl_dropable_handle(Dropable *drop, Evas_Coord x, Evas_Coord y);
@@ -3499,8 +3890,20 @@ _wl_dnd_send(void *data, int type EINA_UNUSED, void *event)
         if (!strcmp(_atoms[i].name, ev->type))
           {
              cnp_debug("Found a type: %s\n", _atoms[i].name);
-             _atoms[i].wl_converter(ev->type, sel, sel->selbuf,
-                                    sel->buflen, &data_ret, &len_ret);
+             Dropable *drop;
+             eo_do(sel->requestwidget, drop = eo_key_data_get("__elm_dropable"));
+             if (drop)
+               drop->last.type = _atoms[i].name;
+             if (_atoms[i].wl_converter)
+               {
+                  _atoms[i].wl_converter(ev->type, sel, sel->selbuf,
+                                         sel->buflen, &data_ret, &len_ret);
+               }
+             else
+               {
+                  data_ret = strdup(sel->selbuf);
+                  len_ret = sel->buflen;
+               }
              break;
           }
      }
@@ -3535,8 +3938,10 @@ _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event)
    if (sel->requestwidget)
      {
         if (!ev->done)
-          _wl_dropable_data_handle(sel, ev->data);
-        else
+          {
+             _wl_dropable_data_handle(sel, ev);
+          }
+        else if (sel->requestfinished)
           {
              evas_object_event_callback_del_full(sel->requestwidget,
                                                  EVAS_CALLBACK_DEL,
@@ -3587,29 +3992,12 @@ _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSE
 }
 
 static void
-_wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
+_wl_dropable_data_handle(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev)
 {
    cnp_debug("In\n");
    Dropable *drop;
-   Elm_Selection_Data sdata;
-   int len = 0;
-   char *s = NULL;
 
-   len = strlen(data);
-   if (!(s = malloc(len + 1))) return;
-   memcpy(s, data, len);
-   s[len] = 0;
-
-   if (savedtypes.textreq)
-     {
-        savedtypes.textreq = 0;
-        savedtypes.imgfile = s;
-     }
-
-   sdata.len = len;
-   sdata.x = savedtypes.x;
-   sdata.y = savedtypes.y;
-
+   sel->requestfinished = EINA_TRUE;
    eo_do(sel->requestwidget, drop = eo_key_data_get("__elm_dropable"));
    if (drop)
      {
@@ -3619,23 +4007,17 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
           {
              if (cbs->types && drop->last.format)
                {
-                  /* If it's markup that also supports images */
-                  if (cbs->types & (ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE))
+                  int i = 0;
+                  for (i = 0; i < CNP_N_ATOMS; i++)
                     {
-                       sdata.format = ELM_SEL_FORMAT_MARKUP;
-                       sdata.data = (char *)savedtypes.imgfile;
+                       if ((!strcmp(_atoms[i].name, drop->last.type))
+                           && _atoms[i].wl_notify)
+                         {
+                            cnp_debug("call notify: %s\n", drop->last.type);
+                            _atoms[i].wl_notify(sel, ev);
+                            return;
+                         }
                     }
-                  else if (cbs->types & ELM_SEL_FORMAT_IMAGE)
-                    {
-                       sdata.format = ELM_SEL_FORMAT_IMAGE;
-                       sdata.data = (char *)savedtypes.imgfile;
-                    }
-                  else
-                    {
-                       sdata.format = drop->last.format;
-                       sdata.data = s;
-                    }
-                  if (cbs->dropcb) cbs->dropcb(cbs->dropdata, drop->obj, &sdata);
                }
           }
      }
