@@ -252,6 +252,17 @@ static Eina_Bool _x11_elm_selection_selection_has_owner  (Evas_Object *obj EINA_
 
 #endif
 
+#ifdef HAVE_ELEMENTARY_WAYLAND
+typedef struct _Wl_Cnp_Selection Wl_Cnp_Selection;
+
+typedef Eina_Bool (*Wl_Converter_Fn_Cb)     (char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+static Eina_Bool _wl_targets_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+static Eina_Bool _wl_general_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+static Eina_Bool _wl_image_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+static Eina_Bool _wl_text_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+static Eina_Bool _wl_vcard_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+#endif
+
 struct _Cnp_Atom
 {
    const char              *name;
@@ -264,6 +275,10 @@ struct _Cnp_Atom
    /* Atom */
    Ecore_X_Atom             x_atom;
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   Wl_Converter_Fn_Cb       wl_converter;
+#endif
+
    void                    *_term;
 };
 
@@ -444,6 +459,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_response = _x11_response_handler_targets,
         .x_notify = _x11_notify_handler_targets,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_targets_converter,
+#endif
    },
    ARRAYINIT(CNP_ATOM_ATOM) {
         .name = "ATOM", // for opera browser
@@ -453,12 +471,18 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_response = _x11_response_handler_targets,
         .x_notify = _x11_notify_handler_targets,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_targets_converter,
+#endif
    },
    ARRAYINIT(CNP_ATOM_XELM)  {
         .name = "application/x-elementary-markup",
         .formats = ELM_SEL_FORMAT_MARKUP,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_general_converter,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_general_converter,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_uri) {
@@ -468,6 +492,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_general_converter,
         .x_notify = _x11_notify_handler_uri,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_general_converter,
+#endif
    },
    ARRAYINIT(CNP_ATOM_text_urilist) {
         .name = "text/uri-list",
@@ -475,6 +502,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_general_converter,
         .x_notify = _x11_notify_handler_uri,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_general_converter,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_x_vcard) {
@@ -484,6 +514,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_vcard_send,
         .x_notify = _x11_vcard_receive,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_vcard_converter,
+#endif
    },
    ARRAYINIT(CNP_ATOM_image_png) {
         .name = "image/png",
@@ -491,6 +524,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
         .x_notify = _x11_notify_handler_image,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_image_converter,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_jpeg) {
@@ -500,6 +536,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_image_converter,
         .x_notify = _x11_notify_handler_image,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_image_converter,
+#endif
    },
    ARRAYINIT(CNP_ATOM_image_bmp) {
         .name = "image/x-ms-bmp",
@@ -507,6 +546,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
         .x_notify = _x11_notify_handler_image,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_image_converter,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_gif) {
@@ -516,6 +558,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_image_converter,
         .x_notify = _x11_notify_handler_image,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_image_converter,
+#endif
    },
    ARRAYINIT(CNP_ATOM_image_tiff) {
         .name = "image/tiff",
@@ -523,6 +568,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
         .x_notify = _x11_notify_handler_image,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_image_converter,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_svg) {
@@ -532,6 +580,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_image_converter,
         .x_notify = _x11_notify_handler_image,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_image_converter,
+#endif
    },
    ARRAYINIT(CNP_ATOM_image_xpm) {
         .name = "image/x-xpixmap",
@@ -539,6 +590,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
         .x_notify = _x11_notify_handler_image,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_image_converter,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_tga) {
@@ -548,6 +602,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_image_converter,
         .x_notify = _x11_notify_handler_image,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_image_converter,
+#endif
    },
    ARRAYINIT(CNP_ATOM_image_ppm) {
         .name = "image/x-portable-pixmap",
@@ -555,6 +612,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
         .x_notify = _x11_notify_handler_image,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_image_converter,
 #endif
    },
 /*
@@ -565,6 +625,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
       .x_converter = _x11_general_converter,
       .x_notify = _x11_notify_handler_html,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_general_converter,
+#endif
    },
    ARRAYINIT(CNP_ATOM_text_html) {
       .name = "text/html",
@@ -572,6 +635,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
       .x_converter = _x11_general_converter,
       .x_notify = _x11_notify_handler_html,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_general_converter,
 #endif
    },
  */
@@ -582,6 +648,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_text_converter,
         .x_notify = _x11_notify_handler_text,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_text_converter,
+#endif
    },
    ARRAYINIT(CNP_ATOM_STRING) {
         .name = "STRING",
@@ -589,6 +658,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_text_converter,
         .x_notify = _x11_notify_handler_text,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_text_converter,
 #endif
    },
    ARRAYINIT(CNP_ATOM_COMPOUND_TEXT) {
@@ -598,6 +670,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_text_converter,
         .x_notify = _x11_notify_handler_text,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_text_converter,
+#endif
    },
    ARRAYINIT(CNP_ATOM_TEXT) {
         .name = "TEXT",
@@ -605,6 +680,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_text_converter,
         .x_notify = _x11_notify_handler_text,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_text_converter,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_plain_utf8) {
@@ -614,6 +692,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_text_converter,
         .x_notify = _x11_notify_handler_text,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_text_converter,
+#endif
    },
    ARRAYINIT(CNP_ATOM_text_plain) {
         .name = "text/plain",
@@ -621,6 +702,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_text_converter,
         .x_notify = _x11_notify_handler_text,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_text_converter,
 #endif
    },
 };
@@ -2404,8 +2488,6 @@ _x11_elm_selection_selection_has_owner(Evas_Object *obj EINA_UNUSED)
 #endif
 
 #ifdef HAVE_ELEMENTARY_WAYLAND
-typedef struct _Wl_Cnp_Selection Wl_Cnp_Selection;
-
 struct _Wl_Cnp_Selection
 {
    char *selbuf;
@@ -2428,6 +2510,156 @@ struct _Wl_Cnp_Selection
 
    Eina_Bool active : 1;
 };
+
+static Eina_Bool
+_wl_targets_converter(char *target, Wl_Cnp_Selection *sel EINA_UNUSED, void *data EINA_UNUSED, int size EINA_UNUSED, void **data_ret, int *size_ret)
+{
+   cnp_debug("in\n");
+   if (!data_ret) return EINA_FALSE;
+
+   const char *sep = "\n";
+   char *aret;
+   int len = 0;
+   int i = 0;
+   Elm_Sel_Format formats = ELM_SEL_FORMAT_NONE;
+
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        if (!strcmp(target, _atoms[i].name))
+          {
+             formats = _atoms[i].formats;
+          }
+     }
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        if (formats & _atoms[i].formats)
+          {
+             len += strlen(_atoms[i].name) + strlen(sep);
+          }
+     }
+   aret = calloc(1, len * sizeof(char));
+   if (!aret) return EINA_FALSE;
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        if (formats & _atoms[i].formats)
+          {
+             aret = strcat(aret, _atoms[i].name);
+             aret = strcat(aret, sep);
+          }
+     }
+   *data_ret = aret;
+   if (size_ret) *size_ret = len;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_wl_general_converter(char *target, Wl_Cnp_Selection *sel EINA_UNUSED, void *data, int size, void **data_ret, int *size_ret)
+{
+   cnp_debug("in\n");
+   Elm_Sel_Format formats = ELM_SEL_FORMAT_NONE;
+   int i = 0;
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        if (!strcmp(target, _atoms[i].name))
+          {
+             formats = _atoms[i].formats;
+             break;
+          }
+     }
+   if (formats == ELM_SEL_FORMAT_NONE)
+     {
+        if (data_ret)
+          {
+             *data_ret = malloc(size * sizeof(char) + 1);
+             if (!*data_ret) return EINA_FALSE;
+             memcpy(*data_ret, data, size);
+             ((char**)(data_ret))[0][size] = 0;
+          }
+        if (size_ret) *size_ret = size;
+     }
+   else
+     {
+        if (data)
+          {
+             if (data_ret) *data_ret = strdup(data);
+             if (size_ret) *size_ret = strlen(data);
+          }
+        else
+          {
+             if (data_ret) *data_ret = NULL;
+             if (size_ret) *size_ret = 0;
+          }
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_wl_image_converter(char *target EINA_UNUSED, Wl_Cnp_Selection *sel EINA_UNUSED, void *data EINA_UNUSED, int size EINA_UNUSED, void **data_ret EINA_UNUSED, int *size_ret EINA_UNUSED)
+{
+   cnp_debug("in\n");
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_wl_text_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret)
+{
+   cnp_debug("in\n");
+   int i = 0;
+   Elm_Sel_Format formats = ELM_SEL_FORMAT_NONE;
+
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        if (!strcmp(target, _atoms[i].name))
+          {
+             formats = _atoms[i].formats;
+             break;
+          }
+     }
+   if (formats == ELM_SEL_FORMAT_NONE)
+     {
+        if (data_ret)
+          {
+             *data_ret = malloc(size * sizeof(char) + 1);
+             if (!*data_ret) return EINA_FALSE;
+             memcpy(*data_ret, data, size);
+             ((char**)(data_ret))[0][size] = 0;
+             if (size_ret) *size_ret = size;
+             return EINA_TRUE;
+          }
+     }
+   else if ((formats & ELM_SEL_FORMAT_MARKUP) ||
+            (formats & ELM_SEL_FORMAT_HTML))
+     {
+        *data_ret = _elm_util_mkup_to_text(data);
+        if (size_ret && *data_ret) *size_ret = strlen(*data_ret);
+     }
+   else if (formats & ELM_SEL_FORMAT_TEXT)
+     {
+        *data_ret = strdup(data);
+        if (size_ret && *data_ret) *size_ret = strlen(*data_ret);
+     }
+   else if (formats & ELM_SEL_FORMAT_IMAGE)
+     {
+        cnp_debug("Image %s\n", evas_object_type_get(sel->widget));
+        evas_object_image_file_get(elm_photocam_internal_image_get(sel->widget),
+                                   (const char **)data_ret, NULL);
+        if (!data_ret) *data_ret = strdup("No file");
+        else *data_ret = strdup(*data_ret);
+        if (size_ret) *size_ret = strlen(*data_ret);
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_wl_vcard_converter(char *target EINA_UNUSED, Wl_Cnp_Selection *sel EINA_UNUSED, void *data, int size EINA_UNUSED, void **data_ret, int *size_ret)
+{
+   cnp_debug("in\n");
+   if (data_ret) *data_ret = strdup(data);
+   if (size_ret) *size_ret = strlen(data);
+   return EINA_TRUE;
+}
 
 static Eina_Bool _wl_elm_cnp_init(void);
 
@@ -3232,6 +3464,7 @@ _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
           {
              cnp_debug("Request data of type %s\n", drop->last.type);
              wl_cnp_selection.requestwidget = drop->obj;
+             wl_cnp_selection.requestformat = drop->last.format;
              evas_object_event_callback_add(wl_cnp_selection.requestwidget,
                    EVAS_CALLBACK_DEL,
                    _wl_sel_obj_del2,
@@ -3253,15 +3486,29 @@ _wl_dnd_send(void *data, int type EINA_UNUSED, void *event)
    int len_written = 0;
    Wl_Cnp_Selection *sel;
    Ecore_Wl_Event_Data_Source_Send *ev;
+   void *data_ret = NULL;
+   int len_ret = 0;
+   int i = 0;
 
    cnp_debug("In\n");
    ev = event;
    sel = data;
 
-   len_remained = sel->buflen;
-   buf = sel->selbuf;
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        if (!strcmp(_atoms[i].name, ev->type))
+          {
+             cnp_debug("Found a type: %s\n", _atoms[i].name);
+             _atoms[i].wl_converter(ev->type, sel, sel->selbuf,
+                                    sel->buflen, &data_ret, &len_ret);
+             break;
+          }
+     }
 
-   while (len_written < sel->buflen)
+   len_remained = len_ret;
+   buf = data_ret;
+
+   while (len_written < len_ret)
      {
         ret = write(ev->fd, buf, len_remained);
         if (ret == -1) break;
@@ -3269,6 +3516,7 @@ _wl_dnd_send(void *data, int type EINA_UNUSED, void *event)
         len_written += ret;
         len_remained -= ret;
      }
+   free(data_ret);
 
    close(ev->fd);
    return ECORE_CALLBACK_PASS_ON;
