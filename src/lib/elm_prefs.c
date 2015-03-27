@@ -46,6 +46,7 @@ static void _elm_prefs_values_get_default(Elm_Prefs_Page_Node *, Eina_Bool);
 static Eina_Bool _prefs_item_widget_value_from_self(Elm_Prefs_Item_Node *, Eina_Bool);
 static Eina_Bool _elm_prefs_value_get(Elm_Prefs_Data *, const char *, Eina_Value *);
 static Eina_Bool _elm_prefs_value_set(Elm_Prefs_Data *, const char *, const Elm_Prefs_Item_Type, const Eina_Value *);
+static void _elm_prefs_value_restore(Elm_Prefs_Data *, Elm_Prefs_Item_Node *, const char *);
 static Eina_Bool _elm_prefs_item_changed(Eo *, Elm_Prefs_Data *, const char *);
 static void _elm_prefs_values_get_user(Elm_Prefs_Data *, Elm_Prefs_Page_Node *);
 static void _elm_prefs_values_fetch(Eo *, Elm_Prefs_Data *, bool);
@@ -379,6 +380,13 @@ _elm_prefs_item_changed(Eo *obj,
    Elm_Prefs_Item_Node *item = _elm_prefs_item_node_by_name(sd, key);
    if (!item) return EINA_FALSE;
 
+   if (sd->pending_change && strcmp(sd->pending_change, key) == 0)
+     {
+        free(sd->pending_change);
+        sd->pending_change = NULL;
+        return EINA_FALSE;
+     }
+
    Eina_Value value;
    if (!_elm_prefs_value_get(sd, key, &value))
      {
@@ -407,7 +415,12 @@ _elm_prefs_properties_changed(Eo *obj,
    const char *property;
    Eina_Array_Iterator it;
    EINA_ARRAY_ITER_NEXT(properties, i, property, it)
-     changed = _elm_prefs_item_changed(obj, sd, property) || changed;
+     {
+        const char *key = eina_hash_find(sd->property_to_key, property);
+        if (!key)
+          key = property;
+        changed = _elm_prefs_item_changed(obj, sd, key) || changed;
+     }
 
    return changed;
 }
@@ -422,7 +435,6 @@ _model_property_changed_cb(void *data,
    Eo *obj = (Eo*)data;
 
    ELM_PREFS_DATA_GET(obj, sd);
-   if (sd->changing_from_ui) return EO_CALLBACK_CONTINUE;
 
    Eina_Bool changed = _elm_prefs_properties_changed
      (obj, sd, evt->changed_properties);
@@ -443,6 +455,17 @@ _model_load_status_change_cb(void *data,
    const Emodel_Load *load = (Emodel_Load*)event_info;
    Eo *obj = (Eo*)data;
    ELM_PREFS_DATA_GET(obj, sd);
+
+   if ((load->status & EMODEL_LOAD_STATUS_ERROR) && sd->pending_change)
+     {
+        Elm_Prefs_Item_Node *item = _elm_prefs_item_node_by_name(sd, sd->pending_change);
+        if (item)
+          _elm_prefs_value_restore(sd, item, sd->pending_change);
+
+        free(sd->pending_change);
+        sd->pending_change = NULL;
+        return EO_CALLBACK_CONTINUE;
+     }
 
    bool reset_values = !(load->status & EMODEL_LOAD_STATUS_LOADED_PROPERTIES);
    _elm_prefs_values_fetch(obj, sd, reset_values);
@@ -550,7 +573,9 @@ _elm_prefs_evas_object_smart_del(Eo *obj, Elm_Prefs_Data *sd)
         _root_node_free(sd);
      }
 
-   eina_hash_free(sd->prop_con);
+   eina_hash_free(sd->key_to_property);
+   eina_hash_free(sd->property_to_key);
+   free(sd->pending_change);
    if (sd->prefs_data) elm_prefs_data_unref(sd->prefs_data);
    if (sd->model) eo_unref(sd->model);
 
@@ -608,7 +633,8 @@ _elm_prefs_eo_base_constructor(Eo *obj, Elm_Prefs_Data *pd)
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_elm_prefs_smart_callbacks),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_REDUNDANT_OBJECT));
-   pd->prop_con = eina_hash_string_superfast_new(free);
+   pd->key_to_property = eina_hash_string_superfast_new(free);
+   pd->property_to_key = eina_hash_string_superfast_new(free);
 }
 
 static Eina_Bool
@@ -670,25 +696,7 @@ _item_changed_cb(Evas_Object *it_obj)
    if (it->w_impl->value_validate &&
        !it->w_impl->value_validate(it->w_obj))
      {
-        if (sd->prefs_data || sd->model)
-          {
-             Eina_Value value;
-
-             // Restoring to the last valid value.
-             if (!_elm_prefs_value_get(sd, buf, &value))
-               goto restore_fail;
-
-             Eina_Bool ret = it->w_impl->value_set(it->w_obj, &value);
-             eina_value_flush(&value);
-             if (!ret)
-               goto restore_fail;
-          }
-        else
-          {
-             if (!_prefs_item_widget_value_from_self(it, EINA_FALSE))
-               goto restore_fail;
-          }
-
+        _elm_prefs_value_restore(sd, it, buf);
         return;
      }
 
@@ -709,12 +717,6 @@ end:
    if (!sd->values_fetching) _elm_prefs_item_changed_report(it->prefs, it);
 
    _elm_prefs_mark_as_dirty(it->prefs);
-
-   return;
-
-restore_fail:
-   ERR("failed to restore the last valid value from widget of item %s",
-       buf);
 }
 
 static Eina_Bool
@@ -2006,7 +2008,7 @@ elm_prefs_file_get(const Eo *obj, const char **file, const char **page)
 static Eina_Bool
 _elm_prefs_value_get(Elm_Prefs_Data *sd, const char *key, Eina_Value *value)
 {
-   const char *property = eina_hash_find(sd->prop_con, key);
+   const char *property = eina_hash_find(sd->key_to_property, key);
    if (!property)
      property = key;
 
@@ -2033,27 +2035,65 @@ _elm_prefs_value_set(Elm_Prefs_Data *sd,
                      const Elm_Prefs_Item_Type type,
                      const Eina_Value *value)
 {
-   const char *property = eina_hash_find(sd->prop_con, key);
+   const char *property = eina_hash_find(sd->key_to_property, key);
    if (!property)
      property = key;
 
-   sd->changing_from_ui = EINA_TRUE;
 
    Eina_Bool result = EINA_FALSE;
    if (sd->prefs_data)
-     result = elm_prefs_data_value_set(sd->prefs_data, property, type, value);
+     {
+        sd->changing_from_ui = EINA_TRUE;
+        result = elm_prefs_data_value_set(sd->prefs_data, property, type, value);
+        sd->changing_from_ui = EINA_FALSE;
+     }
    else
    if (sd->model)
      {
+        sd->pending_change = strdup(key);
+
         // TODO: Convert the value
         Emodel_Load_Status status;
         eo_do(sd->model, status = emodel_property_set(property, value));
         result = EMODEL_LOAD_STATUS_ERROR != status;
-        // TODO: The property changed event could be delayed for Emodel
+
+        if (!result)
+          {
+             free(sd->pending_change);
+             sd->pending_change = NULL;
+          }
      }
 
-   sd->changing_from_ui = EINA_FALSE;
    return result;
+}
+
+static void
+_elm_prefs_value_restore(Elm_Prefs_Data *sd,
+                         Elm_Prefs_Item_Node *it,
+                         const char *key)
+{
+   if (sd->prefs_data || sd->model)
+     {
+        Eina_Value value;
+
+        // Restoring to the last valid value.
+        if (!_elm_prefs_value_get(sd, key, &value))
+          goto on_error;
+
+        Eina_Bool ret = it->w_impl->value_set(it->w_obj, &value);
+        eina_value_flush(&value);
+        if (!ret) goto on_error;
+     }
+   else
+     {
+        if (!_prefs_item_widget_value_from_self(it, EINA_FALSE))
+          goto on_error;
+     }
+
+   return;
+
+on_error:
+   ERR("failed to restore the last valid value from widget of item %s", key);
 }
 
 static void
@@ -2066,7 +2106,8 @@ _elm_prefs_property_connect(Eo *obj EINA_UNUSED,
    EINA_SAFETY_ON_NULL_RETURN(property);
    EINA_SAFETY_ON_NULL_RETURN(part);
 
-   free(eina_hash_set(sd->prop_con, part, strdup(property)));
+   free(eina_hash_set(sd->key_to_property, part, strdup(property)));
+   free(eina_hash_set(sd->property_to_key, property, strdup(part)));
 }
 
 static void
