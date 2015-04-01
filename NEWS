@@ -1,6 +1,30 @@
 =================
-Elementary 1.13.1
+Elementary 1.13.2
 =================
+
+Changes since 1.13.1:
+---------------------
+
+Fixes:
+
+   * layout: here default content alias can be acceptable.
+   * popup: correct popup position.
+   * popup: passing right parameter to elm_layout_sizing_eval
+   * genlist: select the focused item on enter key input
+   * gengrid: select the focused item on enter key input
+   * popup: removed button style setting code in theme_apply
+   * layout: apply widget's states when elm_layout_file_set is called
+   * gengrid/genlist/list: focus first item if first_item_focus_on_first_focus_in is on whether focus highlight is enabled or not
+   * config: fix config name
+   * Genlist/Gengrid : Modified to handle the focus highlight on unrealized items
+   * genlist: Send param item type instead of eo item type.
+   * widget: fix the abi break.
+   * GLView: Return false if the surface could not be created
+   * conform: Use eo_isa() to check object types.
+   * elm_panel: Fix incorrect scroller content region calculation of panel.
+   * elm_win fullscreen setting on FAKE wins should just toggle the flag
+   * elm_widget: fix wrong parmeter.
+   * genlist: Fix elm_genlist_item_index_get.
 
 Changes since 1.13.0:
 ---------------------
