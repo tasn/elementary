@@ -6986,8 +6986,7 @@ _elm_genlist_item_elm_widget_item_tooltip_window_mode_set(Eo *eo_it, Elm_Gen_Ite
 EAPI Eina_Bool
 elm_genlist_item_tooltip_window_mode_get(const Elm_Object_Item *eo_it)
 {
-   ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
-   return eo_do(VIEW(it), elm_wdg_item_tooltip_window_mode_get());
+   return eo_do(eo_it, elm_wdg_item_tooltip_window_mode_get());
 }
 
 EAPI void
