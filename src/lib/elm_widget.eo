@@ -790,6 +790,21 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
             @in Evas_Object *relative_child @optional;
          }
       }
+      atspi_relationship_append {
+         /*@ No description supplied by the EAPI. */
+         return: bool;
+         params {
+            @in Elm_Atspi_Relation_Type type;
+            @in const(Eo) *relation_object;
+         }
+      }
+      atspi_relationship_remove {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in Elm_Atspi_Relation_Type type;
+            @in const(Eo) *relation_object;
+         }
+      }
    }
    implements {
       class.constructor;

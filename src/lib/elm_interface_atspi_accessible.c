@@ -262,12 +262,13 @@ _elm_interface_atspi_accessible_state_set_get(Eo *obj EINA_UNUSED, void *pd EINA
    return ret;
 }
 
-EOLIAN Eina_List*
+EOLIAN Elm_Atspi_Relation_Set
 _elm_interface_atspi_accessible_relation_set_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
+   Elm_Atspi_Relation_Set ret = 0;
    WRN("The %s object does not implement the \"accessible_relation_set\" function.",
        eo_class_name_get(eo_class_get(obj)));
-   return NULL;
+   return ret;
 }
 
 EAPI void elm_atspi_attributes_list_free(Eina_List *list)
@@ -279,6 +280,103 @@ EAPI void elm_atspi_attributes_list_free(Eina_List *list)
         eina_stringshare_del(attr->value);
         free(attr);
      }
+}
+
+EAPI void elm_atspi_relation_free(Elm_Atspi_Relation *relation)
+{
+   eina_list_free(relation->objects);
+   free(relation);
+}
+
+EAPI Elm_Atspi_Relation *elm_atspi_relation_clone(const Elm_Atspi_Relation *relation)
+{
+   Elm_Atspi_Relation *ret = calloc(sizeof(Elm_Atspi_Relation), 1);
+   ret->type = relation->type;
+   ret->objects = eina_list_clone(relation->objects);
+   return ret;
+}
+
+EAPI Eina_Bool elm_atspi_relation_set_relation_append(Elm_Atspi_Relation_Set *set, Elm_Atspi_Relation_Type type, const Eo *rel_obj)
+{
+   Elm_Atspi_Relation *rel;
+   Eina_List *l;
+
+   if (!eo_isa(rel_obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(*set, l, rel)
+     {
+        if (rel->type == type)
+          {
+             if (!eina_list_data_find(rel->objects, rel_obj))
+               rel->objects = eina_list_append(rel->objects, rel_obj);
+             return EINA_TRUE;
+          }
+     }
+
+   rel = calloc(sizeof(Elm_Atspi_Relation), 1);
+   rel->type = type;
+   rel->objects = eina_list_append(rel->objects, rel_obj);
+   *set = eina_list_append(*set, rel);
+   return EINA_TRUE;
+}
+
+EAPI void elm_atspi_relation_set_relation_remove(Elm_Atspi_Relation_Set *set, Elm_Atspi_Relation_Type type, const Eo *rel_obj)
+{
+   Eina_List *l;
+   Elm_Atspi_Relation *rel;
+
+   EINA_LIST_FOREACH(*set, l, rel)
+     {
+        if (rel->type == type)
+          {
+             rel->objects = eina_list_remove(rel->objects, rel_obj);
+             if (!rel->objects)
+               {
+                  *set = eina_list_remove(*set, rel);
+                  elm_atspi_relation_free(rel);
+               }
+             return;
+          }
+     }
+}
+
+EAPI void elm_atspi_relation_set_relation_type_remove(Elm_Atspi_Relation_Set *set, Elm_Atspi_Relation_Type type)
+{
+   Eina_List *l;
+   Elm_Atspi_Relation *rel;
+
+   EINA_LIST_FOREACH(*set, l, rel)
+     {
+        if (rel->type == type)
+          {
+             *set = eina_list_remove(*set, rel);
+             elm_atspi_relation_free(rel);
+             return;
+          }
+     }
+}
+
+EAPI void elm_atspi_relation_set_free(Elm_Atspi_Relation_Set *set)
+{
+   Elm_Atspi_Relation *rel;
+   EINA_LIST_FREE(*set, rel)
+     elm_atspi_relation_free(rel);
+}
+
+EAPI Elm_Atspi_Relation_Set elm_atspi_relation_set_clone(const Elm_Atspi_Relation_Set *set)
+{
+   Elm_Atspi_Relation_Set ret = NULL;
+   Eina_List *l;
+   Elm_Atspi_Relation *rel;
+
+   EINA_LIST_FOREACH(*set, l, rel)
+     {
+        Elm_Atspi_Relation *cpy = elm_atspi_relation_clone(rel);
+        ret = eina_list_append(ret, cpy);
+     }
+
+   return ret;
 }
 
 #include "elm_interface_atspi_accessible.eo.c"

@@ -508,3 +508,31 @@ EAPI void        elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina
  */
 EAPI Eina_Bool   elm_object_orientation_mode_disabled_get(const Evas_Object *obj);
 
+#ifdef ELM_BETA_API_SUPPORT
+
+/**
+ * Set ATSPI2 relationship between two elementary widgets.
+ *
+ * @param obj The Elementary widget.
+ * @param type Type of relationship.
+ * @param relation_obj object being second side of the relation.
+ *
+ * @since 1.15
+ *
+ * @ingroup General
+ */
+EAPI Eina_Bool   elm_object_atspi_relationship_append(Evas_Object *obj, Elm_Atspi_Relation_Type type, Evas_Object *relation_obj);
+
+/**
+ * Removes ATSPI2 relationship between widgets.
+ *
+ * @param obj The Elementary widget.
+ * @param type Type of relationship.
+ * @param relation_obj object being second side of the relation.
+ *
+ * @since 1.15
+ *
+ * @ingroup General
+ */
+EAPI void        elm_object_atspi_relationship_remove(Evas_Object *obj, Elm_Atspi_Relation_Type type, Evas_Object *relation_obj);
+#endif

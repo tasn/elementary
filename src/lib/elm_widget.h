@@ -410,6 +410,7 @@ typedef struct _Elm_Widget_Smart_Data
    int                          role;         /**< Accessibility role */
    const char                   *description; /**< Accessibility description */
    Eo                           *atspi_custom_parent; /**< Accessibility parent if different then parent_obj */
+   Elm_Atspi_Relation_Set       atspi_custom_relations; /**< Developer-defined accessiblity relations @since 1.15 */
 
    /* this is a hook to be set on-the-fly on widgets. this is code
     * handling the request of showing a specific region from an inner
@@ -776,6 +777,8 @@ EAPI Elm_Object_Item *elm_widget_focused_item_get(const Evas_Object *obj);
 EAPI void             elm_widget_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 EAPI Eina_Bool        elm_widget_orientation_mode_disabled_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_highlight_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+EAPI Eina_Bool        elm_widget_atspi_relationship_append(Evas_Object *obj, Elm_Atspi_Relation_Type type, const Evas_Object *relation_obj);
+EAPI void             elm_widget_atspi_relationship_remove(Evas_Object *obj, Elm_Atspi_Relation_Type type, const Evas_Object *relation_obj);
 void                  _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *it);
 
 /**

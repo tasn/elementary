@@ -1731,3 +1731,14 @@ elm_object_focused_item_get(const Evas_Object *obj)
    return elm_widget_focused_item_get(obj);
 }
 
+EAPI Eina_Bool
+elm_object_atspi_relationship_append(Evas_Object *obj, Elm_Atspi_Relation_Type type, const Evas_Object *relation_obj)
+{
+   return elm_widget_atspi_relationship_append(obj, type, relation_obj);
+}
+
+EAPI void
+elm_object_atspi_relationship_remove(Evas_Object *obj, Elm_Atspi_Relation_Type type, const Evas_Object *relation_obj)
+{
+   elm_widget_atspi_relationship_remove(obj, type, relation_obj);
+}

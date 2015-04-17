@@ -29,7 +29,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             elements Should be free by a user. */
          }
          values {
-            own(list<own(Elm_Atspi_Relation *)> *) relations;
+            Elm_Atspi_Relation_Set relations;
          }
       }
       @property role @protected {
