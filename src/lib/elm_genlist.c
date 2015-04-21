@@ -6023,6 +6023,7 @@ _elm_genlist_item_prepend(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_G
 EOLIAN static Elm_Object_Item*
 _elm_genlist_item_insert_after(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *eo_parent, Elm_Object_Item *eo_after, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_after, NULL);
    ELM_GENLIST_ITEM_DATA_GET(eo_after, after);
    Elm_Gen_Item *it;
 
@@ -6069,6 +6070,7 @@ _elm_genlist_item_insert_after(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const 
 EOLIAN static Elm_Object_Item*
 _elm_genlist_item_insert_before(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *eo_parent, Elm_Object_Item *eo_before, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_before, NULL);
    ELM_GENLIST_ITEM_DATA_GET(eo_before, before);
    Elm_Gen_Item *it;
 
