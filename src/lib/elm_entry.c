@@ -654,7 +654,24 @@ _drag_drop_cb(void *data EINA_UNUSED,
      }
    memcpy(buf, drop->data, drop->len);
    buf[drop->len] = '\0';
-   elm_entry_entry_insert(obj, buf);
+
+   if (drop->format & ELM_SEL_FORMAT_IMAGE)
+     {
+        char *entry_tag;
+        int len;
+        static const char *tag_string =
+           "<item absize=240x180 href=file://%s></item>";
+
+        len = strlen(tag_string) + strlen(buf);
+        entry_tag = alloca(len + 1);
+        snprintf(entry_tag, len + 1, tag_string, buf);
+        elm_entry_entry_insert(obj, entry_tag);
+     }
+   else
+     {
+        elm_entry_entry_insert(obj, buf);
+     }
+
    free(buf);
    edje_object_part_text_cursor_copy
      (sd->entry_edje, "elm.text", EDJE_CURSOR_USER, /*->*/ EDJE_CURSOR_MAIN);
