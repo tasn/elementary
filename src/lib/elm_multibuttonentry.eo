@@ -279,6 +279,7 @@ class Elm.Multibuttonentry (Elm.Layout)
       expanded;
       contracted;
       expand,state,changed;
+      changed;
    }
 
 }
