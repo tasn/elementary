@@ -526,6 +526,7 @@ void                *_elm_icon_signal_callback_del(Evas_Object *obj,
                                                    const char *emission,
                                                    const char *source,
                                                    Edje_Signal_Cb func_cb);
+Eo*                  _elm_atspi_bridge_utils_proxy_create(Eo *parent, const char *svcname, int svcnum, Elm_Atspi_Proxy_Type type);
 /* end of DEPRECATED */
 
 
@@ -576,5 +577,7 @@ _elm_dgettext(const char *string)
 void   _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
 
 double _elm_atof(const char *s);
+
+Eina_List* _elm_atspi_proxy_socket_list_get(void);
 
 #endif

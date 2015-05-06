@@ -43,6 +43,7 @@ class Elm.Plug (Elm.Widget)
       Evas.Object_Smart.add;
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;
+      Elm_Interface_Atspi_Accessible.children.get;
    }
    events {
       clicked;

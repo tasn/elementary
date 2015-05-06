@@ -669,6 +669,7 @@ class Elm.Web (Elm.Widget)
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;
       Elm.Widget.event;
+	  Elm_Interface_Atspi_Accessible.children.get;
    }
    events {
       uri,changed; /*@ s */

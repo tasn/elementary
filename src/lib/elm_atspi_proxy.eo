@@ -1,0 +1,43 @@
+class Elm_Atspi_Proxy (Eo.Base, Elm_Interface_Atspi_Accessible)
+{
+   eo_prefix: elm_obj_atspi_proxy;
+   data: Elm_Atspi_Proxy_Data;
+   methods {
+      constructor {
+         /*@ No description supplied by the EAPI. */
+         legacy: null;
+         params {
+            @in type: Elm_Atspi_Proxy_Type;
+         }
+      }
+      @property address {
+         set {
+         }
+         get {
+         }
+         values {
+            bus: const(char)*;
+            path: const(char)*;
+         }
+      }
+      @property type {
+         get {
+         }
+         values {
+            ret: Elm_Atspi_Proxy_Type;
+         }
+      }
+   }
+   constructors {
+      .constructor;
+   }
+   implements {
+      Eo.Base.destructor;
+      Elm_Interface_Atspi_Accessible.children.get;
+      Elm_Interface_Atspi_Accessible.parent.get;
+   }
+   events {
+      connected;
+      disconnected;
+   }
+}

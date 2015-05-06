@@ -195,6 +195,8 @@ struct _Elm_Win_Data
       Eina_Bool    use : 1; /* set ture when application use window manager rotation. */
    } wm_rot;
 
+   Eo *socket_proxy; /* reference object to atspi object in separate process @since 1.15 */
+
    void *trap_data;
 
    struct
@@ -3742,7 +3744,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
    eo_do(obj, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_WINDOW));
    if (_elm_config->atspi_mode == ELM_ATSPI_MODE_ON)
      {
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(_elm_atspi_bridge_root_get(), obj);
+        eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, NULL));
      }
 
    evas_object_show(sd->edje);
@@ -5189,6 +5191,14 @@ _elm_win_socket_listen(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *svcnam
    if (!ecore_evas_extn_socket_listen(sd->ee, svcname, svcnum, svcsys))
      return EINA_FALSE;
 
+   if (_elm_config->atspi_mode)
+     {
+        if (sd->socket_proxy)
+          eo_unref(sd->socket_proxy);
+        sd->socket_proxy = _elm_atspi_bridge_utils_proxy_create(obj, svcname, svcnum, ELM_ATSPI_PROXY_TYPE_SOCKET);
+        elm_atspi_bridge_utils_proxy_listen(sd->socket_proxy);
+     }
+
    return EINA_TRUE;
 }
 
@@ -5424,7 +5434,12 @@ EOLIAN static Eo*
 _elm_win_elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd EINA_UNUSED)
 {
    // attach all kinds of windows directly to ATSPI application root object
-   return _elm_atspi_bridge_root_get();
+   if (sd->type == ELM_WIN_SOCKET_IMAGE)
+     {
+        return sd->socket_proxy;
+     }
+   else
+     return _elm_atspi_bridge_root_get();
 }
 
 EOLIAN static const Elm_Atspi_Action*

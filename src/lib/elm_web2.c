@@ -579,9 +579,32 @@ _view_smart_url_changed_cb(void *data,
 }
 
 static void
+_view_smart_load_finished(void *data,
+                          Evas_Object *obj,
+                          void *event_info EINA_UNUSED)
+{
+   Eo *eo = data;
+   Elm_Web_Data *wd = eo_data_scope_get(eo, ELM_WEB_CLASS);
+   if (_elm_config->atspi_mode && !wd->atspi_plug)
+     {
+        char *bus, *path;
+        const char *address = ewk_view_accessibility_plug_id_get(obj);
+        if (_elm_atspi_bridge_plug_id_split(address, &bus, &path))
+          {
+             wd->atspi_plug = eo_add(ELM_ATSPI_PROXY_CLASS, eo, elm_obj_atspi_proxy_constructor(ELM_ATSPI_PROXY_TYPE_PLUG));
+             eo_do(wd->atspi_plug, elm_obj_atspi_proxy_address_set(bus, path));
+             elm_atspi_bridge_utils_proxy_connect(wd->atspi_plug);
+             free(bus);
+             free(path);
+          }
+     }
+}
+
+static void
 _view_smart_callback_proxy(Evas_Object *view, Evas_Object *parent)
 {
    evas_object_smart_callback_add(view, SIG_URL_CHANGED, _view_smart_url_changed_cb, parent);
+   evas_object_smart_callback_add(view, "load,finished", _view_smart_load_finished, parent);
 }
 
 static Eina_Bool _elm_need_web = EINA_FALSE;
@@ -608,6 +631,16 @@ elm_need_web(void)
 #else
    return EINA_FALSE;
 #endif
+}
+
+EOLIAN static Eina_List*
+_elm_web_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Web_Data *sd)
+{
+#ifdef HAVE_ELEMENTARY_WEB
+   if (sd->atspi_plug)
+     return eina_list_append(NULL, sd->atspi_plug);
+#endif
+   return NULL;
 }
 
 EOLIAN static Eina_Bool

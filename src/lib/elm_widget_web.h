@@ -66,6 +66,8 @@ struct _Elm_Web_Data
       Ecore_Animator *animator;
    } bring_in;
 
+   Eo *atspi_plug; // @since 1.15
+
    Eina_Bool tab_propagate : 1;
    Eina_Bool inwin_mode : 1;
 #endif
