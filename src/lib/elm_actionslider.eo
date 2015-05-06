@@ -90,6 +90,8 @@ class Elm.Actionslider (Elm.Layout)
    events {
       language,changed;
       access,changed;
+      pos_changed;
+      selected;
    }
 
 }

@@ -790,11 +790,6 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
       clicked,double;
       press;
       longpressed;
-      scroll;
-      scroll,drag,start;
-      scroll,drag,stop;
-      scroll,anim,start;
-      scroll,anim,stop;
       zoom,start;
       zoom,stop;
       zoom,change;
