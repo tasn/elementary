@@ -2,7 +2,7 @@ class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action,
                          Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_colorselector;
-   methods {
+           methods {
       @property color {
          set {
             /*@
