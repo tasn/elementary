@@ -119,6 +119,8 @@ class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
       access,changed;
       focused;
       unfocused;
+      clicked;
+      file,chosen;
    }
 
 }

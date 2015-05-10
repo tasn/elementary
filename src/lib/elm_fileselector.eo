@@ -68,6 +68,11 @@ class Elm.Fileselector (Elm.Layout, Elm_Interface_Fileselector,
    events {
       focused;
       unfocused;
+      done;
+      activated;
+      selected;
+      selected,invalid;
+      directory,open;
    }
 
 }
