@@ -3245,9 +3245,9 @@ _wl_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
    sel->requestformat = format;
    sel->requestwidget = obj;
    sel->win = win;
-   /* sel->request(win, ECORE_X_SELECTION_TARGET_TARGETS); */
    sel->datacb = datacb;
    sel->udata = udata;
+   sel->requesttype = "TARGETS";
 
    evas_object_event_callback_add(sel->requestwidget,
                                   EVAS_CALLBACK_DEL, _wl_sel_obj_del2,
@@ -3256,28 +3256,7 @@ _wl_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
    if ((selection == ELM_SEL_TYPE_CLIPBOARD) ||
        (selection == ELM_SEL_TYPE_PRIMARY) ||
        (selection == ELM_SEL_TYPE_SECONDARY))
-     {
-        const char *types[10] = {0, };
-        int i = -1;
-
-        if ((format & ELM_SEL_FORMAT_MARKUP) ||
-            (format & ELM_SEL_FORMAT_TEXT))
-          {
-             types[++i] = "application/x-elementary-markup";
-             types[++i] = "text/plain";
-             types[++i] = "text/plain;charset=utf-8";
-          }
-
-        if (format & ELM_SEL_FORMAT_HTML)
-          {
-             types[++i] = "text/html";
-             types[++i] = "text/html;charset=utf-8";
-          }
-
-        if (i < 0) return EINA_FALSE;
-
-        ecore_wl_dnd_selection_get(ecore_wl_input_get(), *types);
-     }
+     ecore_wl_dnd_selection_get(ecore_wl_input_get(), "TARGETS");
 
    return EINA_TRUE;
 }
