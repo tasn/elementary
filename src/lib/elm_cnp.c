@@ -2528,6 +2528,7 @@ struct _Wl_Cnp_Selection
 
    Eina_Bool active : 1;
    Eina_Bool requestfinished : 1;
+   const char *requesttype;
 };
 
 static Eina_Bool
@@ -3058,7 +3059,7 @@ static Wl_Cnp_Selection wl_cnp_selection =
 {
    0, 0, NULL, NULL,
    NULL, 0, 0, NULL, NULL, NULL,
-   0, NULL, 0, EINA_FALSE
+   0, NULL, 0, EINA_FALSE, EINA_FALSE, ""
 };
 
 static void _wl_sel_obj_del2(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
@@ -3084,7 +3085,6 @@ static Eina_Bool _wl_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, 
 static Eina_Bool _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 /* static Eina_Bool _wl_dnd_offer(void *data EINA_UNUSED, int type EINA_UNUSED, void *event); */
 
-static Eina_Bool _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event);
 static Eina_Bool _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
 static void _wl_dropable_data_handle(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready  *data);
 
@@ -3357,88 +3357,94 @@ _wl_selection_send(void *data, int type EINA_UNUSED, void *event)
 }
 
 static Eina_Bool
-_wl_selection_receive(void *udata, int type EINA_UNUSED, void *event)
+_wl_selection_get_timer_cb(void *data)
 {
-   Wl_Cnp_Selection *sel = udata;
+   char *type = data;
+
+   ecore_wl_dnd_selection_get(ecore_wl_input_get(), type);
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_wl_selection_data_handle(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev)
+{
+   if (!strcmp(sel->requesttype, "TARGETS"))
+     {
+        char *data = ev->data;
+        int len = ev->len;
+        int count = 0;
+        int i = 0, j = 0;
+        char **data_arr = NULL;
+
+        _wl_selection_parser(data, len, &data_arr, &count);
+        for (i = 2; i < CNP_N_ATOMS; i++)
+          {
+             if ((sel->requestformat & _atoms[i].formats) &&
+                 _atoms[i].wl_notify)
+               {
+                  for (j = 0; j < count; j++)
+                    {
+                       if (!strcmp(_atoms[i].name, data_arr[j]))
+                         {
+                            cnp_debug("Request new type: %s\n", _atoms[i].name);
+                            sel->requesttype = _atoms[i].name;
+                            sel->requestfinished = EINA_FALSE;
+                            /* Since we cannot call ecore_wl_dnd_selection_get
+                               in here (it causes ecore callbacks circular
+                               dependency and makes data send cannot
+                               be called), we use ecore_timer to call it */
+                            ecore_timer_add(0.001, _wl_selection_get_timer_cb,
+                                            _atoms[i].name);
+                            return;
+                         }
+                    }
+               }
+          }
+     }
+   else
+     {
+        int i = 0;
+        for (i = 0; i < CNP_N_ATOMS; i++)
+          {
+             if ((!strcmp(sel->requesttype, _atoms[i].name)) &&
+                 _atoms[i].wl_notify)
+               {
+                  cnp_debug("Call notify for: %s\n", _atoms[i].name);
+                  _atoms[i].wl_notify(sel, ev);
+                  return;
+               }
+          }
+     }
+}
+
+static Eina_Bool
+_wl_selection_receive(void *data, int type EINA_UNUSED, void *event)
+{
+   Wl_Cnp_Selection *sel = data;
    Ecore_Wl_Event_Selection_Data_Ready *ev = event;
 
    _wl_elm_cnp_init();
 
+   cnp_debug("In\n");
    if (sel->requestwidget)
      {
         if (!ev->done)
           {
-             if (sel->seltype == ELM_SEL_TYPE_XDND)
-               {
-                  Elm_Selection_Data sdata;
-                  Eina_List *l;
-                  Dropable *dropable;
-
-                  EINA_LIST_FOREACH(drops, l, dropable)
-                    {
-                       if (dropable->obj == sel->requestwidget) break;
-                       dropable = NULL;
-                    }
-
-                  if (dropable)
-                    {
-                       Dropable_Cbs *cbs;
-
-                       sdata.x = savedtypes.x;
-                       sdata.y = savedtypes.y;
-                       sdata.format = ELM_SEL_FORMAT_TEXT;
-                       sdata.data = ev->data;
-                       sdata.len = ev->len;
-                       sdata.action = sel->action;
-
-                       EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
-                         if (cbs->dropcb)
-                           cbs->dropcb(cbs->dropdata, dropable->obj, &sdata);
-
-                       goto end;
-                    }
-               }
-
-             if (sel->datacb)
-               {
-                  Elm_Selection_Data sdata;
-
-                  sdata.x = sdata.y = 0;
-                  sdata.format = ELM_SEL_FORMAT_TEXT;
-                  sdata.data = ev->data;
-                  sdata.len = ev->len;
-                  sdata.action = sel->action;
-                  sel->datacb(sel->udata, sel->widget, &sdata);
-               }
+             if (ev->selection == ECORE_WL_SELECTION_DND)
+               _wl_dropable_data_handle(sel, ev);
              else
-               {
-                  char *stripstr, *mkupstr;
-
-                  stripstr = malloc(ev->len + 1);
-                  if (!stripstr) goto end;
-                  strncpy(stripstr, (char *)ev->data, ev->len);
-                  stripstr[ev->len] = '\0';
-                  mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
-                  /* TODO BUG: should never NEVER assume it's an elm_entry! */
-                  _elm_entry_entry_paste(sel->requestwidget, mkupstr);
-                  free(stripstr);
-                  free(mkupstr);
-               }
+               _wl_selection_data_handle(sel, ev);
           }
-        else
+        else if (sel->requestfinished)
           {
+             cnp_debug("request finished\n");
              evas_object_event_callback_del_full(sel->requestwidget,
                                                  EVAS_CALLBACK_DEL,
                                                  _wl_sel_obj_del2, sel);
              sel->requestwidget = NULL;
           }
      }
-
-end:
-   if (sel->seltype == ELM_SEL_TYPE_XDND)
-     {
-        /* FIXME: Send Finished ?? */
-     }
+   else cnp_debug("Request widget does not exist\n");
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -3470,8 +3476,6 @@ _wl_elm_dnd_init(void)
    text_uri = eina_stringshare_add("text/uri-list");
 
    _wl_elm_cnp_init();
-   ecore_event_handler_add(ECORE_WL_EVENT_SELECTION_DATA_READY,
-                           _wl_dnd_receive, &wl_cnp_selection);
 
    ecore_event_handler_add(ECORE_WL_EVENT_DND_END,
                            _wl_dnd_end, &wl_cnp_selection);
@@ -3895,34 +3899,6 @@ _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      }
 
    ecore_wl_dnd_drag_end(ecore_wl_input_get());
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_wl_dnd_receive(void *data, int type EINA_UNUSED, void *event)
-{
-   Wl_Cnp_Selection *sel;
-   Ecore_Wl_Event_Selection_Data_Ready *ev;
-   cnp_debug("In\n");
-
-   ev = event;
-   sel = data;
-
-   if (sel->requestwidget)
-     {
-        if (!ev->done)
-          {
-             _wl_dropable_data_handle(sel, ev);
-          }
-        else if (sel->requestfinished)
-          {
-             evas_object_event_callback_del_full(sel->requestwidget,
-                                                 EVAS_CALLBACK_DEL,
-                                                 _wl_sel_obj_del2, sel);
-             sel->requestwidget = NULL;
-          }
-     }
-
    return ECORE_CALLBACK_PASS_ON;
 }
 
