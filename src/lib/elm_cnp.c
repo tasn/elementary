@@ -2945,28 +2945,50 @@ _wl_notify_handler_uri(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Read
      }
    free(savedtypes.imgfile);
 
-   /* FIXME: this needs to be generic: Used for all receives */
-   EINA_LIST_FOREACH(drops, l, dropable)
+   if (ev->selection == ECORE_WL_SELECTION_DND)
      {
-        if (dropable->obj == sel->requestwidget) break;
-     }
-   if (!dropable)
-     {
-        cnp_debug("Unable to find drop object");
+        /* FIXME: this needs to be generic: Used for all receives */
+        EINA_LIST_FOREACH(drops, l, dropable)
+          {
+             if (dropable->obj == sel->requestwidget) break;
+          }
+        if (!dropable)
+          {
+             cnp_debug("Unable to find drop object");
+             ecore_wl_dnd_drag_end(ecore_wl_input_get());
+             return 0;
+          }
+        dropable = eina_list_data_get(l);
+        ddata.x = savedtypes.x;
+        ddata.y = savedtypes.y;
+        ddata.data = stripstr;
+        ddata.len = strlen(stripstr);
+        ddata.action = sel->action;
+        ddata.format = sel->requestformat;
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+           if ((cbs->types & dropable->last.format) && cbs->dropcb)
+             cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
         ecore_wl_dnd_drag_end(ecore_wl_input_get());
-        return 0;
      }
-   dropable = eina_list_data_get(l);
-   ddata.x = savedtypes.x;
-   ddata.y = savedtypes.y;
-   ddata.data = stripstr;
-   ddata.len = strlen(stripstr);
-   ddata.action = sel->action;
-   ddata.format = sel->requestformat;
-   EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-      if ((cbs->types & dropable->last.format) && cbs->dropcb)
-        cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
-   ecore_wl_dnd_drag_end(ecore_wl_input_get());
+   else if (sel->datacb)
+     {
+        ddata.x = ddata.y = 0;
+        ddata.format = ELM_SEL_FORMAT_MARKUP;
+        ddata.data = stripstr;
+        ddata.len = strlen(stripstr);
+        ddata.action = sel->action;
+        sel->datacb(sel->udata, sel->widget, &ddata);
+     }
+   else
+     {
+        char *mkupstr;
+
+        mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
+        /* TODO BUG: should never NEVER assume it's an elm_entry! */
+        _elm_entry_entry_paste(sel->requestwidget, mkupstr);
+        free(mkupstr);
+     }
+
    return 0;
 }
 
@@ -2976,36 +2998,50 @@ _wl_vcard_receive(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev
    cnp_debug("In\n");
    return EINA_TRUE;
 
-   Dropable *dropable;
-   Eina_List *l;
-
-   cnp_debug("vcard receive\n");
-   Dropable_Cbs *cbs;
-   Eina_Inlist *itr;
    Elm_Selection_Data ddata;
 
-   /* FIXME: this needs to be generic: Used for all receives */
-   EINA_LIST_FOREACH(drops, l, dropable)
+   if (ev->selection == ECORE_WL_SELECTION_DND)
      {
-        if (dropable->obj == sel->requestwidget) break;
-     }
-   if (!dropable)
-     {
-        cnp_debug("Unable to find drop object");
+        Dropable *dropable;
+        Eina_List *l;
+        Dropable_Cbs *cbs;
+        Eina_Inlist *itr;
+        cnp_debug("vcard receive\n");
+
+        /* FIXME: this needs to be generic: Used for all receives */
+        EINA_LIST_FOREACH(drops, l, dropable)
+          {
+             if (dropable->obj == sel->requestwidget) break;
+          }
+        if (!dropable)
+          {
+             cnp_debug("Unable to find drop object");
+             ecore_wl_dnd_drag_end(ecore_wl_input_get());
+             return 0;
+          }
+        dropable = eina_list_data_get(l);
+        ddata.x = savedtypes.x;
+        ddata.y = savedtypes.y;
+        ddata.format = ELM_SEL_FORMAT_VCARD;
+        ddata.data = ev->data;
+        ddata.len = ev->len;
+        ddata.action = sel->action;
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+           if ((cbs->types & dropable->last.format) && cbs->dropcb)
+             cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
         ecore_wl_dnd_drag_end(ecore_wl_input_get());
-        return 0;
      }
-   dropable = eina_list_data_get(l);
-   ddata.x = savedtypes.x;
-   ddata.y = savedtypes.y;
-   ddata.format = ELM_SEL_FORMAT_VCARD;
-   ddata.data = ev->data;
-   ddata.len = ev->len;
-   ddata.action = sel->action;
-   EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-      if ((cbs->types & dropable->last.format) && cbs->dropcb)
-        cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
-   ecore_wl_dnd_drag_end(ecore_wl_input_get());
+   else if (sel->datacb)
+     {
+        ddata.x = ddata.y = 0;
+        ddata.format = ELM_SEL_FORMAT_VCARD;
+        ddata.data = ev->data;
+        ddata.len = ev->len;
+        ddata.action = sel->action;
+        sel->datacb(sel->udata, sel->widget, &ddata);
+     }
+   else cnp_debug("Paste request\n");
+
    return 0;
 }
 
@@ -3014,40 +3050,65 @@ _wl_notify_handler_image(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Re
 {
    cnp_debug("In\n");
    Tmp_Info *tmp;
-   Eina_List *l;
-   Dropable *dropable;
-
    Elm_Selection_Data ddata;
 
-   tmp = _tempfile_new(ev->len);
-   if (!tmp) goto end;
-   memcpy(tmp->map, ev->data, ev->len);
-   munmap(tmp->map, ev->len);
+   if (ev->selection == ECORE_WL_SELECTION_DND)
+     {
+        Eina_List *l;
+        Dropable *dropable;
 
-   /* FIXME: this needs to be generic: Used for all receives */
-   EINA_LIST_FOREACH(drops, l, dropable)
-     {
-        if (dropable->obj == sel->requestwidget) break;
-        dropable = NULL;
+        tmp = _tempfile_new(ev->len);
+        if (!tmp)
+          {
+             ecore_wl_dnd_drag_end(ecore_wl_input_get());
+             return 0;
+          }
+        memcpy(tmp->map, ev->data, ev->len);
+        munmap(tmp->map, ev->len);
+        /* FIXME: this needs to be generic: Used for all receives */
+        EINA_LIST_FOREACH(drops, l, dropable)
+          {
+             if (dropable->obj == sel->requestwidget) break;
+             dropable = NULL;
+          }
+        if (dropable)
+          {
+             Dropable_Cbs *cbs;
+             Eina_Inlist *itr;
+             ddata.x = savedtypes.x;
+             ddata.y = savedtypes.y;
+             ddata.format = ELM_SEL_FORMAT_IMAGE;
+             ddata.data = tmp->filename;
+             ddata.len = strlen(tmp->filename);
+             ddata.action = sel->action;
+             EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+                if ((cbs->types & dropable->last.format) && cbs->dropcb)
+                  cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+          }
+        _tmpinfo_free(tmp);
+        ecore_wl_dnd_drag_end(ecore_wl_input_get());
      }
-   if (dropable)
+   else if (sel->datacb)
      {
-        Dropable_Cbs *cbs;
-        Eina_Inlist *itr;
-        ddata.x = savedtypes.x;
-        ddata.y = savedtypes.y;
+        ddata.x = ddata.y = 0;
         ddata.format = ELM_SEL_FORMAT_IMAGE;
-        ddata.data = tmp->filename;
-        ddata.len = strlen(tmp->filename);
+        ddata.data = ev->data;
+        ddata.len = ev->len;
         ddata.action = sel->action;
-        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-           if ((cbs->types & dropable->last.format) && cbs->dropcb)
-             cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+        sel->datacb(sel->udata, sel->widget, &ddata);
      }
-   _tmpinfo_free(tmp);
+   else
+     {
+        cnp_debug("no datacb\n");
+        tmp = _tempfile_new(ev->len);
+        if (!tmp) return 0;
+        memcpy(tmp->map, ev->data, ev->len);
+        munmap(tmp->map, ev->len);
+        /* FIXME: Add to paste image data to clean up */
+        _pasteimage_append(tmp->filename, sel->requestwidget);
+        _tmpinfo_free(tmp);
+     }
 
-end:
-   ecore_wl_dnd_drag_end(ecore_wl_input_get());
    return 0;
 }
 
@@ -3056,33 +3117,61 @@ _wl_notify_handler_text(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Rea
 {
    cnp_debug("In\n");
 
-   Eina_List *l;
-   Dropable *dropable;
-
    Elm_Selection_Data ddata;
 
-   cnp_debug("drag & drop\n");
-   /* FIXME: this needs to be generic: Used for all receives */
-   EINA_LIST_FOREACH(drops, l, dropable)
+   if (ev->selection == ECORE_WL_SELECTION_DND)
      {
-        if (dropable->obj == sel->requestwidget) break;
-        dropable = NULL;
+        Eina_List *l;
+        Dropable *dropable;
+
+        cnp_debug("drag & drop\n");
+        /* FIXME: this needs to be generic: Used for all receives */
+        EINA_LIST_FOREACH(drops, l, dropable)
+          {
+             if (dropable->obj == sel->requestwidget) break;
+             dropable = NULL;
+          }
+        if (dropable)
+          {
+             Dropable_Cbs *cbs;
+             Eina_Inlist *itr;
+             ddata.x = savedtypes.x;
+             ddata.y = savedtypes.y;
+             ddata.format = ELM_SEL_FORMAT_TEXT;
+             ddata.data = ev->data;
+             ddata.len = ev->len;
+             ddata.action = sel->action;
+             EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+                if ((cbs->types & dropable->last.format) && cbs->dropcb)
+                  cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+          }
+        ecore_wl_dnd_drag_end(ecore_wl_input_get());
      }
-   if (dropable)
+   else if (sel->datacb)
      {
-        Dropable_Cbs *cbs;
-        Eina_Inlist *itr;
-        ddata.x = savedtypes.x;
-        ddata.y = savedtypes.y;
+        ddata.x = ddata.y = 0;
         ddata.format = ELM_SEL_FORMAT_TEXT;
         ddata.data = ev->data;
         ddata.len = ev->len;
         ddata.action = sel->action;
-        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-           if ((cbs->types & dropable->last.format) && cbs->dropcb)
-             cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+        sel->datacb(sel->udata, sel->widget, &ddata);
      }
-   ecore_wl_dnd_drag_end(ecore_wl_input_get());
+   else
+     {
+        cnp_debug("no datacb\n");
+        char *stripstr, *mkupstr;
+
+        stripstr = malloc(ev->len + 1);
+        if (!stripstr) return 0;
+        strncpy(stripstr, (char *)ev->data, ev->len);
+        stripstr[ev->len] = '\0';
+        mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
+        /* TODO BUG: should never NEVER assume it's an elm_entry! */
+        _elm_entry_entry_paste(sel->requestwidget, mkupstr);
+        free(stripstr);
+        free(mkupstr);
+     }
+
    return 0;
 }
 
