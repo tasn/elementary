@@ -2557,19 +2557,32 @@ _wl_targets_converter(char *target, Wl_Cnp_Selection *sel EINA_UNUSED, void *dat
    int len = 0;
    int i = 0;
    Elm_Sel_Format formats = ELM_SEL_FORMAT_NONE;
+   Eina_Bool is_uri_data = EINA_TRUE;
 
-   for (i = 0; i < CNP_N_ATOMS; i++)
+   if (sel->format)
      {
-        if (!strcmp(target, _atoms[i].name))
+        formats = sel->format;
+        is_uri_data = _wl_is_uri_type_data(sel->selbuf, sel->buflen);
+     }
+   else
+     {
+        for (i = 0; i < CNP_N_ATOMS; i++)
           {
-             formats = _atoms[i].formats;
+             if (!strcmp(target, _atoms[i].name))
+               {
+                  formats = _atoms[i].formats;
+               }
           }
      }
+   /* Only provide formats which selection owner can send */
    for (i = 0; i < CNP_N_ATOMS; i++)
      {
         if (formats & _atoms[i].formats)
           {
-             len += strlen(_atoms[i].name) + strlen(sep);
+             if ((is_uri_data) || (!is_uri_data &&
+                                   strcmp(_atoms[i].name, "text/uri") &&
+                                   strcmp(_atoms[i].name, "text/uri-list")))
+               len += strlen(_atoms[i].name) + strlen(sep);
           }
      }
    aret = calloc(1, len * sizeof(char));
@@ -2578,8 +2591,13 @@ _wl_targets_converter(char *target, Wl_Cnp_Selection *sel EINA_UNUSED, void *dat
      {
         if (formats & _atoms[i].formats)
           {
-             aret = strcat(aret, _atoms[i].name);
-             aret = strcat(aret, sep);
+             if ((is_uri_data) || (!is_uri_data &&
+                                   strcmp(_atoms[i].name, "text/uri") &&
+                                   strcmp(_atoms[i].name, "text/uri-list")))
+               {
+                  aret = strcat(aret, _atoms[i].name);
+                  aret = strcat(aret, sep);
+               }
           }
      }
    *data_ret = aret;
