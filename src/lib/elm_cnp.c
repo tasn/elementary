@@ -3084,7 +3084,6 @@ static Eina_Bool _wl_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, 
 static Eina_Bool _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 /* static Eina_Bool _wl_dnd_offer(void *data EINA_UNUSED, int type EINA_UNUSED, void *event); */
 
-static Eina_Bool _wl_dnd_send(void *data, int type EINA_UNUSED, void *event);
 static Eina_Bool _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event);
 static Eina_Bool _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
 static void _wl_dropable_data_handle(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready  *data);
@@ -3300,20 +3299,50 @@ _wl_elm_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection EINA_UNUSED
 }
 
 static Eina_Bool
-_wl_selection_send(void *udata, int type EINA_UNUSED, void *event)
+_wl_selection_send(void *data, int type EINA_UNUSED, void *event)
 {
    char *buf;
    int ret, len_remained;
    int len_written = 0;
-   Wl_Cnp_Selection *sel = udata;
-   Ecore_Wl_Event_Data_Source_Send *ev = event;
+   Wl_Cnp_Selection *sel;
+   Ecore_Wl_Event_Data_Source_Send *ev;
+   void *data_ret = NULL;
+   int len_ret = 0;
+   int i = 0;
 
    _wl_elm_cnp_init();
 
-   len_remained = sel->buflen;
-   buf = sel->selbuf;
+   cnp_debug("In\n");
+   ev = event;
+   sel = data;
 
-   while (len_written < sel->buflen)
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        if (!strcmp(_atoms[i].name, ev->type))
+          {
+             cnp_debug("Found a type: %s\n", _atoms[i].name);
+             Dropable *drop;
+             eo_do(sel->requestwidget, drop = eo_key_data_get("__elm_dropable"));
+             if (drop)
+               drop->last.type = _atoms[i].name;
+             if (_atoms[i].wl_converter)
+               {
+                  _atoms[i].wl_converter(ev->type, sel, sel->selbuf,
+                                         sel->buflen, &data_ret, &len_ret);
+               }
+             else
+               {
+                  data_ret = strdup(sel->selbuf);
+                  len_ret = sel->buflen;
+               }
+             break;
+          }
+     }
+
+   len_remained = len_ret;
+   buf = data_ret;
+
+   while (len_written < len_ret)
      {
         ret = write(ev->fd, buf, len_remained);
         if (ret == -1) break;
@@ -3321,6 +3350,7 @@ _wl_selection_send(void *udata, int type EINA_UNUSED, void *event)
         len_written += ret;
         len_remained -= ret;
      }
+   free(data_ret);
 
    close(ev->fd);
    return ECORE_CALLBACK_PASS_ON;
@@ -3439,8 +3469,7 @@ _wl_elm_dnd_init(void)
 
    text_uri = eina_stringshare_add("text/uri-list");
 
-   ecore_event_handler_add(ECORE_WL_EVENT_DATA_SOURCE_SEND,
-                           _wl_dnd_send, &wl_cnp_selection);
+   _wl_elm_cnp_init();
    ecore_event_handler_add(ECORE_WL_EVENT_SELECTION_DATA_READY,
                            _wl_dnd_receive, &wl_cnp_selection);
 
@@ -3866,62 +3895,6 @@ _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      }
 
    ecore_wl_dnd_drag_end(ecore_wl_input_get());
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_wl_dnd_send(void *data, int type EINA_UNUSED, void *event)
-{
-   char *buf;
-   int ret, len_remained;
-   int len_written = 0;
-   Wl_Cnp_Selection *sel;
-   Ecore_Wl_Event_Data_Source_Send *ev;
-   void *data_ret = NULL;
-   int len_ret = 0;
-   int i = 0;
-
-   cnp_debug("In\n");
-   ev = event;
-   sel = data;
-
-   for (i = 0; i < CNP_N_ATOMS; i++)
-     {
-        if (!strcmp(_atoms[i].name, ev->type))
-          {
-             cnp_debug("Found a type: %s\n", _atoms[i].name);
-             Dropable *drop;
-             eo_do(sel->requestwidget, drop = eo_key_data_get("__elm_dropable"));
-             if (drop)
-               drop->last.type = _atoms[i].name;
-             if (_atoms[i].wl_converter)
-               {
-                  _atoms[i].wl_converter(ev->type, sel, sel->selbuf,
-                                         sel->buflen, &data_ret, &len_ret);
-               }
-             else
-               {
-                  data_ret = strdup(sel->selbuf);
-                  len_ret = sel->buflen;
-               }
-             break;
-          }
-     }
-
-   len_remained = len_ret;
-   buf = data_ret;
-
-   while (len_written < len_ret)
-     {
-        ret = write(ev->fd, buf, len_remained);
-        if (ret == -1) break;
-        buf += ret;
-        len_written += ret;
-        len_remained -= ret;
-     }
-   free(data_ret);
-
-   close(ev->fd);
    return ECORE_CALLBACK_PASS_ON;
 }
 
