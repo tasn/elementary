@@ -2566,13 +2566,9 @@ _wl_targets_converter(char *target, Wl_Cnp_Selection *sel EINA_UNUSED, void *dat
      }
    else
      {
-        for (i = 0; i < CNP_N_ATOMS; i++)
-          {
-             if (!strcmp(target, _atoms[i].name))
-               {
-                  formats = _atoms[i].formats;
-               }
-          }
+        Cnp_Atom *atom = eina_hash_find(_types_hash, target);
+        if (atom)
+          formats = atom->formats;
      }
    /* Only provide formats which selection owner can send */
    for (i = 0; i < CNP_N_ATOMS; i++)
@@ -2611,15 +2607,11 @@ _wl_general_converter(char *target, Wl_Cnp_Selection *sel EINA_UNUSED, void *dat
 {
    cnp_debug("in\n");
    Elm_Sel_Format formats = ELM_SEL_FORMAT_NONE;
-   int i = 0;
-   for (i = 0; i < CNP_N_ATOMS; i++)
-     {
-        if (!strcmp(target, _atoms[i].name))
-          {
-             formats = _atoms[i].formats;
-             break;
-          }
-     }
+   Cnp_Atom *atom = NULL;
+
+   atom = eina_hash_find(_types_hash, target);
+   if (atom)
+     formats = atom->formats;
    if (formats == ELM_SEL_FORMAT_NONE)
      {
         if (data_ret)
@@ -2652,17 +2644,12 @@ static Eina_Bool
 _wl_text_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret)
 {
    cnp_debug("in\n");
-   int i = 0;
    Elm_Sel_Format formats = ELM_SEL_FORMAT_NONE;
+   Cnp_Atom *atom = NULL;
 
-   for (i = 0; i < CNP_N_ATOMS; i++)
-     {
-        if (!strcmp(target, _atoms[i].name))
-          {
-             formats = _atoms[i].formats;
-             break;
-          }
-     }
+   atom = eina_hash_find(_types_hash, target);
+   if (atom)
+     formats = atom->formats;
    if (formats == ELM_SEL_FORMAT_NONE)
      {
         if (data_ret)
@@ -2791,29 +2778,24 @@ _wl_notify_handler_targets(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_
    if (!ev) return EINA_FALSE;
    char *data = ev->data;
    int len = ev->len;
-   int count = 0;
-   int i = 0, j = 0;
+   int count = 0, i = 0;
    char **data_arr = NULL;
+   Cnp_Atom *atom = NULL;
 
    _wl_selection_parser(data, len, &data_arr, &count);
-   for (i = 0; i < CNP_N_ATOMS; i++)
+   for (i = 0; i < count; i++)
      {
-        Eina_Bool found = EINA_FALSE;
-        for (j = 2; j < count; j++)
+        atom = eina_hash_find(_types_hash, data_arr[i]);
+        if (atom && (atom->formats != ELM_SEL_FORMAT_TARGETS))
           {
-             if (!strcmp(_atoms[i].name, data_arr[j]))
-               {
-                  printf("\n%d: Match found: %s\n", __LINE__, _atoms[i].name);
-                  sel->requestfinished = EINA_FALSE;
-                  /* Since we cannot call ecore_wl_dnd_drag_get in here (it causes
-                     ecore callbacks circular dependency and makes drag_send cannot
-                     be called), we use ecore_timer to call it */
-                  ecore_timer_add(0.001, _wl_dnd_drag_get_timer_cb, _atoms[i].name);
-                  found = EINA_TRUE;
-                  break;
-               }
+             cnp_debug("Match found: %s\n", atom->name);
+             sel->requestfinished = EINA_FALSE;
+             /* Since we cannot call ecore_wl_dnd_drag_get in here (it causes
+                ecore callbacks circular dependency and makes drag_send cannot
+                be called), we use ecore_timer to call it */
+             ecore_timer_add(0.001, _wl_dnd_drag_get_timer_cb, atom->name);
+             break;
           }
-        if (found) break;
      }
    free(data_arr);
    return EINA_TRUE;
@@ -3422,7 +3404,7 @@ _wl_selection_send(void *data, int type EINA_UNUSED, void *event)
    Ecore_Wl_Event_Data_Source_Send *ev;
    void *data_ret = NULL;
    int len_ret = 0;
-   int i = 0;
+   Cnp_Atom *atom = NULL;
 
    _wl_elm_cnp_init();
 
@@ -3430,26 +3412,23 @@ _wl_selection_send(void *data, int type EINA_UNUSED, void *event)
    ev = event;
    sel = data;
 
-   for (i = 0; i < CNP_N_ATOMS; i++)
+   atom = eina_hash_find(_types_hash, ev->type);
+   if (atom)
      {
-        if (!strcmp(_atoms[i].name, ev->type))
+        cnp_debug("Found a type: %s\n", atom->name);
+        Dropable *drop;
+        eo_do(sel->requestwidget, drop = eo_key_data_get("__elm_dropable"));
+        if (drop)
+          drop->last.type = atom->name;
+        if (atom->wl_converter)
           {
-             cnp_debug("Found a type: %s\n", _atoms[i].name);
-             Dropable *drop;
-             eo_do(sel->requestwidget, drop = eo_key_data_get("__elm_dropable"));
-             if (drop)
-               drop->last.type = _atoms[i].name;
-             if (_atoms[i].wl_converter)
-               {
-                  _atoms[i].wl_converter(ev->type, sel, sel->selbuf,
-                                         sel->buflen, &data_ret, &len_ret);
-               }
-             else
-               {
-                  data_ret = strdup(sel->selbuf);
-                  len_ret = sel->buflen;
-               }
-             break;
+             atom->wl_converter(ev->type, sel, sel->selbuf,
+                                sel->buflen, &data_ret, &len_ret);
+          }
+        else
+          {
+             data_ret = strdup(sel->selbuf);
+             len_ret = sel->buflen;
           }
      }
 
@@ -3486,47 +3465,37 @@ _wl_selection_data_handle(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_R
      {
         char *data = ev->data;
         int len = ev->len;
-        int count = 0;
-        int i = 0, j = 0;
+        int count = 0, i = 0;
         char **data_arr = NULL;
 
         _wl_selection_parser(data, len, &data_arr, &count);
-        for (i = 2; i < CNP_N_ATOMS; i++)
+        for (i = 0; i < count; i++)
           {
-             if ((sel->requestformat & _atoms[i].formats) &&
-                 _atoms[i].wl_notify)
+             Cnp_Atom *atom = eina_hash_find(_types_hash, data_arr[i]);
+             if (atom && atom->wl_notify &&
+                 (atom->formats != ELM_SEL_FORMAT_TARGETS) &&
+                 (sel->requestformat & atom->formats))
                {
-                  for (j = 0; j < count; j++)
-                    {
-                       if (!strcmp(_atoms[i].name, data_arr[j]))
-                         {
-                            cnp_debug("Request new type: %s\n", _atoms[i].name);
-                            sel->requesttype = _atoms[i].name;
-                            sel->requestfinished = EINA_FALSE;
-                            /* Since we cannot call ecore_wl_dnd_selection_get
-                               in here (it causes ecore callbacks circular
-                               dependency and makes data send cannot
-                               be called), we use ecore_timer to call it */
-                            ecore_timer_add(0.001, _wl_selection_get_timer_cb,
-                                            _atoms[i].name);
-                            return;
-                         }
-                    }
+                  cnp_debug("Request new type: %s\n", atom->name);
+                  sel->requesttype = atom->name;
+                  sel->requestfinished = EINA_FALSE;
+                  /* Since we cannot call ecore_wl_dnd_selection_get
+                     in here (it causes ecore callbacks circular
+                     dependency and makes data send cannot
+                     be called), we use ecore_timer to call it */
+                  ecore_timer_add(0.001, _wl_selection_get_timer_cb,
+                                  atom->name);
+                  return;
                }
           }
      }
    else
      {
-        int i = 0;
-        for (i = 0; i < CNP_N_ATOMS; i++)
+        Cnp_Atom *atom = eina_hash_find(_types_hash, sel->requesttype);
+        if (atom && atom->wl_notify)
           {
-             if ((!strcmp(sel->requesttype, _atoms[i].name)) &&
-                 _atoms[i].wl_notify)
-               {
-                  cnp_debug("Call notify for: %s\n", _atoms[i].name);
-                  _atoms[i].wl_notify(sel, ev);
-                  return;
-               }
+             cnp_debug("Call notify for: %s\n", atom->name);
+             atom->wl_notify(sel, ev);
           }
      }
 }
@@ -4070,16 +4039,12 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Re
           {
              if (cbs->types && drop->last.format)
                {
-                  int i = 0;
-                  for (i = 0; i < CNP_N_ATOMS; i++)
+                  Cnp_Atom *atom = eina_hash_find(_types_hash, drop->last.type);
+                  if (atom && atom->wl_notify)
                     {
-                       if ((!strcmp(_atoms[i].name, drop->last.type))
-                           && _atoms[i].wl_notify)
-                         {
-                            cnp_debug("call notify: %s\n", drop->last.type);
-                            _atoms[i].wl_notify(sel, ev);
-                            return;
-                         }
+                       cnp_debug("call notify: %s\n", drop->last.type);
+                       atom->wl_notify(sel, ev);
+                       return;
                     }
                }
           }
