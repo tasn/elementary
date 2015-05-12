@@ -2978,8 +2978,6 @@ static Eina_Bool
 _wl_vcard_receive(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev)
 {
    cnp_debug("In\n");
-   return EINA_TRUE;
-
    Elm_Selection_Data ddata;
 
    if (ev->selection == ECORE_WL_SELECTION_DND)
@@ -4141,39 +4139,22 @@ _wl_drops_accept(const char *type)
 {
    Eina_List *l;
    Dropable *drop;
-   Eina_Bool will_accept = EINA_FALSE;
 
    EINA_LIST_FOREACH(drops, l, drop)
      {
         Dropable_Cbs *cbs;
         EINA_INLIST_FOREACH(drop->cbs_list, cbs)
           {
-             switch (cbs->types)
+             Cnp_Atom *atom = eina_hash_find(_types_hash, type);
+             if (atom && (atom->formats & cbs->types))
                {
-                case ELM_SEL_FORMAT_TARGETS:
-                case ELM_SEL_FORMAT_IMAGE:
-                   if ((!strncmp(type, "text/uri", 8)) ||
-                         (!strncmp(type, "image/", 6)))
-                     {
-                        wl_cnp_selection.requestwidget = drop->obj;
-                        return EINA_TRUE;
-                     }
-                   break;
-                case ELM_SEL_FORMAT_NONE:
-                   break;
-                case ELM_SEL_FORMAT_TEXT:
-                   break;
-                case ELM_SEL_FORMAT_MARKUP:
-                   break;
-                case ELM_SEL_FORMAT_VCARD:
-                   break;
-                case ELM_SEL_FORMAT_HTML:
-                   break;
+                  wl_cnp_selection.requestwidget = drop->obj;
+                  return EINA_TRUE;
                }
           }
      }
 
-   return will_accept;
+   return EINA_FALSE;
 }
 
 static unsigned int
