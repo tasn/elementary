@@ -1641,6 +1641,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
       wm,rotation,changed;
       animator,tick;
       theme,changed;
+      elm,action,block_menu;
    }
 
 }
