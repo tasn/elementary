@@ -1,6 +1,21 @@
 =================
-Elementary 1.13.2
+Elementary 1.13.3
 =================
+
+Changes since 1.13.2:
+---------------------
+
+Fixes:
+
+   * Elm_Win: Fix _elm_win_focus_prev_target_del callback added repeatly without callback del.
+   * elm_genlist: pass eo_it to eo_do func, not VIEW(it)
+   * [elm_panel] Fix mirroring issue.
+   * elm_image: return EINA_FALSE if the data source is NULL in elm_image_memfile_set
+   * atspi: add missing signals array sentiel.
+   * elm_slider: fix theme apply
+   * elm_clock: fix theme apply
+   * elm: add safety check
+   * elm_segment_control: mark default return value in eolian API
 
 Changes since 1.13.1:
 ---------------------
