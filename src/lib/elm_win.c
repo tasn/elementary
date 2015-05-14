@@ -67,8 +67,8 @@ static const Elm_Win_Trap *trap = NULL;
          {                                                      \
             edje_object_signal_emit(cursd->edje, \
                         "elm,action,hide_blocker", "elm");      \
-            evas_object_smart_callback_call(cursd->main_menu, \
-                        "elm,action,unblock_menu", NULL);       \
+            eo_do(cursd->main_menu, eo_event_callback_call      \
+              (ELM_WIN_EVENT_ELM_ACTION_UNBLOCK_MENU, NULL));   \
          }                                                      \
     }
 
