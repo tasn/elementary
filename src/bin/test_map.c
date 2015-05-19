@@ -534,7 +534,7 @@ static void
 _track_add(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *fs, *vbox, *hbox, *sep;
-   const char *path = NULL;
+   char *path = NULL;
 
    fs_win = elm_win_util_standard_add("fileselector", "File Selector");
    elm_win_autodel_set(fs_win, EINA_TRUE);
@@ -547,7 +547,7 @@ _track_add(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSE
    fs = elm_fileselector_add(fs_win);
    elm_fileselector_is_save_set(fs, EINA_TRUE);
    elm_fileselector_expandable_set(fs, EINA_FALSE);
-   path = eina_environment_home_get();
+   path = getenv("HOME");
    //if "HOME" is not available, set current dir. path
    if (!path)
      path = ".";

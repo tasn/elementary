@@ -2,72 +2,72 @@ class Elm_App_Server_View (Eo.Base)
 {
    legacy_prefix: null;
    eo_prefix: elm_app_server_view;
-   methods {
-      @property progress {
+   properties {
+      progress {
          set {
          }
          get {
          }
          values {
-            progress: short;
+            short progress;
          }
       }
-      @property new_events {
+      new_events {
          set {
          }
          get {
          }
          values {
-            events: int;
+            int events;
          }
       }
-      @property icon {
+      icon {
          set {
          }
          get {
          }
          values {
-            icon: const(char)*;
+            const(char)* icon;
          }
       }
-      @property title {
+      title {
          set {
          }
          get {
          }
          values {
-            title: const(char)* @nullable;
+            const(char)* title;
          }
       }
-      @property window {
+      window {
          set {
          }
          values {
-            win: Evas_Object *;
+            Evas_Object *win;
          }
       }
-      @property id {
+      id {
          get {
          }
          values {
-            ret: Eina_Stringshare *;
+            Eina_Stringshare *ret;
          }
       }
-      @property state {
+      state {
          get {
          }
          values {
-            ret: Elm_App_View_State;
+            Elm_App_View_State ret;
          }
       }
-      @property path {
+      path {
          get {
          }
          values {
-            ret: const(char)*;
+            const(char)* ret;
          }
       }
-      @property pixels {
+      pixels {
          get {
             /*@ Get application raw icon. */
          }
@@ -75,17 +75,19 @@ class Elm_App_Server_View (Eo.Base)
             /*@ Set icon to application, using the raw pixels of image. */
          }
          values {
-            w: uint;
-            h: uint;
-            has_alpha: bool;
-            pixels: const(ubyte)*;
+            uint w;
+            uint h;
+            bool has_alpha;
+            const(ubyte)* pixels;
          }
       }
+   }
+   methods {
       constructor {
          /*@ Class constructor of elm_app_server_view */
          legacy: null;
          params {
-            @in id: const(char)* @nullable; /*@ identifier of view */
+            @in const(char)* id; /*@ identifier of view */
          }
       }
       pause {

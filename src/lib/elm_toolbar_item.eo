@@ -1,24 +1,8 @@
-enum Elm.Toolbar_Item.Scrollto_Type
-{
-   /*@
-     Defines where to position the item in the toolbar.
-     @ingroup Toolbar
-   */
-
-   legacy: elm_toolbar_item_scrollto;
-
-   none = 0,   /*@< no scrollto */
-   in = (1 << 0),   /*@< to the nearest viewport */
-   first = (1 << 1),   /*@< to the first of viewport */
-   middle = (1 << 2),   /*@< to the middle of viewport */
-   last = (1 << 3)   /*@< to the last of viewport */
-}
-
-class Elm.Toolbar_Item(Elm.Widget_Item)
+class Elm_Toolbar_Item(Elm_Widget_Item)
 {
       eo_prefix: elm_obj_toolbar_item;
-      methods {
-           @property prev {
+      properties {
+           prev {
                 get {
                      /*@
                       Get the item before @p item in toolbar.
@@ -31,10 +15,10 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ The item before @p item, or @c NULL if none or on failure. */
+                     Elm_Object_Item *item; /*@ The item before @p item, or @c NULL if none or on failure. */
                 }
            }
-           @property next {
+           next {
                 get {
                      /*@
                       Get the item after @p item in toolbar.
@@ -47,10 +31,10 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ The item after @p item, or @c NULL if none or on failure. */
+                     Elm_Object_Item *item; /*@ The item after @p item, or @c NULL if none or on failure. */
                 }
            }
-           @property priority {
+           priority {
                 get {
                      /*@
                       Get the priority of a toolbar item.
@@ -77,10 +61,10 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     priority: int; /*@ The @p item priority. The default is zero for set and 0 is returned on failure. */
+                     int priority; /* The @p item priority. The default is zero for set and 0 is returned on failure. */
                 }
            }
-           @property selected {
+           selected {
                 get {
                      /*@
                       Get whether the @p item is selected or not.
@@ -114,10 +98,10 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     selected: bool; /*@ The selected state */
+                     Eina_Bool selected; /*@ The selected state */
                 }
            }
-           @property icon {
+           icon {
                 get {
                      /*@
                       Get the string used to set the icon of @p item.
@@ -148,10 +132,10 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     icon: const (char) *;
+                     const (char) *icon;
                 }
            }
-           @property object {
+           object {
                 get {
                      /*@
                       Get the real Evas(Edje) object created to implement the view of a given
@@ -161,10 +145,10 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     obj: Evas_Object *; /*@ The base Edje object associated with @p it. */
+                     Evas_Object *obj; /*@ The base Edje object associated with @p it. */
                 }
            }
-           @property icon_object {
+           icon_object {
                 get {
                      /*@
                       Get the icon object of @p item.
@@ -176,10 +160,10 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     obj: Evas_Object *; /*@ The icon object */
+                     Evas_Object *obj; /*@ The icon object */
                 }
            }
-           @property separator {
+           separator {
                 get {
                      /*@
                       Get a value whether item is a separator or not.
@@ -210,10 +194,10 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     separator: bool;
+                     Eina_Bool separator;
                 }
            }
-           @property menu {
+           menu {
                 get {
                      /*@
                       Get toolbar item's menu.
@@ -227,10 +211,10 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     menu: Evas_Object *; /*@ Item's menu object or @c NULL on failure. */
+                     Evas_Object *menu; /*@ Item's menu object or @c NULL on failure. */
                 }
            }
-           @property state {
+           state {
                 get {
                      /*@
                       Get the current state of @p it.
@@ -262,9 +246,11 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      return: bool;
                 }
                 values {
-                     state: Elm_Toolbar_Item_State * @nullable;
+                     Elm_Toolbar_Item_State *state;
                 }
            }
+      }
+      methods {
            /*      init { FIXME
                    params {
                    Evas_Smart_Cb func;
@@ -281,10 +267,10 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                  @ingroup Toolbar
                  */
                 params {
-                     @in img: const (void) *; /*@ The binary data that will be used as an image */
-                     @in size: size_t; /*@ The size of binary data @p img */
-                     @in format: const (char) *; /*@ Optional format of @p img to pass to the image loader */
-                     @in key: const (char) *; /*@ Optional key of @p img to pass to the image loader (eg. if @p img is an edje file) */
+                     @in const (void) *img; /*@ The binary data that will be used as an image */
+                     @in size_t size; /*@ The size of binary data @p img */
+                     @in const (char) *format; /*@ Optional format of @p img to pass to the image loader */
+                     @in const (char) *key; /*@ Optional key of @p img to pass to the image loader (eg. if @p img is an edje file) */
                 }
                 return: bool; /*@ (@c EINA_TRUE = success, @c EINA_FALSE = error) */
            }
@@ -298,8 +284,8 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                  @ingroup Toolbar
                  */
                 params {
-                     @in file: const (char) *; /*@ The file that contains the image */
-                     @in key: const (char) *; /*@ Optional key of @p img to pass to the image loader (eg. if @p img is an edje file) */
+                     @in const (char) *file; /*@ The file that contains the image */
+                     @in const (char) *key; /*@ Optional key of @p img to pass to the image loader (eg. if @p img is an edje file) */
                 }
                 return: bool; /*@ (@c EINA_TRUE = success, @c EINA_FALSE = error) */
            }
@@ -321,10 +307,10 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                  @ingroup Toolbar
                  */
                 params {
-                     @in icon: const (char) *; /*@ A string with icon name or the absolute path of an image file. */
-                     @in label: const (char) *; /*@ The label of the new state. */
-                     @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked when this * state is selected. */
-                     @in data: const (void) * @optional; /*@ The data to associate with the state. */
+                     @in const (char) *icon; /*@ A string with icon name or the absolute path of an image file. */
+                     @in const (char) *label; /*@ The label of the new state. */
+                     @in Evas_Smart_Cb func; /*@ The function to call when the item is clicked when this * state is selected. */
+                     @in const (void) *data; /*@ The data to associate with the state. */
                 }
                 return: Elm_Toolbar_Item_State *; /*@ The toolbar item state, or @c NULL upon failure. */
            }
@@ -335,7 +321,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                  @see elm_toolbar_item_state_add()
                  */
                 params {
-                     @in state: Elm_Toolbar_Item_State *; /*@ The state to be deleted. */
+                     @in Elm_Toolbar_Item_State *state; /*@ The state to be deleted. */
                 }
                 return: bool; /*@ @c EINA_TRUE on success or @c EINA_FALSE on failure. */
            }
@@ -376,7 +362,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                  @ingroup Toolbar
                  */
                 params {
-                     @in scrollto: Elm_Toolbar_Item_Scrollto_Type; /*@ the position the item should appear at */
+                     @in Elm_Toolbar_Item_Scrollto_Type scrollto; /*@ the position the item should appear at */
                 }
            }
            bring_in {
@@ -389,7 +375,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                  @ingroup Toolbar
                  */
                 params {
-                     @in scrollto: Elm_Toolbar_Item_Scrollto_Type; /*@ the position the item should appear at */
+                     @in Elm_Toolbar_Item_Scrollto_Type scrollto; /*@ the position the item should appear at */
                 }
            }
            menu_set {
@@ -423,21 +409,21 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                  @ingroup Toolbar
                  */
                 params {
-                     @in menu: bool; /*@ If @c EINA_TRUE, @p item will opens a menu when selected. */
+                     @in Eina_Bool menu; /*@ If @c EINA_TRUE, @p item will opens a menu when selected. */
                 }
            }
       }
       implements {
            Eo.Base.constructor;
            Eo.Base.destructor;
-           Elm.Widget_Item.disable;
-           Elm.Widget_Item.focus.set;
-           Elm.Widget_Item.focus.get;
-           Elm.Widget_Item.part_text.get;
-           Elm.Widget_Item.part_text.set;
-           Elm.Widget_Item.part_content.get;
-           Elm.Widget_Item.part_content.set;
-           Elm.Widget_Item.part_content_unset;
+           Elm_Widget_Item.disable;
+           Elm_Widget_Item.focus.set;
+           Elm_Widget_Item.focus.get;
+           Elm_Widget_Item.part_text.get;
+           Elm_Widget_Item.part_text.set;
+           Elm_Widget_Item.part_content.get;
+           Elm_Widget_Item.part_content.set;
+           Elm_Widget_Item.part_content_unset;
            Elm_Interface_Atspi_Accessible.name.get;
            Elm_Interface_Atspi_Accessible.state_set.get;
       }

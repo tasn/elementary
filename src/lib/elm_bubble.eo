@@ -1,8 +1,8 @@
-class Elm.Bubble (Elm.Layout)
+class Elm_Bubble (Elm_Layout)
 {
    eo_prefix: elm_obj_bubble;
-   methods {
-      @property pos {
+   properties {
+      pos {
          set {
             /*@
             Set the corner of the bubble
@@ -25,7 +25,7 @@ class Elm.Bubble (Elm.Layout)
             @ingroup Bubble */
          }
          values {
-            pos: Elm_Bubble_Pos; /*@ The given corner for the bubble. */
+            Elm_Bubble_Pos pos; /*@ The given corner for the bubble. */
          }
       }
    }
@@ -33,15 +33,15 @@ class Elm.Bubble (Elm.Layout)
       class.constructor;
       Eo.Base.constructor;
       Evas.Object_Smart.add;
-      Elm.Widget.focus_direction;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.access;
-      Elm.Layout.text_set;
-      Elm.Layout.text_aliases.get;
-      Elm.Layout.content_aliases.get;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.focus_direction;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.access;
+      Elm_Layout.text_set;
+      Elm_Layout.text_aliases.get;
+      Elm_Layout.content_aliases.get;
+      Elm_Layout.sizing_eval;
    }
    events {
       clicked;

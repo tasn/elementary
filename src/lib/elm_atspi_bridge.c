@@ -86,12 +86,8 @@ EO_CALLBACKS_ARRAY_DEFINE(_events_cb,
 
 EO_CALLBACKS_ARRAY_DEFINE(_window_cb,
    { ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, _window_signal_send},
-   { ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED, _window_signal_send},
    { ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED, _window_signal_send},
-   { ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED, _window_signal_send},
-   { ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MAXIMIZED, _window_signal_send},
-   { ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MINIMIZED, _window_signal_send},
-   { ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_RESTORED, _window_signal_send}
+   { ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED, _window_signal_send}
 );
 
 EO_CALLBACKS_ARRAY_DEFINE(_selection_cb,
@@ -2620,20 +2616,10 @@ _set_broadcast_flag(const char *event)
           _window_signal_broadcast_mask = -1; // broadcast all
         else if (!strcmp(tokens[1], "Create"))
           STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_CREATE);
-        else if (!strcmp(tokens[1], "Destroy"))
-          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_DESTROY);
         else if (!strcmp(tokens[1], "Activate"))
           STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_ACTIVATE);
         else if (!strcmp(tokens[1], "Deactivate"))
           STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_DEACTIVATE);
-        else if (!strcmp(tokens[1], "Maximize"))
-          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_MAXIMIZE);
-        else if (!strcmp(tokens[1], "Minimize"))
-          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_MINIMIZE);
-        else if (!strcmp(tokens[1], "Resize"))
-          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_RESIZE);
-        else if (!strcmp(tokens[1], "Restore"))
-          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_RESTORE);
      }
 
    free(tokens[0]);
@@ -2831,25 +2817,30 @@ _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *d
 static Eina_Bool
 _window_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc, void *event_info EINA_UNUSED)
 {
+   const char *event_desc;
    Eldbus_Service_Interface *window = data;
    enum _Atspi_Window_Signals type;
 
    if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED)
-     type = ATSPI_WINDOW_EVENT_CREATE;
-   else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED)
-     type = ATSPI_WINDOW_EVENT_DESTROY;
+     {
+        event_desc = "Created";
+        type = ATSPI_WINDOW_EVENT_CREATE;
+     }
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED)
-     type = ATSPI_WINDOW_EVENT_DEACTIVATE;
+     {
+        event_desc = "Deactivate";
+        type = ATSPI_WINDOW_EVENT_DEACTIVATE;
+     }
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED)
-     type = ATSPI_WINDOW_EVENT_ACTIVATE;
-   else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MAXIMIZED)
-     type = ATSPI_WINDOW_EVENT_MAXIMIZE;
-   else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MINIMIZED)
-     type = ATSPI_WINDOW_EVENT_MINIMIZE;
-   else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_RESTORED)
-     type = ATSPI_WINDOW_EVENT_RESTORE;
+     {
+        event_desc = "Activate";
+        type = ATSPI_WINDOW_EVENT_ACTIVATE;
+     }
    else
-     return EINA_FALSE;
+     {
+        WRN("ATSPI Window event not handled");
+        return EINA_FALSE;
+     }
 
    if (!STATE_TYPE_GET(_window_signal_broadcast_mask, type))
      return EINA_FALSE;
@@ -2860,9 +2851,9 @@ _window_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description 
         return EINA_FALSE;
      }
 
-   _object_signal_send(window, type, "", 0, 0, "i", 0);
+   _object_signal_send(window, type, event_desc, 0, 0, "i", 0);
 
-   DBG("sent signal org.a11y.atspi.Window:%d", type);
+   DBG("signal sent Window:%s", event_desc);
 
    return EINA_TRUE;
 }

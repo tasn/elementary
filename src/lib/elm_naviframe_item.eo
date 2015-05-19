@@ -1,8 +1,8 @@
-class Elm.Naviframe_Item(Elm.Widget_Item)
+class Elm_Naviframe_Item(Elm_Widget_Item)
 {
    eo_prefix: elm_obj_naviframe_item;
-   methods {
-        @property style {
+   properties {
+        style {
              get {
                  /*@
                   Get an item style
@@ -25,9 +25,11 @@ class Elm.Naviframe_Item(Elm.Widget_Item)
                  */
              }
              values {
-                 style: const (char) * @nullable; /*@ The current item style name. @c NULL would be default */
+                 const (char) *style; /*@ The current item style name. @c NULL would be default */
              }
         }
+   }
+   methods {
       pop_to {
             /*@
              Pop the top item and delete the items between the top and the above
@@ -62,8 +64,8 @@ class Elm.Naviframe_Item(Elm.Widget_Item)
              @ingroup Naviframe
             */
             params {
-                @in enable: bool; /*@ If @c EINA_TRUE, title area will be enabled, disabled otherwise */
-                @in transition: bool; /*@ If @c EINA_TRUE, transition effect of the title will be visible, invisible otherwise */
+                @in Eina_Bool enable; /*@ If @c EINA_TRUE, title area will be enabled, disabled otherwise */
+                @in Eina_Bool transition; /*@ If @c EINA_TRUE, transition effect of the title will be visible, invisible otherwise */
              }
         }
       promote {
@@ -91,19 +93,19 @@ class Elm.Naviframe_Item(Elm.Widget_Item)
              @ingroup Naviframe
              */
              params {
-                  @in func: Elm_Naviframe_Item_Pop_Cb @nullable; /*@ The callback function */
-                  @in data: void * @optional; /*@ Data to be passed to func call */
+                  @in Elm_Naviframe_Item_Pop_Cb func; /*@ The callback function */
+                  @in void *data; /*@ Data to be passed to func call */
              }
         }
    }
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm.Widget_Item.signal_emit;
-        Elm.Widget_Item.part_text.set;
-        Elm.Widget_Item.part_text.get;
-        Elm.Widget_Item.part_content.get;
-        Elm.Widget_Item.part_content.set;
-        Elm.Widget_Item.part_content_unset;
+        Elm_Widget_Item.signal_emit;
+        Elm_Widget_Item.part_text.set;
+        Elm_Widget_Item.part_text.get;
+        Elm_Widget_Item.part_content.get;
+        Elm_Widget_Item.part_content.set;
+        Elm_Widget_Item.part_content_unset;
    }
 }

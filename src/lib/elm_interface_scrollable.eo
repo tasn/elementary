@@ -3,8 +3,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
    legacy_prefix: null;
    eo_prefix: elm_interface_scrollable;
    data: Elm_Scrollable_Smart_Interface_Data;
-   methods {
-      @property gravity {
+   properties {
+      gravity {
          set {
             /*@ Set scrolling gravity on the scrollable
 
@@ -42,12 +42,12 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            x: double; /*@ Horizontal scrolling gravity */
-            y: double; /*@ Vertical scrolling gravity */
+            double x; /*@ Horizontal scrolling gravity */
+            double y; /*@ Vertical scrolling gravity */
          }
       }
-      @property bounce_allow {
-         /*@ @brief Bouncing behavior
+      bounce_allow {
+         /* @brief Bouncing behavior
           *
           * When scrolling, the scroller may "bounce" when reaching an edge of the
           * content object. This is a visual way to indicate the end has been reached.
@@ -61,13 +61,13 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          get {
          }
          values {
-            horiz: bool; /*@ Horizontal bounce policy. */
-            vert: bool; /*@ Vertical bounce policy. */
+            bool horiz; /*@ Horizontal bounce policy. */
+            bool vert; /*@ Vertical bounce policy. */
          }
       }
-      @property wheel_disabled {
+      wheel_disabled {
          set {
-              /*@ @brief Set Wheel disable
+              /* @brief Set Wheel disable
                * Enable or disable mouse wheel to be used to scroll the scroller content.
                * Wheel is enabled by default.
                *
@@ -75,17 +75,17 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
                */
          }
          get {
-              /*@ @brief Get Wheel disable
+              /* @brief Get Wheel disable
                * Get a value whether wheel to be used to scroll the scroller content.
                *
                * @ingroup Widget
                */
          }
          values {
-            disabled: bool;
+            bool disabled;
          }
       }
-      @property movement_block {
+      movement_block {
          /*@
           * @brief Blocking of scrolling (per axis)
           *
@@ -109,10 +109,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          get {
          }
          values {
-            block: Elm_Scroller_Movement_Block; /*@ Which axis (or axes) to block */
+            Elm_Scroller_Movement_Block block; /*@ Which axis (or axes) to block */
          }
       }
-      @property momentum_animator_disabled {
+      momentum_animator_disabled {
          set {
             /*@ No description supplied by the EAPI. */
          }
@@ -120,10 +120,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            disabled: bool;
+            bool disabled;
          }
       }
-      @property policy {
+      policy {
          /*@
           * @brief Scrollbar visibility policy
           *
@@ -139,11 +139,11 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          get {
          }
          values {
-            hbar: Elm.Scroller.Policy; /*@ Horizontal scrollbar policy */
-            vbar: Elm.Scroller.Policy; /*@ Vertical scrollbar policy */
+            Elm_Scroller_Policy hbar; /*@ Horizontal scrollbar policy */
+            Elm_Scroller_Policy vbar; /*@ Vertical scrollbar policy */
          }
       }
-      @property content_region {
+      content_region {
          /*@
           * @brief Currently visible content region
           *
@@ -162,13 +162,13 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          get {
          }
          values {
-            x: Evas_Coord; /*@ X coordinate of the region */
-            y: Evas_Coord; /*@ Y coordinate of the region */
-            w: Evas_Coord; /*@ Width of the region */
-            h: Evas_Coord; /*@ Height of the region */
+            Evas_Coord x; /*@ X coordinate of the region */
+            Evas_Coord y; /*@ Y coordinate of the region */
+            Evas_Coord w; /*@ Width of the region */
+            Evas_Coord h; /*@ Height of the region */
          }
       }
-      @property repeat_events {
+      repeat_events {
          set {
             /*@ It decides whether the scrollable object propagates the events to content object or not. */
          }
@@ -176,10 +176,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ It gets whether the scrollable object propagates the events to content object or not. */
          }
          values {
-            repeat_events: bool;
+            bool repeat_events;
          }
       }
-      @property page_size {
+      page_size {
          /*@
           * @brief Scroll page size relative to viewport size.
           *
@@ -201,11 +201,11 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          get {
          }
          values {
-            x: Evas_Coord; /*@ The horizontal page relative size */
-            y: Evas_Coord; /*@ The vertical page relative size */
+            Evas_Coord x; /*@ The horizontal page relative size */
+            Evas_Coord y; /*@ The vertical page relative size */
          }
       }
-      @property bounce_animator_disabled {
+      bounce_animator_disabled {
          set {
             /*@ No description supplied by the EAPI. */
          }
@@ -213,10 +213,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            disabled: bool;
+            bool disabled;
          }
       }
-      @property page_scroll_limit {
+      page_scroll_limit {
          set {
             /*@ No description supplied by the EAPI. */
          }
@@ -224,11 +224,11 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            page_limit_h: int;
-            page_limit_v: int;
+            int page_limit_h;
+            int page_limit_v;
          }
       }
-      @property page_snap_allow {
+      page_snap_allow {
          /*@
           * @brief Page snapping behavior
           *
@@ -251,11 +251,11 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          get {
          }
          values {
-            horiz: bool; /*@ Allow snap horizontally */
-            vert: bool;  /*@ Allow snap vertically */
+            bool horiz; /*@ Allow snap horizontally */
+            bool vert;  /*@ Allow snap vertically */
          }
       }
-      @property paging {
+      paging {
          set {
             /*@ No description supplied by the EAPI. */
          }
@@ -263,13 +263,13 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            pagerel_h: double;
-            pagerel_v: double;
-            pagesize_h: Evas_Coord;
-            pagesize_v: Evas_Coord;
+            double pagerel_h;
+            double pagerel_v;
+            Evas_Coord pagesize_h;
+            Evas_Coord pagesize_v;
          }
       }
-      @property single_direction {
+      single_direction {
          /*@
           * @brief Single direction scroll configuration
           *
@@ -291,10 +291,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          get {
          }
          values {
-            single_dir: Elm_Scroller_Single_Direction; /*@ The single direction scroll policy */
+            Elm_Scroller_Single_Direction single_dir; /*@ The single direction scroll policy */
          }
       }
-      @property step_size {
+      step_size {
          set {
             /*@ No description supplied by the EAPI. */
          }
@@ -302,11 +302,11 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            x: Evas_Coord;
-            y: Evas_Coord;
+            Evas_Coord x;
+            Evas_Coord y;
          }
       }
-      @property loop {
+      loop {
          set {
             /*@ Sets an infinite loop for a scroller.
 
@@ -328,11 +328,11 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            loop_h: bool; /*@ The scrolling horizontal loop */
-            loop_v: bool; /*@ The scrolling vertical loop */
+            Eina_Bool loop_h; /*@ The scrolling horizontal loop */
+            Eina_Bool loop_v; /*@ The scrolling vertical loop */
          }
       }
-      @property scroll_up_cb {
+      scroll_up_cb {
          set {
             /*@ Set the callback to run when the content has been moved up.
 
@@ -341,10 +341,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            scroll_up_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb scroll_up_cb; /*@ The callback */
          }
       }
-      @property hbar_drag_cb {
+      hbar_drag_cb {
          set {
             /*@ Set the callback to run when the horizontal scrollbar is dragged.
 
@@ -353,10 +353,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            hbar_drag_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb hbar_drag_cb; /*@ The callback */
          }
       }
-      @property drag_start_cb {
+      drag_start_cb {
          set {
             /*@ Set the callback to run when dragging of the contents has started.
 
@@ -365,26 +365,26 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            drag_start_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb drag_start_cb; /*@ The callback */
          }
       }
-      @property freeze {
+      freeze {
          set {
             /*@ No description supplied by the EAPI. */
          }
          values {
-            freeze: bool;
+            bool freeze;
          }
       }
-      @property content_viewport_resize_cb {
+      content_viewport_resize_cb {
          set {
             /*@ When the viewport is resized, the callback is called. */
          }
          values {
-            viewport_resize_cb: Elm_Interface_Scrollable_Resize_Cb @nullable;
+            Elm_Interface_Scrollable_Resize_Cb viewport_resize_cb;
          }
       }
-      @property scroll_left_cb {
+      scroll_left_cb {
          set {
             /*@ Set the callback to run when the content has been moved to the left
 
@@ -393,10 +393,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            scroll_left_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb scroll_left_cb; /*@ The callback */
          }
       }
-      @property vbar_press_cb {
+      vbar_press_cb {
          set {
             /*@ Set the callback to run when the vertical scrollbar is pressed.
 
@@ -405,10 +405,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            vbar_press_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb vbar_press_cb; /*@ The callback */
          }
       }
-      @property hbar_press_cb {
+      hbar_press_cb {
          set {
             /*@ Set the callback to run when the horizontal scrollbar is pressed.
 
@@ -417,10 +417,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            hbar_press_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb hbar_press_cb; /*@ The callback */
          }
       }
-      @property hbar_unpress_cb {
+      hbar_unpress_cb {
          set {
             /*@ Set the callback to run when the horizontal scrollbar is unpressed.
 
@@ -429,10 +429,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            hbar_unpress_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb hbar_unpress_cb; /*@ The callback */
          }
       }
-      @property drag_stop_cb {
+      drag_stop_cb {
          set {
             /*@ Set the callback to run when dragging of the contents has stopped.
              *
@@ -442,18 +442,18 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            drag_stop_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb drag_stop_cb; /*@ The callback */
          }
       }
-      @property extern_pan {
+      extern_pan {
          set {
             /*@ No description supplied by the EAPI. */
          }
          values {
-            pan: Evas_Object * @nullable;
+            Evas_Object *pan;
          }
       }
-      @property page_change_cb {
+      page_change_cb {
          set {
             /*@ Set the callback to run when the visible page changes.
 
@@ -462,18 +462,18 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            page_change_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb page_change_cb; /*@ The callback */
          }
       }
-      @property hold {
+      hold {
          set {
             /*@ No description supplied by the EAPI. */
          }
          values {
-            hold: bool;
+            bool hold;
          }
       }
-      @property animate_start_cb {
+      animate_start_cb {
          set {
             /*@ Set the callback to run when the scrolling animation has started.
 
@@ -482,10 +482,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            animate_start_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb animate_start_cb; /*@ The callback */
          }
       }
-      @property scroll_down_cb {
+      scroll_down_cb {
          set {
             /*@ Set the callback to run when the content has been moved down.
 
@@ -494,19 +494,19 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            scroll_down_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb scroll_down_cb; /*@ The callback */
          }
       }
-      @property page_relative {
+      page_relative {
          set {
             /*@ Set scroll page size relative to viewport size. */
          }
          values {
-            h_pagerel: double;
-            v_pagerel: double;
+            double h_pagerel;
+            double v_pagerel;
          }
       }
-      @property scroll_cb {
+      scroll_cb {
          set {
             /*@ Set the callback to run when the content has been moved.
 
@@ -515,10 +515,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            scroll_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb scroll_cb; /*@ The callback */
          }
       }
-      @property animate_stop_cb {
+      animate_stop_cb {
          set {
             /*@ Set the callback to run when the scrolling animation has stopped.
 
@@ -527,26 +527,26 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            animate_stop_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb animate_stop_cb; /*@ The callback */
          }
       }
-      @property mirrored {
+      mirrored {
          set {
             /*@ No description supplied by the EAPI. */
          }
          values {
-            mirrored: bool;
+            bool mirrored;
          }
       }
-      @property content_min_limit_cb {
+      content_min_limit_cb {
          set {
             /*@ No description supplied by the EAPI. */
          }
          values {
-            min_limit_cb: Elm_Interface_Scrollable_Min_Limit_Cb @nullable;
+            Elm_Interface_Scrollable_Min_Limit_Cb min_limit_cb;
          }
       }
-      @property scroll_right_cb {
+      scroll_right_cb {
          set {
             /*@ Set the callback to run when the content has been moved to the right.
 
@@ -555,18 +555,18 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            scroll_right_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb scroll_right_cb; /*@ The callback */
          }
       }
-      @property content {
+      content {
          set {
             /*@ No description supplied by the EAPI. */
          }
          values {
-            content: Evas_Object * @nullable;
+            Evas_Object *content;
          }
       }
-      @property edge_left_cb {
+      edge_left_cb {
          set {
             /*@ Set the callback to run when the left edge of the content has been reached.
 
@@ -575,10 +575,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            edge_left_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb edge_left_cb; /*@ The callback */
          }
       }
-      @property vbar_drag_cb {
+      vbar_drag_cb {
          set {
             /*@ Set the callback to run when the horizontal scrollbar is dragged.
 
@@ -587,10 +587,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            vbar_drag_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb vbar_drag_cb; /*@ The callback */
          }
       }
-      @property vbar_unpress_cb {
+      vbar_unpress_cb {
          set {
             /*@ Set the callback to run when the horizontal scrollbar is unpressed.
 
@@ -599,10 +599,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            vbar_unpress_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb vbar_unpress_cb; /*@ The callback */
          }
       }
-      @property edge_bottom_cb {
+      edge_bottom_cb {
          set {
             /*@ Set the callback to run when the bottom edge of the content has been reached.
 
@@ -611,10 +611,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            edge_bottom_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb edge_bottom_cb; /*@ The callback */
          }
       }
-      @property edge_right_cb {
+      edge_right_cb {
          set {
             /*@ Set the callback to run when the right edge of the content has been reached.
 
@@ -623,10 +623,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            edge_right_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb edge_right_cb; /*@ The callback */
          }
       }
-      @property edge_top_cb {
+      edge_top_cb {
          set {
             /*@ Set the callback to run when the top edge of the content has been reached.
 
@@ -635,19 +635,19 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            edge_top_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            Elm_Interface_Scrollable_Cb edge_top_cb; /*@ The callback */
          }
       }
-      @property objects {
+      objects {
          set {
             /*@ No description supplied by the EAPI. */
          }
          values {
-            edje_object: Evas_Object *;
-            hit_rectangle: Evas_Object *;
+            Evas_Object *edje_object;
+            Evas_Object *hit_rectangle;
          }
       }
-      @property last_page {
+      last_page {
          get {
             /*@ Get scroll last page number.
 
@@ -662,11 +662,11 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            pagenumber_h: int; /*@ The horizontal page number */
-            pagenumber_v: int; /*@ The vertical page number */
+            int pagenumber_h; /*@ The horizontal page number */
+            int pagenumber_v; /*@ The vertical page number */
          }
       }
-      @property current_page {
+      current_page {
          get {
             /*@ Get scroll current page number.
 
@@ -683,22 +683,22 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            pagenumber_h: int; /*@ The horizontal page number */
-            pagenumber_v: int; /*@ The vertical page number */
+            int pagenumber_h; /*@ The horizontal page number */
+            int pagenumber_v; /*@ The vertical page number */
          }
       }
-      @property content_viewport_geometry {
+      content_viewport_geometry {
          get {
             /*@ No description supplied by the EAPI. */
          }
          values {
-            x: Evas_Coord;
-            y: Evas_Coord;
-            w: Evas_Coord;
-            h: Evas_Coord;
+            Evas_Coord x;
+            Evas_Coord y;
+            Evas_Coord w;
+            Evas_Coord h;
          }
       }
-      @property content_size {
+      content_size {
          get {
             /*@ Get the size of the content object
 
@@ -708,24 +708,26 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            w: Evas_Coord; /*@ Width of the content object. */
-            h: Evas_Coord; /*@ Height of the content object. */
+            Evas_Coord w; /*@ Width of the content object. */
+            Evas_Coord h; /*@ Height of the content object. */
 
          }
       }
+   }
+   methods {
       content_pos_set {
          /*@ No description supplied by the EAPI. */
          params {
-            @in x: Evas_Coord;
-            @in y: Evas_Coord;
-            @in sig: bool;
+            @in Evas_Coord x;
+            @in Evas_Coord y;
+            @in bool sig;
          }
       }
       content_pos_get {
          /*@ No description supplied by the EAPI. */
          params {
-            @out x: Evas_Coord;
-            @out y: Evas_Coord;
+            @out Evas_Coord x;
+            @out Evas_Coord y;
          }
       }
       page_show {
@@ -739,8 +741,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
           @ingroup Widget
           */
          params {
-            @in pagenumber_h: int; /*@ The horizontal page number */
-            @in pagenumber_v: int; /*@ The vertical page number */
+            @in int pagenumber_h; /*@ The horizontal page number */
+            @in int pagenumber_v; /*@ The vertical page number */
          }
       }
       region_bring_in {
@@ -759,10 +761,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
           @ingroup Widget
           */
          params {
-            @in x: Evas_Coord; /*@ X coordinate of the region */
-            @in y: Evas_Coord; /*@ Y coordinate of the region */
-            @in w: Evas_Coord; /*@ Width of the region */
-            @in h: Evas_Coord; /*@ Height of the region */
+            @in Evas_Coord x; /*@ X coordinate of the region */
+            @in Evas_Coord y; /*@ Y coordinate of the region */
+            @in Evas_Coord w; /*@ Width of the region */
+            @in Evas_Coord h; /*@ Height of the region */
          }
       }
       page_bring_in {
@@ -776,8 +778,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
           @ingroup Scroller
           */
          params {
-            @in pagenumber_h: int; /*@ The horizontal page number */
-            @in pagenumber_v: int; /*@ The vertical page number */
+            @in int pagenumber_h; /*@ The horizontal page number */
+            @in int pagenumber_v; /*@ The vertical page number */
          }
       }
       content_region_show {
@@ -790,10 +792,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
           @ingroup Widget
           */
          params {
-            @in x: Evas_Coord; /*@ X coordinate of the region */
-            @in y: Evas_Coord; /*@ Y coordinate of the region */
-            @in w: Evas_Coord; /*@ Width of the region */
-            @in h: Evas_Coord; /*@ Height of the region */
+            @in Evas_Coord x; /*@ X coordinate of the region */
+            @in Evas_Coord y; /*@ Y coordinate of the region */
+            @in Evas_Coord w; /*@ Width of the region */
+            @in Evas_Coord h; /*@ Height of the region */
          }
       }
       content_min_limit {
@@ -807,8 +809,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
           @ingroup Widget
           */
          params {
-            @in w: bool; /*@ whether to limit the minimum horizontal size */
-            @in h: bool; /*@ whether to limit the minimum vertical size */
+            @in bool w; /*@ whether to limit the minimum horizontal size */
+            @in bool h; /*@ whether to limit the minimum vertical size */
          }
       }
    }

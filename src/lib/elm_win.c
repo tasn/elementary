@@ -176,7 +176,6 @@ struct _Elm_Win_Data
    const char  *title;
    const char  *icon_name;
    const char  *role;
-   Eina_Stringshare *name;
 
    Evas_Object *main_menu;
 
@@ -196,12 +195,6 @@ struct _Elm_Win_Data
    } wm_rot;
 
    void *trap_data;
-
-   struct
-     {
-        Ecore_Animator *obj;
-        unsigned short wants;
-     } animator;
 
    double       aspect;
    int          size_base_w, size_base_h;
@@ -1043,12 +1036,6 @@ _elm_win_focus_in(Ecore_Evas *ee)
         edje_object_signal_emit(sd->frame_obj, "elm,action,focus", "elm");
      }
 
-   if (_elm_config->atspi_mode)
-     {
-        eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED, NULL));
-        elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_ACTIVE, EINA_TRUE);
-     }
-
    /* do nothing */
    /* else if (sd->img_obj) */
    /*   { */
@@ -1077,12 +1064,6 @@ _elm_win_focus_out(Ecore_Evas *ee)
 
    /* access */
    _elm_access_object_highlight_disable(evas_object_evas_get(obj));
-
-   if (_elm_config->atspi_mode)
-     {
-        eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED, NULL));
-        elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_ACTIVE, EINA_FALSE);
-     }
 
    /* do nothing */
    /* if (sd->img_obj) */
@@ -1275,17 +1256,9 @@ _elm_win_state_change(Ecore_Evas *ee)
         if (sd->withdrawn)
           evas_object_smart_callback_call(obj, SIG_WITHDRAWN, NULL);
         else if (sd->iconified)
-          {
-             evas_object_smart_callback_call(obj, SIG_ICONIFIED, NULL);
-             if (_elm_config->atspi_mode)
-               eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MINIMIZED, NULL));
-          }
+          evas_object_smart_callback_call(obj, SIG_ICONIFIED, NULL);
         else
-          {
-             evas_object_smart_callback_call(obj, SIG_NORMAL, NULL);
-             if (_elm_config->atspi_mode)
-               eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_RESTORED, NULL));
-          }
+          evas_object_smart_callback_call(obj, SIG_NORMAL, NULL);
      }
    if (ch_sticky)
      {
@@ -1317,17 +1290,9 @@ _elm_win_state_change(Ecore_Evas *ee)
    if (ch_maximized)
      {
         if (sd->maximized)
-          {
-             evas_object_smart_callback_call(obj, SIG_MAXIMIZED, NULL);
-             if (_elm_config->atspi_mode)
-               eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MAXIMIZED, NULL));
-          }
+          evas_object_smart_callback_call(obj, SIG_MAXIMIZED, NULL);
         else
-          {
-             evas_object_smart_callback_call(obj, SIG_UNMAXIMIZED, NULL);
-             if (_elm_config->atspi_mode)
-               eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_RESTORED, NULL));
-          }
+          evas_object_smart_callback_call(obj, SIG_UNMAXIMIZED, NULL);
      }
    if (ch_profile)
      {
@@ -1496,9 +1461,6 @@ _elm_win_evas_object_smart_show(Eo *obj, Elm_Win_Data *sd)
    TRAP(sd, show);
 
    if (sd->shot.info) _shot_handle(sd);
-
-   if (_elm_config->atspi_mode)
-     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, NULL));
 }
 
 EOLIAN static void
@@ -1534,8 +1496,6 @@ _elm_win_evas_object_smart_hide(Eo *obj, Elm_Win_Data *sd)
         ecore_evas_hide(sd->pointer.ee);
 #endif
      }
-   if (_elm_config->atspi_mode)
-     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED, NULL));
 }
 
 static void
@@ -1840,7 +1800,6 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
    eina_stringshare_del(sd->title);
    eina_stringshare_del(sd->icon_name);
    eina_stringshare_del(sd->role);
-   eina_stringshare_del(sd->name);
    evas_object_del(sd->icon);
    evas_object_del(sd->main_menu);
 
@@ -1982,8 +1941,6 @@ _elm_win_delete_request(Ecore_Evas *ee)
    evas_object_ref(obj);
    evas_object_smart_callback_call(obj, SIG_DELETE_REQUEST, NULL);
    // FIXME: if above callback deletes - then the below will be invalid
-   if (_elm_config->atspi_mode)
-     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED, NULL));
    if (autodel) evas_object_del(obj);
    else sd->autodel_clear = NULL;
    evas_object_unref(obj);
@@ -2785,8 +2742,6 @@ _elm_win_frame_cb_close(void *data,
    evas_object_ref(win);
    evas_object_smart_callback_call(win, SIG_DELETE_REQUEST, NULL);
    // FIXME: if above callback deletes - then the below will be invalid
-   if (_elm_config->atspi_mode)
-     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED, NULL));
    if (autodel) evas_object_del(win);
    else sd->autodel_clear = NULL;
    evas_object_unref(win);
@@ -2997,9 +2952,7 @@ elm_win_add(Evas_Object *parent,
             const char *name,
             Elm_Win_Type type)
 {
-   Evas_Object *obj = eo_add(MY_CLASS, parent,
-                             elm_obj_win_name_set(name),
-                             elm_obj_win_type_set(type));
+   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_win_constructor(name, type));
    return obj;
 }
 
@@ -3008,8 +2961,7 @@ elm_win_fake_add(Ecore_Evas *ee)
 {
    return eo_add(MY_CLASS, NULL,
          elm_obj_win_fake_canvas_set(ee),
-         elm_obj_win_name_set(NULL),
-         elm_obj_win_type_set(ELM_WIN_FAKE));
+         elm_obj_win_constructor(NULL, ELM_WIN_FAKE));
 }
 
 static void
@@ -3107,61 +3059,8 @@ _accel_is_gl(void)
    return EINA_FALSE;
 }
 
-static Eina_Bool
-_animator_tick_cb(void *_obj)
-{
-   Elm_Win *obj = _obj;
-   eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_ANIMATOR_TICK, NULL));
-
-   return ECORE_CALLBACK_RENEW;
-}
-
-static Eina_Bool
-_cb_added(void *_data,
-          Eo *obj,
-          const Eo_Event_Description *desc EINA_UNUSED,
-          void *event_info)
-{
-   const Eo_Callback_Array_Item *event = event_info;
-   Elm_Win_Data *data = _data;
-
-   if (event->desc == ELM_WIN_EVENT_ANIMATOR_TICK)
-     {
-        data->animator.wants++;
-        if (data->animator.wants == 1)
-          {
-             data->animator.obj = eo_add(ECORE_ANIMATOR_CLASS, obj,
-                   ecore_animator_constructor(_animator_tick_cb, obj));
-          }
-     }
-
-   return EO_CALLBACK_CONTINUE;
-}
-
-static Eina_Bool
-_cb_deled(void *_data,
-          Eo *obj EINA_UNUSED,
-          const Eo_Event_Description *desc EINA_UNUSED,
-          void *event_info)
-{
-   const Eo_Callback_Array_Item *event = event_info;
-   Elm_Win_Data *data = _data;
-
-   if (event->desc == ELM_WIN_EVENT_ANIMATOR_TICK)
-     {
-        data->animator.wants--;
-        if (data->animator.wants == 0)
-          {
-             eo_del(data->animator.obj);
-             data->animator.obj = NULL;
-          }
-     }
-
-   return EO_CALLBACK_CONTINUE;
-}
-
-static void
-_elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type type)
+EOLIAN static void
+_elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type type)
 {
    sd->obj = obj; // in ctor
 
@@ -3628,7 +3527,6 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
      }
 
    TRAP(sd, name_class_set, name, _elm_appname);
-   TRAP(sd, title_set, sd->title);
    ecore_evas_callback_delete_request_set(sd->ee, _elm_win_delete_request);
    ecore_evas_callback_state_change_set(sd->ee, _elm_win_state_change);
    ecore_evas_callback_focus_in_set(sd->ee, _elm_win_focus_in);
@@ -3733,12 +3631,10 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
    if (_elm_config->atspi_mode == ELM_ATSPI_MODE_ON)
      {
         elm_interface_atspi_accessible_children_changed_added_signal_emit(_elm_atspi_bridge_root_get(), obj);
+        eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, NULL));
      }
 
    evas_object_show(sd->edje);
-
-   eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_ADD, _cb_added, sd),
-         eo_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deled, sd));
 }
 
 EOLIAN static void
@@ -3747,48 +3643,16 @@ _elm_win_eo_base_constructor(Eo *obj EINA_UNUSED, Elm_Win_Data *_pd EINA_UNUSED)
    /* Do nothing. */
 }
 
-EOLIAN static Eo *
-_elm_win_eo_base_finalize(Eo *obj, Elm_Win_Data *_pd)
-{
-   _elm_win_finalize_internal(obj, _pd, _pd->name, _pd->type);
-   eo_do_super(obj, MY_CLASS, obj = eo_finalize());
-   return obj;
-}
-
 EOLIAN static void
 _elm_win_fake_canvas_set(Eo *obj EINA_UNUSED, Elm_Win_Data *pd, Ecore_Evas *oee)
 {
    pd->ee = oee;
 }
 
-EOLIAN static void
-_elm_win_type_set(Eo *obj, Elm_Win_Data *sd, Elm_Win_Type type)
-{
-   Eina_Bool finalized;
-   if (eo_do_ret(obj, finalized, eo_finalized_get()))
-     {
-        ERR("This function is only allowed during construction.");
-        return;
-     }
-   sd->type = type;
-}
-
 EOLIAN static Elm_Win_Type
 _elm_win_type_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
    return sd->type;
-}
-
-EOLIAN static void
-_elm_win_name_set(Eo *obj, Elm_Win_Data *sd, const char *name)
-{
-   Eina_Bool finalized;
-   if (eo_do_ret(obj, finalized, eo_finalized_get()))
-     {
-        ERR("This function is only allowed during construction.");
-        return;
-     }
-   sd->name = eina_stringshare_add(name);
 }
 
 EOLIAN static void
@@ -3880,8 +3744,7 @@ _elm_win_title_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *title)
 {
    if (!title) return;
    eina_stringshare_replace(&(sd->title), title);
-   if (sd->ee)
-     TRAP(sd, title_set, sd->title);
+   TRAP(sd, title_set, sd->title);
    if (sd->frame_obj)
      edje_object_part_text_escaped_set
        (sd->frame_obj, "elm.text.title", sd->title);
@@ -5017,43 +4880,6 @@ _elm_win_illume_command_send(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Elm_Illume_C
 #endif
 }
 
-EOLIAN static Eina_Bool
-_elm_win_keygrab_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *key, Evas_Modifier_Mask modifiers EINA_UNUSED, Evas_Modifier_Mask not_modifiers EINA_UNUSED, int priority EINA_UNUSED, Elm_Win_Keygrab_Mode grab_mode)
-{
-   Eina_Bool ret = EINA_FALSE;
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     {
-        if (grab_mode == ELM_WIN_KEYGRAB_SHARED)
-          ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, ECORE_X_WIN_KEYGRAB_SHARED);
-        else if (grab_mode == ELM_WIN_KEYGRAB_TOPMOST)
-          ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, ECORE_X_WIN_KEYGRAB_TOPMOST);
-        else if (grab_mode == ELM_WIN_KEYGRAB_EXCLUSIVE)
-          ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, ECORE_X_WIN_KEYGRAB_EXCLUSIVE);
-        else if (grab_mode == ELM_WIN_KEYGRAB_OVERRIDE_EXCLUSIVE)
-          ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, ECORE_X_WIN_KEYGRAB_EXCLUSIVE);
-     }
-   return ret;
-#else
-   return ret;
-#endif
-}
-
-EOLIAN static Eina_Bool
-_elm_win_keygrab_unset(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *key, Evas_Modifier_Mask modifiers EINA_UNUSED, Evas_Modifier_Mask not_modifiers EINA_UNUSED)
-{
-   Eina_Bool ret = EINA_FALSE;
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     ret = ecore_x_window_keygrab_unset(sd->x.xwin, key, 0, 0);
-   return ret;
-#else
-   return ret;
-#endif
-}
-
 EOLIAN static Evas_Object*
 _elm_win_inlined_image_object_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
@@ -5421,18 +5247,6 @@ _elm_win_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, 
           { NULL, NULL, NULL, NULL }
    };
    return &atspi_actions[0];
-}
-
-EOLIAN static Elm_Atspi_State_Set
-_elm_win_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Win_Data *sd EINA_UNUSED)
-{
-   Elm_Atspi_State_Set ret;
-   eo_do_super(obj, MY_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
-
-   if (elm_win_focus_get(obj))
-     STATE_TYPE_SET(ret, ELM_ATSPI_STATE_ACTIVE);
-
-   return ret;
 }
 
 #include "elm_win.eo.c"

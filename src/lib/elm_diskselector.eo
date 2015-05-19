@@ -1,9 +1,9 @@
-class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
+class Elm_Diskselector (Elm_Widget, Elm_Interface_Scrollable,
                         Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_diskselector;
-   methods {
-      @property side_text_max_length {
+   properties {
+      side_text_max_length {
          set {
             /*@
             Set the side labels max length.
@@ -39,10 +39,10 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Diskselector */
          }
          values {
-            len: int; /*@ The max length defined for side labels. */
+            int len; /*@ The max length defined for side labels. */
          }
       }
-      @property round_enabled {
+      round_enabled {
          set {
             /*@
             Enable or disable round mode.
@@ -67,11 +67,11 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Diskselector */
          }
          values {
-            enabled: bool; /*@ @c EINA_TRUE to enable round mode or @c EINA_FALSE to
+            bool enabled; /*@ @c EINA_TRUE to enable round mode or @c EINA_FALSE to
             disable it. */
          }
       }
-      @property display_item_num {
+      display_item_num {
          set {
             /*@
             Set the number of items to be displayed.
@@ -97,10 +97,10 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Diskselector */
          }
          values {
-            num: int; /*@ The number of items the diskselector will display. */
+            int num; /*@ The number of items the diskselector will display. */
          }
       }
-      @property first_item {
+      first_item {
          get {
             /*@
             Get the first item of the diskselector.
@@ -117,7 +117,7 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             return: Elm_Object_Item *;
          }
       }
-      @property items {
+      items {
          get {
             /*@
             Get a list of all the diskselector items.
@@ -130,10 +130,10 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             @see elm_diskselector_clear()
 
             @ingroup Diskselector */
-            return: const(list<Elm.Object.Item*>)*;
+            return: const(list)*;
          }
       }
-      @property last_item {
+      last_item {
          get {
             /*@
             Get the last item of the diskselector.
@@ -150,7 +150,7 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             return: Elm_Object_Item *;
          }
       }
-      @property selected_item {
+      selected_item {
          get {
             /*@
             Get the selected item.
@@ -170,6 +170,8 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             return: Elm_Object_Item *;
          }
       }
+   }
+   methods {
       item_append {
          /*@
          Appends a new item to the diskselector object.
@@ -212,12 +214,12 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in label: const(char)*; /*@ The label of the diskselector item. */
-            @in icon: Evas_Object * @optional; /*@ The icon object to use at left side of the item. An
+            @in const(char)* label; /*@ The label of the diskselector item. */
+            @in Evas_Object *icon; /*@ The icon object to use at left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
-            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is selected. */
-            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
+            @in Evas_Smart_Cb func; /*@ The function to call when the item is selected. */
+            @in const(void)* data; /*@ The data to associate with the item for related callbacks. */
          }
       }
       clear {
@@ -239,14 +241,14 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Evas.Object_Smart.resize;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.access;
-      Elm.Widget.focus_next;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus;
-      Elm.Widget.translate;
-      Elm.Widget.sub_object_del;
-      Elm.Widget.event;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.access;
+      Elm_Widget.focus_next;
+      Elm_Widget.theme_apply;
+      Elm_Widget.on_focus;
+      Elm_Widget.translate;
+      Elm_Widget.sub_object_del;
+      Elm_Widget.event;
       Elm_Interface_Scrollable.policy;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }

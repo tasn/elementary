@@ -1,8 +1,8 @@
-class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Widget_Action)
+class Elm_Spinner (Elm_Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_spinner;
-   methods {
-      @property min_max {
+   properties {
+      min_max {
          set {
             /*@
             Set the minimum and maximum values for the spinner.
@@ -33,11 +33,11 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            min: double; /*@ The minimum value. */
-            max: double; /*@ The maximum value. */
+            double min; /*@ The minimum value. */
+            double max; /*@ The maximum value. */
          }
       }
-      @property step {
+      step {
          set {
             /*@
             Set the step used to increment or decrement the spinner value.
@@ -66,10 +66,10 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            step: double; /*@ The step value. */
+            double step; /*@ The step value. */
          }
       }
-      @property wrap {
+      wrap {
          set {
             /*@
             Set whether the spinner should wrap when it reaches its
@@ -115,11 +115,11 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            wrap: bool; /*@ @c EINA_TRUE to enable wrap or @c EINA_FALSE to
+            bool wrap; /*@ @c EINA_TRUE to enable wrap or @c EINA_FALSE to
             disable it. */
          }
       }
-      @property interval {
+      interval {
          set {
             /*@
             Set the interval on time updates for an user mouse button hold
@@ -155,10 +155,10 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            interval: double; /*@ The (first) interval value in seconds. */
+            double interval; /*@ The (first) interval value in seconds. */
          }
       }
-      @property round {
+      round {
          set {
             /*@
             Set the round value for rounding
@@ -184,10 +184,10 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            rnd: int; /*@ The rounding value */
+            int rnd; /*@ The rounding value */
          }
       }
-      @property editable {
+      editable {
          set {
             /*@
             Set whether the spinner can be directly edited by the user or not.
@@ -218,11 +218,11 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            editable: bool; /*@ @c EINA_TRUE to allow users to edit it or @c EINA_FALSE to
+            bool editable; /*@ @c EINA_TRUE to allow users to edit it or @c EINA_FALSE to
             don't allow users to edit it directly. */
          }
       }
-      @property base {
+      base {
          set {
             /*@
             Set the base for rounding
@@ -261,10 +261,10 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            base: double; /*@ The base value */
+            double base; /*@ The base value */
          }
       }
-      @property value {
+      value {
          set {
             /*@
             Set the value the spinner displays.
@@ -292,10 +292,10 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            val: double; /*@ The value to be displayed. */
+            double val; /*@ The value to be displayed. */
          }
       }
-      @property label_format {
+      label_format {
          set {
             /*@
             Set the format string of the displayed label.
@@ -325,9 +325,11 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            fmt: const(char)* @nullable; /*@ The format string for the label display. */
+            const(char)* fmt; /*@ The format string for the label display. */
          }
       }
+   }
+   methods {
       special_value_add {
          /*@
          Set a special string to display in the place of the numerical value.
@@ -354,8 +356,8 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
          @ingroup Spinner */
 
          params {
-            @in value: double; /*@ The value to be replaced. */
-            @in label: const(char)*; /*@ The label to be used. */
+            @in double value; /*@ The value to be replaced. */
+            @in const(char)* label; /*@ The label to be used. */
          }
       }
    }
@@ -364,15 +366,15 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.access;
-      Elm.Widget.focus_next;
-      Elm.Widget.focus_direction;
-      Elm.Widget.on_focus;
-      Elm.Widget.event;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.access;
+      Elm_Widget.focus_next;
+      Elm_Widget.focus_direction;
+      Elm_Widget.on_focus;
+      Elm_Widget.event;
+      Elm_Layout.sizing_eval;
       Elm_Interface_Atspi_Accessible.name.get;
       Elm_Interface_Atspi_Value.value_and_text.get;
       Elm_Interface_Atspi_Value.value_and_text.set;

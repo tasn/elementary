@@ -1,50 +1,8 @@
-enum Elm.Flip.Mode
-{
-  /*@
-    @ingroup Flip
-   */
-   legacy: elm_flip;
-   rotate_y_center_axis,
-   rotate_x_center_axis,
-   rotate_xz_center_axis,
-   rotate_yz_center_axis,
-   cube_left,
-   cube_right,
-   cube_up,
-   cube_down,
-   page_left,
-   page_right,
-   page_up,
-   page_down
-}
-
-enum Elm.Flip.Interaction
-{
-  /*@
-    @ingroup Flip
-   */
-   none,
-   rotate,
-   cube,
-   page
-}
-
-enum Elm.Flip.Direction
-{
-  /*@
-    @ingroup Flip
-   */
-   up = 0, /*@< Allows interaction with the top of the widget */
-   down, /*@< Allows interaction with the bottom of the widget */
-   left, /*@< Allows interaction with the left portion of the widget */
-   right /*@< Allows interaction with the right portion of the widget */
-}
-
-class Elm.Flip (Elm.Container)
+class Elm_Flip (Elm_Container)
 {
    eo_prefix: elm_obj_flip;
-   methods {
-      @property interaction {
+   properties {
+      interaction {
          set {
             /*@
             @brief Set the interactive flip mode
@@ -79,10 +37,10 @@ class Elm.Flip (Elm.Container)
             @ingroup Flip */
          }
          values {
-            mode: Elm.Flip.Interaction; /*@ The interactive flip mode to use */
+            Elm_Flip_Interaction mode; /*@ The interactive flip mode to use */
          }
       }
-      @property front_visible {
+      front_visible {
          get {
             /*@
             @brief Get flip front visibility state
@@ -94,6 +52,8 @@ class Elm.Flip (Elm.Container)
             return: bool;
          }
       }
+   }
+   methods {
       interaction_direction_hitsize_set {
          /*@
          @brief Set the amount of the flip that is sensitive to interactive flip
@@ -116,8 +76,8 @@ class Elm.Flip (Elm.Container)
          @ingroup Flip */
 
          params {
-            @in dir: Elm.Flip.Direction; /*@ The hit area to set */
-            @in hitsize: double; /*@ The amount of that dimension (0.0 to 1.0) to use */
+            @in Elm_Flip_Direction dir; /*@ The hit area to set */
+            @in double hitsize; /*@ The amount of that dimension (0.0 to 1.0) to use */
          }
       }
       interaction_direction_hitsize_get {
@@ -133,7 +93,7 @@ class Elm.Flip (Elm.Container)
 
          return: double;
          params {
-            @in dir: Elm.Flip.Direction; /*@ The direction to check */
+            @in Elm_Flip_Direction dir; /*@ The direction to check */
          }
       }
       interaction_direction_enabled_set {
@@ -153,8 +113,8 @@ class Elm.Flip (Elm.Container)
          @ingroup Flip */
 
          params {
-            @in dir: Elm.Flip.Direction; /*@ The direction to change */
-            @in enabled: bool; /*@ If that direction is enabled or not */
+            @in Elm_Flip_Direction dir; /*@ The direction to change */
+            @in bool enabled; /*@ If that direction is enabled or not */
          }
       }
       interaction_direction_enabled_get {
@@ -171,7 +131,7 @@ class Elm.Flip (Elm.Container)
 
          return: bool;
          params {
-            @in dir: Elm.Flip.Direction; /*@ The direction to check */
+            @in Elm_Flip_Direction dir; /*@ The direction to check */
          }
       }
       go {
@@ -223,7 +183,7 @@ class Elm.Flip (Elm.Container)
          @ingroup Flip */
 
          params {
-            @in mode: Elm.Flip.Mode; /*@ The mode type */
+            @in Elm_Flip_Mode mode; /*@ The mode type */
          }
       }
       go_to {
@@ -275,8 +235,8 @@ class Elm.Flip (Elm.Container)
          @ingroup Flip */
 
          params {
-            @in front: bool; /*@ if @c EINA_TRUE, makes front visible, otherwise makes back. */
-            @in mode: Elm.Flip.Mode; /*@ The mode type */
+            @in bool front; /*@ if @c EINA_TRUE, makes front visible, otherwise makes back. */
+            @in Elm_Flip_Mode mode; /*@ The mode type */
          }
       }
    }
@@ -285,16 +245,16 @@ class Elm.Flip (Elm.Container)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.focus_direction;
-      Elm.Widget.sub_object_add;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.sub_object_del;
-      Elm.Container.content_get;
-      Elm.Container.content_set;
-      Elm.Container.content_unset;
+      Elm_Widget.focus_direction;
+      Elm_Widget.sub_object_add;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.sub_object_del;
+      Elm_Container.content_get;
+      Elm_Container.content_set;
+      Elm_Container.content_unset;
    }
    events {
       animate,begin;

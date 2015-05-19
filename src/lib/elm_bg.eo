@@ -1,8 +1,8 @@
-class Elm.Bg (Elm.Layout, Efl.File)
+class Elm_Bg (Elm_Layout, Efl.File)
 {
    eo_prefix: elm_obj_bg;
-   methods {
-      @property option {
+   properties {
+      option {
          set {
             /*@
             Set the mode of display for a given background widget's image
@@ -28,10 +28,10 @@ class Elm.Bg (Elm.Layout, Efl.File)
             @ingroup Bg */
          }
          values {
-            option: Elm_Bg_Option; /*@ The desired background option (see #Elm_Bg_Option) */
+            Elm_Bg_Option option; /*@ The desired background option (see #Elm_Bg_Option) */
          }
       }
-      @property color {
+      color {
          set {
             /*@
             Set the color on a given background widget
@@ -63,13 +63,13 @@ class Elm.Bg (Elm.Layout, Efl.File)
             legacy: null; /* legacy doesn't have 'a' param */
          }
          values {
-            r: int; /*@ The red color component's value */
-            g: int; /*@ The green color component's value */
-            b: int; /*@ The blue color component's value */
-            a: int; /*@ The blue color component's value */
+            int r; /*@ The red color component's value */
+            int g; /*@ The green color component's value */
+            int b; /*@ The blue color component's value */
+            int a; /*@ The blue color component's value */
          }
       }
-      @property load_size {
+      load_size {
          set {
             /*@
             Set the size of the pixmap representation of the image set on a
@@ -91,8 +91,8 @@ class Elm.Bg (Elm.Layout, Efl.File)
             @ingroup Bg */
          }
          values {
-            w: Evas_Coord; /*@ The new width of the image pixmap representation. */
-            h: Evas_Coord; /*@ The new height of the image pixmap representation. */
+            Evas_Coord w; /*@ The new width of the image pixmap representation. */
+            Evas_Coord h; /*@ The new height of the image pixmap representation. */
          }
       }
    }
@@ -100,8 +100,8 @@ class Elm.Bg (Elm.Layout, Efl.File)
       class.constructor;
       Eo.Base.constructor;
       Evas.Object_Smart.add;
-      Elm.Layout.content_aliases.get;
-      Elm.Layout.sizing_eval;
+      Elm_Layout.content_aliases.get;
+      Elm_Layout.sizing_eval;
       Efl.File.file.set;
       Efl.File.file.get;
    }

@@ -722,7 +722,7 @@ _elm_config_user_dir_snprintf(char       *dst,
         else
 #endif
           {
-             home = eina_environment_home_get();
+             home = getenv("HOME");
              if (!home) home = "/";
 #ifdef DOXDG
              user_dir_len = eina_str_join_len

@@ -1,8 +1,8 @@
-class Elm.Hoversel_Item(Elm.Widget_Item)
+class Elm_Hoversel_Item(Elm_Widget_Item)
 {
    eo_prefix: elm_obj_hoversel_item;
-   methods {
-        @property icon {
+   properties {
+        icon {
              get {
                  /*@
                   @brief This sets the icon for the given hoversel item.
@@ -25,20 +25,20 @@ class Elm.Hoversel_Item(Elm.Widget_Item)
                  */
              }
              values {
-                icon_file: const (char) * @nullable; /*@ An image file path on disk to use for the icon or standard icon name */
-                icon_group: const (char) * @nullable; /*@ The edje group to use if @p icon_file is an edje file. Set this to NULL if the icon is not an edje file */
-                icon_type: Elm_Icon_Type; /*@ The icon type */
+                const (char) *icon_file; /*@ An image file path on disk to use for the icon or standard icon name */
+                const (char) *icon_group; /*@ The edje group to use if @p icon_file is an edje file. Set this to NULL if the icon is not an edje file */
+                Elm_Icon_Type icon_type; /*@ The icon type */
              }
         }
+   }
+   methods {
    }
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm.Widget_Item.signal_emit;
-        Elm.Widget_Item.part_text.get;
-        Elm.Widget_Item.style.get;
-        Elm.Widget_Item.style.set;
-        Elm.Widget_Item.focus.set;
-        Elm.Widget_Item.focus.get;
+        Elm_Widget_Item.signal_emit;
+        Elm_Widget_Item.part_text.get;
+        Elm_Widget_Item.style.get;
+        Elm_Widget_Item.style.set;
    }
 }

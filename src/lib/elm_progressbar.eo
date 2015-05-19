@@ -1,8 +1,8 @@
-class Elm.Progressbar (Elm.Layout)
+class Elm_Progressbar (Elm_Layout)
 {
    eo_prefix: elm_obj_progressbar;
-   methods {
-      @property span_size {
+   properties {
+      span_size {
          set {
             /*@
             Set the (exact) length of the bar region of a given progress bar
@@ -36,10 +36,10 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            size: Evas_Coord; /*@ The length of the progress bar's bar region */
+            Evas_Coord size; /*@ The length of the progress bar's bar region */
          }
       }
-      @property pulse {
+      pulse {
          set {
             /*@
             Set whether a given progress bar widget is at "pulsing mode" or
@@ -71,11 +71,11 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            pulse: bool; /*@ @c EINA_TRUE to put @p obj in pulsing mode,
+            bool pulse; /*@ @c EINA_TRUE to put @p obj in pulsing mode,
             @c EINA_FALSE to put it back to its default one */
          }
       }
-      @property value {
+      value {
          set {
             /*@
             Set the progress value (in percentage) on a given progress bar
@@ -101,11 +101,11 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            val: double; /*@ The progress value (@b must be between @c 0.0 and @c
+            double val; /*@ The progress value (@b must be between @c 0.0 and @c
             1.0) */
          }
       }
-      @property inverted {
+      inverted {
          set {
             /*@
             Invert a given progress bar widget's displaying values order
@@ -133,11 +133,11 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            inverted: bool; /*@ Use @c EINA_TRUE to make @p obj inverted,
+            bool inverted; /*@ Use @c EINA_TRUE to make @p obj inverted,
             @c EINA_FALSE to bring it back to default, non-inverted values. */
          }
       }
-      @property horizontal {
+      horizontal {
          set {
             /*@
             Set the orientation of a given progress bar widget
@@ -161,11 +161,11 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            horizontal: bool; /*@ Use @c EINA_TRUE to make @p obj to be
+            bool horizontal; /*@ Use @c EINA_TRUE to make @p obj to be
             @b horizontal, @c EINA_FALSE to make it @b vertical */
          }
       }
-      @property unit_format {
+      unit_format {
          set {
             /*@
             Set the format string for a given progress bar widget's units
@@ -199,10 +199,10 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            units: const(char)* @nullable; /*@ The format string for @p obj's units label */
+            const(char)* units; /*@ The format string for @p obj's units label */
          }
       }
-      @property unit_format_function {
+      unit_format_function {
          set {
             /*@
             Set the format function pointer for the units label
@@ -216,10 +216,12 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            func: progressbar_func_type @nullable; /*@ The unit format function */
-            free_func: progressbar_freefunc_type @optional; /*@ The freeing function for the format string. */
+            progressbar_func_type func; /*@ The unit format function */
+            progressbar_freefunc_type free_func; /*@ The freeing function for the format string. */
          }
       }
+   }
+   methods {
       part_value_set {
          /*@
          Set the progress value (in percentage) on a given progress bar
@@ -232,8 +234,8 @@ class Elm.Progressbar (Elm.Layout)
          @ingroup Progressbar */
 
          params {
-            @in part: const(char)*; /*@ The partname to which val have to set */
-            @in val: double; /*@ The progress value (@b must be between @c 0.0 and @c
+            @in const(char)* part; /*@ The partname to which val have to set */
+            @in double val; /*@ The progress value (@b must be between @c 0.0 and @c
             1.0) */
          }
       }
@@ -251,7 +253,7 @@ class Elm.Progressbar (Elm.Layout)
          @ingroup Progressbar */
          return: double;
          params {
-            @in part: const(char)*; /*@ The part name of the progress bar */
+            @in const(char)* part; /*@ The part name of the progress bar */
          }
       }
       pulse {
@@ -266,7 +268,7 @@ class Elm.Progressbar (Elm.Layout)
          @ingroup Progressbar */
 
          params {
-            @in state: bool; /*@ @c EINA_TRUE, to @b start the pulsing animation,
+            @in bool state; /*@ @c EINA_TRUE, to @b start the pulsing animation,
             @c EINA_FALSE to @b stop it */
          }
       }
@@ -276,14 +278,14 @@ class Elm.Progressbar (Elm.Layout)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.sub_object_del;
-      Elm.Container.content_set;
-      Elm.Layout.text_aliases.get;
-      Elm.Layout.content_aliases.get;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.sub_object_del;
+      Elm_Container.content_set;
+      Elm_Layout.text_aliases.get;
+      Elm_Layout.content_aliases.get;
+      Elm_Layout.sizing_eval;
    }
    events {
       changed;

@@ -1,9 +1,9 @@
-class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
+class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
                Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_map;
-   methods {
-      @property zoom {
+   properties {
+      zoom {
          set {
             /*@
             Set the zoom level of the map.
@@ -40,10 +40,10 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Map */
          }
          values {
-            zoom: int; /*@ The zoom level to set. */
+            int zoom; /*@ The zoom level to set. */
          }
       }
-      @property paused {
+      paused {
          set {
             /*@
             Pause or unpause the map.
@@ -74,11 +74,11 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Map */
          }
          values {
-            paused: bool; /*@ Use @c EINA_TRUE to pause the map @p obj or @c EINA_FALSE
+            bool paused; /*@ Use @c EINA_TRUE to pause the map @p obj or @c EINA_FALSE
             to unpause it. */
          }
       }
-      @property wheel_disabled {
+      wheel_disabled {
          set {
             /*@
             Enable or disable mouse wheel to be used to zoom in / out the map.
@@ -105,11 +105,11 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Map */
          }
          values {
-            disabled: bool; /*@ Use @c EINA_TRUE to disable mouse wheel or @c EINA_FALSE
+            bool disabled; /*@ Use @c EINA_TRUE to disable mouse wheel or @c EINA_FALSE
             to enable it. */
          }
       }
-      @property zoom_min {
+      zoom_min {
          set {
             /*@
             Set the minimum zoom of the source.
@@ -130,10 +130,10 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Map */
          }
          values {
-            zoom: int(-1); /*@ New minimum zoom value to be used. */
+            int zoom(-1); /*@ New minimum zoom value to be used. */
          }
       }
-      @property rotate {
+      rotate {
          set {
             /*@
             Rotate the map.
@@ -151,18 +151,18 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Map */
          }
          values {
-            degree: double; /*@ Angle from 0.0 to 360.0 to rotate around Z axis. */
-            cx: Evas_Coord; /*@ Rotation's center horizontal position. */
-            cy: Evas_Coord; /*@ Rotation's center vertical position. */
+            double degree; /*@ Angle from 0.0 to 360.0 to rotate around Z axis. */
+            Evas_Coord cx; /*@ Rotation's center horizontal position. */
+            Evas_Coord cy; /*@ Rotation's center vertical position. */
          }
       }
-      @property user_agent {
+      user_agent {
          set {
             /*@
             Set the user agent used by the map object to access routing services.
 
             User agent is a client application implementing a network protocol used
-            in communications within a clientserver distributed computing system
+            in communications within a client–server distributed computing system
 
             The @p user_agent identification string will transmitted in a header
             field @c User-Agent.
@@ -182,10 +182,10 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Map */
          }
          values {
-            user_agent: const(char)*; /*@ The user agent to be used by the map. */
+            const(char)* user_agent; /*@ The user agent to be used by the map. */
          }
       }
-      @property zoom_max {
+      zoom_max {
          set {
             /*@
             Set the maximum zoom of the source.
@@ -206,10 +206,10 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Map */
          }
          values {
-            zoom: int(-1); /*@ New maximum zoom value to be used. */
+            int zoom(-1); /*@ New maximum zoom value to be used. */
          }
       }
-      @property zoom_mode {
+      zoom_mode {
          set {
             /*@
             Set the zoom mode used by the map object.
@@ -245,11 +245,11 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Map */
          }
          values {
-            mode: Elm_Map_Zoom_Mode; /*@ The zoom mode of the map, being it one of #ELM_MAP_ZOOM_MODE_MANUAL
+            Elm_Map_Zoom_Mode mode; /*@ The zoom mode of the map, being it one of #ELM_MAP_ZOOM_MODE_MANUAL
             (default), #ELM_MAP_ZOOM_MODE_AUTO_FIT, or #ELM_MAP_ZOOM_MODE_AUTO_FILL. */
          }
       }
-      @property region {
+      region {
          get {
             /*@
             Get the current geographic coordinates of the map.
@@ -263,11 +263,11 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Map */
          }
          values {
-            lon: double; /*@ Pointer to store longitude. */
-            lat: double; /*@ Pointer to store latitude. */
+            double lon; /*@ Pointer to store longitude. */
+            double lat; /*@ Pointer to store latitude. */
          }
       }
-      @property overlays {
+      overlays {
          get {
             /*@
             Return all overlays in the map object.
@@ -280,10 +280,10 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @since 1.7
 
             @ingroup Map */
-            return: list<Elm_Map_Overlay *> *;
+            return: list *;
          }
       }
-      @property tile_load_status {
+      tile_load_status {
          get {
             /*@
             Get the information of tile load status.
@@ -293,10 +293,12 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Map */
          }
          values {
-            try_num: int; /*@ Pointer to store number of tiles download requested. */
-            finish_num: int; /*@ Pointer to store number of tiles successfully downloaded. */
+            int try_num; /*@ Pointer to store number of tiles download requested. */
+            int finish_num; /*@ Pointer to store number of tiles successfully downloaded. */
          }
       }
+   }
+   methods {
       source_set {
          /*@
          Set the current source of the map for a specific type.
@@ -326,8 +328,8 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          @ingroup Map */
 
          params {
-            @in type: Elm_Map_Source_Type; /*@ source type. */
-            @in source_name: const(char)*; /*@ The source to be used. */
+            @in Elm_Map_Source_Type type; /*@ source type. */
+            @in const(char)* source_name; /*@ The source to be used. */
          }
       }
       source_get @const {
@@ -342,7 +344,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          @ingroup Map */
          return: const(char)*;
          params {
-            @in type: Elm_Map_Source_Type; /*@ source type. */
+            @in Elm_Map_Source_Type type; /*@ source type. */
          }
       }
       route_add {
@@ -376,14 +378,14 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
 
          return: Elm_Map_Route *;
          params {
-            @in type: Elm_Map_Route_Type; /*@ The type of transport to be considered when tracing a route. */
-            @in method: Elm_Map_Route_Method; /*@ The routing method, what should be prioritized. */
-            @in flon: double; /*@ The start longitude. */
-            @in flat: double; /*@ The start latitude. */
-            @in tlon: double; /*@ The destination longitude. */
-            @in tlat: double; /*@ The destination latitude. */
-            @in route_cb: Elm_Map_Route_Cb @optional; /*@ The route to be traced. */
-            @in data: void * @optional; /*@ A pointer of user data. */
+            @in Elm_Map_Route_Type type; /*@ The type of transport to be considered when tracing a route. */
+            @in Elm_Map_Route_Method method; /*@ The routing method, what should be prioritized. */
+            @in double flon; /*@ The start longitude. */
+            @in double flat; /*@ The start latitude. */
+            @in double tlon; /*@ The destination longitude. */
+            @in double tlat; /*@ The destination latitude. */
+            @in Elm_Map_Route_Cb route_cb; /*@ The route to be traced. */
+            @in void *data; /*@ A pointer of user data. */
          }
       }
       track_add {
@@ -398,7 +400,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
 
          return: Evas_Object *;
          params {
-            @in emap: void *; /*@ The emap route object. */
+            @in void *emap; /*@ The emap route object. */
          }
       }
       region_to_canvas_convert @const {
@@ -413,10 +415,10 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
 
          @ingroup Map */
          params {
-            @in lon: double; /*@ The longitude to convert. */
-            @in lat: double; /*@ The latitude to convert. */
-            @out x: Evas_Coord; /*@ A pointer to horizontal coordinate. */
-            @out y: Evas_Coord; /*@ A pointer to vertical coordinate. */
+            @in double lon; /*@ The longitude to convert. */
+            @in double lat; /*@ The latitude to convert. */
+            @out Evas_Coord x; /*@ A pointer to horizontal coordinate. */
+            @out Evas_Coord y; /*@ A pointer to vertical coordinate. */
          }
       }
       overlay_circle_add {
@@ -434,9 +436,9 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
 
          return: Elm_Map_Overlay *;
          params {
-            @in lon: double; /*@ The center longitude. */
-            @in lat: double; /*@ The center latitude. */
-            @in radius: double; /*@ The pixel length of radius. */
+            @in double lon; /*@ The center longitude. */
+            @in double lat; /*@ The center latitude. */
+            @in double radius; /*@ The pixel length of radius. */
          }
       }
       overlay_class_add {
@@ -519,7 +521,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          @ingroup Map */
          return: const(char)**;
          params {
-            @in type: Elm_Map_Source_Type; /*@ source type. */
+            @in Elm_Map_Source_Type type; /*@ source type. */
          }
       }
       overlay_polygon_add {
@@ -555,10 +557,10 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
 
          return: Elm_Map_Overlay *;
          params {
-            @in flon: double; /*@ The start longitude. */
-            @in flat: double; /*@ The start latitude. */
-            @in tlon: double; /*@ The destination longitude. */
-            @in tlat: double; /*@ The destination latitude. */
+            @in double flon; /*@ The start longitude. */
+            @in double flat; /*@ The start latitude. */
+            @in double tlon; /*@ The destination longitude. */
+            @in double tlat; /*@ The destination latitude. */
          }
       }
       region_show {
@@ -575,8 +577,8 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          @ingroup Map */
 
          params {
-            @in lon: double; /*@ Longitude to center at. */
-            @in lat: double; /*@ Latitude to center at. */
+            @in double lon; /*@ Longitude to center at. */
+            @in double lat; /*@ Latitude to center at. */
          }
       }
       name_add @const {
@@ -599,11 +601,11 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          @ingroup Map */
          return: Elm_Map_Name *;
          params {
-            @in address: const(char)* @optional; /*@ The address. */
-            @in lon: double; /*@ The longitude. */
-            @in lat: double; /*@ The latitude. */
-            @in name_cb: Elm_Map_Name_Cb @optional; /*@ The callback function. */
-            @in data: void * @optional; /*@ The user callback data. */
+            @in const(char)* address; /*@ The address. */
+            @in double lon; /*@ The longitude. */
+            @in double lat; /*@ The latitude. */
+            @in Elm_Map_Name_Cb name_cb; /*@ The callback function. */
+            @in void *data; /*@ The user callback data. */
          }
       }
       name_search @const {
@@ -617,9 +619,9 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          @internal
          @ingroup Map */
          params {
-            @in address: const(char)*; /*@ The address. */
-            @in name_cb: Elm_Map_Name_List_Cb @optional; /*@ The callback function. */
-            @in data: void * @optional; /*@ The user callback data. */
+            @in const(char)* address; /*@ The address. */
+            @in Elm_Map_Name_List_Cb name_cb; /*@ The callback function. */
+            @in void *data; /*@ The user callback data. */
          }
       }
       region_bring_in {
@@ -637,8 +639,8 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          @ingroup Map */
 
          params {
-            @in lon: double; /*@ Longitude to center at. */
-            @in lat: double; /*@ Latitude to center at. */
+            @in double lon; /*@ Longitude to center at. */
+            @in double lat; /*@ Latitude to center at. */
          }
       }
       region_zoom_bring_in {
@@ -658,9 +660,9 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          @ingroup Map */
 
          params {
-            @in zoom: int;   /*@ The zoom level to set. */
-            @in lon: double; /*@ Longitude to center at. */
-            @in lat: double; /*@ Latitude to center at. */
+            @in int zoom;   /*@ The zoom level to set. */
+            @in double lon; /*@ Longitude to center at. */
+            @in double lat; /*@ Latitude to center at. */
          }
       }
       track_remove {
@@ -670,7 +672,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          @ingroup Map */
 
          params {
-            @in route: Evas_Object *; /*@ The track to remove. */
+            @in Evas_Object *route; /*@ The track to remove. */
          }
       }
       overlay_route_add {
@@ -696,7 +698,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
 
          return: Elm_Map_Overlay *;
          params {
-            @in route: const(Elm_Map_Route)*; /*@ The route object to make a overlay. */
+            @in const(Elm_Map_Route)* route; /*@ The route object to make a overlay. */
          }
       }
       overlay_scale_add {
@@ -716,8 +718,8 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
 
          return: Elm_Map_Overlay *;
          params {
-            @in x: Evas_Coord; /*@ horizontal pixel coordinate. */
-            @in y: Evas_Coord; /*@ vertical pixel coordinate */
+            @in Evas_Coord x; /*@ horizontal pixel coordinate. */
+            @in Evas_Coord y; /*@ vertical pixel coordinate */
          }
       }
       overlay_add {
@@ -749,8 +751,8 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
 
          return: Elm_Map_Overlay *;
          params {
-            @in lon: double; /*@ The longitude of the overlay. */
-            @in lat: double; /*@ The latitude of the overlay. */
+            @in double lon; /*@ The longitude of the overlay. */
+            @in double lat; /*@ The latitude of the overlay. */
          }
       }
       canvas_to_region_convert @const {
@@ -765,10 +767,10 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
 
          @ingroup Map */
          params {
-            @in x: Evas_Coord; /*@ horizontal coordinate of the point to convert. */
-            @in y: Evas_Coord; /*@ vertical coordinate of the point to convert. */
-            @out lon: double; /*@ A pointer to the longitude. */
-            @out lat: double; /*@ A pointer to the latitude. */
+            @in Evas_Coord x; /*@ horizontal coordinate of the point to convert. */
+            @in Evas_Coord y; /*@ vertical coordinate of the point to convert. */
+            @out double lon; /*@ A pointer to the longitude. */
+            @out double lat; /*@ A pointer to the latitude. */
          }
       }
    }
@@ -780,9 +782,9 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
       Evas.Object_Smart.del;
       Evas.Object_Smart.member_add;
       Evas.Object_Smart.resize;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus;
-      Elm.Widget.event;
+      Elm_Widget.theme_apply;
+      Elm_Widget.on_focus;
+      Elm_Widget.event;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {

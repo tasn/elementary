@@ -1,8 +1,8 @@
-class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
+class Elm_Popup (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_popup;
-   methods {
-      @property align {
+   properties {
+      align {
          set {
             /*@
             @brief Set the alignment of the popup object
@@ -22,11 +22,11 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Popup */
          }
          values {
-            horizontal: double; /*@ The horizontal alignment of the popup */
-            vertical: double; /*@ The vertical alignment of the popup */
+            double horizontal; /*@ The horizontal alignment of the popup */
+            double vertical; /*@ The vertical alignment of the popup */
          }
       }
-      @property allow_events {
+      allow_events {
          set {
             /*@
             @brief Sets whether events should be passed to by a click outside.
@@ -49,10 +49,10 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @note By default the Blocked event area is present */
          }
          values {
-            allow: bool; /*@ @c EINA_TRUE Events are passed to lower objects, else not */
+            bool allow; /*@ @c EINA_TRUE Events are passed to lower objects, else not */
          }
       }
-      @property content_text_wrap_type {
+      content_text_wrap_type {
          set {
             /*@
             @brief Sets the wrapping type of content text packed in content
@@ -72,10 +72,10 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_popup_content_text_wrap_type_set */
          }
          values {
-            wrap: Elm_Wrap_Type; /*@ wrapping type of type Elm_Wrap_Type */
+            Elm_Wrap_Type wrap; /*@ wrapping type of type Elm_Wrap_Type */
          }
       }
-      @property orient {
+      orient {
          set {
             /*@
             @brief Sets the orientation of the popup in the parent region
@@ -97,10 +97,10 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @see Elm_Popup_Orient */
          }
          values {
-            orient: Elm_Popup_Orient; /*@ the orientation of the popup */
+            Elm_Popup_Orient orient; /*@ the orientation of the popup */
          }
       }
-      @property timeout {
+      timeout {
          set {
             /*@
             @brief Sets a timeout to hide popup automatically
@@ -128,9 +128,11 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_popup_timeout_set() */
          }
          values {
-            timeout: double; /*@ The timeout in seconds */
+            double timeout; /*@ The timeout in seconds */
          }
       }
+   }
+   methods {
       item_append {
          /*@
          @brief Add a new item to a Popup object
@@ -147,10 +149,10 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in label: const(char)*; /*@ The Label of the new item */
-            @in icon: Evas_Object * @optional; /*@ Icon to be set on new item */
-            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when item selected */
-            @in data: const(void)* @optional; /*@ Data passed to @p func above */
+            @in const(char)* label; /*@ The Label of the new item */
+            @in Evas_Object *icon; /*@ Icon to be set on new item */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when item selected */
+            @in const(void)* data; /*@ Data passed to @p func above */
          }
       }
    }
@@ -159,22 +161,22 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       Eo.Base.constructor;
       Evas.Object_Smart.del;
       Evas.Object_Smart.add;
-      Elm.Widget.focus_direction;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.access;
-      Elm.Widget.focus_next;
-      Elm.Widget.parent.set;
-      Elm.Widget.translate;
-      Elm.Widget.sub_object_del;
-      Elm.Widget.event;
-      Elm.Container.content_get;
-      Elm.Container.content_set;
-      Elm.Container.content_unset;
-      Elm.Layout.text_set;
-      Elm.Layout.text_get;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.focus_direction;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.access;
+      Elm_Widget.focus_next;
+      Elm_Widget.parent.set;
+      Elm_Widget.translate;
+      Elm_Widget.sub_object_del;
+      Elm_Widget.event;
+      Elm_Container.content_get;
+      Elm_Container.content_set;
+      Elm_Container.content_unset;
+      Elm_Layout.text_set;
+      Elm_Layout.text_get;
+      Elm_Layout.sizing_eval;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {

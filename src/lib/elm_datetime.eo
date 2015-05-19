@@ -1,8 +1,8 @@
-class Elm.Datetime (Elm.Layout)
+class Elm_Datetime (Elm_Layout)
 {
    eo_prefix: elm_obj_datetime;
-   methods {
-      @property format {
+   properties {
+      format {
          set {
             /*@
             Set the datetime format. Format is a combination of allowed Libc date format
@@ -82,9 +82,11 @@ class Elm.Datetime (Elm.Layout)
             /*@ Get the datetime format. */
          }
          values {
-            fmt: const(char)* @nullable; /*@ The datetime format */
+            const(char)* fmt; /*@ The datetime format */
          }
       }
+   }
+   methods {
       field_limit_set {
          /*@
          @brief Set the field limits of a field.
@@ -100,9 +102,9 @@ class Elm.Datetime (Elm.Layout)
          @ingroup Datetime */
 
          params {
-            @in fieldtype: Elm_Datetime_Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
-            @in min: int; /*@ Reference to field's minimum value */
-            @in max: int; /*@ Reference to field's maximum value */
+            @in Elm_Datetime_Field_Type fieldtype; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
+            @in int min; /*@ Reference to field's minimum value */
+            @in int max; /*@ Reference to field's maximum value */
          }
       }
       field_limit_get @const {
@@ -119,9 +121,9 @@ class Elm.Datetime (Elm.Layout)
          @see elm_datetime_field_limit_set()
          @ingroup Datetime */
          params {
-            @in fieldtype: Elm_Datetime_Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
-            @out min: int; /*@ Reference to field's minimum value */
-            @out max: int; /*@ Reference to field's maximum value */
+            @in Elm_Datetime_Field_Type fieldtype; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
+            @out int min; /*@ Reference to field's minimum value */
+            @out int max; /*@ Reference to field's maximum value */
          }
       }
       value_min_set {
@@ -146,7 +148,7 @@ class Elm.Datetime (Elm.Layout)
 
          return: bool;
          params {
-            @in mintime: const(Elm_Datetime_Time)*; /*@ Time structure containing the minimum time value. */
+            @in const(struct tm)* mintime; /*@ Time structure containing the minimum time value. */
          }
       }
       value_min_get @const {
@@ -170,7 +172,7 @@ class Elm.Datetime (Elm.Layout)
          @ingroup Datepicker */
          return: bool;
          params {
-            @inout mintime: Elm_Datetime_Time; /*@ Time structure. */
+            @inout struct tm mintime; /*@ Time structure. */
          }
       }
       value_set {
@@ -195,7 +197,7 @@ class Elm.Datetime (Elm.Layout)
 
          return: bool;
          params {
-            @in newtime: const(Elm_Datetime_Time)*; /*@ Time structure filled with values to be set. */
+            @in const(struct tm)* newtime; /*@ Time structure filled with values to be set. */
          }
       }
       value_get @const {
@@ -219,7 +221,7 @@ class Elm.Datetime (Elm.Layout)
          @ingroup Datetime */
          return: bool;
          params {
-            @inout currtime: Elm_Datetime_Time; /*@ Time structure. */
+            @inout struct tm currtime; /*@ Time structure. */
          }
       }
       field_visible_set {
@@ -238,8 +240,8 @@ class Elm.Datetime (Elm.Layout)
          @ingroup Datetime */
 
          params {
-            @in fieldtype: Elm_Datetime_Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
-            @in visible: bool; /*@ @c EINA_TRUE field can be visible, @c EINA_FALSE otherwise. */
+            @in Elm_Datetime_Field_Type fieldtype; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
+            @in bool visible; /*@ @c EINA_TRUE field can be visible, @c EINA_FALSE otherwise. */
          }
       }
       field_visible_get @const {
@@ -252,7 +254,7 @@ class Elm.Datetime (Elm.Layout)
          @ingroup Datetime */
          return: bool;
          params {
-            @in fieldtype: Elm_Datetime_Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc */
+            @in Elm_Datetime_Field_Type fieldtype; /*@ Type of the field. #ELM_DATETIME_YEAR etc */
          }
       }
       value_max_set {
@@ -277,7 +279,7 @@ class Elm.Datetime (Elm.Layout)
 
          return: bool;
          params {
-            @in maxtime: const(Elm_Datetime_Time)*; /*@ Time structure containing the maximum time value. */
+            @in const(struct tm)* maxtime; /*@ Time structure containing the maximum time value. */
          }
       }
       value_max_get @const {
@@ -301,7 +303,7 @@ class Elm.Datetime (Elm.Layout)
          @ingroup Datetime */
          return: bool;
          params {
-            @inout maxtime: Elm_Datetime_Time; /*@ Time structure containing the maximum time value. */
+            @inout struct tm maxtime; /*@ Time structure containing the maximum time value. */
          }
       }
    }
@@ -310,13 +312,13 @@ class Elm.Datetime (Elm.Layout)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.disable;
-      Elm.Widget.on_focus;
-      Elm.Widget.translate;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.disable;
+      Elm_Widget.on_focus;
+      Elm_Widget.translate;
+      Elm_Layout.sizing_eval;
    }
    events {
       changed;

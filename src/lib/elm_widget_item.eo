@@ -1,12 +1,11 @@
-class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
-                      Elm_Interface_Atspi_Component)
+class Elm_Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
 {
       eo_prefix: elm_wdg_item;
       legacy_prefix: elm_object_item;
-      methods {
-           @property tooltip_window_mode {
+      properties {
+           tooltip_window_mode {
                 get {
-                     /*@
+                     /**
                        @brief Get size restriction state of an object's tooltip
 
                        This function returns whether a tooltip is allowed to expand beyond
@@ -15,7 +14,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 set {
-                     /*@
+                     /**
                        @brief Disable size restrictions on an object's tooltip
 
                        This function allows a tooltip to expand beyond its parent window's canvas.
@@ -24,12 +23,12 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                      return: bool; /*@ @c EINA_FALSE on failure, @c EINA_TRUE on success */
                 }
                 values {
-                     disable: bool; /*@ If @c EINA_TRUE, size restrictions are disabled */
+                     Eina_Bool disable; /*@ If @c EINA_TRUE, size restrictions are disabled */
                 }
            }
-           @property tooltip_style {
+           tooltip_style {
                 get {
-                     /*@
+                     /**
                        Get the style for this item tooltip.
 
                        @see elm_object_tooltip_style_get() for more details.
@@ -39,7 +38,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 set {
-                     /*@
+                     /**
                        Sets a different style for this item tooltip.
 
                        @note before you set a style you should define a tooltip with
@@ -52,12 +51,12 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 values {
-                     style: const (char)*; /*@ the theme style used/to use (default, transparent, ...) */ 
+                     const (char)* style; /*@ the theme style used/to use (default, transparent, ...) */ 
                 }
            }
-           @property cursor {
+           cursor {
                 get {
-                     /*@
+                     /*
                         Get the type of mouse pointer/cursor decoration set to be shown,
                         when the mouse pointer is over the given item
 
@@ -69,7 +68,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 set {
-                     /*@
+                     /**
                        Set the type of mouse pointer/cursor decoration to be shown,
                        when the mouse pointer is over the given item
 
@@ -90,12 +89,12 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 values {
-                     cursor: const (char) *; /*@ the cursor type's name */
+                     const (char) *cursor; /*@ the cursor type's name */
                 }
            }
-           @property cursor_style {
+           cursor_style {
                 get {
-                     /*@
+                     /**
                        Get the current @b style set for a given item's custom
                        cursor
 
@@ -105,7 +104,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 set {
-                     /*@
+                     /**
                        Set a different @b style for a given custom cursor set for an
                        item.
 
@@ -126,12 +125,12 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 values {
-                     style: const (char) *; /*@ the <b>theme style</b> to use/in use (e.g. @c "default", @c "transparent", etc) */
+                     const (char) *style; /*@ the <b>theme style</b> to use/in use (e.g. @c "default", @c "transparent", etc) */
                 }
            }
-           @property cursor_engine_only {
+           cursor_engine_only {
                 get {
-                     /*@
+                     /**
                        Get if the (custom) cursor for a given item is being
                        searched in its theme, also, or is only relying on the rendering
                        engine.
@@ -146,7 +145,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 set {
-                     /*@
+                     /**
                        Set if the (custom)cursor for a given item should be
                        searched in its theme, also, or should only rely on the
                        rendering engine.
@@ -161,14 +160,14 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 values {
-                     engine_only: bool; /*@ Use @c EINA_TRUE to have cursors looked for only
-                                          on those provided by the rendering engine, @c EINA_FALSE
-                                          to have them searched on the widget's theme, as well. */
+                     Eina_Bool engine_only; /* Use @c EINA_TRUE to have cursors looked for only
+                                               on those provided by the rendering engine, @c EINA_FALSE
+                                               to have them searched on the widget's theme, as well. */
                 }
            }
-           @property part_content {
+           part_content {
                 get {
-                     /*@
+                     /**
                        Get a content of an object item
 
                        @return content of the object item or NULL for any error
@@ -179,7 +178,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 set {
-                     /*@
+                     /**
                        Set a content of an object item
 
                        This sets a new object to an item as a content object. If any object was
@@ -192,15 +191,15 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 keys {
-                     part: const (char) * @nullable; /*@ The content part name  (NULL for the default content) */
+                     const (char) *part; /*@ The content part name  (NULL for the default content) */
                 }
                 values {
-                     content: Evas_Object *; /*@ The content of the object item */
+                     Evas_Object *content; /*@ The content of the object item */
                 }
            }
-           @property part_text {
+           part_text {
                 get {
-                     /*@
+                     /**
                        Get a label of an object item
 
                        @note Elementary object items may have many labels
@@ -209,7 +208,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 set {
-                     /*@
+                     /**
                        Set a label of an object item
 
                        @note Elementary object items may have many labels
@@ -218,13 +217,13 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 keys {
-                     part: const (char) * @nullable; /*@ The text part name (NULL for the default label) */
+                     const (char) *part; /*@ The text part name (NULL for the default label) */
                 }
                 values {
-                     label: const (char) *; /*@ Text of the label */
+                     const (char) *label; /*@ Text of the label */
                 }
            }
-           @property part_text_custom @protected {
+           part_text_custom @protected {
                 get {
                      /*@ Get additional text part content */
                      legacy: null;
@@ -234,15 +233,15 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                      legacy: null;
                 }
                 keys {
-                     part: const (char) *;
+                     const (char) *part;
                 }
                 values {
-                     label: const (char) *;
+                     const (char) *label;
                 }
            }
-           @property focus {
+           focus {
                 get {
-                     /*@
+                     /**
                        Get whether the @p it is focused or not.
 
                        @see elm_object_item_focus_set()
@@ -252,7 +251,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 set {
-                     /*@
+                     /**
                        Set the object item focused
 
                        @see elm_object_item_focus_get()
@@ -262,12 +261,12 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 values {
-                     focused: bool; /*@ The focused state */
+                     Eina_Bool focused; /*@ The focused state */
                 }
            }
-           @property style {
+           style {
                 get {
-                     /*@
+                     /**
                        Get the style of an object item
 
                        @since 1.9
@@ -276,7 +275,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 set {
-                     /*@
+                     /**
                        Set a style of an object item
 
                        @since 1.9
@@ -285,12 +284,12 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 values {
-                     style: const (char) *; /*@ The style of object item */
+                     const (char) *style; /*@ The style of object item */
                 }
            }
-           @property disabled {
+           disabled {
                 get {
-                     /*@
+                     /**
                        Get the disabled state of an widget item.
 
                        This gets the state of the widget, which might be enabled or disabled.
@@ -299,7 +298,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 set {
-                     /*@
+                     /**
                        Set the disabled state of an widget item.
 
                        Elementary object item can be @b disabled, in which state they won't
@@ -315,31 +314,34 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                       */
                 }
                 values {
-                     disable: bool; /*@ @c EINA_TRUE, if the widget item is disabled, @c EINA_FALSE if it's enabled (or on errors) */
+                     Eina_Bool disable; /*@ @c EINA_TRUE, if the widget item is disabled, @c EINA_FALSE if it's enabled (or on errors) */
                 }
            }
-           access_order_get {
-                /*@
-                  @brief Get highlight order
-                  @since 1.8
+           access_order {
+                get {
+                     /**
+                       @brief Get highlight order
+                       @since 1.8
 
-                  @ingroup General
-                 */
-                return: const(list<Evas_Object *>) *;
-           }
-           access_order_set {
-                /*@
-                  @brief Set highlight order
-                  @since 1.8
+                       @ingroup General
+                      */
+                }
+                set {
+                     /**
+                       @brief Set highlight order
+                       @since 1.8
 
-                  @ingroup General
-                 */
-                params {
-                     @in objs: own(list<Evas_Object *> *); /*@ Order of objects to pass highlight */
+                       @ingroup General
+                      */
+                }
+                values {
+                     Eina_List *objs @const_get; /*@ Order of objects to pass highlight */
                 }
            }
+      }
+      methods {
            widget_get @const {
-                /*@
+                /**
                   Get the widget object's handle which contains a given item
 
                   @note This returns the widget object itself that an item belongs to.
@@ -349,7 +351,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                   return: Evas_Object*; /*@ The widget object */
            }
            del {
-                /*@
+                /**
                   Delete the given item.
 
                   @ingroup General
@@ -360,7 +362,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                 legacy: null;
            }
            tooltip_text_set {
-                /*@
+                /**
                   Set the text to be shown in a given object item's tooltips.
 
                   Setup the text as tooltip to object. The item can have only one tooltip,
@@ -372,18 +374,18 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                   @ingroup General
                  */
                 params {
-                     text: const (char) *; /*@ The text to set in the content. */
+                     const (char) *text; /*@ The text to set in the content. */
                 }
            }
            tooltip_translatable_text_set @protected {
                 /*@ Set widget item tooltip as a text string */
                 legacy: null;
                 params {
-                     text: const (char) *;
+                     const (char) *text;
                 }
            }
            tooltip_unset {
-                /*@
+                /**
                   Unset tooltip from item.
 
                   Remove tooltip from item. The callback provided as del_cb to
@@ -397,7 +399,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                  */
            }
            cursor_unset {
-                /*@
+                /**
                   Unset any custom mouse pointer/cursor decoration set to be
                   shown, when the mouse pointer is over the given
                   item, thus making it show the @b default cursor again.
@@ -412,7 +414,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                  */
            }
            part_content_unset {
-                /*@
+                /**
                   Unset a content of an object item
 
                   @note Elementary object items may have many contents
@@ -420,7 +422,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                   @ingroup General
                  */
                 params {
-                     part: const (char) *; /*@ The content part name to unset (NULL for the default content) */
+                     const (char) *part; /*@ The content part name to unset (NULL for the default content) */
                 }
                 return: Evas_Object*;
            }
@@ -429,7 +431,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                 legacy: null;
            }
            signal_callback_add {
-                /*@
+                /**
                   Add a callback for a signal emitted by object item edje.
 
                   This function connects a callback function to a signal emitted by the
@@ -441,14 +443,14 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                   @ingroup General
                  */
                 params {
-                     emission: const (char) *; /*@ The signal's name. */
-                     source: const (char) *; /*@ The signal's source. */
-                     func: Elm_Object_Item_Signal_Cb; /*@ The callback function to be executed when the signal is emitted. */
-                     data: void *; /*@ A pointer to data to pass to the callback function. */
+                     const (char) *emission; /*@ The signal's name. */
+                     const (char) *source; /*@ The signal's source. */
+                     Elm_Object_Item_Signal_Cb func; /*@ The callback function to be executed when the signal is emitted. */
+                     void *data; /*@ A pointer to data to pass to the callback function. */
                 }
            }
            signal_callback_del {
-                /*@
+                /**
                   Remove a signal-triggered callback from a object item edje object.
 
                   This function removes the @b last callback, previously attached to
@@ -464,14 +466,14 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                   @ingroup General
                  */
                 params {
-                     emission: const (char) *; /*@ The signal's name. */
-                     source: const (char) *; /*@ The signal's source. */
-                     func: Elm_Object_Item_Signal_Cb; /*@ The callback function to be executed when the signal is emitted. */
+                     const (char) *emission; /*@ The signal's name. */
+                     const (char) *source; /*@ The signal's source. */
+                     Elm_Object_Item_Signal_Cb func; /*@ The callback function to be executed when the signal is emitted. */
                 }
                 return: void*; /*@ The data pointer of the signal callback or @c NULL, on errors. */
            }
            signal_emit {
-                /*@
+                /**
                   Send a signal to the edje object of the widget item.
 
                   This function sends a signal to the edje object of the obj item. An
@@ -481,22 +483,22 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                   @ingroup General
                  */
                 params {
-                     emission: const (char) *; /*@ The signal's name. */
-                     source: const (char) *; /*@ The signal's source. */
+                     const (char) *emission; /*@ The signal's name. */
+                     const (char) *source; /*@ The signal's source. */
                 }
            }
            access_info_set {
-                /*@
+                /**
                   Set the text to read out when in accessibility mode
 
                   @ingroup General
                  */
                 params {
-                     txt: const (char) *; /*@ The text that describes the widget to people with poor or no vision */
+                     const (char) *txt; /*@ The text that describes the widget to people with poor or no vision */
                 }
            }
            access_object_get @const {
-                /*@
+                /**
                   @brief Get an accessible object of the object item.
                   @since 1.8
 
@@ -505,7 +507,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                 return: Evas_Object*; /*@ Accessible object of the object item or NULL for any error */
            }
            domain_translatable_part_text_set {
-                /*@
+                /**
                   Set the text for an object item's part, marking it as translatable.
 
                   The string to set as @p text must be the original one. Do not pass the
@@ -524,13 +526,13 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                   @since 1.8
                  */
                 params {
-                     part: const (char) *; /*@ The name of the part to set */
-                     domain: const (char) *; /*@ The translation domain to use */
-                     label: const (char) *; /*@ The original, non-translated text to set */
+                     const (char) *part; /*@ The name of the part to set */
+                     const (char) *domain; /*@ The translation domain to use */
+                     const (char) *label; /*@ The original, non-translated text to set */
                 }
            }
            translatable_part_text_get @const {
-                /*@
+                /**
                   Get the original string set as translatable for an object item.
 
                   When setting translated strings, the function elm_object_item_part_text_get()
@@ -541,7 +543,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                   @since 1.8
                  */
                 params {
-                     part: const (char) *; /*@ The name of the part that was set */
+                     const (char) *part; /*@ The name of the part that was set */
                 }
                 return: const (char)*; /*@ The original, untranslated string */
            }
@@ -550,7 +552,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                 legacy: null;
            }
            domain_part_text_translatable_set {
-                /*@
+                /**
                   Mark the part text to be translatable or not.
 
                   Once you mark the part text to be translatable, the text will be translated
@@ -568,13 +570,13 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                   @ingroup General
                  */
                 params {
-                     part: const (char) *; /*@ The part name of the translatable text */
-                     domain: const (char) *; /*@ The translation domain to use */
-                     translatable: bool; /*@ @c EINA_TRUE, the part text will be translated internally. @c EINA_FALSE, otherwise. */
+                     const (char) *part; /*@ The part name of the translatable text */
+                     const (char) *domain; /*@ The translation domain to use */
+                     Eina_Bool translatable; /*@ @c EINA_TRUE, the part text will be translated internally. @c EINA_FALSE, otherwise. */
                 }
            }
            track {
-                /*@
+                /**
                   This returns track object of the item.
 
                   @note This gets a rectangle object that represents the object item's internal
@@ -605,7 +607,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                 return: Evas_Object*; /*@ The track object */
            }
            untrack {
-                /*@
+                /**
                   This retrieve the track object of the item.
 
                   @note This retrieves the track object that was returned from
@@ -620,7 +622,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                  */
            }
            track_get @const {
-                /*@
+                /**
                   Get the track object reference count.
 
                   @note This gets the reference count for the track object. Whenever you call
@@ -645,7 +647,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                 legacy: null;
            }
            del_cb_set {
-                /*@
+                /**
                   @brief Set the function to be called when an item from the widget is
                   freed.
 
@@ -660,11 +662,11 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                   @ingroup General
                  */
                 params {
-                     del_cb: Evas_Smart_Cb @nullable; /*@ The function called */
+                     Evas_Smart_Cb del_cb; /*@ The function called */
                 }
            }
            tooltip_content_cb_set {
-                /*@
+                /**
                   Set the content to be shown in the tooltip item.
 
                   Setup the tooltip to item. The item can have only one tooltip,
@@ -678,18 +680,18 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                   @ingroup General
                  */
                 params {
-                     func: Elm_Tooltip_Item_Content_Cb @nullable; /*@ the function used to create the tooltip contents. */
-                     data: const (void) * @optional; /*@ what to provide to @a func as callback data/context. */
-                     del_cb: Evas_Smart_Cb @optional; /*@ called when data is not needed anymore, either when
-                                                       another callback replaces @a func, the tooltip is unset with
-                                                       elm_object_item_tooltip_unset() or the owner @a item
-                                                       dies. This callback receives as the first parameter the
-                                                       given @a data, and @p event_info is the item. */
+                     Elm_Tooltip_Item_Content_Cb func; /*@ the function used to create the tooltip contents. */
+                     const (void) *data; /*@ what to provide to @a func as callback data/context. */
+                     Evas_Smart_Cb del_cb; /*@ called when data is not needed anymore, either when
+                                             another callback replaces @a func, the tooltip is unset with
+                                             elm_object_item_tooltip_unset() or the owner @a item
+                                             dies. This callback receives as the first parameter the
+                                             given @a data, and @p event_info is the item. */
 
                 }
            }
            access_register {
-                /*@
+                /**
                   @brief Register object item as an accessible object.
                   @since 1.8
 
@@ -698,7 +700,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                 return: Evas_Object*; /*@ Accessible object of the object item or NULL for any error */
            }
            access_unregister {
-                /*@
+                /**
                   @brief Unregister accessible object of the object item.
                   @since 1.8
 
@@ -706,7 +708,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                  */
            }
            access_order_unset {
-                /*@
+                /**
                   @brief Unset highlight order
                   @since 1.8
 
@@ -730,10 +732,5 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
            Elm_Interface_Atspi_Accessible.role.set;
            Elm_Interface_Atspi_Accessible.state_set.get;
            Elm_Interface_Atspi_Accessible.parent.get;
-           Elm_Interface_Atspi_Component.extents.get;
-           Elm_Interface_Atspi_Component.extents.set;
-           Elm_Interface_Atspi_Component.alpha.get;
-           Elm_Interface_Atspi_Component.layer.get;
-           Elm_Interface_Atspi_Component.focus_grab;
       }
 }

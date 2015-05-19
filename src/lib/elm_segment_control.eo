@@ -1,8 +1,8 @@
-class Elm.Segment_Control (Elm.Layout)
+class Elm_Segment_Control (Elm_Layout)
 {
    eo_prefix: elm_obj_segment_control;
-   methods {
-      @property item_count {
+   properties {
+      item_count {
          get {
             /*@
             Get the Segment items count from segment control.
@@ -15,7 +15,7 @@ class Elm.Segment_Control (Elm.Layout)
             return: int;
          }
       }
-      @property item_selected {
+      item_selected {
          get {
             /*@
             Get the selected item.
@@ -32,6 +32,8 @@ class Elm.Segment_Control (Elm.Layout)
             return: Elm_Object_Item *;
          }
       }
+   }
+   methods {
       item_label_get @const {
          /*@
          Get the label of item.
@@ -49,7 +51,7 @@ class Elm.Segment_Control (Elm.Layout)
          @ingroup SegmentControl */
          return: const(char)*;
          params {
-            @in idx: int; /*@ The index of the segment item. */
+            @in int idx; /*@ The index of the segment item. */
          }
       }
       item_insert_at {
@@ -80,11 +82,11 @@ class Elm.Segment_Control (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in icon: Evas_Object * @optional; /*@ The icon object to use for the left side of the item. An
+            @in Evas_Object *icon; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
-            @in label: const(char)* @optional; /*@ The label of the item. */
-            @in idx: int; /*@ Item position. Value should be between 0 and items count. */
+            @in const(char)* label; /*@ The label of the item. */
+            @in int idx; /*@ Item position. Value should be between 0 and items count. */
          }
       }
       item_get @const {
@@ -101,7 +103,7 @@ class Elm.Segment_Control (Elm.Layout)
          @ingroup SegmentControl */
          return: Elm_Object_Item *;
          params {
-            @in idx: int; /*@ The index of the segment item. */
+            @in int idx; /*@ The index of the segment item. */
          }
       }
       item_del_at {
@@ -115,7 +117,7 @@ class Elm.Segment_Control (Elm.Layout)
          @ingroup SegmentControl */
 
          params {
-            @in idx: int; /*@ The position of the segment control item to be deleted. */
+            @in int idx; /*@ The position of the segment control item to be deleted. */
          }
       }
       item_add {
@@ -156,10 +158,10 @@ class Elm.Segment_Control (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in icon: Evas_Object * @optional; /*@ The icon object to use for the left side of the item. An
+            @in Evas_Object *icon; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
-            @in label: const(char)* @optional; /*@ The label of the item.
+            @in const(char)* label; /*@ The label of the item.
             Note that, NULL is different from empty string "". */
          }
       }
@@ -180,7 +182,7 @@ class Elm.Segment_Control (Elm.Layout)
          @ingroup SegmentControl */
          return: Evas_Object *;
          params {
-            @in idx: int; /*@ The index of the segment item. */
+            @in int idx; /*@ The index of the segment item. */
          }
       }
    }
@@ -189,14 +191,14 @@ class Elm.Segment_Control (Elm.Layout)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.access;
-      Elm.Widget.disable;
-      Elm.Widget.translate;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.access;
+      Elm_Widget.disable;
+      Elm_Widget.translate;
+      Elm_Layout.sizing_eval;
    }
    events {
       changed;

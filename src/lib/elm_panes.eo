@@ -1,8 +1,8 @@
-class Elm.Panes (Elm.Layout)
+class Elm_Panes (Elm_Layout)
 {
    eo_prefix: elm_obj_panes;
-   methods {
-      @property content_left_size {
+   properties {
+      content_left_size {
          set {
             /*@
             Set the size proportion of panes widget's left side.
@@ -35,11 +35,11 @@ class Elm.Panes (Elm.Layout)
             @ingroup Panes */
          }
          values {
-            size: double; /*@ Value between 0.0 and 1.0 representing size proportion
+            double size; /*@ Value between 0.0 and 1.0 representing size proportion
             of left side. */
          }
       }
-      @property horizontal {
+      horizontal {
          set {
             /*@
             Set how to split and dispose each content.
@@ -67,12 +67,12 @@ class Elm.Panes (Elm.Layout)
             @ingroup Panes */
          }
          values {
-            horizontal: bool; /*@ Use @c EINA_TRUE to make @p obj to split panes
+            bool horizontal; /*@ Use @c EINA_TRUE to make @p obj to split panes
             horizontally ("top" and "bottom" contents). @c EINA_FALSE to make it
             vertically ("left" and "right" contents) */
          }
       }
-      @property fixed {
+      fixed {
          set {
             /*@
             Set whether the left and right panes can be resized by user interaction.
@@ -98,12 +98,12 @@ class Elm.Panes (Elm.Layout)
             @ingroup Panes */
          }
          values {
-            fixed: bool; /*@ Use @c EINA_TRUE to fix the left and right panes sizes and make
+            bool fixed; /*@ Use @c EINA_TRUE to fix the left and right panes sizes and make
             them not to be resized by user interaction. Use @c EINA_FALSE to make them
             resizable. */
          }
       }
-      @property content_right_size {
+      content_right_size {
          set {
             /*@
             Set the size proportion of panes widget's right side.
@@ -136,11 +136,11 @@ class Elm.Panes (Elm.Layout)
             @ingroup Panes */
          }
          values {
-            size: double; /*@ Value between 0.0 and 1.0 representing size proportion
+            double size; /*@ Value between 0.0 and 1.0 representing size proportion
             of right side. */
          }
       }
-      @property content_left_min_relative_size {
+      content_left_min_relative_size {
          set {
             /*@
              Set the relative minimum size of panes widget's left side.
@@ -169,11 +169,11 @@ class Elm.Panes (Elm.Layout)
              @ingroup Panes */
          }
          values {
-            size: double; /*@ value between 0.0 and 1.0 representing size proportion
+            double size; /*@ value between 0.0 and 1.0 representing size proportion
                            of minimum size of left side. */
          }
       }
-      @property content_right_min_relative_size {
+      content_right_min_relative_size {
          set {
             /*@
              Set the relative minimum size of panes widget's right side.
@@ -201,11 +201,11 @@ class Elm.Panes (Elm.Layout)
              @ingroup Panes */
          }
          values {
-            size: double; /*@ value between 0.0 and 1.0 representing size proportion
+            double size; /*@ value between 0.0 and 1.0 representing size proportion
                            of minimum size of right side. */
          }
       }
-      @property content_left_min_size {
+      content_left_min_size {
          set {
             /*@
             Set the absolute minimum size of panes widget's left side.
@@ -231,11 +231,11 @@ class Elm.Panes (Elm.Layout)
             @ingroup Panes */
          }
          values {
-            size: Evas_Coord; /*@ value representing minimum size of left side
+            Evas_Coord size; /*@ value representing minimum size of left side
                                in pixels. */
          }
       }
-      @property content_right_min_size {
+      content_right_min_size {
          set {
             /*@
             Set the absolute minimum size of panes widget's right side.
@@ -261,7 +261,7 @@ class Elm.Panes (Elm.Layout)
             @ingroup Panes */
          }
          values {
-            size: Evas_Coord; /*@ value representing minimum size of right side
+            Evas_Coord size; /*@ value representing minimum size of right side
                                in pixels. */
          }
       }
@@ -270,10 +270,10 @@ class Elm.Panes (Elm.Layout)
       class.constructor;
       Eo.Base.constructor;
       Evas.Object_Smart.add;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.theme_apply;
-      Elm.Layout.content_aliases.get;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.theme_apply;
+      Elm_Layout.content_aliases.get;
    }
    events {
       clicked;

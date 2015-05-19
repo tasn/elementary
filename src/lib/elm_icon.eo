@@ -1,8 +1,8 @@
-class Elm.Icon (Elm.Image)
+class Elm_Icon (Elm_Image)
 {
    eo_prefix: elm_obj_icon;
-   methods {
-      @property order_lookup {
+   properties {
+      order_lookup {
          set {
             /*@
             Sets the icon lookup order used by elm_icon_standard_set().
@@ -25,12 +25,12 @@ class Elm.Icon (Elm.Image)
             @ingroup Icon */
          }
          values {
-            order: Elm_Icon_Lookup_Order(1); /*@ The icon lookup order (can be one of
+            Elm_Icon_Lookup_Order order(1); /*@ The icon lookup order (can be one of
             #ELM_ICON_LOOKUP_FDO_THEME, #ELM_ICON_LOOKUP_THEME_FDO, #ELM_ICON_LOOKUP_FDO
             or #ELM_ICON_LOOKUP_THEME) */
          }
       }
-      @property standard {
+      standard {
          set {
             /*@
             Set the icon by icon standards names.
@@ -71,10 +71,10 @@ class Elm.Icon (Elm.Image)
             @ingroup Icon */
          }
          values {
-            name: const(char)*; /*@ The icon name */
+            const(char)* name; /*@ The icon name */
          }
       }
-      @property thumb {
+      thumb {
          set {
             /*@
             Set the file that will be used, but use a generated thumbnail.
@@ -90,8 +90,8 @@ class Elm.Icon (Elm.Image)
             @ingroup Icon */
          }
          values {
-            file: const(char)* @nullable; /*@ The path to file that will be used as icon image */
-            group: const(char)* @optional; /*@ The group that the icon belongs to an edje file */
+            const(char)* file; /*@ The path to file that will be used as icon image */
+            const(char)* group; /*@ The group that the icon belongs to an edje file */
          }
       }
    }
@@ -100,8 +100,8 @@ class Elm.Icon (Elm.Image)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.theme_apply;
-      Elm.Image.memfile.set;
+      Elm_Widget.theme_apply;
+      Elm_Image.memfile.set;
       Efl.File.file.set;
    }
    events {

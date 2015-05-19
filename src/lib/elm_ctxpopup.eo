@@ -1,8 +1,8 @@
-class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
+class Elm_Ctxpopup (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_ctxpopup;
-   methods {
-      @property horizontal {
+   properties {
+      horizontal {
          set {
             /*@
             @brief Change the ctxpopup's orientation to horizontal or vertical.
@@ -20,10 +20,10 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Ctxpopup */
          }
          values {
-            horizontal: bool; /*@ @c EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical */
+            bool horizontal; /*@ @c EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical */
          }
       }
-      @property auto_hide_disabled {
+      auto_hide_disabled {
          set {
             /*@
             @brief Set ctxpopup auto hide mode triggered by ctxpopup policy.
@@ -53,10 +53,10 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Ctxpopup */
          }
          values {
-            disabled: bool; /*@ auto hide enable/disable. */
+            bool disabled; /*@ auto hide enable/disable. */
          }
       }
-      @property hover_parent {
+      hover_parent {
          set {
             /*@
             @brief Set the Ctxpopup's parent
@@ -80,10 +80,10 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Ctxpopup */
          }
          values {
-            parent: Evas_Object *; /*@ The parent to use */
+            Evas_Object *parent; /*@ The parent to use */
          }
       }
-      @property direction_priority {
+      direction_priority {
          set {
             /*@
             @brief Set the direction priority of a ctxpopup.
@@ -105,13 +105,13 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Ctxpopup */
          }
          values {
-            first: Elm_Ctxpopup_Direction; /*@ 1st priority of direction */
-            second: Elm_Ctxpopup_Direction; /*@ 2nd priority of direction */
-            third: Elm_Ctxpopup_Direction; /*@ 3th priority of direction */
-            fourth: Elm_Ctxpopup_Direction; /*@ 4th priority of direction */
+            Elm_Ctxpopup_Direction first; /*@ 1st priority of direction */
+            Elm_Ctxpopup_Direction second; /*@ 2nd priority of direction */
+            Elm_Ctxpopup_Direction third; /*@ 3th priority of direction */
+            Elm_Ctxpopup_Direction fourth; /*@ 4th priority of direction */
          }
       }
-      @property direction {
+      direction {
          get {
             /*@
             @brief Get the current direction of a ctxpopup.
@@ -125,7 +125,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: Elm_Ctxpopup_Direction(4);
          }
       }
-      @property items {
+      items {
          get {
             /*@
             @brief Get the internal list of items in a given ctxpopup widget.
@@ -145,10 +145,10 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             call to this function when changes happen.
 
             @ingroup Ctxpopup */
-            return: const(list<Elm.Object.Item*>)*;
+            return: const(list)*;
          }
       }
-      @property first_item {
+      first_item {
          get {
             /*@
             Get the first item in the given ctxpopup widget's list of
@@ -165,7 +165,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: Elm_Object_Item *;
          }
       }
-      @property last_item {
+      last_item {
          get {
             /*@
             Get the last item in the given ctxpopup widget's list of
@@ -182,6 +182,8 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: Elm_Object_Item *;
          }
       }
+   }
+   methods {
       dismiss {
          /*@
          @brief Dismiss a ctxpopup object
@@ -213,10 +215,10 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in label: const(char)*; /*@ The Label of the new item */
-            @in icon: Evas_Object * @optional; /*@ Icon to be set on new item */
-            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when item selected */
-            @in data: const(void)* @optional; /*@ Data passed to @p func */
+            @in const(char)* label; /*@ The Label of the new item */
+            @in Evas_Object *icon; /*@ Icon to be set on new item */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when item selected */
+            @in const(void)* data; /*@ Data passed to @p func */
          }
       }
       item_prepend {
@@ -235,10 +237,10 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in label: const(char)*; /*@ The Label of the new item */
-            @in icon: Evas_Object * @optional; /*@ Icon to be set on new item */
-            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when item selected */
-            @in data: const(void)* @optional; /*@ Data passed to @p func */
+            @in const(char)* label; /*@ The Label of the new item */
+            @in Evas_Object *icon; /*@ Icon to be set on new item */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when item selected */
+            @in const(void)* data; /*@ Data passed to @p func */
          }
       }
    }
@@ -247,21 +249,21 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       Eo.Base.constructor;
       Evas.Object_Smart.del;
       Evas.Object_Smart.add;
-      Elm.Widget.parent.set;
-      Elm.Widget.focus_direction;
-      Elm.Widget.sub_object_add;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.disable;
-      Elm.Widget.translate;
-      Elm.Widget.theme_apply;
-      Elm.Widget.event;
-      Elm.Container.content_get;
-      Elm.Container.content_set;
-      Elm.Container.content_unset;
-      Elm.Layout.sub_object_add_enable;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.parent.set;
+      Elm_Widget.focus_direction;
+      Elm_Widget.sub_object_add;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.disable;
+      Elm_Widget.translate;
+      Elm_Widget.theme_apply;
+      Elm_Widget.event;
+      Elm_Container.content_get;
+      Elm_Container.content_set;
+      Elm_Container.content_unset;
+      Elm_Layout.sub_object_add_enable;
+      Elm_Layout.sizing_eval;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {

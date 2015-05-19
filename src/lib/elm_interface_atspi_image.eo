@@ -3,37 +3,37 @@ mixin Elm_Interface_Atspi_Image ()
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_image;
    data: null;
-   methods {
-      @property extents @protected {
+   properties {
+      extents @protected {
          get {
             /*@ Gets an image extents. */
          }
          keys {
-            screen_coords: bool;
+            bool screen_coords;
          }
          values {
-            x: int;
-            y: int;
-            width: int;
-            height: int;
+            int x;
+            int y;
+            int width;
+            int height;
          }
       }
-      @property description @protected {
+      description @protected {
          get {
-            /*@ Gets textual description of image */
+            /* Gets textual description of image */
          }
          set {
          }
          values {
-            description: const(char)*;
+            const(char)* description;
          }
       }
-      @property locale @protected {
+      locale @protected {
          get {
-            /*@ Gets locale of the image description. */
+            /* Gets locale of the image description. */
          }
          values {
-            locale: const(char)*;
+            const(char)* locale;
          }
       }
    }

@@ -2,46 +2,48 @@ interface Elm_Interface_Atspi_Editable_Text ()
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_editable_text;
-   methods {
-      @property content @protected {
+   properties {
+      content @protected {
          set {
             return: bool;
          }
          values {
-            string: const(char)*;
+            const(char)* string;
          }
       }
+   }
+   methods {
       insert @protected {
          params {
-            @in string: const(char)*;
-            @in position: int;
+            @in const(char)* string;
+            @in int position;
          }
          return: bool;
       }
       copy @protected {
          params {
-            @in start: int;
-            @in end: int;
+            @in int start;
+            @in int end;
          }
          return: bool;
       }
       cut @protected {
          params {
-            @in start: int;
-            @in end: int;
+            @in int start;
+            @in int end;
          }
          return: bool;
       }
       delete @protected {
          params {
-            @in start: int;
-            @in end: int;
+            @in int start;
+            @in int end;
          }
          return: bool;
       }
       paste @protected {
          params {
-            @in position: int;
+            @in int position;
          }
          return: bool;
       }

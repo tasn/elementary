@@ -3,8 +3,8 @@ mixin Elm_Interface_Atspi_Component ()
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_component;
    data: null;
-   methods {
-      @property size @protected {
+   properties {
+      size @protected {
          set {
             /*@ Sets size of accessible widget. */
             return: bool;
@@ -13,36 +13,36 @@ mixin Elm_Interface_Atspi_Component ()
             /*@ Gets size of accessible widget. */
          }
          values {
-            w: int;
-            h: int;
+            int w;
+            int h;
          }
       }
-      @property layer @protected {
+      layer @protected {
          get {
             /*@ Sets evas layer of accessible widget. */
          }
          values {
-            layer: int;
+            int layer;
          }
       }
-      @property alpha @protected {
+      alpha @protected {
          get {
             /*@ Gets alpha of accessible widget. */
          }
          values {
-            alpha: double; /*@ alpha value in [0, 1] range. */
+            double alpha; /*@ alpha value in [0, 1] range. */
          }
       }
-      @property z_order @protected {
+      z_order @protected {
          get {
             /*@ Gets the depth at which the component is shown in relation to
             other components in the same container. */
          }
          values {
-            z_order: int;
+            int z_order;
          }
       }
-      @property extents @protected {
+      extents @protected {
          get {
             /*@ Gets geometry of accessible widget. */
          }
@@ -51,18 +51,18 @@ mixin Elm_Interface_Atspi_Component ()
             return: bool;
          }
          keys {
-            screen_coords: bool; /*@ If true x and y values will be relative
+            bool screen_coords; /*@ If true x and y values will be relative
                                        to screen origin, otherwise relative to
                                        canvas */
          }
          values {
-            x: int;
-            y: int;
-            w: int;
-            h: int;
+            int x;
+            int y;
+            int w;
+            int h;
          }
       }
-      @property position @protected {
+      position @protected {
          set {
             /*@ Sets position of accessible widget. */
             return: bool;
@@ -71,22 +71,24 @@ mixin Elm_Interface_Atspi_Component ()
             /*@ Gets position of accessible widget. */
          }
          keys {
-            screen_coords: bool; /*@ If true x and y values will be relative
+            bool screen_coords; /*@ If true x and y values will be relative
                                        to screen origin, otherwise relative to
                                        canvas */
          }
          values {
-            x: int;
-            y: int;
+            int x;
+            int y;
          }
       }
+   }
+   methods {
       contains @protected {
          params {
-            screen_coords: bool; /*@ If true x and y values will be relative
+            bool screen_coords; /*@ If true x and y values will be relative
                                        to screen origin, otherwise relative to
                                        canvas */
-            @in x: int;
-            @in y: int;
+            @in int x;
+            @in int y;
          }
          return: bool;
       }
@@ -100,13 +102,13 @@ mixin Elm_Interface_Atspi_Component ()
       accessible_at_point_get @protected {
          /*@ Gets top component object occupying space at given coordinates. */
          params {
-            screen_coords: bool; /*@ If true x and y values will be relative
+            bool screen_coords; /*@ If true x and y values will be relative
                                        to screen origin, otherwise relative to
                                        canvas */
-            @in x: int;
-            @in y: int;
+            @in int x;
+            @in int y;
          }
-         return: Eo*;
+         return: Evas_Object *;
       }
    }
 }

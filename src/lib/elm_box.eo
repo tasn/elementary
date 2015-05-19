@@ -1,8 +1,8 @@
-class Elm.Box (Elm.Widget)
+class Elm_Box (Elm_Widget)
 {
    eo_prefix: elm_obj_box;
-   methods {
-      @property homogeneous {
+   properties {
+      homogeneous {
          set {
             /*@
             Set the box to arrange its children homogeneously
@@ -23,10 +23,10 @@ class Elm.Box (Elm.Widget)
             @ingroup Box */
          }
          values {
-            homogeneous: bool; /*@ The homogeneous flag */
+            bool homogeneous; /*@ The homogeneous flag */
          }
       }
-      @property align {
+      align {
          set {
             /*@
             Set the alignment of the whole bounding box of contents.
@@ -46,11 +46,11 @@ class Elm.Box (Elm.Widget)
             @ingroup Box */
          }
          values {
-            horizontal: double; /*@ The horizontal alignment of elements */
-            vertical: double; /*@ The vertical alignment of elements */
+            double horizontal; /*@ The horizontal alignment of elements */
+            double vertical; /*@ The vertical alignment of elements */
          }
       }
-      @property horizontal {
+      horizontal {
          set {
             /*@
             Set the horizontal orientation
@@ -73,11 +73,11 @@ class Elm.Box (Elm.Widget)
             @ingroup Box */
          }
          values {
-            horizontal: bool; /*@ The horizontal flag (@c EINA_TRUE = horizontal,
+            bool horizontal; /*@ The horizontal flag (@c EINA_TRUE = horizontal,
             @c EINA_FALSE = vertical) */
          }
       }
-      @property padding {
+      padding {
          set {
             /*@
             Set the space (padding) between the box's elements.
@@ -98,11 +98,11 @@ class Elm.Box (Elm.Widget)
             @ingroup Box */
          }
          values {
-            horizontal: Evas_Coord; /*@ The horizontal space between elements */
-            vertical: Evas_Coord; /*@ The vertical space between elements */
+            Evas_Coord horizontal; /*@ The horizontal space between elements */
+            Evas_Coord vertical; /*@ The vertical space between elements */
          }
       }
-      @property layout {
+      layout {
          set {
             /*@
             Set the layout defining function to be used by the box
@@ -135,12 +135,12 @@ class Elm.Box (Elm.Widget)
             @ingroup Box */
          }
          values {
-            cb: Evas_Object_Box_Layout @nullable; /*@ The callback function used for layout */
-            data: const(void)* @optional; /*@ Data that will be passed to layout function */
-            free_data: Ecore_Cb @optional; /*@ Function called to free @p data */
+            Evas_Object_Box_Layout cb; /*@ The callback function used for layout */
+            const(void)* data; /*@ Data that will be passed to layout function */
+            Ecore_Cb free_data; /*@ Function called to free @p data */
          }
       }
-      @property children {
+      children {
          get {
             /*@
             Get a list of the objects packed into the box
@@ -151,9 +151,11 @@ class Elm.Box (Elm.Widget)
             You must free this list with eina_list_free() once you are done with it.
 
             @ingroup Box */
-            return: free(own(list<Evas_Object*>*), eina_list_free) @warn_unused;
+            return: own(list<Evas_Object*>*);
          }
       }
+   }
+   methods {
       pack_end {
          /*@
          Add an object at the end of the pack list
@@ -174,7 +176,7 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in subobj: Evas_Object *; /*@ The object to add to the box */
+            @in Evas_Object *subobj; /*@ The object to add to the box */
          }
       }
       unpack_all {
@@ -206,7 +208,7 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in subobj: Evas_Object *; /*@ The object to unpack */
+            @in Evas_Object *subobj; /*@ The object to unpack */
          }
       }
       pack_after {
@@ -228,8 +230,8 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in subobj: Evas_Object *; /*@ The object to add to the box */
-            @in after: Evas_Object *; /*@ The object after which to add it */
+            @in Evas_Object *subobj; /*@ The object to add to the box */
+            @in Evas_Object *after; /*@ The object after which to add it */
          }
       }
       pack_start {
@@ -252,7 +254,7 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in subobj: Evas_Object *; /*@ The object to add to the box */
+            @in Evas_Object *subobj; /*@ The object to add to the box */
          }
       }
       recalculate {
@@ -287,8 +289,8 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in subobj: Evas_Object *; /*@ The object to add to the box */
-            @in before: Evas_Object *; /*@ The object before which to add it */
+            @in Evas_Object *subobj; /*@ The object to add to the box */
+            @in Evas_Object *before; /*@ The object before which to add it */
          }
       }
       clear {
@@ -310,12 +312,12 @@ class Elm.Box (Elm.Widget)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.focus_direction;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.theme_apply;
-      Elm.Widget.sub_object_del;
+      Elm_Widget.focus_direction;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.theme_apply;
+      Elm_Widget.sub_object_del;
    }
    events {
       child,added;

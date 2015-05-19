@@ -1,8 +1,8 @@
-class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
+class Elm_Slideshow (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_slideshow;
-   methods {
-      @property cache_after {
+   properties {
+      cache_after {
          set {
             /*@
             Set the number of items to cache, on a given slideshow widget,
@@ -27,10 +27,10 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Slideshow */
          }
          values {
-            count: int; /*@ Number of items to cache after the current one */
+            int count; /*@ Number of items to cache after the current one */
          }
       }
-      @property cache_before {
+      cache_before {
          set {
             /*@
             Set the number of items to cache, on a given slideshow widget,
@@ -55,10 +55,10 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Slideshow */
          }
          values {
-            count: int; /*@ Number of items to cache before the current one */
+            int count; /*@ Number of items to cache before the current one */
          }
       }
-      @property layout {
+      layout {
          set {
             /*@
             Set the current slide layout in use for a given slideshow widget
@@ -82,10 +82,10 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Slideshow */
          }
          values {
-            layout: const(char)*; /*@ The new layout's name string */
+            const(char)* layout; /*@ The new layout's name string */
          }
       }
-      @property transition {
+      transition {
          set {
             /*@
             Set the current slide transition/effect in use for a given
@@ -112,10 +112,10 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Slideshow */
          }
          values {
-            transition: const(char)* @nullable; /*@ The new transition's name string */
+            const(char)* transition; /*@ The new transition's name string */
          }
       }
-      @property loop {
+      loop {
          set {
             /*@
             Set if, after a slideshow is started, for a given slideshow
@@ -143,12 +143,12 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Slideshow */
          }
          values {
-            loop: bool; /*@ Use @c EINA_TRUE to make it cycle through items or
+            bool loop; /*@ Use @c EINA_TRUE to make it cycle through items or
             @c EINA_FALSE for it to stop at the end of @p obj's internal
             list of items */
          }
       }
-      @property timeout {
+      timeout {
          set {
             /*@
             Set the interval between each image transition on a given
@@ -181,10 +181,10 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Slideshow */
          }
          values {
-            timeout: double; /*@ The new displaying timeout for images */
+            double timeout; /*@ The new displaying timeout for images */
          }
       }
-      @property items {
+      items {
          get {
             /*@
             Get the internal list of items in a given slideshow widget.
@@ -201,10 +201,10 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             call to this function when changes happen.
 
             @ingroup Slideshow */
-            return: const(list<Elm_Object_Item *>)*;
+            return: const(list)*;
          }
       }
-      @property transitions {
+      transitions {
          get {
             /*@
             Returns the list of sliding transition/effect names available, for a
@@ -243,10 +243,10 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_slideshow_transition_set()
 
             @ingroup Slideshow */
-            return: const(list<const(char)*>)*;
+            return: const(list)*;
          }
       }
-      @property count {
+      count {
          get {
             /*@
             Get the number of items stored in a given slideshow widget
@@ -257,7 +257,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: uint;
          }
       }
-      @property item_current {
+      item_current {
          get {
             /*@
             Returns the currently displayed item, in a given slideshow widget
@@ -269,7 +269,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: Elm_Object_Item *;
          }
       }
-      @property layouts {
+      layouts {
          get {
             /*@
             Returns the list of @b layout names available, for a given
@@ -303,9 +303,11 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_slideshow_layout_set()
 
             @ingroup Slideshow */
-            return: const(list<const(char)*>)*;
+            return: const(list)*;
          }
       }
+   }
+   methods {
       previous {
          /*@
          Slide to the @b previous item, in a given slideshow widget
@@ -330,7 +332,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          @ingroup Slideshow */
          return: Elm_Object_Item *;
          params {
-            @in nth: uint; /*@ The number of the item to grab a handle to (0 being
+            @in uint nth; /*@ The number of the item to grab a handle to (0 being
             the first) */
          }
       }
@@ -380,8 +382,8 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in itc: const(Elm_Slideshow_Item_Class)*; /*@ The item class for the item */
-            @in data: const(void)*; /*@ The item's data */
+            @in const(Elm_Slideshow_Item_Class)* itc; /*@ The item class for the item */
+            @in const(void)* data; /*@ The item's data */
          }
       }
       item_sorted_insert {
@@ -406,9 +408,9 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in itc: const(Elm_Slideshow_Item_Class)*; /*@ The item class for the item */
-            @in data: const(void)*; /*@ The item's data */
-            @in func: Eina_Compare_Cb; /*@ The comparing function to be used to sort slideshow
+            @in const(Elm_Slideshow_Item_Class)* itc; /*@ The item class for the item */
+            @in const(void)* data; /*@ The item's data */
+            @in Eina_Compare_Cb func; /*@ The comparing function to be used to sort slideshow
             items <b>by #Elm_Slideshow_Item_Class item handles</b> */
          }
       }
@@ -418,10 +420,10 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.event;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.event;
+      Elm_Layout.sizing_eval;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {

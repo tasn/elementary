@@ -1,8 +1,8 @@
-class Elm.Label (Elm.Layout)
+class Elm_Label (Elm_Layout)
 {
    eo_prefix: elm_obj_label;
-   methods {
-      @property wrap_width {
+   properties {
+      wrap_width {
          set {
             /*@
             @brief Set wrap width of the label
@@ -24,10 +24,10 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            w: Evas_Coord; /*@ The wrap width in pixels at a minimum where words need to wrap */
+            Evas_Coord w; /*@ The wrap width in pixels at a minimum where words need to wrap */
          }
       }
-      @property slide_speed {
+      slide_speed {
          set {
             /*@
             @brief Set the slide speed of the label
@@ -51,10 +51,10 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            speed: double; /*@ The speed of the slide animation in px per seconds */
+            double speed; /*@ The speed of the slide animation in px per seconds */
          }
       }
-      @property slide_mode {
+      slide_mode {
          set {
             /*@
             @brief Set the slide mode of the label widget.
@@ -89,10 +89,10 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            mode: Elm_Label_Slide_Mode; /*@ The slide mode */
+            Elm_Label_Slide_Mode mode; /*@ The slide mode */
          }
       }
-      @property slide_duration {
+      slide_duration {
          set {
             /*@
             @brief Set the slide duration of the label
@@ -116,11 +116,11 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            duration: double; /*@ The duration in seconds in moving text from slide begin position
+            double duration; /*@ The duration in seconds in moving text from slide begin position
             to slide end position */
          }
       }
-      @property line_wrap {
+      line_wrap {
          set {
             /*@
             @brief Set the wrapping behavior of the label
@@ -144,10 +144,10 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            wrap: Elm_Wrap_Type; /*@ To wrap text or not */
+            Elm_Wrap_Type wrap; /*@ To wrap text or not */
          }
       }
-      @property ellipsis {
+      ellipsis {
          set {
             /*@
             @brief Set the ellipsis behavior of the label
@@ -171,9 +171,11 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            ellipsis: bool; /*@ To ellipsis text or not */
+            bool ellipsis; /*@ To ellipsis text or not */
          }
       }
+   }
+   methods {
       slide_go {
          /*@
          @brief Start slide effect.
@@ -189,12 +191,12 @@ class Elm.Label (Elm.Layout)
       class.constructor;
       Eo.Base.constructor;
       Evas.Object_Smart.add;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.theme_apply;
-      Elm.Layout.text_set;
-      Elm.Layout.text_aliases.get;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.theme_apply;
+      Elm_Layout.text_set;
+      Elm_Layout.text_aliases.get;
+      Elm_Layout.sizing_eval;
    }
    events {
       language,changed;

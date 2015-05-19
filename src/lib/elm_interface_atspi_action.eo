@@ -3,30 +3,30 @@ mixin Elm_Interface_Atspi_Action ()
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_action;
    data: null;
-   methods {
-      @property name @protected {
+   properties {
+      name @protected {
          get {
             /*@ Gets action name for given id */
          }
          values {
-            name: const(char)*;
+            const(char)* name;
          }
          keys {
-            id: int;
+            int id;
          }
       }
-      @property localized_name @protected {
+      localized_name @protected {
          get {
             /*@ Gets localized action name for given id */
          }
          values {
-            name: const(char)*;
+            const(char)* name;
          }
          keys {
-            id: int;
+            int id;
          }
       }
-      @property description @protected {
+      description @protected {
          get {
             /*@ Gets action description for given id */
          }
@@ -35,24 +35,26 @@ mixin Elm_Interface_Atspi_Action ()
             return: bool;
          }
          values {
-            description: const(char)*;
+            const(char)* description;
          }
          keys {
-            id: int;
+            int id;
          }
       }
-      @property actions @protected {
+      actions @protected {
          get {
             /*@ Get list of available widget actions */
          }
          values {
-            actions: list<Elm_Atspi_Action> *; /*@ contains statically allocated strings */
+            list *actions; /*@ contains statically allocated strings */
          }
       }
+   }
+   methods {
       action_do @protected {
          /*@ Performs action on given widget. */
          params {
-            @in id: int;
+            @in int id;
          }
          return: bool;
       }
@@ -60,9 +62,9 @@ mixin Elm_Interface_Atspi_Action ()
          /*@ Gets configured keybinding for specific action and widget.
              returned pointer should be free by a user.*/
          params {
-            @in id: int;
+            @in  int id;
          }
-         return: own(char *) @warn_unused;
+         return: char *;
       }
    }
    implements {

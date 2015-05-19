@@ -1,185 +1,9 @@
-enum Elm.Win.Type
-{
-   /*@
-   Defines the types of window that can be created
-
-   These are hints set on the window so that a running Window Manager knows
-   how the window should be handled and/or what kind of decorations it
-   should have.
-
-   Currently, only the X11 backed engines use them.
-
-   @ingroup Win */
-
-   legacy: elm_win;
-
-   unknown = -1,
-   basic, /*@ A normal window. Indicates a normal, top-level
-              window. Almost every window will be created with this
-              type. */
-   dialog_basic, /*@ Used for simple dialog windows. */
-   desktop, /*@ For special desktop windows, like a background
-                window holding desktop icons. */
-   dock, /*@ The window is used as a dock or panel. Usually would
-             be kept on top of any other window by the Window
-             Manager. */
-   toolbar, /*@ The window is used to hold a floating toolbar, or
-                similar. */
-   menu, /*@ Similar to #ELM_WIN_TOOLBAR. */
-   utility, /*@ A persistent utility window, like a toolbox or
-                palette. */
-   splash, /*@ Splash window for a starting up application. */
-   dropdown_menu, /*@ The window is a dropdown menu, as when an
-                      entry in a menubar is clicked. Typically used
-                      with elm_win_override_set(). This hint exists
-                      for completion only, as the EFL way of
-                      implementing a menu would not normally use a
-                      separate window for its contents. */
-   popup_menu, /*@ Like #ELM_WIN_DROPDOWN_MENU, but for the menu
-                   triggered by right-clicking an object. */
-   tooltip, /*@ The window is a tooltip. A short piece of
-                explanatory text that typically appear after the
-                mouse cursor hovers over an object for a while.
-                Typically used with elm_win_override_set() and also
-                not very commonly used in the EFL. */
-   notification, /*@ A notification window, like a warning about
-                     battery life or a new E-Mail received. */
-   combo, /*@ A window holding the contents of a combo box. Not
-              usually used in the EFL. */
-   dnd, /*@ Used to indicate the window is a representation of an
-            object being dragged across different windows, or even
-            applications. Typically used with
-            elm_win_override_set(). */
-   inlined_image, /*@ The window is rendered onto an image
-                      buffer. No actual window is created for this
-                      type, instead the window and all of its
-                      contents will be rendered to an image buffer.
-                      This allows to have children window inside a
-                      parent one just like any other object would
-                      be, and do other things like applying @c
-                      Evas_Map effects to it. This is the only type
-                      of window that requires the @c parent
-                      parameter of elm_win_add() to be a valid @c
-                      Evas_Object. */
-   socket_image, /*@ The window is rendered onto an image buffer
-                     and can be shown other process's plug image object.
-                     No actual window is created for this type,
-                     instead the window and all of its contents will be
-                     rendered to an image buffer and can be shown
-                     other process's plug image object. */
-   fake /*@ This window was created using a pre-existing canvas.
-            The window widget can be deleted, but the canvas
-            must be managed externally.
-            @since 1.13 */
-}
-
-enum Elm.Win.Keyboard_Mode
-{
-   /*@
-   The different layouts that can be requested for the virtual keyboard.
-
-   When the application window is being managed by Illume, it may request
-   any of the following layouts for the virtual keyboard.
-
-   @ingroup Win */
-
-   legacy: elm_win_keyboard;
-
-   unknown, /*@ Unknown keyboard state */
-   off, /*@ Request to deactivate the keyboard */
-   on, /*@ Enable keyboard with default layout */
-   alpha, /*@ Alpha (a-z) keyboard layout */
-   numeric, /*@ Numeric keyboard layout */
-   pin, /*@ PIN keyboard layout */
-   phone_number, /*@ Phone keyboard layout */
-   hex, /*@ Hexadecimal numeric keyboard layout */
-   terminal, /*@ Full (QWERTY) keyboard layout */
-   password, /*@ Password keyboard layout */
-   ip, /*@ IP keyboard layout */
-   host, /*@ Host keyboard layout */
-   file, /*@ File keyboard layout */
-   url, /*@ URL keyboard layout */
-   keypad, /*@ Keypad layout */
-   j2me /*@ J2ME keyboard layout */
-}
-
-enum Elm.Win.Indicator_Mode
-{
-   /*@
-   In some environments, like phones, you may have an indicator that
-   shows battery status, reception, time etc. This is the indicator.
-
-   Sometimes you don't want it because you provide the same functionality
-   inside your app, so this will request that the indicator is hidden in
-   this circumstance if you use ELM_ILLUME_INDICATOR_HIDE. The default
-   is to have the indicator shown.
-
-   @ingroup Win */
-
-   legacy: elm_win_indicator;
-
-   unknown, /*@ Unknown indicator state */
-   hide, /*@ Hides the indicator */
-   show /*@ Shows the indicator */
-}
-
-enum Elm.Win.Indicator_Opacity_Mode
-{
-   /*@
-   Defines the opacity modes of indicator that can be shown
-
-   @ingroup Win */
-
-   legacy: elm_win_indicator;
-
-   opacity_unknown, /*@ Unknown indicator opacity mode */
-   opaque, /*@ Opacifies the indicator */
-   translucent, /*@ Be translucent the indicator */
-   transparent /*@ Transparentizes the indicator */
-}
-
-/**
- */
-enum Elm.Win.Keygrab_Mode
-{
-   /*@
-   Define the keygrab modes of window.
-   A window may send commands to the Keyrouter according this mode,
-   and perform different actions.
-
-   @ingroup Win */
-
-   legacy: elm_win_keygrab;
-
-   unknown = 0, /*@ Unknown keygrab mode */
-   shared = (1 << 8), /*@ Getting the grabbed-key together with the other client windows */
-   topmost = (1 << 9), /*@ Getting the grabbed-key only when window is top of the stack */
-   exclusive = (1 << 10), /*@ Getting the grabbed-key exclusively regardless of window's position */
-   override_exclusive = (1 << 11) /*@ Getting the grabbed-key exclusively regardless of window's position. Being overrided the grab by the other client window  */
-}
-
-enum Elm.Illume_Command
-{
-   /*@
-   Available commands that can be sent to the Illume manager.
-
-   When running under an Illume session, a window may send commands to the
-   Illume manager to perform different actions.
-
-   @ingroup Win */
-
-   focus_back, /*@ Reverts focus to the previous window */
-   focus_forward, /*@ Sends focus to the next window in the list */
-   focus_home, /*@ Hides all windows to show the Home screen */
-   close /*@ Closes the currently active window */
-}
-
-class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
+class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
                Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_win;
-   methods {
-      @property keyboard_win {
+   properties {
+      keyboard_win {
          set {
             /*@
             Sets whether the window is a keyboard.
@@ -195,10 +19,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            is_keyboard: bool; /*@ If true, the window is a virtual keyboard */
+            bool is_keyboard; /*@ If true, the window is a virtual keyboard */
          }
       }
-      @property autodel {
+      autodel {
          set {
             /*@
             Set the window's autodel state.
@@ -227,11 +51,11 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            autodel: bool; /*@ If true, the window will automatically delete itself when
+            bool autodel; /*@ If true, the window will automatically delete itself when
             closed */
          }
       }
-      @property override {
+      override {
          set {
             /*@
             Set the override state of a window.
@@ -259,10 +83,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            override: bool; /*@ If true, the window is overridden */
+            bool override; /*@ If true, the window is overridden */
          }
       }
-      @property iconified {
+      iconified {
          set {
             /*@
             Set the iconified state of a window.
@@ -278,10 +102,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            iconified: bool; /*@ If true, the window is iconified */
+            bool iconified; /*@ If true, the window is iconified */
          }
       }
-      @property wm_available_rotations {
+      wm_available_rotations {
          set {
             /*@
             Set the array of available window rotations.
@@ -309,11 +133,11 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             return: bool;
          }
          values {
-            rotations: int * @const_set; /*@ The array of rotation value. */
-            count: uint; /*@ The size of the @param rotations array. */
+            int *rotations @const_set; /*@ The array of rotation value. */
+            uint count; /*@ The size of the @param rotations array. */
          }
       }
-      @property quickpanel_zone {
+      quickpanel_zone {
          set {
             /*@
             Set which zone this quickpanel should appear in
@@ -329,10 +153,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            zone: int; /*@ The requested zone for this quickpanel */
+            int zone; /*@ The requested zone for this quickpanel */
          }
       }
-      @property maximized {
+      maximized {
          set {
             /*@
             Set the maximized state of a window.
@@ -348,10 +172,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            maximized: bool; /*@ If true, the window is maximized */
+            bool maximized; /*@ If true, the window is maximized */
          }
       }
-      @property modal {
+      modal {
          set {
             /*@
             Set the modal state of a window.
@@ -367,10 +191,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            modal: bool; /*@ If true, the window is modal */
+            bool modal; /*@ If true, the window is modal */
          }
       }
-      @property icon_name {
+      icon_name {
          set {
             /*@
             Set the icon name of the window
@@ -390,10 +214,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            icon_name: const(char)*; /*@ The icon name to set */
+            const(char)* icon_name; /*@ The icon name to set */
          }
       }
-      @property withdrawn {
+      withdrawn {
          set {
             /*@
             Set the withdrawn state of a window.
@@ -409,10 +233,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            withdrawn: bool; /*@ If true, the window is withdrawn */
+            bool withdrawn; /*@ If true, the window is withdrawn */
          }
       }
-      @property role {
+      role {
          set {
             /*@
             Set the role of the window
@@ -432,10 +256,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            role: const(char)*; /*@ The role to set */
+            const(char)* role; /*@ The role to set */
          }
       }
-      @property size_step {
+      size_step {
          set {
             /*@
             Set the window stepping used with sizing calculation
@@ -457,11 +281,11 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @since 1.7 */
          }
          values {
-            w: int; /*@ The stepping width (0 disables) */
-            h: int; /*@ The stepping height (0 disables) */
+            int w; /*@ The stepping width (0 disables) */
+            int h; /*@ The stepping height (0 disables) */
          }
       }
-      @property focus_highlight_style {
+      focus_highlight_style {
          set {
             /*@
             Set the style for the focus highlight on this window
@@ -483,10 +307,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            style: const(char)* @nullable; /*@ The style to set */
+            const(char)* style; /*@ The style to set */
          }
       }
-      @property borderless {
+      borderless {
          set {
             /*@
             Set the borderless state of a window.
@@ -505,10 +329,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            borderless: bool; /*@ If true, the window is borderless */
+            bool borderless; /*@ If true, the window is borderless */
          }
       }
-      @property screen_constrain {
+      screen_constrain {
          set {
             /*@
             Constrain the maximum width and height of a window to the width and height of its screen
@@ -526,10 +350,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            constrain: bool; /*@ EINA_TRUE to restrict the window's maximum size, EINA_FALSE to disable restriction */
+            bool constrain; /*@ EINA_TRUE to restrict the window's maximum size, EINA_FALSE to disable restriction */
          }
       }
-      @property available_profiles {
+      available_profiles {
          set {
             /*@
             Set the array of available profiles to a window.
@@ -548,11 +372,11 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             return: bool;
          }
          values {
-            profiles: char ** @const_set; /*@ The string array of available profiles */
-            count: uint; /*@ The number of members in profiles */
+            char **profiles @const_set; /*@ The string array of available profiles */
+            uint count; /*@ The number of members in profiles */
          }
       }
-      @property focus_highlight_enabled {
+      focus_highlight_enabled {
          set {
             /*@
             Set the enabled status for the focus highlight in a window
@@ -571,10 +395,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            enabled: bool; /*@ The enabled value for the highlight */
+            bool enabled; /*@ The enabled value for the highlight */
          }
       }
-      @property title {
+      title {
          set {
             /*@
             Set the title of the window
@@ -594,10 +418,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            title: const(char)*; /*@ The title to set */
+            const(char)* title; /*@ The title to set */
          }
       }
-      @property alpha {
+      alpha {
          set {
             /*@
             Set the alpha channel state of a window.
@@ -627,10 +451,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            alpha: bool; /*@ EINA_TRUE if the window alpha channel is enabled, EINA_FALSE otherwise */
+            bool alpha; /*@ EINA_TRUE if the window alpha channel is enabled, EINA_FALSE otherwise */
          }
       }
-      @property urgent {
+      urgent {
          set {
             /*@
             Set the urgent state of a window.
@@ -646,10 +470,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            urgent: bool; /*@ If true, the window is urgent */
+            bool urgent; /*@ If true, the window is urgent */
          }
       }
-      @property rotation {
+      rotation {
          set {
             /*@
             Set the rotation of the window.
@@ -675,11 +499,11 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            rotation: int; /*@ The rotation of the window, in degrees (0-360),
+            int rotation; /*@ The rotation of the window, in degrees (0-360),
             counter-clockwise. */
          }
       }
-      @property icon_object {
+      icon_object {
          set {
             /*@
             Set a window object's icon
@@ -714,10 +538,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            icon: Evas_Object * @const_get @nullable; /*@ The Evas image object to use for an icon */
+            Evas_Object *icon @const_get; /*@ The Evas image object to use for an icon */
          }
       }
-      @property quickpanel_priority_minor {
+      quickpanel_priority_minor {
          set {
             /*@
             Set the minor priority of a quickpanel window
@@ -733,10 +557,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            priority: int(-1); /*@ The minor priority for this quickpanel */
+            int priority(-1); /*@ The minor priority for this quickpanel */
          }
       }
-      @property sticky {
+      sticky {
          set {
             /*@
             Set the sticky state of the window.
@@ -757,10 +581,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            sticky: bool; /*@ If true, the window's sticky state is enabled */
+            bool sticky; /*@ If true, the window's sticky state is enabled */
          }
       }
-      @property keyboard_mode {
+      keyboard_mode {
          set {
             /*@
             Sets the keyboard mode of the window.
@@ -776,10 +600,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            mode: Elm.Win.Keyboard_Mode; /*@ The mode to set, one of #Elm_Win_Keyboard_Mode */
+            Elm_Win_Keyboard_Mode mode; /*@ The mode to set, one of #Elm_Win_Keyboard_Mode */
          }
       }
-      @property focus_highlight_animate {
+      focus_highlight_animate {
          set {
             /*@
             Set the animate status for the focus highlight for this window.
@@ -798,10 +622,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            animate: bool; /*@ The enabled value for the highlight animation */
+            bool animate; /*@ The enabled value for the highlight animation */
          }
       }
-      @property aspect {
+      aspect {
          set {
             /*@
             Set the aspect ratio of a window.
@@ -817,11 +641,11 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            aspect: double; /*@ If 0, the window has no aspect limits, otherwise it is
+            double aspect; /*@ If 0, the window has no aspect limits, otherwise it is
             width divided by height */
          }
       }
-      @property quickpanel_priority_major {
+      quickpanel_priority_major {
          set {
             /*@
             Set the major priority of a quickpanel window
@@ -837,10 +661,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            priority: int(-1); /*@ The major priority for this quickpanel */
+            int priority(-1); /*@ The major priority for this quickpanel */
          }
       }
-      @property indicator_opacity {
+      indicator_opacity {
          set {
             /*@
             Sets the indicator opacity mode of the window.
@@ -856,10 +680,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            mode: Elm.Win.Indicator_Opacity_Mode; /*@ The mode to set, one of #Elm_Win_Indicator_Opacity_Mode */
+            Elm_Win_Indicator_Opacity_Mode mode; /*@ The mode to set, one of #Elm_Win_Indicator_Opacity_Mode */
          }
       }
-      @property demand_attention {
+      demand_attention {
          set {
             /*@
             Set the demand_attention state of a window.
@@ -875,10 +699,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            demand_attention: bool; /*@ If true, the window is demand_attention */
+            bool demand_attention; /*@ If true, the window is demand_attention */
          }
       }
-      @property wm_preferred_rotation {
+      wm_preferred_rotation {
          set {
             /*@
             Set the preferred rotation value.
@@ -907,11 +731,11 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             legacy: elm_win_wm_rotation_preferred_rotation_get;
          }
          values {
-            rotation: int; /*@ The preferred rotation of the window in degrees (0-360),
+            int rotation; /*@ The preferred rotation of the window in degrees (0-360),
             counter-clockwise. */
          }
       }
-      @property layer {
+      layer {
          set {
             /*@
             Set the layer of the window.
@@ -937,10 +761,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            layer: int; /*@ The layer of the window */
+            int layer; /*@ The layer of the window */
          }
       }
-      @property profile {
+      profile {
          set {
             /*@
             Set the profile of a window.
@@ -958,10 +782,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @since 1.8 */
          }
          values {
-            profile: const(char)*; /*@ The string value of a window profile */
+            const(char)* profile; /*@ The string value of a window profile */
          }
       }
-      @property shaped {
+      shaped {
          set {
             /*@
             Set the shaped state of a window.
@@ -988,10 +812,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            shaped: bool; /*@ If true, the window is shaped */
+            bool shaped; /*@ If true, the window is shaped */
          }
       }
-      @property fullscreen {
+      fullscreen {
          set {
             /*@
             Set the fullscreen state of a window.
@@ -1007,10 +831,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            fullscreen: bool; /*@ If true, the window is fullscreen */
+            bool fullscreen; /*@ If true, the window is fullscreen */
          }
       }
-      @property wm_manual_rotation_done {
+      wm_manual_rotation_done {
          set {
             /*@
             Set the manual rotation done mode.
@@ -1043,10 +867,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             legacy: elm_win_wm_rotation_manual_rotation_done_get;
          }
          values {
-            set: bool; /*@ EINA_TRUE means to set manual rotation done mode EINA_FALSE otherwise. */
+            bool set; /*@ EINA_TRUE means to set manual rotation done mode EINA_FALSE otherwise. */
          }
       }
-      @property indicator_mode {
+      indicator_mode {
          set {
             /*@
             Sets the indicator mode of the window.
@@ -1062,10 +886,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            mode: Elm.Win.Indicator_Mode; /*@ The mode to set, one of #Elm_Win_Indicator_Mode */
+            Elm_Win_Indicator_Mode mode; /*@ The mode to set, one of #Elm_Win_Indicator_Mode */
          }
       }
-      @property conformant {
+      conformant {
          set {
             /*@
             Set if this window is an illume conformant window
@@ -1081,10 +905,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            conformant: bool; /*@ The conformant flag (1 = conformant, 0 = non-conformant) */
+            bool conformant; /*@ The conformant flag (1 = conformant, 0 = non-conformant) */
          }
       }
-      @property size_base {
+      size_base {
          set {
             /*@
             Set the base window size used with stepping calculation
@@ -1106,11 +930,11 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @since 1.7 */
          }
          values {
-            w: int; /*@ The base width */
-            h: int; /*@ The base height */
+            int w; /*@ The base width */
+            int h; /*@ The base height */
          }
       }
-      @property quickpanel {
+      quickpanel {
          set {
             /*@
             Set a window to be an illume quickpanel window
@@ -1128,10 +952,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            quickpanel: bool; /*@ The quickpanel flag (1 = quickpanel, 0 = normal window) */
+            bool quickpanel; /*@ The quickpanel flag (1 = quickpanel, 0 = normal window) */
          }
       }
-      @property rotation_with_resize {
+      rotation_with_resize {
          set {
             /*@
             Rotates the window and resizes it.
@@ -1142,11 +966,11 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            rotation: int; /*@ The rotation of the window in degrees (0-360),
+            int rotation; /*@ The rotation of the window in degrees (0-360),
             counter-clockwise. */
          }
       }
-      @property prop_focus_skip {
+      prop_focus_skip {
          set {
             /*@
             Set the window to be skipped by keyboard focus
@@ -1167,10 +991,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            skip: bool; /*@ The skip flag state (EINA_TRUE if it is to be skipped) */
+            bool skip; /*@ The skip flag state (EINA_TRUE if it is to be skipped) */
          }
       }
-      @property screen_position {
+      screen_position {
          get {
             /*@
             Get the screen position of a window.
@@ -1178,11 +1002,11 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            x: int; /*@ The int to store the x coordinate to */
-            y: int; /*@ The int to store the y coordinate to */
+            int x; /*@ The int to store the x coordinate to */
+            int y; /*@ The int to store the y coordinate to */
          }
       }
-      @property wm_rotation_supported {
+      wm_rotation_supported {
          get {
             /*@
             Query whether window manager supports window rotation or not.
@@ -1206,7 +1030,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             return: bool;
          }
       }
-      @property xwindow {
+      xwindow {
          get {
             /*@
             Get the Ecore_X_Window of an Evas_Object
@@ -1217,7 +1041,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             return: Ecore_X_Window;
          }
       }
-      @property focus {
+      focus {
          get {
             /*@
             Determine whether a window has focus
@@ -1227,20 +1051,20 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             return: bool;
          }
       }
-      @property screen_size {
+      screen_size {
          get {
             /*@
             Get screen geometry details for the screen that a window is on
             @ingroup Win */
          }
          values {
-            x: int; /*@ where to return the horizontal offset value. May be NULL. */
-            y: int; /*@ where to return the vertical offset value. May be NULL. */
-            w: int; /*@ where to return the width value. May be NULL. */
-            h: int; /*@ where to return the height value. May be NULL. */
+            int x; /*@ where to return the horizontal offset value. May be NULL. */
+            int y; /*@ where to return the vertical offset value. May be NULL. */
+            int w; /*@ where to return the width value. May be NULL. */
+            int h; /*@ where to return the height value. May be NULL. */
          }
       }
-      @property main_menu {
+      main_menu {
          get {
             /*@
             Get the Main Menu of a window.
@@ -1251,7 +1075,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             return: Evas_Object *;
          }
       }
-      @property wl_window {
+      wl_window {
          get {
             /*@
             Get the Ecore_Wl_Window of an Evas_Object
@@ -1263,7 +1087,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             legacy: null;
          }
       }
-      @property window_id {
+      window_id {
          get {
             /*@
             Get the Ecore_Window of an Evas_Object
@@ -1278,7 +1102,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             legacy: null;
          }
       }
-      @property screen_dpi {
+      screen_dpi {
          get {
             /*@
             Get screen dpi for the screen that a window is on
@@ -1286,11 +1110,11 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @since 1.7 */
          }
          values {
-            xdpi: int; /*@ Pointer to value to store return horizontal dpi. May be NULL. */
-            ydpi: int; /*@ Pointer to value to store return vertical dpi. May be NULL. */
+            int xdpi; /*@ Pointer to value to store return horizontal dpi. May be NULL. */
+            int ydpi; /*@ Pointer to value to store return vertical dpi. May be NULL. */
          }
       }
-      @property inlined_image_object {
+      inlined_image_object {
          get {
             /*@
             Get the inlined image object handle
@@ -1307,73 +1131,18 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             return: Evas_Object *;
          }
       }
-      @property name {
-         /*@
-         The window name.
-
-         The meaning of name depends on the underlying windowing system.
-
-         The window name is a constructing property that need to be set at
-         creation within @ref eo_add.
-
-         Example:
-         @code
-         win = eo_add(ELM_WIN_CLASS, NULL, elm_obj_win_name_set(ELM_WIN_BASIC));
-         @endcode
-
-         @note Once set, it can NOT be modified afterward.
-
-         @ingroup Win */
-
-         set {
-            /*@
-            Can only be used at creation time, within @ref eo_add.
-
-            @ingroup Win */
-         }
-         values {
-            name: const(char)* @nullable;
-         }
-      }
-      @property type {
-         /*@
-         The type of the window.
-
-         It is a hint of how the Window Manager should handle it.
-
-         The window type is a constructing property that need to be set at
-         creation within @ref eo_add.
-
-         Example:
-         @code
-         win = eo_add(ELM_WIN_CLASS, NULL, elm_obj_win_type_set(ELM_WIN_BASIC));
-         @endcode
-
-         @note Once set, it can NOT be modified afterward.
-
-         @see Elm_Win_Type
-
-         @ingroup Win */
-
-         set {
-            /*@
-            Can only be used at creation time, within @ref eo_add.
-
-            @see Elm_Win_Type
-
-            @ingroup Win */
-         }
+      type {
          get {
             /*@
-            If the object is not window object, return #ELM_WIN_UNKNOWN.
+            Get the type of a window.
+
+            @return The type of a window object. If the object is not window object, return #ELM_WIN_UNKNOWN.
 
             @ingroup Win */
-         }
-         values {
-            type: Elm.Win.Type(Elm.Win.Type.unknown);
+            return: Elm_Win_Type(-1);
          }
       }
-      @property noblank {
+      noblank {
          set {
             /*@
             Set the noblank property of a window.
@@ -1400,10 +1169,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            noblank: bool; /*@ If true, the window is set to noblank */
+            bool noblank; /*@ If true, the window is set to noblank */
          }
       }
-      @property trap_data {
+      trap_data {
          get {
             /*@
 
@@ -1413,16 +1182,26 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            trap_data: void *; /*@ The trap data of the window */
+            void *trap_data; /*@ The trap data of the window */
          }
       }
-      @property fake_canvas @protected {
+      fake_canvas @protected {
            set {
                 /*@ Internal. Used to completent the fake window type. */
            }
            values {
-                oee: Ecore_Evas *;
+                Ecore_Evas *oee;
            }
+      }
+   }
+   methods {
+      constructor {
+         /*@ No description supplied by the EAPI. */
+         legacy: null;
+         params {
+            @in const(char)* name;
+            @in Elm_Win_Type type;
+         }
       }
       wm_manual_rotation_done_manual {
          /*@
@@ -1448,9 +1227,9 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
 
          return: bool;
          params {
-            @in svcname: const(char)*; /*@ The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail. */
-            @in svcnum: int; /*@ A number (any value, 0 being the common default) to differentiate multiple instances of services with the same name. */
-            @in svcsys: bool; /*@ A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user id that created the service. */
+            @in const(char)* svcname; /*@ The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail. */
+            @in int svcnum; /*@ A number (any value, 0 being the common default) to differentiate multiple instances of services with the same name. */
+            @in bool svcsys; /*@ A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user id that created the service. */
          }
       }
       illume_command_send {
@@ -1467,8 +1246,8 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          @ingroup Win */
 
          params {
-            @in command: Elm.Illume_Command; /*@ The command to send */
-            @in params: void * @optional; /*@ Optional parameters for the command */
+            @in Elm_Illume_Command command; /*@ The command to send */
+            @in void *params; /*@ Optional parameters for the command */
          }
       }
       activate {
@@ -1514,7 +1293,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          @ingroup Win */
 
          params {
-            @in subobj: Evas_Object *; /*@ The resize object to add */
+            @in Evas_Object *subobj; /*@ The resize object to add */
          }
       }
       raise {
@@ -1555,7 +1334,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          @ingroup Win */
 
          params {
-            @in subobj: Evas_Object *; /*@ The resize object to add */
+            @in Evas_Object *subobj; /*@ The resize object to add */
          }
       }
       center {
@@ -1567,65 +1346,32 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          @ingroup Win */
 
          params {
-            @in h: bool; /*@ If true, center horizontally. If false, do not change horizontal location. */
-            @in v: bool; /*@ If true, center vertically. If false, do not change vertical location. */
-         }
-      }
-      keygrab_set {
-         /*@
-         Set keygrab value of the window
-
-         This function grabs the @p key of window using @p grab_mode.
-         @ingroup Win */
-
-         return: bool;
-         params {
-            @in key: const(char)*; /*@ This string is the keyname to grab. */
-            @in modifiers: Evas_Modifier_Mask; /*@ This is for the keymask feature. Currently this feature is not supported. */
-            @in not_modifiers: Evas_Modifier_Mask; /*@ This is for the keymask feature. Currently this feature is not supported. */
-            @in proirity: int; /*@ This is for the priority of keygrab. Currently this feature is not supported. */
-            @in grab_mode: Elm.Win.Keygrab_Mode; /*@  According to the grabmode, it can grab key differently */
-         }
-      }
-      keygrab_unset {
-         /*@
-         Unset keygrab value of the window
-
-         This function unset keygrab value. Ungrab @p key of window.
-         @ingroup Win */
-
-         return: bool;
-         params {
-            @in key: const(char)*; /*@ This string is the keyname to grab. */
-            @in modifiers: Evas_Modifier_Mask; /*@ This is for the keymask feature. Currently this feature is not supported. */
-            @in not_modifiers: Evas_Modifier_Mask; /*@ This is for the keymask feature. Currently this feature is not supported. */
+            @in bool h; /*@ If true, center horizontally. If false, do not change horizontal location. */
+            @in bool v; /*@ If true, center vertically. If false, do not change vertical location. */
          }
       }
    }
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Eo.Base.finalize;
       Evas.Object_Smart.hide;
       Evas.Object_Smart.show;
       Evas.Object_Smart.move;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Evas.Object_Smart.resize;
-      Elm.Widget.focus_direction;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus;
-      Elm.Widget.event;
+      Elm_Widget.focus_direction;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.theme_apply;
+      Elm_Widget.on_focus;
+      Elm_Widget.event;
       Elm_Interface_Atspi_Accessible.parent.get;
-      Elm_Interface_Atspi_Accessible.state_set.get;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    constructors {
-      .name;
-      .type;
+      .constructor;
    }
    events {
       delete,request;

@@ -1,8 +1,8 @@
-class Elm.Notify (Elm.Container)
+class Elm_Notify (Elm_Container)
 {
    eo_prefix: elm_obj_notify;
-   methods {
-      @property align {
+   properties {
+      align {
          set {
             /*@
             @brief Set the alignment of the notify object
@@ -24,11 +24,11 @@ class Elm.Notify (Elm.Container)
             @ingroup Notify */
          }
          values {
-            horizontal: double; /*@ The horizontal alignment of the notification */
-            vertical: double; /*@ The vertical alignment of the notification */
+            double horizontal; /*@ The horizontal alignment of the notification */
+            double vertical; /*@ The vertical alignment of the notification */
          }
       }
-      @property allow_events {
+      allow_events {
          set {
             /*@
             @brief Sets whether events should be passed to by a click outside
@@ -49,10 +49,10 @@ class Elm.Notify (Elm.Container)
             @ingroup Notify */
          }
          values {
-            allow: bool; /*@ EINA_TRUE If events are allowed, otherwise not */
+            bool allow; /*@ EINA_TRUE If events are allowed, otherwise not */
          }
       }
-      @property timeout {
+      timeout {
          set {
             /*@
             @brief Set the time interval after which the notify window is going to be
@@ -79,7 +79,7 @@ class Elm.Notify (Elm.Container)
             @ingroup Notify */
          }
          values {
-            timeout: double; /*@ The timeout in seconds */
+            double timeout; /*@ The timeout in seconds */
          }
       }
    }
@@ -92,18 +92,16 @@ class Elm.Notify (Elm.Container)
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Evas.Object_Smart.resize;
-      Elm.Widget.focus_direction;
-      Elm.Widget.parent;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.sub_object_del;
-      Elm.Widget.part_text.set;
-      Elm.Widget.part_text.get;
-      Elm.Container.content_get;
-      Elm.Container.content_set;
-      Elm.Container.content_unset;
+      Elm_Widget.focus_direction;
+      Elm_Widget.parent;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.sub_object_del;
+      Elm_Container.content_get;
+      Elm_Container.content_set;
+      Elm_Container.content_unset;
    }
    events {
       block,clicked;

@@ -1,8 +1,8 @@
-class Elm.Color_Item(Elm.Widget_Item)
+class Elm_Color_Item(Elm_Widget_Item)
 {
    eo_prefix: elm_obj_color_item;
-   methods {
-        @property color {
+   properties {
+        color {
              get {
                  /*@
                  Get Palette item's color.
@@ -18,13 +18,13 @@ class Elm.Color_Item(Elm.Widget_Item)
                  */
              }
              values {
-                 r: int; /*@ red-value of color   */
-                 g: int; /*@ green-value of color */
-                 b: int; /*@ blue-value of color  */
-                 a: int; /*@ alpha-value of color */
+                 int r; /*@ red-value of color   */
+                 int g; /*@ green-value of color */
+                 int b; /*@ blue-value of color  */
+                 int a; /*@ alpha-value of color */
              }
         }
-        @property selected {
+        selected {
              get {
                  /*@
                  Get the selected state of color palette item
@@ -42,14 +42,14 @@ class Elm.Color_Item(Elm.Widget_Item)
                  */
              }
              values {
-                 selected: bool; /*@ @c EINA_TRUE if selected @c EINA_FALSE otherwise */
+                 Eina_Bool selected; /*@ @c EINA_TRUE if selected @c EINA_FALSE otherwise */
              }
         }
    }
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm.Widget_Item.access_register;
-        Elm.Widget_Item.signal_emit;
+        Elm_Widget_Item.access_register;
+        Elm_Widget_Item.signal_emit;
    }
 }

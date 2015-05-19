@@ -1,8 +1,8 @@
-class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
+class Elm_Calendar (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_calendar;
-   methods {
-      @property first_day_of_week {
+   properties {
+      first_day_of_week {
          set {
             /*@
             Set the first day of week to use on calendar widgets'.
@@ -21,11 +21,11 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Calendar */
          }
          values {
-            day: Elm_Calendar_Weekday; /*@ An int which correspond to the first day of the week (Sunday = 0, Monday = 1,
+            Elm_Calendar_Weekday day; /*@ An int which correspond to the first day of the week (Sunday = 0, Monday = 1,
             ..., Saturday = 6) */
          }
       }
-      @property selectable {
+      selectable {
          set {
             /*@
             Define which fields of a @b tm struct will be taken into account, when
@@ -50,10 +50,10 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @since 1.8 */
          }
          values {
-            selectable: Elm_Calendar_Selectable; /*@ A bitmask of Elm_Calendar_Selectable */
+            Elm_Calendar_Selectable selectable; /*@ A bitmask of Elm_Calendar_Selectable */
          }
       }
-      @property interval {
+      interval {
          set {
             /*@
             Set the interval on time updates for an user mouse button hold
@@ -89,10 +89,10 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Calendar */
          }
          values {
-            interval: double; /*@ The (first) interval value in seconds */
+            double interval; /*@ The (first) interval value in seconds */
          }
       }
-      @property weekdays_names {
+      weekdays_names {
          set {
             /*@
             Set weekdays names to be displayed by the calendar.
@@ -135,12 +135,12 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Calendar */
          }
          values {
-            weekdays: const(char)**; /*@ Array of seven strings to be used as weekday names.
+            const(char)** weekdays; /*@ Array of seven strings to be used as weekday names.
             @warning It must have 7 elements, or it will access invalid memory.
             @warning The strings must be NULL terminated ('@\0'). */
          }
       }
-      @property select_mode {
+      select_mode {
          set {
             /*@
             Set select day mode to use.
@@ -162,10 +162,10 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Calendar */
          }
          values {
-            mode: Elm_Calendar_Select_Mode; /*@ The select mode to use. */
+            Elm_Calendar_Select_Mode mode; /*@ The select mode to use. */
          }
       }
-      @property min_max_year {
+      min_max_year {
          set {
             /*@
             Set the minimum and maximum values for the year
@@ -196,11 +196,11 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Calendar */
          }
          values {
-            min: int; /*@ The minimum year, greater than 1901; */
-            max: int; /*@ The maximum year; */
+            int min; /*@ The minimum year, greater than 1901; */
+            int max; /*@ The maximum year; */
          }
       }
-      @property format_function {
+      format_function {
          set {
             /*@
             Set a function to format the string that will be used to display
@@ -229,11 +229,11 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Calendar */
          }
          values {
-            format_function: Elm_Calendar_Format_Cb; /*@ Function to set the month-year string given
+            Elm_Calendar_Format_Cb format_function; /*@ Function to set the month-year string given
             the selected date */
          }
       }
-      @property marks {
+      marks {
          get {
             /*@
             Get a list of all the calendar marks.
@@ -245,9 +245,11 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_calendar_marks_clear()
 
             @ingroup Calendar */
-            return: const(list<Elm.Calendar.Mark*>)*;
+            return: const(list)*;
          }
       }
+   }
+   methods {
       selected_time_set {
          /*@
          Set selected date to be highlighted on calendar.
@@ -263,7 +265,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          @ingroup Calendar */
 
          params {
-            @in selected_time: Elm_Calendar_Time *; /*@ A @b tm struct to represent the selected date. */
+            @in struct tm *selected_time; /*@ A @b tm struct to represent the selected date. */
          }
       }
       selected_time_get @const {
@@ -285,7 +287,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          @ingroup Calendar */
          return: bool;
          params {
-            @inout selected_time: Elm_Calendar_Time; /*@ A @b tm struct to point to selected date */
+            @inout struct tm selected_time; /*@ A @b tm struct to point to selected date */
          }
       }
       mark_add {
@@ -331,13 +333,13 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Calendar_Mark *;
          params {
-            @in mark_type: const(char)*; /*@ A string used to define the type of mark. It will be
+            @in const(char)* mark_type; /*@ A string used to define the type of mark. It will be
             emitted to the theme, that should display a related modification on these
             days representation. */
-            @in mark_time: Elm_Calendar_Time *; /*@ A time struct to represent the date of inclusion of the
+            @in struct tm *mark_time; /*@ A time struct to represent the date of inclusion of the
             mark. For marks that repeats it will just be displayed after the inclusion
             date in the calendar. */
-            @in repeat: Elm_Calendar_Mark_Repeat_Type; /*@ Repeat the event following this periodicity. Can be a unique
+            @in Elm_Calendar_Mark_Repeat_Type repeat; /*@ Repeat the event following this periodicity. Can be a unique
             mark (that don't repeat), daily, weekly, monthly or annually. */
          }
       }
@@ -383,7 +385,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          @since 1.8 */
          return: bool;
          params {
-            @inout displayed_time: Elm_Calendar_Time; /*@ A @b tm struct to point to displayed date */
+            @inout struct tm displayed_time; /*@ A @b tm struct to point to displayed date */
          }
       }
    }
@@ -393,13 +395,13 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       Evas.Object_Smart.calculate;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.access;
-      Elm.Widget.focus_next;
-      Elm.Widget.event;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.access;
+      Elm_Widget.focus_next;
+      Elm_Widget.event;
+      Elm_Layout.sizing_eval;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {

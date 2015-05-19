@@ -1,8 +1,8 @@
-class Elm.Prefs (Elm.Widget, Efl.File)
+class Elm_Prefs (Elm_Widget, Efl.File)
 {
    eo_prefix: elm_obj_prefs;
-   methods {
-      @property data {
+   properties {
+      data {
          set {
             /*@
             Set user data for a given prefs widget
@@ -48,10 +48,10 @@ class Elm.Prefs (Elm.Widget, Efl.File)
             @since 1.8 */
          }
          values {
-            data: Elm_Prefs_Data * @nullable; /*@ A valid prefs_data handle */
+            Elm_Prefs_Data *data; /*@ A valid prefs_data handle */
          }
       }
-      @property autosave {
+      autosave {
          set {
             /*@
             Set whether a given prefs widget should save its values back (on
@@ -84,10 +84,12 @@ class Elm.Prefs (Elm.Widget, Efl.File)
             @since 1.8 */
          }
          values {
-            autosave: bool; /*@ @c EINA_TRUE to save automatically, @c EINA_FALSE
+            bool autosave; /*@ @c EINA_TRUE to save automatically, @c EINA_FALSE
             otherwise. */
          }
       }
+   }
+   methods {
       reset {
          /*@
          Reset the values of a given prefs widget to a previous state.
@@ -101,7 +103,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          @since 1.8 */
 
          params {
-            @in mode: Elm_Prefs_Reset_Mode; /*@ The reset mode to apply on @a prefs */
+            @in Elm_Prefs_Reset_Mode mode; /*@ The reset mode to apply on @a prefs */
          }
       }
       item_value_set {
@@ -118,9 +120,9 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
          return: bool;
          params {
-            @in name: const(char)*; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) */
-            @in value: const(Eina_Value)*; /*@ The value to set on the item. It should be typed as
+            @in const(Eina_Value)* value; /*@ The value to set on the item. It should be typed as
             the item expects, preferably, or a conversion will
             take place */
          }
@@ -138,9 +140,9 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          @since 1.8 */
          return: bool;
          params {
-            @in name: const(char)*; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get value from */
-            @out value: Eina_Value; /*@ Where to store the value of the item. It will be
+            @out Eina_Value value; /*@ Where to store the value of the item. It will be
             overwritten and setup with the type the item
             is bound to */
          }
@@ -164,7 +166,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
          return: const(Evas_Object)*;
          params {
-            @in name: const(char)*; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get object from */
          }
       }
@@ -178,9 +180,9 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          @since 1.8 */
 
          params {
-            @in name: const(char)*; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to act on */
-            @in disabled: bool; /*@ @c EINA_TRUE, to make it disabled, @c EINA_FALSE
+            @in bool disabled; /*@ @c EINA_TRUE, to make it disabled, @c EINA_FALSE
             otherwise */
          }
       }
@@ -197,7 +199,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          @since 1.8 */
          return: bool;
          params {
-            @in name: const(char)*; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get disabled state from */
          }
       }
@@ -213,9 +215,9 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
          return: bool;
          params {
-            @in name: const(char)*; /*@ the name of the SWALLOW item (as declared in the prefs
+            @in const(char)* name; /*@ the name of the SWALLOW item (as declared in the prefs
             collection) */
-            @in child: Evas_Object *; /*@ The object to occupy the item */
+            @in Evas_Object *child; /*@ The object to occupy the item */
          }
       }
       item_editable_set {
@@ -232,9 +234,9 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          @since 1.8 */
 
          params {
-            @in name: const(char)*; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to act on */
-            @in editable: bool; /*@ @c EINA_TRUE, to make it editable, @c EINA_FALSE
+            @in bool editable; /*@ @c EINA_TRUE, to make it editable, @c EINA_FALSE
             otherwise */
          }
       }
@@ -251,7 +253,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          @since 1.8 */
          return: bool;
          params {
-            @in name: const(char)*; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get editable state from */
          }
       }
@@ -267,7 +269,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
          return: Evas_Object *;
          params {
-            @in name: const(char)*; /*@ the name of the SWALLOW item (as declared in the prefs
+            @in const(char)* name; /*@ the name of the SWALLOW item (as declared in the prefs
             collection) */
          }
       }
@@ -285,9 +287,9 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          @since 1.8 */
 
          params {
-            @in name: const(char)*; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to change visibility of */
-            @in visible: bool; /*@ @c EINA_TRUE, to make it visible, @c EINA_FALSE
+            @in bool visible; /*@ @c EINA_TRUE, to make it visible, @c EINA_FALSE
             otherwise */
          }
       }
@@ -304,7 +306,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          @since 1.8 */
          return: bool;
          params {
-            @in name: const(char)*; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get visibility state from */
          }
       }
@@ -316,7 +318,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
       Efl.File.file.get;
       Evas.Object_Smart.del;
       Evas.Object_Smart.add;
-      Elm.Widget.focus_next;
+      Elm_Widget.focus_next;
    }
    events {
       page,changed; /*@ s */

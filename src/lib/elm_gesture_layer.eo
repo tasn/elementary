@@ -1,8 +1,8 @@
-class Elm.Gesture_Layer (Elm.Widget)
+class Elm_Gesture_Layer (Elm_Widget)
 {
    eo_prefix: elm_obj_gesture_layer;
-   methods {
-      @property zoom_step {
+   properties {
+      zoom_step {
          set {
             /*@
             This function sets step-value for zoom action.
@@ -24,10 +24,10 @@ class Elm.Gesture_Layer (Elm.Widget)
              */
          }
          values {
-            step: double; /*@ new zoom step value. */
+            double step; /*@ new zoom step value. */
          }
       }
-      @property tap_finger_size {
+      tap_finger_size {
          set {
             /*@
             This function sets the gesture layer finger-size for taps
@@ -49,10 +49,10 @@ class Elm.Gesture_Layer (Elm.Widget)
              */
          }
          values {
-            sz: Evas_Coord; /*@ Finger size */
+            Evas_Coord sz; /*@ Finger size */
          }
       }
-      @property hold_events {
+      hold_events {
          set {
             /*@
             This function is to make gesture-layer repeat events.
@@ -72,10 +72,10 @@ class Elm.Gesture_Layer (Elm.Widget)
              */
          }
          values {
-            hold_events: bool; /*@ hold events or not. */
+            bool hold_events; /*@ hold events or not. */
          }
       }
-      @property rotate_step {
+      rotate_step {
          set {
             /*@
             This function sets step-value for rotate action.
@@ -93,10 +93,10 @@ class Elm.Gesture_Layer (Elm.Widget)
              */
          }
          values {
-            step: double; /*@ new rotate step value. */
+            double step; /*@ new rotate step value. */
          }
       }
-      @property cb {
+      cb {
          set {
             /*@
             Use function to set callbacks to be notified about
@@ -111,12 +111,14 @@ class Elm.Gesture_Layer (Elm.Widget)
              */
          }
          values {
-            idx: Elm_Gesture_Type; /*@ The gesture you would like to track its state. */
-            cb_type: Elm_Gesture_State; /*@ what event this callback tracks: START, MOVE, END, ABORT. */
-            cb: Elm_Gesture_Event_Cb; /*@ callback function pointer. */
-            data: void * @optional; /*@ user info to be sent to callback (usually, Smart Data) */
+            Elm_Gesture_Type idx; /*@ The gesture you would like to track its state. */
+            Elm_Gesture_State cb_type; /*@ what event this callback tracks: START, MOVE, END, ABORT. */
+            Elm_Gesture_Event_Cb cb; /*@ callback function pointer. */
+            void *data; /*@ user info to be sent to callback (usually, Smart Data) */
          }
       }
+   }
+   methods {
       attach {
          /*@
          Attach a given gesture layer widget to an Evas object, thus setting
@@ -132,7 +134,7 @@ class Elm.Gesture_Layer (Elm.Widget)
 
          return: bool;
          params {
-            @in target: Evas_Object *; /*@ Object to attach to @a obj (target) */
+            @in Evas_Object *target; /*@ Object to attach to @a obj (target) */
          }
       }
       cb_del {
@@ -143,10 +145,10 @@ class Elm.Gesture_Layer (Elm.Widget)
           */
 
          params {
-            @in idx: Elm_Gesture_Type; /*@ The gesture you would like to track its state. */
-            @in cb_type: Elm_Gesture_State; /*@ what event this callback tracks: START, MOVE, END, ABORT. */
-            @in cb: Elm_Gesture_Event_Cb; /*@ callback function pointer. */
-            @in data: void * @nullable; /*@ user info for the callback (usually, Smart Data) */
+            @in Elm_Gesture_Type idx; /*@ The gesture you would like to track its state. */
+            @in Elm_Gesture_State cb_type; /*@ what event this callback tracks: START, MOVE, END, ABORT. */
+            @in Elm_Gesture_Event_Cb cb; /*@ callback function pointer. */
+            @in void *data; /*@ user info for the callback (usually, Smart Data) */
          }
       }
       cb_add {
@@ -168,10 +170,10 @@ class Elm.Gesture_Layer (Elm.Widget)
           */
 
          params {
-            @in idx: Elm_Gesture_Type; /*@ The gesture you would like to track its state. */
-            @in cb_type: Elm_Gesture_State; /*@ what event this callback tracks: START, MOVE, END, ABORT. */
-            @in cb: Elm_Gesture_Event_Cb; /*@ callback function pointer. */
-            @in data: void * @optional; /*@ user info to be sent to callback (usually, Smart Data) */
+            @in Elm_Gesture_Type idx; /*@ The gesture you would like to track its state. */
+            @in Elm_Gesture_State cb_type; /*@ what event this callback tracks: START, MOVE, END, ABORT. */
+            @in Elm_Gesture_Event_Cb cb; /*@ callback function pointer. */
+            @in void *data; /*@ user info to be sent to callback (usually, Smart Data) */
          }
       }
    }
@@ -180,7 +182,7 @@ class Elm.Gesture_Layer (Elm.Widget)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.disable;
+      Elm_Widget.disable;
    }
 
 }

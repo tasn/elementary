@@ -1,8 +1,8 @@
-class Elm.Diskselector_Item(Elm.Widget_Item)
+class Elm_Diskselector_Item(Elm_Widget_Item)
 {
       eo_prefix: elm_obj_diskselector_item;
-      methods {
-           @property prev {
+      properties {
+           prev {
                 get {
                      /*@
                       Get the item before @p item in diskselector.
@@ -20,10 +20,10 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ The item before @p item, or @c NULL if none or on failure. */
+                     Elm_Object_Item *item; /*@ The item before @p item, or @c NULL if none or on failure. */
                 }
            }
-           @property next {
+           next {
                 get {
                      /*@
                       Get the item after @p item in diskselector.
@@ -41,10 +41,10 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ The item after @p item, or @c NULL if none or on failure. */
+                     Elm_Object_Item *item; /*@ The item after @p item, or @c NULL if none or on failure. */
                 }
            }
-           @property selected {
+           selected {
                 get {
                      /*@
                       Get whether the @p item is selected or not.
@@ -81,9 +81,11 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     selected: bool; /*@ The selected state */
+                     Eina_Bool selected; /*@ The selected state */
                 }
            }
+      }
+      methods {
            /*      init { FIXME
                    params {
                    Evas_Smart_Cb func;
@@ -94,9 +96,9 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
       implements {
            Eo.Base.constructor;
            Eo.Base.destructor;
-           Elm.Widget_Item.part_text.get;
-           Elm.Widget_Item.part_text.set;
-           Elm.Widget_Item.part_content.get;
-           Elm.Widget_Item.part_content.set;
+           Elm_Widget_Item.part_text.get;
+           Elm_Widget_Item.part_text.set;
+           Elm_Widget_Item.part_content.get;
+           Elm_Widget_Item.part_content.set;
       }
 }

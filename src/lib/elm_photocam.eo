@@ -1,9 +1,9 @@
-class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
-                    Elm_Interface_Atspi_Widget_Action, Efl.File)
+class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable,
+                    Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_photocam;
-   methods {
-      @property paused {
+   properties {
+      paused {
          set {
             /*@
             @brief Set the paused state for photocam
@@ -28,10 +28,41 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Photocam */
          }
          values {
-            paused: bool; /*@ The pause state to set */
+            bool paused; /*@ The pause state to set */
          }
       }
-      @property gesture_enabled {
+      file {
+         set {
+            /*@
+            @brief Set the photo file to be shown
+
+            @return The return error (see EVAS_LOAD_ERROR_NONE, EVAS_LOAD_ERROR_GENERIC etc.)
+
+            This sets (and shows) the specified file (with a relative or absolute
+            path) and will return a load error (same error that
+            evas_object_image_load_error_get() will return). The image will change and
+            adjust its size at this point and begin a background load process for this
+            photo that at some time in the future will be displayed at the full
+            quality needed.
+
+            @ingroup Photocam */
+            return: Evas_Load_Error;
+         }
+         get {
+            /*@
+            @brief Returns the path of the current image file
+
+            @return Returns the path
+
+            @see elm_photocam_file_set()
+
+            @ingroup Photocam */
+         }
+         values {
+            const(char)* file; /*@ The photo file */
+         }
+      }
+      gesture_enabled {
          set {
             /*@
             @brief Set the gesture state for photocam.
@@ -54,10 +85,10 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Photocam */
          }
          values {
-            gesture: bool; /*@ The gesture state to set */
+            bool gesture; /*@ The gesture state to set */
          }
       }
-      @property zoom {
+      zoom {
          set {
             /*@
             @brief Set the zoom level of the photo
@@ -90,10 +121,10 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Photocam */
          }
          values {
-            zoom: double; /*@ The zoom level to set */
+            double zoom; /*@ The zoom level to set */
          }
       }
-      @property zoom_mode {
+      zoom_mode {
          set {
             /*@
             @brief Set the zoom mode
@@ -123,10 +154,10 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Photocam */
          }
          values {
-            mode: Elm_Photocam_Zoom_Mode; /*@ The desired mode */
+            Elm_Photocam_Zoom_Mode mode; /*@ The desired mode */
          }
       }
-      @property image_region {
+      image_region {
          get {
             /*@
             @brief Get the region of the image that is currently shown
@@ -137,13 +168,13 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Photocam */
          }
          values {
-            x: int; /*@ A pointer to the X-coordinate of region */
-            y: int; /*@ A pointer to the Y-coordinate of region */
-            w: int; /*@ A pointer to the width */
-            h: int; /*@ A pointer to the height */
+            int x; /*@ A pointer to the X-coordinate of region */
+            int y; /*@ A pointer to the Y-coordinate of region */
+            int w; /*@ A pointer to the width */
+            int h; /*@ A pointer to the height */
          }
       }
-      @property internal_image {
+      internal_image {
          get {
             /*@
             @brief Get the internal low-res image used for photocam
@@ -158,7 +189,7 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             return: Evas_Object *;
          }
       }
-      @property image_size {
+      image_size {
          get {
             /*@
             @brief Get the current image pixel width and height
@@ -170,11 +201,11 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Photocam */
          }
          values {
-            w: int; /*@ A pointer to the width return */
-            h: int; /*@ A pointer to the height return */
+            int w; /*@ A pointer to the width return */
+            int h; /*@ A pointer to the height return */
          }
       }
-      @property image_orient {
+      image_orient {
          set {
             /*@
             Set the photocam image orientation.
@@ -200,10 +231,12 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Photocam */
          }
          values {
-            orient: Evas_Image_Orient; /*@ The photocam image orientation @ref Evas_Image_Orient
+            Evas_Image_Orient orient; /*@ The photocam image orientation @ref Evas_Image_Orient
             Default is #EVAS_IMAGE_ORIENT_NONE. */
          }
       }
+   }
+   methods {
       image_region_show {
          /*@
          @brief Set the viewed region of the image
@@ -213,10 +246,10 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
          @ingroup Photocam */
 
          params {
-            @in x: int; /*@ X-coordinate of region in image original pixels */
-            @in y: int; /*@ Y-coordinate of region in image original pixels */
-            @in w: int; /*@ Width of region in image original pixels */
-            @in h: int; /*@ Height of region in image original pixels */
+            @in int x; /*@ X-coordinate of region in image original pixels */
+            @in int y; /*@ Y-coordinate of region in image original pixels */
+            @in int w; /*@ Width of region in image original pixels */
+            @in int h; /*@ Height of region in image original pixels */
          }
       }
    }
@@ -228,13 +261,11 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
       Evas.Object_Smart.del;
       Evas.Object_Smart.member_add;
       Evas.Object_Smart.resize;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus;
-      Elm.Widget.event;
+      Elm_Widget.theme_apply;
+      Elm_Widget.on_focus;
+      Elm_Widget.event;
       Elm_Interface_Scrollable.region_bring_in;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
-      Efl.File.file.set;
-      Efl.File.file.get;
    }
    events {
       clicked;

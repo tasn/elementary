@@ -1,16 +1,16 @@
-class Elm.Route (Elm.Widget)
+class Elm_Route (Elm_Widget)
 {
    eo_prefix: elm_obj_route;
-   methods {
-      @property emap {
+   properties {
+      emap {
          set {
             /*@ No description supplied by the EAPI. */
          }
          values {
-            emap: void *;
+            void *emap;
          }
       }
-      @property longitude_min_max {
+      longitude_min_max {
          get {
             /*@
             Get the minimum and maximum values along the longitude.
@@ -21,11 +21,11 @@ class Elm.Route (Elm.Widget)
             @ingroup Route */
          }
          values {
-            min: double; /*@ Pointer to store the minimum value. */
-            max: double; /*@ Pointer to store the maximum value. */
+            double min; /*@ Pointer to store the minimum value. */
+            double max; /*@ Pointer to store the maximum value. */
          }
       }
-      @property latitude_min_max {
+      latitude_min_max {
          get {
             /*@
             Get the minimum and maximum values along the latitude.
@@ -36,8 +36,8 @@ class Elm.Route (Elm.Widget)
             @ingroup Route */
          }
          values {
-            min: double; /*@ Pointer to store the minimum value. */
-            max: double; /*@ Pointer to store the maximum value. */
+            double min; /*@ Pointer to store the minimum value. */
+            double max; /*@ Pointer to store the maximum value. */
          }
       }
    }
@@ -46,7 +46,7 @@ class Elm.Route (Elm.Widget)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.theme_apply;
+      Elm_Widget.theme_apply;
    }
 
 }

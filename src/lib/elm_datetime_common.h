@@ -18,9 +18,6 @@ typedef enum
    ELM_DATETIME_AMPM    = 5, /**< Indicates AM/PM field */
 } Elm_Datetime_Field_Type;
 
-/* temporary until better solution is found: is here because of eolian */
-typedef struct tm Elm_Datetime_Time;
-
 /**
  * @}
  */

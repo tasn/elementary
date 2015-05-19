@@ -307,7 +307,6 @@ _item_text_realize(Elm_Gen_Item *it,
    const Eina_List *l;
    const char *key;
    char *s;
-   char buf[256];
 
    if (!it->itc->func.text_get) return;
 
@@ -324,9 +323,6 @@ _item_text_realize(Elm_Gen_Item *it,
           {
              edje_object_part_text_escaped_set(target, key, s);
              free(s);
-
-             snprintf(buf, sizeof(buf), "elm,state,%s,visible", key);
-             edje_object_signal_emit(target, buf, "elm");
           }
         else
           {
@@ -346,7 +342,6 @@ _item_content_realize(Elm_Gen_Item *it,
 {
    Eina_Bool tmp;
    Evas_Object *content;
-   char buf[256];
 
    if (!parts)
      {
@@ -389,9 +384,6 @@ _item_content_realize(Elm_Gen_Item *it,
              elm_widget_sub_object_add(WIDGET(it), content);
              if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()))
                elm_widget_disabled_set(content, EINA_TRUE);
-
-             snprintf(buf, sizeof(buf), "elm,state,%s,visible", key);
-             edje_object_signal_emit(target, buf, "elm");
           }
      }
 }
@@ -5401,13 +5393,6 @@ _elm_genlist_focus_highlight_move_up_end_cb(void *data,
       _elm_widget_focus_highlight_signal_emit(gl, "elm,action,focus,move,home,down", "elm");
 }
 
-static void
-_evas_viewport_resize_cb(void *d, Evas *e EINA_UNUSED, void *ei EINA_UNUSED)
-{
-   Elm_Genlist_Data *priv = d;
-   evas_object_smart_changed(priv->pan_obj);
-}
-
 EOLIAN static void
 _elm_genlist_evas_object_smart_add(Eo *obj, Elm_Genlist_Data *priv)
 {
@@ -5488,9 +5473,6 @@ _elm_genlist_evas_object_smart_add(Eo *obj, Elm_Genlist_Data *priv)
 
    edje_object_signal_callback_add(wd->resize_obj, "elm,looping,up,done", "elm", _elm_genlist_looping_up_cb, obj);
    edje_object_signal_callback_add(wd->resize_obj, "elm,looping,down,done", "elm", _elm_genlist_looping_down_cb, obj);
-   evas_event_callback_add(evas_object_evas_get(obj),
-                           EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE,
-                           _evas_viewport_resize_cb, priv);
 }
 
 EOLIAN static void
@@ -5501,10 +5483,6 @@ _elm_genlist_evas_object_smart_del(Eo *obj, Elm_Genlist_Data *sd)
    elm_genlist_clear(obj);
    for (i = 0; i < 2; i++)
      ELM_SAFE_FREE(sd->stack[i], evas_object_del);
-
-   evas_event_callback_del_full(evas_object_evas_get(obj),
-                                EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE,
-                                _evas_viewport_resize_cb, sd);
    ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
 
    _item_cache_zero(sd);
@@ -7049,12 +7027,6 @@ elm_genlist_item_tooltip_style_get(const Elm_Object_Item *it)
 {
    const char *ret;
    return eo_do_ret(it, ret, elm_wdg_item_tooltip_style_get());
-}
-
-EOLIAN static const char *
-_elm_genlist_item_elm_widget_item_tooltip_style_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
-{
-   return it->tooltip.style;
 }
 
 EAPI Eina_Bool

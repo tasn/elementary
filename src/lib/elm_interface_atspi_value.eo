@@ -2,8 +2,8 @@ interface Elm_Interface_Atspi_Value ()
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_value;
-   methods {
-      @property value_and_text @protected {
+   properties {
+      value_and_text @protected {
          get {
             /*@ Gets value displayed by a accessible widget. */
          }
@@ -12,27 +12,27 @@ interface Elm_Interface_Atspi_Value ()
                                 successed, EINA_FALSE otherwise. */
          }
          values {
-            value: double; /*@ Value of widget casted to floating point number. */
-            text: const(char)*; /*@ string describing value in given context
+            double value; /*@ Value of widget casted to floating point number. */
+            const(char)* text; /*@ string describing value in given context
                                eg. small, enough */
          }
       }
-      @property range @protected {
+      range @protected {
          get {
-            /*@ Gets a range of all possible values and its description */
+            /* Gets a range of all possible values and its description */
          }
          values {
-            lower_limit: double;
-            upper_limit: double;
-            description: const(char)*;
+            double lower_limit;
+            double upper_limit;
+            const(char)* description;
          }
       }
-      @property increment @protected {
+      increment @protected {
          get {
-            /*@ Gets an minimal incrementation value */
+            /* Gets an minimal incrementation value */
          }
          values {
-            increment: double;
+            double increment;
          }
       }
    }

@@ -1,9 +1,9 @@
-class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
+class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
                  Elm_Interface_Atspi_Text, Elm_Interface_Atspi_Editable_Text)
 {
    eo_prefix: elm_obj_entry;
-   methods {
-      @property scrollable {
+   properties {
+      scrollable {
          set {
             /*@
             Enable or disable scrolling in entry
@@ -24,10 +24,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            scroll: bool; /*@ EINA_TRUE if it is to be scrollable, EINA_FALSE otherwise */
+            bool scroll; /*@ EINA_TRUE if it is to be scrollable, EINA_FALSE otherwise */
          }
       }
-      @property input_panel_show_on_demand {
+      input_panel_show_on_demand {
          set {
             /*@
             Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
@@ -45,12 +45,12 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            ondemand: bool; /*@ If true, the input panel will be shown in case of only Mouse up event.
+            bool ondemand; /*@ If true, the input panel will be shown in case of only Mouse up event.
             (Focus event will be ignored.)
             @since 1.9 */
          }
       }
-      @property context_menu_disabled {
+      context_menu_disabled {
          set {
             /*@
             This disables the entry's contextual (longpress) menu.
@@ -67,10 +67,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            disabled: bool; /*@ If true, the menu is disabled */
+            bool disabled; /*@ If true, the menu is disabled */
          }
       }
-      @property cnp_mode {
+      cnp_mode {
          set {
             /*@
             Control pasting of text and images for the widget.
@@ -95,10 +95,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            cnp_mode: Elm_Cnp_Mode; /*@ One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP, #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT. */
+            Elm_Cnp_Mode cnp_mode; /*@ One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP, #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT. */
          }
       }
-      @property input_panel_language {
+      input_panel_language {
          set {
             /*@
             Set the language mode of the input panel.
@@ -118,10 +118,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            lang: Elm_Input_Panel_Lang; /*@ language to be set to the input panel. */
+            Elm_Input_Panel_Lang lang; /*@ language to be set to the input panel. */
          }
       }
-      @property selection_handler_disabled {
+      selection_handler_disabled {
          set {
             /*@
             This disabled the entry's selection handlers.
@@ -133,10 +133,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             legacy: null;
          }
          values {
-            disabled: bool; /*@ If true, the selection handlers are disabled. */
+            bool disabled; /*@ If true, the selection handlers are disabled. */
          }
       }
-      @property input_panel_layout_variation {
+      input_panel_layout_variation {
          set {
             /*@
             Set the input panel layout variation of the entry
@@ -156,10 +156,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @since 1.8 */
          }
          values {
-            variation: int; /*@ layout variation type */
+            int variation; /*@ layout variation type */
          }
       }
-      @property autocapital_type {
+      autocapital_type {
          set {
             /*@
             Set the autocapitalization type on the immodule.
@@ -175,10 +175,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            autocapital_type: Elm_Autocapital_Type; /*@ The type of autocapitalization */
+            Elm_Autocapital_Type autocapital_type; /*@ The type of autocapitalization */
          }
       }
-      @property editable {
+      editable {
          set {
             /*@
             Sets if the entry is to be editable or not.
@@ -206,11 +206,11 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            editable: bool; /*@ If EINA_TRUE, user input will be inserted in the entry,
+            bool editable; /*@ If EINA_TRUE, user input will be inserted in the entry,
             if not, the entry is read-only and no user input is allowed. */
          }
       }
-      @property anchor_hover_style {
+      anchor_hover_style {
          set {
             /*@
             Set the style that the hover should use
@@ -237,10 +237,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            style: const(char)* @nullable; /*@ The style to use for the underlying hover */
+            const(char)* style; /*@ The style to use for the underlying hover */
          }
       }
-      @property single_line {
+      single_line {
          set {
             /*@
             Sets the entry to single line mode.
@@ -267,11 +267,11 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            single_line: bool; /*@ If true, the text in the entry
+            bool single_line; /*@ If true, the text in the entry
             will be on a single line. */
          }
       }
-      @property password {
+      password {
          set {
             /*@
             Sets the entry to password mode.
@@ -293,10 +293,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            password: bool; /*@ If true, password mode is enabled. */
+            bool password; /*@ If true, password mode is enabled. */
          }
       }
-      @property file {
+      file {
          set {
             /*@
             This sets the file (and implicitly loads it) for the text to display and
@@ -322,11 +322,11 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            file: const(char)*; /*@ The path to the file to load and save */
-            format: Elm_Text_Format; /*@ The file format */
+            const(char)* file; /*@ The path to the file to load and save */
+            Elm_Text_Format format; /*@ The file format */
          }
       }
-      @property input_panel_return_key_disabled {
+      input_panel_return_key_disabled {
          set {
             /*@
             Set the return key on the input panel to be disabled.
@@ -342,11 +342,11 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            disabled: bool; /*@ The state to put in in: @c EINA_TRUE for
+            bool disabled; /*@ The state to put in in: @c EINA_TRUE for
             disabled, @c EINA_FALSE for enabled */
          }
       }
-      @property autosave {
+      autosave {
          set {
             /*@
             This sets the entry object to 'autosave' the loaded text file or not.
@@ -366,10 +366,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            auto_save: bool; /*@ Autosave the loaded file or not */
+            bool auto_save; /*@ Autosave the loaded file or not */
          }
       }
-      @property anchor_hover_parent {
+      anchor_hover_parent {
          set {
             /*@
             Set the parent of the hover popup
@@ -392,10 +392,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            parent: Evas_Object * @nullable; /*@ The object to use as parent for the hover */
+            Evas_Object *parent; /*@ The object to use as parent for the hover */
          }
       }
-      @property prediction_allow {
+      prediction_allow {
          set {
             /*@
             Set whether the entry should allow to use the text prediction.
@@ -411,10 +411,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            prediction: bool; /*@ Whether the entry should allow to use the text prediction. */
+            bool prediction; /*@ Whether the entry should allow to use the text prediction. */
          }
       }
-      @property input_hint {
+      input_hint {
          set {
             /*@
             Sets the input hint which allows input methods to fine-tune their behavior.
@@ -432,10 +432,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            hints: Elm_Input_Hints; /*@ input hint. */
+            Elm_Input_Hints hints; /*@ input hint. */
          }
       }
-      @property input_panel_layout {
+      input_panel_layout {
          set {
             /*@
             Set the input panel layout of the entry
@@ -453,10 +453,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            layout: Elm_Input_Panel_Layout(8); /*@ layout type */
+            Elm_Input_Panel_Layout layout(8); /*@ layout type */
          }
       }
-      @property input_panel_return_key_type {
+      input_panel_return_key_type {
          set {
             /*@
             Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
@@ -476,10 +476,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            return_key_type: Elm_Input_Panel_Return_Key_Type; /*@ The type of "return" key on the input panel */
+            Elm_Input_Panel_Return_Key_Type return_key_type; /*@ The type of "return" key on the input panel */
          }
       }
-      @property input_panel_enabled {
+      input_panel_enabled {
          set {
             /*@
             Sets the attribute to show the input panel automatically.
@@ -495,10 +495,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            enabled: bool; /*@ If true, the input panel is appeared when entry is clicked or has a focus */
+            bool enabled; /*@ If true, the input panel is appeared when entry is clicked or has a focus */
          }
       }
-      @property line_wrap {
+      line_wrap {
          set {
             /*@
             Set the line wrap type to use on multi-line entries.
@@ -524,10 +524,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            wrap: Elm_Wrap_Type; /*@ The wrap mode to use. See Elm_Wrap_Type for details on them */
+            Elm_Wrap_Type wrap; /*@ The wrap mode to use. See Elm_Wrap_Type for details on them */
          }
       }
-      @property cursor_pos {
+      cursor_pos {
          set {
             /*@
             Sets the cursor position in the entry to the given value
@@ -546,10 +546,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            pos: int; /*@ The position of the cursor */
+            int pos; /*@ The position of the cursor */
          }
       }
-      @property icon_visible {
+      icon_visible {
          set {
             /*@
             Sets the visibility of the left-side widget of the entry,
@@ -558,11 +558,11 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            setting: bool; /*@ EINA_TRUE if the object should be displayed,
+            bool setting; /*@ EINA_TRUE if the object should be displayed,
             EINA_FALSE if not. */
          }
       }
-      @property cursor_line_end {
+      cursor_line_end {
          set {
             /*@
             This moves the cursor to the end of the current line.
@@ -570,7 +570,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
       }
-      @property select_region {
+      select_region {
          set {
             /*@
             This selects a region of text within the entry.
@@ -579,11 +579,11 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @since 1.9 */
          }
          values {
-            start: int; /*@ The starting position */
-            end: int; /*@ The end position */
+            int start; /*@ The starting position */
+            int end; /*@ The end position */
          }
       }
-      @property input_panel_return_key_autoenabled {
+      input_panel_return_key_autoenabled {
          set {
             /*@
             Set whether the return key on the input panel is disabled automatically when entry has no text.
@@ -595,10 +595,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            enabled: bool; /*@ If @p enabled is EINA_TRUE, the return key is automatically disabled when the entry has no text. */
+            bool enabled; /*@ If @p enabled is EINA_TRUE, the return key is automatically disabled when the entry has no text. */
          }
       }
-      @property end_visible {
+      end_visible {
          set {
             /*@
             Sets the visibility of the end widget of the entry, set by
@@ -607,11 +607,11 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            setting: bool; /*@ EINA_TRUE if the object should be displayed,
+            bool setting; /*@ EINA_TRUE if the object should be displayed,
             EINA_FALSE if not. */
          }
       }
-      @property cursor_begin {
+      cursor_begin {
          set {
             /*@
             This moves the cursor to the beginning of the entry.
@@ -619,7 +619,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
       }
-      @property cursor_line_begin {
+      cursor_line_begin {
          set {
             /*@
             This moves the cursor to the beginning of the current line.
@@ -627,7 +627,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
       }
-      @property cursor_end {
+      cursor_end {
          set {
             /*@
             This moves the cursor to the end of the entry.
@@ -635,7 +635,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
       }
-      @property textblock {
+      textblock {
          get {
             /*@
             Returns the actual textblock object of the entry.
@@ -667,7 +667,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             return: Evas_Object *;
          }
       }
-      @property cursor_geometry {
+      cursor_geometry {
          get {
             /*@
             This function returns the geometry of the cursor.
@@ -682,13 +682,13 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             return: bool;
          }
          values {
-            x: Evas_Coord; /*@ returned geometry */
-            y: Evas_Coord; /*@ returned geometry */
-            w: Evas_Coord; /*@ returned geometry */
-            h: Evas_Coord; /*@ returned geometry */
+            Evas_Coord x; /*@ returned geometry */
+            Evas_Coord y; /*@ returned geometry */
+            Evas_Coord w; /*@ returned geometry */
+            Evas_Coord h; /*@ returned geometry */
          }
       }
-      @property imf_context {
+      imf_context {
          get {
             /*@
             Returns the input method context of the entry.
@@ -704,7 +704,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             return: void *;
          }
       }
-      @property cursor_is_format {
+      cursor_is_format {
          get {
             /*@
             Get whether a format node exists at the current cursor position.
@@ -724,7 +724,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             return: bool;
          }
       }
-      @property cursor_content {
+      cursor_content {
          get {
             /*@
             Get the character pointed by the cursor at its current position.
@@ -737,10 +737,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @return The text pointed by the cursors.
 
             @ingroup Entry */
-            return: own(char *) @warn_unused;
+            return: char *;
          }
       }
-      @property selection {
+      selection {
          get {
             /*@
             Get any selected text within the entry.
@@ -759,7 +759,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             return: const(char)*;
          }
       }
-      @property cursor_is_visible_format {
+      cursor_is_visible_format {
          get {
             /*@
             Get if the current cursor position holds a visible format node.
@@ -773,6 +773,8 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             return: bool;
          }
       }
+   }
+   methods {
       cursor_prev {
          /*@
          This moves the cursor one place to the left within the entry.
@@ -803,8 +805,8 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in func: Elm_Entry_Item_Provider_Cb; /*@ The function called to provide the item object */
-            @in data: void * @optional; /*@ The data passed to @p func */
+            @in Elm_Entry_Item_Provider_Cb func; /*@ The function called to provide the item object */
+            @in void *data; /*@ The data passed to @p func */
          }
       }
       input_panel_show {
@@ -893,7 +895,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @since 1.7 */
 
          params {
-            @in style: const(char)*; /*@ The style user to push */
+            @in const(char)* style; /*@ The style user to push */
          }
       }
       item_provider_remove {
@@ -906,8 +908,8 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in func: Elm_Entry_Item_Provider_Cb; /*@ The function called to provide the item object */
-            @in data: void * @optional; /*@ The data passed to @p func */
+            @in Elm_Entry_Item_Provider_Cb func; /*@ The function called to provide the item object */
+            @in void *data; /*@ The data passed to @p func */
          }
       }
       text_style_user_peek @const {
@@ -961,7 +963,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in entry: const(char)*; /*@ The text to insert */
+            @in const(char)* entry; /*@ The text to insert */
          }
       }
       input_panel_imdata_set {
@@ -975,8 +977,8 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in data: const(void)*; /*@ The specific data to be set to the input panel. */
-            @in len: int; /*@ the length of data, in bytes, to send to the input panel */
+            @in const(void)* data; /*@ The specific data to be set to the input panel. */
+            @in int len; /*@ the length of data, in bytes, to send to the input panel */
          }
       }
       input_panel_imdata_get @const {
@@ -987,8 +989,8 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          @ingroup Entry */
          params {
-            @out data: void; /*@ The specific data to be got from the input panel */
-            @out len: int; /*@ The length of data */
+            @out void data; /*@ The specific data to be got from the input panel */
+            @out int len; /*@ The length of data */
          }
       }
       selection_paste {
@@ -1070,8 +1072,8 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in func: Elm_Entry_Filter_Cb; /*@ The filter function to remove */
-            @in data: void * @optional; /*@ The user data passed when adding the function */
+            @in Elm_Entry_Filter_Cb func; /*@ The filter function to remove */
+            @in void *data; /*@ The user data passed when adding the function */
          }
       }
       item_provider_append {
@@ -1090,8 +1092,8 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in func: Elm_Entry_Item_Provider_Cb; /*@ The function called to provide the item object */
-            @in data: void * @optional; /*@ The data passed to @p func */
+            @in Elm_Entry_Item_Provider_Cb func; /*@ The function called to provide the item object */
+            @in void *data; /*@ The data passed to @p func */
          }
       }
       markup_filter_append {
@@ -1110,8 +1112,8 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in func: Elm_Entry_Filter_Cb; /*@ The function to use as text filter */
-            @in data: void * @optional; /*@ User data to pass to @p func */
+            @in Elm_Entry_Filter_Cb func; /*@ The function to use as text filter */
+            @in void *data; /*@ User data to pass to @p func */
          }
       }
       entry_append {
@@ -1128,7 +1130,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in str: const(char)*; /*@ The text to be appended */
+            @in const(char)* str; /*@ The text to be appended */
          }
       }
       context_menu_item_add {
@@ -1147,11 +1149,11 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in label: const(char)* @optional; /*@ The item's text label */
-            @in icon_file: const(char)* @optional; /*@ The item's icon file */
-            @in icon_type: Elm_Icon_Type; /*@ The item's icon type */
-            @in func: Evas_Smart_Cb @optional; /*@ The callback to execute when the item is clicked */
-            @in data: const(void)* @optional; /*@ The data to associate with the item for related functions */
+            @in const(char)* label; /*@ The item's text label */
+            @in const(char)* icon_file; /*@ The item's icon file */
+            @in Elm_Icon_Type icon_type; /*@ The item's icon type */
+            @in Evas_Smart_Cb func; /*@ The callback to execute when the item is clicked */
+            @in const(void)* data; /*@ The data to associate with the item for related functions */
          }
       }
       markup_filter_prepend {
@@ -1164,8 +1166,8 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in func: Elm_Entry_Filter_Cb; /*@ The function to use as text filter */
-            @in data: void * @optional; /*@ User data to pass to @p func */
+            @in Elm_Entry_Filter_Cb func; /*@ The function to use as text filter */
+            @in void *data; /*@ User data to pass to @p func */
          }
       }
    }
@@ -1179,24 +1181,24 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
       Evas.Object_Smart.del;
       Evas.Object_Smart.show;
       Evas.Object_Smart.hide;
-      Elm.Widget.activate;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus;
-      Elm.Widget.on_focus_region;
-      Elm.Widget.disable;
-      Elm.Widget.sub_object_del;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Container.content_unset;
-      Elm.Container.content_set;
-      Elm.Layout.theme_enable;
-      Elm.Layout.sizing_eval;
-      Elm.Layout.text_get;
-      Elm.Layout.signal_callback_add;
-      Elm.Layout.signal_callback_del;
-      Elm.Layout.signal_emit;
-      Elm.Layout.text_set;
-      Elm.Layout.content_aliases.get;
+      Elm_Widget.activate;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.theme_apply;
+      Elm_Widget.on_focus;
+      Elm_Widget.on_focus_region;
+      Elm_Widget.disable;
+      Elm_Widget.sub_object_del;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Container.content_unset;
+      Elm_Container.content_set;
+      Elm_Layout.theme_enable;
+      Elm_Layout.sizing_eval;
+      Elm_Layout.text_get;
+      Elm_Layout.signal_callback_add;
+      Elm_Layout.signal_callback_del;
+      Elm_Layout.signal_emit;
+      Elm_Layout.text_set;
+      Elm_Layout.content_aliases.get;
       Elm_Interface_Scrollable.policy.set;
       Elm_Interface_Scrollable.bounce_allow.set;
       Elm_Interface_Atspi_Accessible.state_set.get;

@@ -1,8 +1,8 @@
-class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
+class Elm_Menu (Elm_Widget, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_menu;
-   methods {
-      @property selected_item {
+   properties {
+      selected_item {
          get {
             /*@
             @brief Get the selected item in the menu
@@ -16,7 +16,7 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
             return: Elm_Object_Item *;
          }
       }
-      @property items {
+      items {
          get {
             /*@
             @brief Returns a list of @p item's items.
@@ -24,10 +24,10 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
             @return An list* of @p item's items
 
             @ingroup Menu */
-            return: const(list<Elm_Object_Item *>)*;
+            return: const(list)*;
          }
       }
-      @property first_item {
+      first_item {
          get {
             /*@
             @brief Get the first item in the menu
@@ -38,7 +38,7 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
             return: Elm_Object_Item *;
          }
       }
-      @property last_item {
+      last_item {
          get {
             /*@
             @brief Get the last item in the menu
@@ -49,6 +49,8 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
             return: Elm_Object_Item *;
          }
       }
+   }
+   methods {
       move {
          /*@
          @brief Move the menu to a new position
@@ -60,8 +62,8 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
          @ingroup Menu */
 
          params {
-            @in x: Evas_Coord; /*@ The new position. */
-            @in y: Evas_Coord; /*@ The new position. */
+            @in Evas_Coord x; /*@ The new position. */
+            @in Evas_Coord y; /*@ The new position. */
          }
       }
       item_add {
@@ -76,11 +78,11 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
 
          return: Elm_Object_Item *;
          params {
-            @in parent: Elm_Object_Item * @optional; /*@ The parent menu item (optional) */
-            @in icon: const(char)* @optional; /*@ An icon display on the item. The icon will be destroyed by the menu. */
-            @in label: const(char)*; /*@ The label of the item. */
-            @in func: Evas_Smart_Cb @optional; /*@ Function called when the user select the item. */
-            @in data: const(void)* @optional; /*@ Data sent by the callback. */
+            @in Elm_Object_Item *parent; /*@ The parent menu item (optional) */
+            @in const(char)* icon; /*@ An icon display on the item. The icon will be destroyed by the menu. */
+            @in const(char)* label; /*@ The label of the item. */
+            @in Evas_Smart_Cb func; /*@ Function called when the user select the item. */
+            @in const(void)* data; /*@ Data sent by the callback. */
          }
       }
       close {
@@ -106,7 +108,7 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
 
          return: Elm_Object_Item *;
          params {
-            @in parent: Elm_Object_Item *; /*@ The item to add the separator under */
+            @in Elm_Object_Item *parent; /*@ The item to add the separator under */
          }
       }
    }
@@ -117,9 +119,9 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
       Evas.Object_Smart.show;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.parent;
-      Elm.Widget.theme_apply;
-      Elm.Widget.translate;
+      Elm_Widget.parent;
+      Elm_Widget.theme_apply;
+      Elm_Widget.translate;
    }
    events {
       language,changed;

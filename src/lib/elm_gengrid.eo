@@ -1,9 +1,9 @@
-class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
+class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable,
                    Evas.Clickable_Interface, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_gengrid;
-   methods {
-      @property align {
+   properties {
+      align {
          set {
             /*@
             Set the items grid's alignment within a given gengrid widget
@@ -34,11 +34,11 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            align_x: double; /*@ Alignment in the horizontal axis (0 <= align_x <= 1). */
-            align_y: double; /*@ Alignment in the vertical axis (0 <= align_y <= 1). */
+            double align_x; /*@ Alignment in the horizontal axis (0 <= align_x <= 1). */
+            double align_y; /*@ Alignment in the vertical axis (0 <= align_y <= 1). */
          }
       }
-      @property filled {
+      filled {
          set {
             /*@
             Set how the items grid's filled within a given gengrid widget
@@ -67,10 +67,10 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            fill: bool; /*@ Filled if True */
+            bool fill; /*@ Filled if True */
          }
       }
-      @property page_relative {
+      page_relative {
          set {
             /*@ Set a given gengrid widget's scrolling page size, relative to its viewport size. */
          }
@@ -78,11 +78,11 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             /*@ Get a given gengrid widget's scrolling page size, relative to its viewport size. */
          }
          values {
-            h_pagerel: double;
-            v_pagerel: double;
+            double h_pagerel;
+            double v_pagerel;
          }
       }
-      @property multi_select {
+      multi_select {
          set {
             /*@
             Enable or disable multi-selection in a given gengrid widget
@@ -113,11 +113,11 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            multi: bool; /*@ @c EINA_TRUE, to enable multi-selection,
+            bool multi; /*@ @c EINA_TRUE, to enable multi-selection,
             @c EINA_FALSE to disable it. */
          }
       }
-      @property group_item_size {
+      group_item_size {
          set {
             /*@
             Set the size for the group items of a given gengrid widget
@@ -144,11 +144,11 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            w: Evas_Coord; /*@ The group items' width. */
-            h: Evas_Coord; /*@ The group items' height. */
+            Evas_Coord w; /*@ The group items' width. */
+            Evas_Coord h; /*@ The group items' height. */
          }
       }
-      @property select_mode {
+      select_mode {
          set {
             /*@
             Set the gengrid select mode.
@@ -179,10 +179,10 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            mode: Elm_Object_Select_Mode(4); /*@ The select mode */
+            Elm_Object_Select_Mode mode(4); /*@ The select mode */
          }
       }
-      @property reorder_mode {
+      reorder_mode {
          set {
             /*@
             Set whether a given gengrid widget is or not able have items
@@ -215,11 +215,11 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            reorder_mode: bool; /*@ Use @c EINA_TRUE to turn reordering on,
+            bool reorder_mode; /*@ Use @c EINA_TRUE to turn reordering on,
             @c EINA_FALSE to turn it off */
          }
       }
-      @property highlight_mode {
+      highlight_mode {
          set {
             /*@ Set whether the gengrid items' should be highlighted when item selected. */
          }
@@ -227,10 +227,10 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             /*@ Get whether the gengrid items' should be highlighted when item selected. */
          }
          values {
-            highlight: bool;
+            bool highlight;
          }
       }
-      @property item_size {
+      item_size {
          set {
             /*@
             Set the size for the items of a given gengrid widget
@@ -257,11 +257,11 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            w: Evas_Coord; /*@ The items' width. */
-            h: Evas_Coord; /*@ The items' height. */
+            Evas_Coord w; /*@ The items' width. */
+            Evas_Coord h; /*@ The items' height. */
          }
       }
-      @property multi_select_mode {
+      multi_select_mode {
          set {
             /*@
             Set the gengrid multi select mode.
@@ -292,10 +292,10 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @since 1.8 */
          }
          values {
-            mode: Elm_Object_Multi_Select_Mode(2); /*@ The multi select mode */
+            Elm_Object_Multi_Select_Mode mode(2); /*@ The multi select mode */
          }
       }
-      @property horizontal {
+      horizontal {
          set {
             /*@
             Set the direction in which a given gengrid widget will expand while
@@ -327,20 +327,20 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            horizontal: bool; /*@ @c EINA_TRUE to make the gengrid expand horizontally,
+            bool horizontal; /*@ @c EINA_TRUE to make the gengrid expand horizontally,
             @c EINA_FALSE to expand vertically. */
          }
       }
-      @property page_size {
+      page_size {
          set {
             /*@ Set a given gengrid widget's scrolling page size */
          }
          values {
-            h_pagesize: Evas_Coord;
-            v_pagesize: Evas_Coord;
+            Evas_Coord h_pagesize;
+            Evas_Coord v_pagesize;
          }
       }
-      @property selected_item {
+      selected_item {
          get {
             /*@
             Get the selected item in a given gengrid widget
@@ -357,7 +357,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             return: Elm_Object_Item *;
          }
       }
-      @property realized_items {
+      realized_items {
          get {
             /*@
             Get a list of realized items in gengrid
@@ -373,10 +373,10 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @see elm_gengrid_realized_items_update()
 
             @ingroup Gengrid */
-            return: free(own(list<Elm_Gen_Item *> *), eina_list_free) @warn_unused;
+            return: list *;
          }
       }
-      @property first_item {
+      first_item {
          get {
             /*@
             Get the first item in a given gengrid widget
@@ -393,7 +393,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             return: Elm_Object_Item *;
          }
       }
-      @property selected_items {
+      selected_items {
          get {
             /*@
             Get <b>a list</b> of selected items in a given gengrid
@@ -410,10 +410,10 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @see elm_gengrid_selected_item_get()
 
             @ingroup Gengrid */
-            return: const(list<Elm_Object_Item *>)*;
+            return: const(list)*;
          }
       }
-      @property last_item {
+      last_item {
          get {
             /*@
             Get the last item in a given gengrid widget
@@ -430,7 +430,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             return: Elm_Object_Item *;
          }
       }
-      @property wheel_disabled {
+      wheel_disabled {
          set {
             /*@
             Enable or disable mouse wheel to be used to scroll the gengrid.
@@ -457,10 +457,12 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            disabled: bool; /*@ Use @c EINA_TRUE to disable mouse wheel or @c EINA_FALSE
+            bool disabled; /*@ Use @c EINA_TRUE to disable mouse wheel or @c EINA_FALSE
             to enable it. */
          }
       }
+   }
+   methods {
       item_insert_before {
          /*@
          Insert an item before another in a gengrid widget
@@ -478,12 +480,12 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in itc: const(Elm_Gengrid_Item_Class)*; /*@ The item class for the item. */
-            @in data: const(void)*; /*@ The item data. */
-            @in relative: Elm_Object_Item *; /*@ The item to place this new one before. */
-            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when the item is
+            @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
+            @in const(void)* data; /*@ The item data. */
+            @in Elm_Object_Item *relative; /*@ The item to place this new one before. */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
             selected. */
-            @in func_data: const(void)* @optional; /*@ Data to be passed to @p func. */
+            @in const(void)* func_data; /*@ Data to be passed to @p func. */
          }
       }
       realized_items_update {
@@ -519,12 +521,12 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in itc: const(Elm_Gengrid_Item_Class)*; /*@ The item class for the item. */
-            @in data: const(void)*; /*@ The item data. */
-            @in relative: Elm_Object_Item *; /*@ The item to place this new one after. */
-            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when the item is
+            @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
+            @in const(void)* data; /*@ The item data. */
+            @in Elm_Object_Item *relative; /*@ The item to place this new one after. */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
             selected. */
-            @in func_data: const(void)* @optional; /*@ Data to be passed to @p func. */
+            @in const(void)* func_data; /*@ Data to be passed to @p func. */
          }
       }
       items_count @const {
@@ -561,10 +563,10 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
          @ingroup Gengrid */
          return: Elm_Object_Item *;
          params {
-            @in x: Evas_Coord; /*@ The input x coordinate */
-            @in y: Evas_Coord; /*@ The input y coordinate */
-            @out xposret: int; /*@ The position relative to the item returned here */
-            @out yposret: int; /*@ The position relative to the item returned here */
+            @in Evas_Coord x; /*@ The input x coordinate */
+            @in Evas_Coord y; /*@ The input y coordinate */
+            @out int xposret; /*@ The position relative to the item returned here */
+            @out int yposret; /*@ The position relative to the item returned here */
          }
       }
       item_append {
@@ -584,11 +586,11 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in itc: const(Elm_Gengrid_Item_Class)*; /*@ The item class for the item. */
-            @in data: const(void)*; /*@ The item data. */
-            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when the item is
+            @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
+            @in const(void)* data; /*@ The item data. */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
             selected. */
-            @in func_data: const(void)* @optional; /*@ Data to be passed to @p func. */
+            @in const(void)* func_data; /*@ Data to be passed to @p func. */
          }
       }
       item_prepend {
@@ -608,11 +610,11 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in itc: const(Elm_Gengrid_Item_Class)*; /*@ The item class for the item. */
-            @in data: const(void)*; /*@ The item data. */
-            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when the item is
+            @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
+            @in const(void)* data; /*@ The item data. */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
             selected. */
-            @in func_data: const(void)* @optional; /*@ Data to be passed to @p func. */
+            @in const(void)* func_data; /*@ Data to be passed to @p func. */
          }
       }
       clear {
@@ -647,12 +649,12 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in itc: const(Elm_Gengrid_Item_Class)*; /*@ The item class for the item. */
-            @in data: const(void)*; /*@ The item data. */
-            @in comp: Eina_Compare_Cb; /*@ User defined comparison function that defines the sort order
+            @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
+            @in const(void)* data; /*@ The item data. */
+            @in Eina_Compare_Cb comp; /*@ User defined comparison function that defines the sort order
             based on gengrid item and its data. */
-            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when the item is selected. */
-            @in func_data: const(void)* @optional; /*@ Data to be passed to @p func. */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is selected. */
+            @in const(void)* func_data; /*@ Data to be passed to @p func. */
          }
       }
       search_by_text_item_get {
@@ -673,10 +675,10 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in item_to_search_from: Elm_Object_Item * @optional; /*@ Pointer to item to start search from. If NULL search will be started from the first item of the gengrid. */
-            @in part_name: const(char) *; /*@ Name of the TEXT part of gengrid item to search string in. */
-            @in pattern: const(char) *; /*@ The search pattern. */
-            @in flags: Elm_Glob_Match_Flags; /*@ Search flags */
+            @in Elm_Object_Item *item_to_search_from; /*@ Pointer to item to start search from. If NULL search will be started from the first item of the gengrid. */
+            @in const(char) *part_name; /*@ Name of the TEXT part of gengrid item to search string in. */
+            @in const(char) *pattern; /*@ The search pattern. */
+            @in Elm_Glob_Match_Flags flags; /*@ Search flags */
          }
       }
    }
@@ -688,18 +690,18 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
       Evas.Object_Smart.del;
       Evas.Object_Smart.member_add;
       Evas.Object_Smart.resize;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.access;
-      Elm.Widget.focus_next;
-      Elm.Widget.on_focus;
-      Elm.Widget.event;
-      Elm.Widget.focus_highlight_geometry_get;
-      Elm.Widget.focused_item.get;
-      Elm.Widget.item_loop_enabled.set;
-      Elm.Widget.item_loop_enabled.get;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.access;
+      Elm_Widget.focus_next;
+      Elm_Widget.on_focus;
+      Elm_Widget.event;
+      Elm_Widget.focus_highlight_geometry_get;
+      Elm_Widget.focused_item.get;
+      Elm_Widget.item_loop_enabled.set;
+      Elm_Widget.item_loop_enabled.get;
+      Elm_Layout.sizing_eval;
       Elm_Interface_Scrollable.bounce_allow.set;
       Elm_Interface_Scrollable.policy;
       Elm_Interface_Atspi_Accessible.children.get;

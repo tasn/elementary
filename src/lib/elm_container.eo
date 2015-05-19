@@ -1,36 +1,38 @@
-class Elm.Container (Elm.Widget)
+class Elm_Container (Elm_Widget)
 {
    legacy_prefix: null;
    eo_prefix: elm_obj_container;
    data: null;
-   methods {
-      @property content_swallow_list {
+   properties {
+      content_swallow_list {
          get {
             /*@ Get the list of swallow parts in the object. */
          }
          values {
-            ret: free(own(list<Evas_Object *> *), eina_list_free); /*@ list */
+            list *ret; /*@ list */
          }
       }
+   }
+   methods {
       content_set {
          /*@ Swallow the given object into the given part of the container. */
          params {
-            @in name: const(char)*; /*@ the part in which to swallow the object */
-            @in content: Evas_Object *; /*@ the object to swallow */
+            @in const(char)* name; /*@ the part in which to swallow the object */
+            @in Evas_Object *content; /*@ the object to swallow */
          }
          return: bool;
       }
       content_get {
          /*@ Get the object swallowed in the given part of the container. */
          params {
-            @in name: const(char)* @nullable; /*@ the part in which the object is swallowed */
+            @in const(char)* name; /*@ the part in which the object is swallowed */
          }
          return: Evas_Object *;
       }
       content_unset {
          /*@ Unswallow the object in the given part of the container and return it. */
          params {
-            @in name: const(char)* @nullable;
+            @in const(char)* name;
          }
          return: Evas_Object *;
       }

@@ -1,8 +1,8 @@
-class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
+class Elm_Hover (Elm_Layout, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_hover;
-   methods {
-      @property target {
+   properties {
+      target {
          set {
             /*@
             @brief Sets the target object for the hover.
@@ -22,9 +22,11 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
             @ingroup Hover */
          }
          values {
-            target: Evas_Object *; /*@ The object to center the hover onto. */
+            Evas_Object *target; /*@ The object to center the hover onto. */
          }
       }
+   }
+   methods {
       best_content_location_get @const {
          /*@
          @brief Returns the best swallow location for content in the hover.
@@ -53,7 +55,7 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
          @ingroup Hover */
          return: const(char)*;
          params {
-            @in pref_axis: Elm_Hover_Axis; /*@ The preferred orientation axis for the hover object to use */
+            @in Elm_Hover_Axis pref_axis; /*@ The preferred orientation axis for the hover object to use */
          }
       }
       dismiss {
@@ -73,17 +75,17 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
       Evas.Object_Smart.move;
       Evas.Object_Smart.add;
       Evas.Object_Smart.resize;
-      Elm.Widget.theme_apply;
-      Elm.Widget.sub_object_add;
-      Elm.Widget.parent;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.sub_object_del;
-      Elm.Container.content_get;
-      Elm.Container.content_set;
-      Elm.Container.content_unset;
-      Elm.Layout.sizing_eval;
-      Elm.Layout.content_aliases.get;
+      Elm_Widget.theme_apply;
+      Elm_Widget.sub_object_add;
+      Elm_Widget.parent;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.sub_object_del;
+      Elm_Container.content_get;
+      Elm_Container.content_set;
+      Elm_Container.content_unset;
+      Elm_Layout.sizing_eval;
+      Elm_Layout.content_aliases.get;
    }
    events {
       focused;

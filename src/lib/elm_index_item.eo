@@ -1,8 +1,8 @@
-class Elm.Index_Item(Elm.Widget_Item)
+class Elm_Index_Item(Elm_Widget_Item)
 {
    eo_prefix: elm_obj_index_item;
-   methods {
-        @property selected {
+   properties {
+        selected {
              set {
                  /*@
                   Set the selected state of an item.
@@ -22,9 +22,12 @@ class Elm.Index_Item(Elm.Widget_Item)
                   */
              }
              values {
-                 selected: bool; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
+                 Eina_Bool selected; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
              }
         }
+
+   }
+   methods {
       letter_get @const {
             /*@
              Get the letter (string) set on a given index widget item.
@@ -38,6 +41,6 @@ class Elm.Index_Item(Elm.Widget_Item)
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm.Widget_Item.access_register;
+        Elm_Widget_Item.access_register;
    }
 }

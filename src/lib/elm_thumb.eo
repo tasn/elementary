@@ -1,8 +1,8 @@
-class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
+class Elm_Thumb (Elm_Layout, Efl.File, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_thumb;
-   methods {
-      @property compress {
+   properties {
+      compress {
          set {
             /*@
             Set the compression for the thumb object.
@@ -22,13 +22,13 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @see elm_thumb_compress_set()
 
             @ingroup Thumb */
-            return: void; /*@ Force the return type to be sure the argument doesn't become the return */
+            return: void; /* Force the return type to be sure the argument doesn't become the return */
          }
          values {
-            compress: int; /*@ The compression of the thumb. */
+            int compress; /*@ The compression of the thumb. */
          }
       }
-      @property format {
+      format {
          set {
             /*@
             Set the format for the thumb object.
@@ -50,10 +50,10 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            format: Ethumb_Thumb_Format; /*@ The format setting. */
+            Ethumb_Thumb_Format format; /*@ The format setting. */
          }
       }
-      @property animate {
+      animate {
          set {
             /*@
             Set the animation state for the thumb object. If its content is an animated
@@ -76,10 +76,10 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            setting: Elm_Thumb_Animation_Setting; /*@ The animation setting. */
+            Elm_Thumb_Animation_Setting setting; /*@ The animation setting. */
          }
       }
-      @property fdo_size {
+      fdo_size {
          set {
             /*@
             Set the FDO size for the thumb object.
@@ -101,10 +101,10 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            size: Ethumb_Thumb_FDO_Size; /*@ The FDO size setting. */
+            Ethumb_Thumb_FDO_Size size; /*@ The FDO size setting. */
          }
       }
-      @property orientation {
+      orientation {
          set {
             /*@
             Set the orientation for the thumb object.
@@ -126,10 +126,10 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            orient: Ethumb_Thumb_Orientation; /*@ The orientation setting. */
+            Ethumb_Thumb_Orientation orient; /*@ The orientation setting. */
          }
       }
-      @property editable {
+      editable {
          set {
             /*@
             Make the thumbnail 'editable'.
@@ -156,10 +156,10 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            edit: bool; /*@ Turn on or off editability. Default is @c EINA_FALSE. */
+            bool edit; /*@ Turn on or off editability. Default is @c EINA_FALSE. */
          }
       }
-      @property aspect {
+      aspect {
          set {
             /*@
             Set the aspect for the thumb object.
@@ -181,10 +181,10 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            aspect: Ethumb_Thumb_Aspect; /*@ The aspect setting. */
+            Ethumb_Thumb_Aspect aspect; /*@ The aspect setting. */
          }
       }
-      @property quality {
+      quality {
          set {
             /*@
             Set the quality for the thumb object.
@@ -204,13 +204,13 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @see elm_thumb_quality_set()
 
             @ingroup Thumb */
-            return: void; /*@ Force the return type to be sure the argument doesn't become the return */
+            return: void; /* Force the return type to be sure the argument doesn't become the return */
          }
          values {
-            quality: int; /*@ The quality of the thumb. */
+            int quality; /*@ The quality of the thumb. */
          }
       }
-      @property size {
+      size {
          set {
             /*@
             Set the size for the thumb object.
@@ -232,11 +232,11 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            tw: int; /*@ The width of the thumb. */
-            th: int; /*@ The height of the thumb. */
+            int tw; /*@ The width of the thumb. */
+            int th; /*@ The height of the thumb. */
          }
       }
-      @property crop_align {
+      crop_align {
          set {
             /*@
             Set the crop alignment for the thumb object.
@@ -258,11 +258,11 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            cropx: double; /*@ The x coordinate of the crop. */
-            cropy: double; /*@ The y coordinate of the crop. */
+            double cropx; /*@ The x coordinate of the crop. */
+            double cropy; /*@ The y coordinate of the crop. */
          }
       }
-      @property path {
+      path {
          get {
             /*@
             Get the path and key to the image or video thumbnail generated by ethumb.
@@ -276,10 +276,12 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            file: const(char)* @optional; /*@ Pointer to thumb path. */
-            key: const(char)* @optional; /*@ Pointer to thumb key. */
+            const(char)* file; /*@ Pointer to thumb path. */
+            const(char)* key; /*@ Pointer to thumb key. */
          }
       }
+   }
+   methods {
       reload {
          /*@
          Reload thumbnail if it was generated before.

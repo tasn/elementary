@@ -66,7 +66,7 @@ _elm_theme_file_item_add(Elm_Theme_Files *files, const char *item, Eina_Bool pre
    Eina_File *f = NULL;
    const char *home;
 
-   home = eina_environment_home_get();
+   home = getenv("HOME") ? getenv("HOME") : "";
    buf = eina_strbuf_new();
 
    if ((item[0] == '/') ||
@@ -320,7 +320,7 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
         file = _elm_theme_group_file_find(th, buf2);
         if (file)
           {
-             if (edje_object_mmap_set(o, file, buf2)) return EINA_FALSE;
+             if (edje_object_mmap_set(o, file, buf2)) return EINA_TRUE;
              else
                {
                   DBG("could not set theme group '%s' from file '%s': %s",
@@ -682,7 +682,7 @@ elm_theme_list_item_path_get(const char *f, Eina_Bool *in_search_path)
 
    if (!home)
      {
-        home = eina_environment_home_get();
+        home = getenv("HOME");
         if (!home) home = "";
      }
 
@@ -761,7 +761,7 @@ elm_theme_name_available_list_new(void)
 
    if (!home)
      {
-        home = eina_environment_home_get();
+        home = getenv("HOME");
         if (!home) home = "";
      }
 
@@ -937,11 +937,12 @@ elm_theme_user_dir_get(void)
 {
    static char *path = NULL;
    char buf[PATH_MAX];
-   const char *home;
 
    if (path) return path;
 
-   home = eina_environment_home_get();
+   char *home = getenv("HOME");
+   if (!home) home = "";
+
    snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/themes", home);
    path = strdup(buf);
 

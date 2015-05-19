@@ -10,9 +10,19 @@ static const char *names[] =
      "bub3", "sh3",
 };
 
-static Eina_Bool
-_anim_tick(void *data EINA_UNUSED, Eo *win, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+static void
+_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   Evas_Object *win = data;
+   Ecore_Animator *ani = evas_object_data_get(win, "animator");
+
+   ecore_animator_del(ani);
+}
+
+static Eina_Bool
+anim(void *data)
+{
+   Evas_Object *win = data;
    Evas_Object *bub, *sh;
    Evas_Coord x, y, w, h, vw, vh;
    double t, xx, yy, zz, r, fac;
@@ -56,6 +66,7 @@ void
 test_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg, *bub, *sh;
+   Ecore_Animator *ani;
    char buf[PATH_MAX];
    unsigned int i;
 
@@ -93,5 +104,8 @@ test_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
 
-   eo_do(win, eo_event_callback_add(ELM_WIN_EVENT_ANIMATOR_TICK, _anim_tick, NULL));
+   ani = ecore_animator_add(anim, win);
+   evas_object_data_set(win, "animator", ani);
+
+   evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _del, win);
 }

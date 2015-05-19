@@ -1,4 +1,4 @@
-class Elm.Glview (Elm.Widget)
+class Elm_Glview (Elm_Widget)
 {
    eo_prefix: elm_obj_glview;
    methods {
@@ -6,10 +6,12 @@ class Elm.Glview (Elm.Widget)
          /*@ Constructor with context version number. */
          legacy: null;
          params {
-            @in version: Evas_GL_Context_Version;
+            @in Evas_GL_Context_Version version;
          }
       }
-      @property size {
+   }
+   properties {
+      size {
          set {
             /*@
             Sets the size of the glview
@@ -28,11 +30,11 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
          values {
-            w: int; /*@ width of the glview object */
-            h: int; /*@ height of the glview object */
+            int w; /*@ width of the glview object */
+            int h; /*@ height of the glview object */
          }
       }
-      @property resize_policy {
+      resize_policy {
          set {
             /*@
             Set the resize policy for the glview object.
@@ -47,10 +49,10 @@ class Elm.Glview (Elm.Widget)
             return: bool;
          }
          values {
-            policy: Elm_GLView_Resize_Policy; /*@ The scaling policy. */
+            Elm_GLView_Resize_Policy policy; /*@ The scaling policy. */
          }
       }
-      @property changed {
+      changed {
          set {
             /*@
             Notifies that there has been changes in the GLView.
@@ -58,7 +60,7 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
       }
-      @property resize_func {
+      resize_func {
          set {
             /*@
             Set the resize function that gets called when resize happens.
@@ -71,10 +73,10 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
          values {
-            func: Elm_GLView_Func_Cb; /*@ The resize function to be registered. */
+            Elm_GLView_Func_Cb func; /*@ The resize function to be registered. */
          }
       }
-      @property del_func {
+      del_func {
          set {
             /*@
             Set the render function that runs in the main loop.
@@ -87,10 +89,10 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
          values {
-            func: Elm_GLView_Func_Cb @nullable; /*@ The delete function to be registered. */
+            Elm_GLView_Func_Cb func; /*@ The delete function to be registered. */
          }
       }
-      @property init_func {
+      init_func {
          set {
             /*@
             Set the init function that runs once in the main loop.
@@ -103,10 +105,10 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
          values {
-            func: Elm_GLView_Func_Cb @nullable; /*@ The init function to be registered. */
+            Elm_GLView_Func_Cb func; /*@ The init function to be registered. */
          }
       }
-      @property render_policy {
+      render_policy {
          set {
             /*@
             Set the render policy for the glview object.
@@ -121,10 +123,10 @@ class Elm.Glview (Elm.Widget)
             return: bool;
          }
          values {
-            policy: Elm_GLView_Render_Policy; /*@ The render policy. */
+            Elm_GLView_Render_Policy policy; /*@ The render policy. */
          }
       }
-      @property mode {
+      mode {
          set {
             /*@
             Set the mode of the GLView. Supports alpha, depth, stencil.
@@ -140,10 +142,10 @@ class Elm.Glview (Elm.Widget)
             return: bool;
          }
          values {
-            mode: Elm_GLView_Mode; /*@ The mode Options OR'ed enabling Alpha, Depth, Stencil, Direct. */
+            Elm_GLView_Mode mode; /*@ The mode Options OR'ed enabling Alpha, Depth, Stencil, Direct. */
          }
       }
-      @property render_func {
+      render_func {
          set {
             /*@
             Set the render function that runs in the main loop.
@@ -155,10 +157,10 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
          values {
-            func: Elm_GLView_Func_Cb @nullable; /*@ The render function to be registered. */
+            Elm_GLView_Func_Cb func; /*@ The render function to be registered. */
          }
       }
-      @property gl_api {
+      gl_api {
          get {
             /*@
             Get the gl api struct for gl rendering
@@ -169,7 +171,7 @@ class Elm.Glview (Elm.Widget)
             return: Evas_GL_API *;
          }
       }
-      @property evas_gl {
+      evas_gl {
          get {
             /*@
             Get the internal Evas GL attached to this view.
@@ -186,7 +188,7 @@ class Elm.Glview (Elm.Widget)
             return: Evas_GL *;
          }
       }
-      @property rotation {
+      rotation {
          get {
             /*@
             Get the current GL view's rotation when using direct rendering
@@ -213,7 +215,7 @@ class Elm.Glview (Elm.Widget)
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Evas.Object_Smart.resize;
-      Elm.Widget.on_focus;
+      Elm_Widget.on_focus;
    }
    events {
       focused;

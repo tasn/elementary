@@ -1,8 +1,8 @@
-class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
+class Elm_Frame (Elm_Layout, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_frame;
-   methods {
-      @property collapse {
+   properties {
+      collapse {
          set {
             /*@
             @brief Manually collapse a frame without animations
@@ -20,10 +20,10 @@ class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
             @ingroup Frame */
          }
          values {
-            collapse: bool; /*@ true to collapse, false to expand */
+            bool collapse; /*@ true to collapse, false to expand */
          }
       }
-      @property autocollapse {
+      autocollapse {
          set {
             /*@
             @brief Toggle autocollapsing of a frame
@@ -45,9 +45,11 @@ class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
             @ingroup Frame */
          }
          values {
-            autocollapse: bool; /*@ Whether to enable autocollapse */
+            bool autocollapse; /*@ Whether to enable autocollapse */
          }
       }
+   }
+   methods {
       collapse_go {
          /*@
          @brief Manually collapse a frame with animations
@@ -56,7 +58,7 @@ class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
          @ingroup Frame */
 
          params {
-            @in collapse: bool; /*@ true to collapse, false to expand */
+            @in bool collapse; /*@ true to collapse, false to expand */
          }
       }
    }
@@ -65,12 +67,12 @@ class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
       class.constructor;
       Evas.Object_Smart.calculate;
       Evas.Object_Smart.add;
-      Elm.Widget.focus_direction;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Layout.text_aliases.get;
-      Elm.Layout.content_aliases.get;
+      Elm_Widget.focus_direction;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Layout.text_aliases.get;
+      Elm_Layout.content_aliases.get;
    }
    events {
       clicked;

@@ -3,16 +3,16 @@ mixin Elm_Interface_Atspi_Accessible ()
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_accessible;
    data: null;
-   methods {
-      @property localized_role_name @protected {
+   properties {
+      localized_role_name @protected {
          get {
             /*@ Gets an localized string describing ATSPI widget role name. */
          }
          values {
-            localized_name: const(char)*;
+            const(char)* localized_name;
          }
       }
-      @property name @protected {
+      name @protected {
          get {
             /*@ Gets an string describing ATSPI widget role name. 
                 Should be free by a user. */
@@ -20,63 +20,63 @@ mixin Elm_Interface_Atspi_Accessible ()
          set {
          }
          values {
-            name: char*; /*@ obj name */
+            char* name; /*@ obj name */
          }
       }
-      @property relation_set @protected {
+      relation_set @protected {
          get {
             /*@ Gets an string describing ATSPI widget role name. Lists and
             elements Should be free by a user. */
          }
          values {
-            relations: own(list<own(Elm_Atspi_Relation *)> *);
+            list *relations;
          }
       }
-      @property role @protected {
+      role @protected {
          get {
             /*@ Gets the role of the widget in ATSPI Accessibility domain. */
          }
          set {
          }
          values {
-            role: Elm_Atspi_Role;
+            Elm_Atspi_Role role;
          }
       }
-      @property children @protected {
+      children @protected {
          get {
             /*@ Gets widget's accessible children. */
          }
          values {
-            children: free(own(list<Eo *> *), eina_list_free);
+            list *children;
          }
       }
-      @property role_name @protected {
+      role_name @protected {
          get {
             /*@ Gets human-readable string indentifying widget accessibility
             role. */
          }
          values {
-            role_name: const(char)*;
+            const(char)* role_name;
          }
       }
-      @property attributes @protected {
+      attributes @protected {
          get {
             /*@ Gets key-value pairs indentifying widget extra 
             attributes. Must be free by a user. */
          }
          values {
-            attributes: free(own(list<own(Elm_Atspi_Attribute *)> *), elm_atspi_attributes_list_free);
+            list *attributes;
          }
       }
-      @property index_in_parent @protected {
+      index_in_parent @protected {
          get {
             /*@ Gets index of the child in parent's children list. */
          }
          values {
-            idx: int;
+            int idx;
          }
       }
-      @property description @protected {
+      description @protected {
          get {
             /*@ Gets widget contextual information. */
          }
@@ -84,10 +84,10 @@ mixin Elm_Interface_Atspi_Accessible ()
             /*@ Sets contextual information about widget. */
          }
          values {
-            description: const(char)*;
+            const(char)* description;
          }
       }
-      @property parent @protected {
+      parent @protected {
          get {
             /*@ Gets widget accessible parent. */
          }
@@ -95,15 +95,15 @@ mixin Elm_Interface_Atspi_Accessible ()
             /*@ Sets widget accessible parent. */
          }
          values {
-            parent: Eo *;
+            Eo *parent;
          }
       }
-      @property state_set @protected {
+      state_set @protected {
          get {
             /*@ Gets set describing widget accessible states. */
          }
          values {
-            states: Elm_Atspi_State_Set;
+            Elm_Atspi_State_Set states;
          }
       }
    }

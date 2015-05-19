@@ -1,9 +1,9 @@
-class Elm.Genlist_Item(Elm.Widget_Item)
+class Elm_Genlist_Item(Elm_Widget_Item)
 {
       eo_prefix: elm_obj_genlist_item;
       data: Elm_Gen_Item;
-      methods {
-           @property prev {
+      properties {
+           prev {
                 get {
                      /*@
                       Get the @b previous item in a genlist widget's internal list of items,
@@ -18,10 +18,10 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
+                     Elm_Object_Item *item; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
                 }
            }
-           @property next {
+           next {
                 get {
                      /*@
                       Get the @b next item in a genlist widget's internal list of items,
@@ -36,10 +36,10 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
+                     Elm_Object_Item *item; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
                 }
            }
-           @property parent {
+           parent {
                 get {
                      /*@
                       Get the parent item of the given item
@@ -51,10 +51,10 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ @return The parent of the item or @c NULL if it has no parent. */
+                     Elm_Object_Item *item; /*@ @return The parent of the item or @c NULL if it has no parent. */
                 }
            }
-           @property subitems {
+           subitems {
                 get {
                      /*@
                       Get the list of subitems of a given item
@@ -66,10 +66,10 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     subitems: const (list<Elm_Object_Item *>) *; /*@ @return The list of subitems, @c NULL on error */
+                     const (Eina_List) *subitems; /*@ @return The list of subitems, @c NULL on error */
                 }
            }
-           @property selected {
+           selected {
                 get {
                      /*@
                       Get whether a given genlist item is selected or not
@@ -98,10 +98,10 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     selected: bool; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
+                     Eina_Bool selected; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
                 }
            }
-           @property expanded {
+           expanded {
                 get {
                      /*@
                       Get the expanded state of an item
@@ -134,10 +134,10 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     expanded: bool; /*@ The expanded state (@c EINA_TRUE expanded, @c EINA_FALSE not expanded). */
+                     Eina_Bool expanded; /*@ The expanded state (@c EINA_TRUE expanded, @c EINA_FALSE not expanded). */
                 }
            }
-           @property expanded_depth {
+           expanded_depth {
                 get {
                      /*@
                       Get the depth of expanded item
@@ -146,10 +146,10 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     depth: int; /*@ @return The depth of expanded item */
+                     int depth; /*@ @return The depth of expanded item */
                 }
            }
-           @property item_class {
+           item_class {
                 get {
                      /*@
                       Get the Genlist Item class for the given Genlist Item.
@@ -161,10 +161,10 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     itc: const (Elm_Genlist_Item_Class) *; /*@ Genlist Item class for the given item */
+                     const (Elm_Genlist_Item_Class) *itc; /*@ Genlist Item class for the given item */
                 }
            }
-           @property index {
+           index {
                 get {
                      /*@
                       Get the index of the item. It is only valid once displayed.
@@ -175,10 +175,10 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     index: int(-1); /*@ @return the position inside the list of item. */
+                     int index(-1); /*@ @return the position inside the list of item. */
                 }
            }
-           @property decorate_mode {
+           decorate_mode {
                 get {
                      /*@
                       Get the item's decorate mode.
@@ -192,10 +192,10 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     decorate_it_type: const(char)*; /*@ name of the item's decorate mode. */
+                     const(char)* decorate_it_type; /*@ name of the item's decorate mode. */
                 }
            }
-           @property flip {
+           flip {
                 get {
                      /*@
                       Get the flip state of a given genlist item.
@@ -225,10 +225,10 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     flip: bool; /*@ The flip mode */
+                     Eina_Bool flip; /*@ The flip mode */
                 }
            }
-           @property select_mode {
+           select_mode {
                 get {
                      /*@
                       Get the genlist item's select mode.
@@ -267,10 +267,10 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     mode: Elm_Object_Select_Mode(4); /*@ The selected mode */
+                     Elm_Object_Select_Mode mode(4); /*@ The selected mode */
                 }
            }
-           @property type {
+           type {
                 get {
                      /*@
                       Get the Item's Type
@@ -284,9 +284,11 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     type: Elm_Genlist_Item_Type(4); /*@ Item tupe */
+                     Elm_Genlist_Item_Type type(4); /*@ Item tupe */
                 }
            }
+      }
+      methods {
            /*      init { FIXME
                    params {
                    Evas_Smart_Cb func;
@@ -350,7 +352,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @in type: Elm_Genlist_Item_Scrollto_Type; /*@ The position to bring in, the given item to.
+                     @in Elm_Genlist_Item_Scrollto_Type type; /*@ The position to bring in, the given item to.
                                                                 @ref Elm_Genlist_Item_Scrollto_Type */
                 }
            }
@@ -368,7 +370,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @in type: Elm_Genlist_Item_Scrollto_Type; /*@ The position to bring in, the given item to.
+                     @in Elm_Genlist_Item_Scrollto_Type type; /*@ The position to bring in, the given item to.
                                                                 @ref Elm_Genlist_Item_Scrollto_Type */
                 }
            }
@@ -384,7 +386,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @out l: own(list<own(Evas_Object *)> *); /*@ The contents list to return */
+                     @out Eina_List *l; /*@ The contents list to return */
                 }
            }
            update {
@@ -426,8 +428,8 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @in parts: const (char) *; /*@ The name of item's part */
-                     @in itf: Elm_Genlist_Item_Field_Type; /*@ The type of item's part type */
+                     @in const (char) *parts; /*@ The name of item's part */
+                     @in Elm_Genlist_Item_Field_Type itf; /*@ The type of item's part type */
                 }
            }
            item_class_update {
@@ -441,7 +443,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @in itc: const (Elm_Genlist_Item_Class) *; /*@ The item class for the item */
+                     @in const (Elm_Genlist_Item_Class) *itc; /*@ The item class for the item */
                 }
            }
            decorate_mode_set {
@@ -482,30 +484,30 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @in decorate_it_type: const(char)*; /*@ Mode name */
-                     @in decorate_it_set: bool; /*@ Boolean to define set or unset mode. */
+                     @in const(char)* decorate_it_type; /*@ Mode name */
+                     @in Eina_Bool decorate_it_set; /*@ Boolean to define set or unset mode. */
                 }
            }
       }
       implements {
            Eo.Base.constructor;
-           Elm.Widget_Item.del_pre;
-           Elm.Widget_Item.disable;
-           Elm.Widget_Item.signal_emit;
-           Elm.Widget_Item.focus.set;
-           Elm.Widget_Item.focus.get;
-           Elm.Widget_Item.part_text.get;
-           Elm.Widget_Item.part_content.get;
-           Elm.Widget_Item.tooltip_text_set;
-           Elm.Widget_Item.tooltip_style.set;
-           Elm.Widget_Item.tooltip_style.get;
-           Elm.Widget_Item.tooltip_window_mode.set;
-           Elm.Widget_Item.tooltip_content_cb_set;
-           Elm.Widget_Item.tooltip_unset;
-           Elm.Widget_Item.cursor.set;
-           Elm.Widget_Item.cursor_unset;
+           Elm_Widget_Item.del_pre;
+           Elm_Widget_Item.disable;
+           Elm_Widget_Item.signal_emit;
+           Elm_Widget_Item.focus.set;
+           Elm_Widget_Item.focus.get;
+           Elm_Widget_Item.part_text.get;
+           Elm_Widget_Item.part_content.get;
+           Elm_Widget_Item.tooltip_text_set;
+           Elm_Widget_Item.tooltip_style.set;
+           Elm_Widget_Item.tooltip_window_mode.set;
+           Elm_Widget_Item.tooltip_content_cb_set;
+           Elm_Widget_Item.tooltip_unset;
+           Elm_Widget_Item.cursor.set;
+           Elm_Widget_Item.cursor_unset;
            Elm_Interface_Atspi_Accessible.name.get;
            Elm_Interface_Atspi_Accessible.state_set.get;
            Elm_Interface_Atspi_Accessible.children.get;
       }
 }
+

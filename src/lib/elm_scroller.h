@@ -64,6 +64,7 @@
  * @{
  */
 
+#include <elm_scroller_common.h>
 #ifdef EFL_EO_API_SUPPORT
 #include <elm_scroller_eo.h>
 #endif

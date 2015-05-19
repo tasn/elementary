@@ -1,9 +1,9 @@
-class Elm.Fileselector (Elm.Layout, Elm_Interface_Fileselector,
+class Elm_Fileselector (Elm_Layout, Elm_Interface_Fileselector,
                         Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_fileselector;
-   methods {
-      @property buttons_ok_cancel {
+   properties {
+      buttons_ok_cancel {
          set {
             /*@
             Enable/disable the "ok" and "cancel" buttons on a given file
@@ -30,7 +30,7 @@ class Elm.Fileselector (Elm.Layout, Elm_Interface_Fileselector,
             @ingroup Fileselector */
          }
          values {
-            visible: bool; /*@ @c EINA_TRUE to show buttons, @c EINA_FALSE to hide. */
+            bool visible; /*@ @c EINA_TRUE to show buttons, @c EINA_FALSE to hide. */
          }
       }
    }
@@ -40,14 +40,14 @@ class Elm.Fileselector (Elm.Layout, Elm_Interface_Fileselector,
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.focus_next;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.focus_direction;      
-      Elm.Widget.event;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Layout.sizing_eval;
-      Elm.Layout.text_set;
+      Elm_Widget.focus_next;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.focus_direction;      
+      Elm_Widget.event;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Layout.sizing_eval;
+      Elm_Layout.text_set;
       Elm_Interface_Fileselector.selected_paths.get;
       Elm_Interface_Fileselector.custom_filter_append;
       Elm_Interface_Fileselector.expandable;

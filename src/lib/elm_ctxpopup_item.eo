@@ -1,8 +1,8 @@
-class Elm.Ctxpopup_Item(Elm.Widget_Item)
+class Elm_Ctxpopup_Item(Elm_Widget_Item)
 {
    eo_prefix: elm_obj_ctxpopup_item;
-   methods {
-      @property prev {
+   properties {
+      prev {
          get {
             /*@
              Get the item before @p it in a ctxpopup widget's internal list of
@@ -15,11 +15,11 @@ class Elm.Ctxpopup_Item(Elm.Widget_Item)
              */
          }
          values {
-              item: Elm_Object_Item *; /*@ The item before the object in its parent's list. If there is no
+              Elm_Object_Item *item; /*@ The item before the object in its parent's list. If there is no
                                        previous item for @p it or there's an error, @c NULL is returned. */
          }
       }
-      @property next {
+      next {
          get {
             /*@
              Get the item after @p it in a ctxpopup widget's
@@ -32,27 +32,27 @@ class Elm.Ctxpopup_Item(Elm.Widget_Item)
              */
          }
          values {
-              item: Elm_Object_Item *; /*@ The item after the object in its parent's list. If there is no
+              Elm_Object_Item *item; /*@ The item after the object in its parent's list. If there is no
                                        previous item for @p it or there's an error, @c NULL is returned. */
          }
       }
+   }
+   methods {
       init {
          params {
-            func: Evas_Smart_Cb @nullable;
-            data: const(void) * @optional;
+            Evas_Smart_Cb func;
+            const(void) * data;
          }
       }
    }
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm.Widget_Item.disable;
-        Elm.Widget_Item.signal_emit;
-        Elm.Widget_Item.part_text.get;
-        Elm.Widget_Item.part_text.set;
-        Elm.Widget_Item.part_content.get;
-        Elm.Widget_Item.part_content.set;
-        Elm.Widget_Item.focus.set;
-        Elm.Widget_Item.focus.get;
+        Elm_Widget_Item.disable;
+        Elm_Widget_Item.signal_emit;
+        Elm_Widget_Item.part_text.get;
+        Elm_Widget_Item.part_text.set;
+        Elm_Widget_Item.part_content.get;
+        Elm_Widget_Item.part_content.set;
    }
 }

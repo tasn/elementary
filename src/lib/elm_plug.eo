@@ -1,9 +1,9 @@
-class Elm.Plug (Elm.Widget)
+class Elm_Plug (Elm_Widget)
 {
    eo_prefix: elm_obj_plug;
    data: null;
-   methods {
-      @property image_object {
+   properties {
+      image_object {
          get {
             /*@
             Get the basic Evas_Image object from this object (widget).
@@ -21,6 +21,8 @@ class Elm.Plug (Elm.Widget)
             return: Evas_Object *;
          }
       }
+   }
+   methods {
       connect {
          /*@
          Connect a plug widget to service provided by socket image.
@@ -31,9 +33,9 @@ class Elm.Plug (Elm.Widget)
 
          return: bool;
          params {
-            @in svcname: const(char)*; /*@ The service name to connect to set up by the socket. */
-            @in svcnum: int; /*@ The service number to connect to (set up by socket). */
-            @in svcsys: bool; /*@ Boolean to set if the service is a system one or not (set up by socket). */
+            @in const(char)* svcname; /*@ The service name to connect to set up by the socket. */
+            @in int svcnum; /*@ The service number to connect to (set up by socket). */
+            @in bool svcsys; /*@ Boolean to set if the service is a system one or not (set up by socket). */
          }
       }
    }
@@ -41,8 +43,8 @@ class Elm.Plug (Elm.Widget)
       class.constructor;
       Eo.Base.constructor;
       Evas.Object_Smart.add;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus;
+      Elm_Widget.theme_apply;
+      Elm_Widget.on_focus;
    }
    events {
       clicked;

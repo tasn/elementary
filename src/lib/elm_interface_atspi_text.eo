@@ -2,53 +2,53 @@ interface Elm_Interface_Atspi_Text ()
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_text;
-   methods {
-      @property character @protected {
+   properties {
+      character @protected {
          get {
             /*@ Gets single character present in accessible widget's text
                 at given offset. */
          }
          keys {
-            offset: int; /*@ Position in text. */
+            int offset; /*@ Position in text. */
          }
          values {
-            character: Eina_Unicode; /*@ Character at offset. 0 when out-of
+            Eina_Unicode character; /*@ Character at offset. 0 when out-of
                                       bounds offset has been given.
                                       Codepoints between DC80 and DCFF indicates
                                       that string includes invalid UTF8 chars. */
          }
       }
-      @property string @protected {
+      string @protected {
          get {
             /*@ Gets string, start and end offset in text according to
               given initial offset and granulatity. */
          }
          keys {
-            granularity: Elm_Atspi_Text_Granularity;
-            start_offset: int * @nonull; /*@ Offset indicating start of string
+            Elm_Atspi_Text_Granularity granularity;
+            int *start_offset @nonull; /*@ Offset indicating start of string
                                                 according to given granularity.
                                                 -1 in case of error. */
-            end_offset: int *; /*@ Offset indicating end of string according
+            int *end_offset; /*@ Offset indicating end of string according
                                    to given granularity. -1 in case of error. */
          }
          values {
-            string: own(char *); /*@ Newly allocated UTF-8 encoded string.
-                                  Must be free by a user. */
+            char *string; /*@ Newly allocated UTF-8 encoded string.
+                            Must be free by a user. */
          }
       }
-      @property text @protected {
+      text @protected {
          get {
             /*@ Gets text of accessible widget. */
          }
          keys {
-            start_offset: int; /*@ Position in text. */
-            end_offset: int; /*@ End offset of text. */
+            int start_offset; /*@ Position in text. */
+            int end_offset; /*@ End offset of text. */
          }
          values {
-            text: own(char *); /*@ UTF-8 encoded text. */
+            char *text; /*@ UTF-8 encoded text. */
          }
       }
-      @property caret_offset @protected {
+      caret_offset @protected {
          get {
             /*@ Gets offset position of caret (cursor) */
          }
@@ -57,134 +57,136 @@ interface Elm_Interface_Atspi_Text ()
                                EINA_FASLE otherwise. */
          }
          values {
-            offset: int;
+            int offset;
          }
       }
-      @property attribute @protected {
+      attribute @protected {
          get {
             /*@ Indicate if a text attribute with a given name is set */
             return: bool;
          }
          keys {
-            name: const(char)* @nonull; /*@ text attribute name */
-            start_offset: int * @nonull; /*@ Position in text from which
+            const(char)* name @nonull; /*@ text attribute name */
+            int *start_offset @nonull; /*@ Position in text from which
                                                 given attribute is set. */
-            end_offset: int *; /*@ Position in text to which given attribute
+            int *end_offset; /*@ Position in text to which given attribute
                                     is set. */
          }
          values {
-            value: own(char *); /*@ Value of text attribute. Should be free() */
+            char *value; /* Value of text attribute. Should be free() */
          }
       }
-      @property attributes @protected {
+      attributes @protected {
          get {
-            /*@ Gets list of all text attributes. */
+            /* Gets list of all text attributes. */
          }
          keys {
-            start_offset: int * @nonull;
-            end_offset: int *;
+            int *start_offset @nonull;
+            int *end_offset;
          }
          values {
-            attributes: own(list<own(Elm_Atspi_Text_Attribute *)> *);
+            own(list*) attributes;
          }
       }
-      @property default_attributes @protected {
+      default_attributes @protected {
          get {
          }
          values {
-            attributes: own(list<own(Elm_Atspi_Text_Attribute *)>*);
+            own(list*) attributes;
          }
       }
-      @property character_extents @protected {
+      character_extents @protected {
          get {
             return: bool;
          }
          keys {
-            offset: int;
-            screen_coords: bool;
+            int offset;
+            bool screen_coords;
          }
          values {
-            rect: Eina_Rectangle;
+            Eina_Rectangle rect;
          }
       }
-      @property character_count @protected {
+      character_count @protected {
          get {
          }
          values {
-            count: int;
+            int count;
          }
       }
-      @property offset_at_point @protected {
-         get {
-         }
-         keys {
-            screen_coords: bool;
-            x: int;
-            y: int;
-         }
-         values {
-            offset: int;
-         }
-      }
-      @property bounded_ranges @protected {
+      offset_at_point @protected {
          get {
          }
          keys {
-            screen_coords: bool;
-            rect: Eina_Rectangle;
-            xclip: Elm_Atspi_Text_Clip_Type;
-            yclip: Elm_Atspi_Text_Clip_Type;
+            bool screen_coords;
+            int x;
+            int y;
          }
          values {
-            ranges: own(list<own(Elm_Atspi_Text_Range *)> *);
+            int offset;
          }
       }
-      @property range_extents @protected {
+      bounded_ranges @protected {
+         get {
+         }
+         keys {
+            bool screen_coords;
+            Eina_Rectangle rect;
+            Elm_Atspi_Text_Clip_Type xclip;
+            Elm_Atspi_Text_Clip_Type yclip;
+         }
+         values {
+            list *ranges;
+         }
+      }
+      range_extents @protected {
          get {
             return: bool;
          }
          keys {
-            screen_coords: bool; /*@ If true x and y values will be relative
+            bool screen_coords; /*@ If true x and y values will be relative
                                        to screen origin, otherwise relative to
                                        canvas */
-            start_offset: int;
-            end_offset: int;
+            int start_offset;
+            int end_offset;
          }
          values {
-            rect: Eina_Rectangle;
+            Eina_Rectangle rect;
          }
       }
-      @property selections_count @protected {
+      selections_count @protected {
          get {
          }
          values {
-            count: int;
+            int count;
          }
       }
-      @property selection @protected {
+      selection @protected {
          get {
          }
          set {
             return: bool;
          }
          keys {
-            selection_number: int;
+            int selection_number;
          }
          values {
-            start_offset: int;
-            end_offset: int;
+            int start_offset;
+            int end_offset;
          }
       }
+   }
+   methods {
       selection_add @protected {
          params {
-            @in start_offset: int;
-            @in end_offset: int;
+            @in int start_offset;
+            @in int end_offset;
          }
          return: bool;
       }
       selection_remove @protected {
          params {
-            @in selection_number: int;
+            @in int selection_number;
          }
          return: bool;
       }

@@ -1,8 +1,8 @@
-class Elm.Mapbuf (Elm.Container)
+class Elm_Mapbuf (Elm_Container)
 {
    eo_prefix: elm_obj_mapbuf;
-   methods {
-      @property auto {
+   properties {
+      auto {
          set {
             /*@
             Set or unset auto flag for map rendering.
@@ -31,11 +31,11 @@ class Elm.Mapbuf (Elm.Container)
             @ingroup Mapbuf */
          }
          values {
-            on: bool; /*@ @c EINA_TRUE to enable auto mode or @c EINA_FALSE
+            bool on; /*@ @c EINA_TRUE to enable auto mode or @c EINA_FALSE
             to disable it. */
          }
       }
-      @property smooth {
+      smooth {
          set {
             /*@
             Enable or disable smooth map rendering.
@@ -60,11 +60,11 @@ class Elm.Mapbuf (Elm.Container)
             @ingroup Mapbuf */
          }
          values {
-            smooth: bool; /*@ @c EINA_TRUE to enable smooth map rendering or @c EINA_FALSE
+            bool smooth; /*@ @c EINA_TRUE to enable smooth map rendering or @c EINA_FALSE
             to disable it. */
          }
       }
-      @property alpha {
+      alpha {
          set {
             /*@
             Set or unset alpha flag for map rendering.
@@ -90,11 +90,11 @@ class Elm.Mapbuf (Elm.Container)
             @ingroup Mapbuf */
          }
          values {
-            alpha: bool; /*@ @c EINA_TRUE to enable alpha blending or @c EINA_FALSE
+            bool alpha; /*@ @c EINA_TRUE to enable alpha blending or @c EINA_FALSE
             to disable it. */
          }
       }
-      @property enabled {
+      enabled {
          set {
             /*@
             Enable or disable the map.
@@ -129,9 +129,11 @@ class Elm.Mapbuf (Elm.Container)
             @ingroup Mapbuf */
          }
          values {
-            enabled: bool; /*@ @c EINA_TRUE to enable map or @c EINA_FALSE to disable it. */
+            bool enabled; /*@ @c EINA_TRUE to enable map or @c EINA_FALSE to disable it. */
          }
       }
+   }
+   methods {
       point_color_set {
          /*@
          Set the color of a vertex in the mapbuf
@@ -146,11 +148,11 @@ class Elm.Mapbuf (Elm.Container)
          @since 1.9 */
 
          params {
-            @in idx: int; /*@ index of point to change. Must be smaller than mapbuf size. */
-            @in r: int; /*@ red (0 - 255) */
-            @in g: int; /*@ green (0 - 255) */
-            @in b: int; /*@ blue (0 - 255) */
-            @in a: int; /*@ alpha (0 - 255) */
+            @in int idx; /*@ index of point to change. Must be smaller than mapbuf size. */
+            @in int r; /*@ red (0 - 255) */
+            @in int g; /*@ green (0 - 255) */
+            @in int b; /*@ blue (0 - 255) */
+            @in int a; /*@ alpha (0 - 255) */
          }
       }
       point_color_get {
@@ -165,11 +167,11 @@ class Elm.Mapbuf (Elm.Container)
          @since 1.9 */
 
          params {
-            @in idx: int; /*@ index of point get. Must be smaller than map size. */
-            @out r: int; /*@ pointer to red return */
-            @out g: int; /*@ pointer to green return */
-            @out b: int; /*@ pointer to blue return */
-            @out a: int; /*@ pointer to alpha return */
+            @in int idx; /*@ index of point get. Must be smaller than map size. */
+            @out int r; /*@ pointer to red return */
+            @out int g; /*@ pointer to green return */
+            @out int b; /*@ pointer to blue return */
+            @out int a; /*@ pointer to alpha return */
          }
       }
    }
@@ -182,11 +184,11 @@ class Elm.Mapbuf (Elm.Container)
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Evas.Object_Smart.resize;
-      Elm.Widget.theme_apply;
-      Elm.Widget.sub_object_del;
-      Elm.Container.content_get;
-      Elm.Container.content_set;
-      Elm.Container.content_unset;
+      Elm_Widget.theme_apply;
+      Elm_Widget.sub_object_del;
+      Elm_Container.content_get;
+      Elm_Container.content_set;
+      Elm_Container.content_unset;
    }
 
 }

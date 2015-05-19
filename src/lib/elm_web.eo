@@ -1,8 +1,8 @@
-class Elm.Web (Elm.Widget)
+class Elm_Web (Elm_Widget)
 {
    eo_prefix: elm_obj_web;
-   methods {
-      @property text_matches_highlight {
+   properties {
+      text_matches_highlight {
          set {
             /*@
             Sets whether to highlight the matched marks
@@ -25,10 +25,10 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            highlight: bool; /*@ Whether to highlight the marks or not */
+            bool highlight; /*@ Whether to highlight the marks or not */
          }
       }
-      @property useragent {
+      useragent {
          set {
             /*@
             Change useragent of a elm_web object
@@ -44,10 +44,10 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            user_agent: const(char)*; /*@ String for useragent */
+            const(char)* user_agent; /*@ String for useragent */
          }
       }
-      @property url {
+      url {
          set {
             /*@
             Sets the URL for the web object
@@ -73,10 +73,10 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            url: const(char)*; /*@ The URL to set */
+            const(char)* url; /*@ The URL to set */
          }
       }
-      @property bg_color {
+      bg_color {
          set {
             /*@
             Sets the background color to be used by the web object
@@ -96,13 +96,13 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            r: int; /*@ Red component */
-            g: int; /*@ Green component */
-            b: int; /*@ Blue component */
-            a: int; /*@ Alpha component */
+            int r; /*@ Red component */
+            int g; /*@ Green component */
+            int b; /*@ Blue component */
+            int a; /*@ Alpha component */
          }
       }
-      @property inwin_mode {
+      inwin_mode {
          set {
             /*@
             Sets the default dialogs to use an Inwin instead of a normal window
@@ -122,10 +122,10 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            value: bool; /*@ @c EINA_TRUE to use Inwin, @c EINA_FALSE to use a normal window */
+            bool value; /*@ @c EINA_TRUE to use Inwin, @c EINA_FALSE to use a normal window */
          }
       }
-      @property tab_propagate {
+      tab_propagate {
          set {
             /*@
             Sets whether to use tab propagation
@@ -149,10 +149,10 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            propagate: bool; /*@ Whether to propagate Tab keys to Elementary or not */
+            bool propagate; /*@ Whether to propagate Tab keys to Elementary or not */
          }
       }
-      @property history_enabled {
+      history_enabled {
          set {
             /*@
             Enables or disables the browsing history
@@ -168,10 +168,10 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            enable: bool; /*@ Whether to enable or disable the browsing history */
+            bool enable; /*@ Whether to enable or disable the browsing history */
          }
       }
-      @property zoom_mode {
+      zoom_mode {
          set {
             /*@
             Sets the zoom mode to use
@@ -199,10 +199,10 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            mode: Elm_Web_Zoom_Mode; /*@ The mode to set */
+            Elm_Web_Zoom_Mode mode; /*@ The mode to set */
          }
       }
-      @property zoom {
+      zoom {
          set {
             /*@
             Sets the zoom level of the web object
@@ -229,10 +229,10 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            zoom: double; /*@ The zoom level to set */
+            double zoom; /*@ The zoom level to set */
          }
       }
-      @property console_message_hook {
+      console_message_hook {
          set {
             /*@
             Sets the function to call when a console message is emitted from JS
@@ -243,11 +243,11 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            func: Elm_Web_Console_Message; /*@ The callback function to be used */
-            data: void *; /*@ User data */
+            Elm_Web_Console_Message func; /*@ The callback function to be used */
+            void *data; /*@ User data */
          }
       }
-      @property window_create_hook {
+      window_create_hook {
          set {
             /*@
             Sets the function to call when a new window is requested
@@ -261,11 +261,11 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            func: Elm_Web_Window_Open @nullable; /*@ The hook function to be called when a window is requested */
-            data: void * @optional; /*@ User data */
+            Elm_Web_Window_Open func; /*@ The hook function to be called when a window is requested */
+            void *data; /*@ User data */
          }
       }
-      @property dialog_file_selector_hook {
+      dialog_file_selector_hook {
          set {
             /*@
             Sets the function to call when an file selector dialog
@@ -280,11 +280,11 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            func: Elm_Web_Dialog_File_Selector @nullable; /*@ The callback function to be used */
-            data: void * @optional; /*@ User data */
+            Elm_Web_Dialog_File_Selector func; /*@ The callback function to be used */
+            void *data; /*@ User data */
          }
       }
-      @property dialog_confirm_hook {
+      dialog_confirm_hook {
          set {
             /*@
             Sets the function to call when an confirm dialog
@@ -298,11 +298,11 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            func: Elm_Web_Dialog_Confirm @nullable; /*@ The callback function to be used */
-            data: void * @optional; /*@ User data */
+            Elm_Web_Dialog_Confirm func; /*@ The callback function to be used */
+            void *data; /*@ User data */
          }
       }
-      @property popup_selected {
+      popup_selected {
          set {
             /*@
             Tells the web object which index in the currently open popup was selected
@@ -316,10 +316,10 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            idx: int; /*@ The index selected */
+            int idx; /*@ The index selected */
          }
       }
-      @property dialog_prompt_hook {
+      dialog_prompt_hook {
          set {
             /*@
             Sets the function to call when an prompt dialog
@@ -333,11 +333,11 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            func: Elm_Web_Dialog_Prompt @nullable; /*@ The callback function to be used */
-            data: void * @optional; /*@ User data */
+            Elm_Web_Dialog_Prompt func; /*@ The callback function to be used */
+            void *data; /*@ User data */
          }
       }
-      @property dialog_alert_hook {
+      dialog_alert_hook {
          set {
             /*@
             Sets the function to call when an alert dialog
@@ -351,11 +351,11 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            func: Elm_Web_Dialog_Alert @nullable; /*@ The callback function to be used */
-            data: void * @optional; /*@ User data */
+            Elm_Web_Dialog_Alert func; /*@ The callback function to be used */
+            void *data; /*@ User data */
          }
       }
-      @property forward_possible {
+      forward_possible {
          get {
             /*@
             Queries whether it's possible to go forward in history
@@ -367,7 +367,7 @@ class Elm.Web (Elm.Widget)
             return: bool;
          }
       }
-      @property webkit_view {
+      webkit_view {
          get {
             /*@
             Get internal ewk_view object from web object.
@@ -387,7 +387,7 @@ class Elm.Web (Elm.Widget)
             return: Evas_Object *;
          }
       }
-      @property back_possible {
+      back_possible {
          get {
             /*@
             Queries whether it's possible to go back in history
@@ -399,7 +399,7 @@ class Elm.Web (Elm.Widget)
             return: bool;
          }
       }
-      @property load_progress {
+      load_progress {
          get {
             /*@
             Get the overall loading progress of the page
@@ -415,7 +415,7 @@ class Elm.Web (Elm.Widget)
             return: double;
          }
       }
-      @property selection {
+      selection {
          get {
             /*@
             Get a copy of the currently selected text
@@ -426,10 +426,10 @@ class Elm.Web (Elm.Widget)
             error occurred
 
             @ingroup Web */
-            return: own(const(char)*) @warn_unused;
+            return: const(char)*;
          }
       }
-      @property title {
+      title {
          get {
             /*@
             Get the current title
@@ -441,9 +441,11 @@ class Elm.Web (Elm.Widget)
             failure
 
             @ingroup Web */
-            return: free(own(const(char)*), eina_stringshare_del) @warn_unused;
+            return: const(char)*;
          }
       }
+   }
+   methods {
       navigate {
          /*@
          Jumps the given number of steps in the browsing history
@@ -462,7 +464,7 @@ class Elm.Web (Elm.Widget)
 
          return: bool;
          params {
-            @in steps: int; /*@ The number of steps to jump */
+            @in int steps; /*@ The number of steps to jump */
          }
       }
       back {
@@ -500,9 +502,9 @@ class Elm.Web (Elm.Widget)
 
          return: bool;
          params {
-            @in html: const(char)*; /*@ HTML data to load */
-            @in base_url: const(char)* @optional; /*@ Base URL used for relative paths to external objects (optional) */
-            @in unreachable_url: const(char)* @optional; /*@ URL that could not be reached (optional) */
+            @in const(char)* html; /*@ HTML data to load */
+            @in const(char)* base_url; /*@ Base URL used for relative paths to external objects (optional) */
+            @in const(char)* unreachable_url; /*@ URL that could not be reached (optional) */
          }
       }
       text_search @const {
@@ -515,10 +517,10 @@ class Elm.Web (Elm.Widget)
          @ingroup Web */
          return: bool;
          params {
-            @in string: const(char)*; /*@ String to search */
-            @in case_sensitive: bool; /*@ If search should be case sensitive or not */
-            @in forward: bool; /*@ If search is from cursor and on or backwards */
-            @in wrap: bool; /*@ If search should wrap at the end */
+            @in const(char)* string; /*@ String to search */
+            @in bool case_sensitive; /*@ If search should be case sensitive or not */
+            @in bool forward; /*@ If search is from cursor and on or backwards */
+            @in bool wrap; /*@ If search should wrap at the end */
          }
       }
       popup_destroy {
@@ -544,10 +546,10 @@ class Elm.Web (Elm.Widget)
          @ingroup Web */
 
          params {
-            @in x: int; /*@ The x coordinate of the region to show */
-            @in y: int; /*@ The y coordinate of the region to show */
-            @in w: int; /*@ The width of the region to show */
-            @in h: int; /*@ The height of the region to show */
+            @in int x; /*@ The x coordinate of the region to show */
+            @in int y; /*@ The y coordinate of the region to show */
+            @in int w; /*@ The width of the region to show */
+            @in int h; /*@ The height of the region to show */
          }
       }
       forward {
@@ -577,10 +579,10 @@ class Elm.Web (Elm.Widget)
 
          return: uint;
          params {
-            @in string: const(char)*; /*@ String to match */
-            @in case_sensitive: bool; /*@ If match should be case sensitive or not */
-            @in highlight: bool; /*@ If matches should be highlighted */
-            @in limit: uint; /*@ Maximum amount of matches, or zero to unlimited */
+            @in const(char)* string; /*@ String to match */
+            @in bool case_sensitive; /*@ If match should be case sensitive or not */
+            @in bool highlight; /*@ If matches should be highlighted */
+            @in uint limit; /*@ Maximum amount of matches, or zero to unlimited */
          }
       }
       region_bring_in {
@@ -593,10 +595,10 @@ class Elm.Web (Elm.Widget)
          @ingroup Web */
 
          params {
-            @in x: int; /*@ The x coordinate of the region to show */
-            @in y: int; /*@ The y coordinate of the region to show */
-            @in w: int; /*@ The width of the region to show */
-            @in h: int; /*@ The height of the region to show */
+            @in int x; /*@ The x coordinate of the region to show */
+            @in int y; /*@ The y coordinate of the region to show */
+            @in int w; /*@ The width of the region to show */
+            @in int h; /*@ The height of the region to show */
          }
       }
       stop {
@@ -627,7 +629,7 @@ class Elm.Web (Elm.Widget)
 
          return: bool;
          params {
-            @in steps: int; /*@ The number of steps to check for */
+            @in int steps; /*@ The number of steps to check for */
          }
       }
       reload_full {
@@ -666,9 +668,9 @@ class Elm.Web (Elm.Widget)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus;
-      Elm.Widget.event;
+      Elm_Widget.theme_apply;
+      Elm_Widget.on_focus;
+      Elm_Widget.event;
    }
    events {
       uri,changed; /*@ s */

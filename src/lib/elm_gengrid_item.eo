@@ -1,9 +1,9 @@
-class Elm.Gengrid_Item(Elm.Widget_Item)
+class Elm_Gengrid_Item(Elm_Widget_Item)
 {
       eo_prefix: elm_obj_gengrid_item;
       data: Elm_Gen_Item;
-      methods {
-           @property prev {
+      properties {
+           prev {
                 get {
                      /*@
                       Get the @b previous item in a gengrid widget's internal list of items,
@@ -18,10 +18,10 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
+                     Elm_Object_Item *item; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
                 }
            }
-           @property next {
+           next {
                 get {
                      /*@
                       Get the @b next item in a gengrid widget's internal list of items,
@@ -36,10 +36,10 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
+                     Elm_Object_Item *item; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
                 }
            }
-           @property selected {
+           selected {
                 get {
                      /*@
                       Get whether a given gengrid item is selected or not
@@ -66,10 +66,10 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     selected: bool; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
+                     Eina_Bool selected; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
                 }
            }
-           @property item_class {
+           item_class {
                 get {
                      /*@
                       Get the Gengrid Item class for the given Gengrid Item.
@@ -81,10 +81,10 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     itc: const (Elm_Gengrid_Item_Class) *; /*@ Gengrid Item class for the given item */
+                     const (Elm_Gengrid_Item_Class) *itc; /*@ Gengrid Item class for the given item */
                 }
            }
-           @property index {
+           index {
                 get {
                      /*@
                       Get the index of the item. It is only valid once displayed.
@@ -93,10 +93,10 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     index: int(-1); /*@ @return the position inside the list of item. */
+                     int index(-1); /*@ @return the position inside the list of item. */
                 }
            }
-           @property pos {
+           pos {
                 get {
                      /*@
                       Get a given gengrid item's position, relative to the whole
@@ -110,11 +110,11 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     x: uint; /*@ Pointer to variable to store the item's <b>row number</b>. */
-                     y: uint; /*@ Pointer to variable to store the item's <b>column number</b>. */
+                     uint x; /*@ Pointer to variable to store the item's <b>row number</b>. */
+                     uint y; /*@ Pointer to variable to store the item's <b>column number</b>. */
                 }
            }
-           @property select_mode {
+           select_mode {
                 get {
                      /*@
                       Get the gengrid item's select mode.
@@ -152,9 +152,11 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     mode: Elm_Object_Select_Mode(4); /*@ The selected mode */
+                     Elm_Object_Select_Mode mode(4); /*@ The selected mode */
                 }
            }
+      }
+      methods {
            /*      init { FIXME
                    params {
                    Evas_Smart_Cb func;
@@ -175,7 +177,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                  @ingroup Gengrid
                  */
                 params {
-                     @in type: Elm_Gengrid_Item_Scrollto_Type; /*@ Where to position the item in the viewport. */
+                     @in Elm_Gengrid_Item_Scrollto_Type type; /*@ Where to position the item in the viewport. */
                 }
            }
            bring_in {
@@ -192,7 +194,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                  @ingroup Gengrid
                  */
                 params {
-                     @in type: Elm_Gengrid_Item_Scrollto_Type; /*@ Where to position the item in the viewport. */
+                     @in Elm_Gengrid_Item_Scrollto_Type type; /*@ Where to position the item in the viewport. */
                 }
            }
            update {
@@ -218,30 +220,31 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                  @ingroup Gengrid
                  */
                 params {
-                     @in itc: const (Elm_Gengrid_Item_Class) *; /*@ The gengrid item class describing the function pointers and the item style. */
+                     @in const (Elm_Gengrid_Item_Class) *itc; /*@ The gengrid item class describing the function pointers and the item style. */
                 }
            }
       }
       implements {
            Eo.Base.constructor;
-           Elm.Widget_Item.del_pre;
-           Elm.Widget_Item.disable;
-           Elm.Widget_Item.signal_emit;
-           Elm.Widget_Item.focus.set;
-           Elm.Widget_Item.focus.get;
-           Elm.Widget_Item.part_text.get;
-           Elm.Widget_Item.part_content.get;
-           Elm.Widget_Item.tooltip_text_set;
-           Elm.Widget_Item.tooltip_style.get;
-           Elm.Widget_Item.tooltip_style.set;
-           Elm.Widget_Item.tooltip_window_mode.get;
-           Elm.Widget_Item.tooltip_window_mode.set;
-           Elm.Widget_Item.tooltip_content_cb_set;
-           Elm.Widget_Item.tooltip_unset;
-           Elm.Widget_Item.cursor.set;
-           Elm.Widget_Item.cursor_unset;
+           Elm_Widget_Item.del_pre;
+           Elm_Widget_Item.disable;
+           Elm_Widget_Item.signal_emit;
+           Elm_Widget_Item.focus.set;
+           Elm_Widget_Item.focus.get;
+           Elm_Widget_Item.part_text.get;
+           Elm_Widget_Item.part_content.get;
+           Elm_Widget_Item.tooltip_text_set;
+           Elm_Widget_Item.tooltip_style.get;
+           Elm_Widget_Item.tooltip_style.set;
+           Elm_Widget_Item.tooltip_window_mode.get;
+           Elm_Widget_Item.tooltip_window_mode.set;
+           Elm_Widget_Item.tooltip_content_cb_set;
+           Elm_Widget_Item.tooltip_unset;
+           Elm_Widget_Item.cursor.set;
+           Elm_Widget_Item.cursor_unset;
            Elm_Interface_Atspi_Accessible.name.get;
            Elm_Interface_Atspi_Accessible.state_set.get;
            Elm_Interface_Atspi_Accessible.children.get;
       }
 }
+

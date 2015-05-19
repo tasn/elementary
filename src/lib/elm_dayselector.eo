@@ -1,8 +1,8 @@
-class Elm.Dayselector (Elm.Layout)
+class Elm_Dayselector (Elm_Layout)
 {
    eo_prefix: elm_obj_dayselector;
-   methods {
-      @property week_start {
+   properties {
+      week_start {
          set {
             /*@
             Set the starting day of Dayselector.
@@ -24,10 +24,10 @@ class Elm.Dayselector (Elm.Layout)
             @ingroup Dayselector */
          }
          values {
-            day: Elm_Dayselector_Day; /*@ Dayselector_Day the first day that the user wants to display. */
+            Elm_Dayselector_Day day; /*@ Dayselector_Day the first day that the user wants to display. */
          }
       }
-      @property weekend_length {
+      weekend_length {
          set {
             /*@
             Set the weekend length of Dayselector.
@@ -48,10 +48,10 @@ class Elm.Dayselector (Elm.Layout)
             @ingroup Dayselector */
          }
          values {
-            length: uint; /*@ Weekend length, number of days as an integer. */
+            uint length; /*@ Weekend length, number of days as an integer. */
          }
       }
-      @property weekend_start {
+      weekend_start {
          set {
             /*@
             Set the weekend starting day of Dayselector.
@@ -73,9 +73,11 @@ class Elm.Dayselector (Elm.Layout)
             @ingroup Dayselector */
          }
          values {
-            day: Elm_Dayselector_Day; /*@ Dayselector_Day the first day from where weekend starts. */
+            Elm_Dayselector_Day day; /*@ Dayselector_Day the first day from where weekend starts. */
          }
       }
+   }
+   methods {
       weekdays_names_set {
          /*@
          Set weekdays names to be displayed by the Dayselector.
@@ -103,7 +105,7 @@ class Elm.Dayselector (Elm.Layout)
          @ingroup Dayselector */
 
          params {
-            @in weekdays: const(char)* * @nullable; /*@ Array of seven strings to be used as weekday names.
+            @in const(char)* *weekdays; /*@ Array of seven strings to be used as weekday names.
             @warning It must have 7 elements, or it will access invalid memory.
             @warning The strings must be NULL terminated ('@\0'). */
          }
@@ -123,7 +125,7 @@ class Elm.Dayselector (Elm.Layout)
          @since 1.8
 
          @ingroup Dayselector */
-         return: own(list<own(Eina_Stringshare *)> *) @warn_unused;
+         return: list *;
       }
       day_selected_set {
          /*@
@@ -135,8 +137,8 @@ class Elm.Dayselector (Elm.Layout)
          @ingroup Dayselector */
 
          params {
-            @in day: Elm_Dayselector_Day; /*@ Dayselector_Day that the user want to set state. */
-            @in selected: bool; /*@ state of the day. @c EINA_TRUE is selected. */
+            @in Elm_Dayselector_Day day; /*@ Dayselector_Day that the user want to set state. */
+            @in bool selected; /*@ state of the day. @c EINA_TRUE is selected. */
          }
       }
       day_selected_get @const {
@@ -151,7 +153,7 @@ class Elm.Dayselector (Elm.Layout)
          @ingroup Dayselector */
          return: bool;
          params {
-            @in day: Elm_Dayselector_Day; /*@ Dayselector_Day that the user want to know state. */
+            @in Elm_Dayselector_Day day; /*@ Dayselector_Day that the user want to know state. */
          }
       }
    }
@@ -160,12 +162,12 @@ class Elm.Dayselector (Elm.Layout)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.translate;
-      Elm.Container.content_unset;
-      Elm.Container.content_set;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.translate;
+      Elm_Container.content_unset;
+      Elm_Container.content_set;
+      Elm_Layout.sizing_eval;
    }
    events {
       dayselector,changed;

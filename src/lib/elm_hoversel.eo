@@ -1,9 +1,9 @@
-class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
+class Elm_Hoversel (Elm_Button, Evas.Selectable_Interface,
                     Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_hoversel;
-   methods {
-      @property horizontal {
+   properties {
+      horizontal {
          set {
             /*@
             @brief This sets the hoversel to expand horizontally.
@@ -24,11 +24,11 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             @ingroup Hoversel */
          }
          values {
-            horizontal: bool; /*@ If true, the hover will expand horizontally to the
+            bool horizontal; /*@ If true, the hover will expand horizontally to the
             right. */
          }
       }
-      @property hover_parent {
+      hover_parent {
          set {
             /*@
             @brief Set the Hover parent
@@ -52,10 +52,10 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             @ingroup Hoversel */
          }
          values {
-            parent: Evas_Object * @nullable; /*@ The parent to use */
+            Evas_Object *parent; /*@ The parent to use */
          }
       }
-      @property expanded {
+      expanded {
          get {
             /*@
             @brief Returns whether the hoversel is expanded.
@@ -67,7 +67,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             return: bool;
          }
       }
-      @property items {
+      items {
          get {
             /*@
             @brief Get the list of items within the given hoversel.
@@ -77,9 +77,11 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             @see elm_hoversel_item_add()
 
             @ingroup Hoversel */
-            return: const(list<Elm_Object_Item *>)*;
+            return: const(list)*;
          }
       }
+   }
+   methods {
       hover_begin {
          /*@
          @brief This triggers the hoversel popup from code, the same as if the user
@@ -126,13 +128,13 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
 
          return: Elm_Object_Item *;
          params {
-            @in label: const(char)* @optional; /*@ The text label to use for the item (NULL if not desired) */
-            @in icon_file: const(char)* @optional; /*@ An image file path on disk to use for the icon or standard
+            @in const(char)* label; /*@ The text label to use for the item (NULL if not desired) */
+            @in const(char)* icon_file; /*@ An image file path on disk to use for the icon or standard
             icon name (NULL if not desired) */
-            @in icon_type: Elm_Icon_Type; /*@ The icon type if relevant */
-            @in func: Evas_Smart_Cb @optional; /*@ Convenience function to call when this item is selected. The last
+            @in Elm_Icon_Type icon_type; /*@ The icon type if relevant */
+            @in Evas_Smart_Cb func; /*@ Convenience function to call when this item is selected. The last
             parameter @p event_info of @c func is the selected item pointer. */
-            @in data: const(void)* @optional; /*@ Data to pass to item-related functions */
+            @in const(void)* data; /*@ Data to pass to item-related functions */
          }
       }
    }
@@ -144,11 +146,11 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
       Evas.Object_Smart.show;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.parent.set;
-      Elm.Widget.theme_apply;
-      Elm.Widget.translate;
-      Elm.Widget.event;
-      Elm.Button.admits_autorepeat.get;
+      Elm_Widget.parent.set;
+      Elm_Widget.theme_apply;
+      Elm_Widget.translate;
+      Elm_Widget.event;
+      Elm_Button.admits_autorepeat.get;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {

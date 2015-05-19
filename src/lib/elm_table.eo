@@ -1,9 +1,9 @@
-class Elm.Table (Elm.Widget)
+class Elm_Table (Elm_Widget)
 {
    eo_prefix: elm_obj_table;
    data: null;
-   methods {
-      @property homogeneous {
+   properties {
+      homogeneous {
          set {
             /*@
             @brief Set the homogeneous layout in the table
@@ -20,11 +20,11 @@ class Elm.Table (Elm.Widget)
             @ingroup Table */
          }
          values {
-            homogeneous: bool; /*@ A boolean to set if the layout is homogeneous in the
+            bool homogeneous; /*@ A boolean to set if the layout is homogeneous in the
             table (EINA_TRUE = homogeneous, EINA_FALSE = no homogeneous) */
          }
       }
-      @property padding {
+      padding {
          set {
             /*@
             @brief Set padding between cells.
@@ -40,11 +40,11 @@ class Elm.Table (Elm.Widget)
             @ingroup Table */
          }
          values {
-            horizontal: Evas_Coord; /*@ set the horizontal padding. */
-            vertical: Evas_Coord; /*@ set the vertical padding. */
+            Evas_Coord horizontal; /*@ set the horizontal padding. */
+            Evas_Coord vertical; /*@ set the vertical padding. */
          }
       }
-      @property align {
+      align {
          set {
             /*@
             @brief Set alignment of table
@@ -62,10 +62,12 @@ class Elm.Table (Elm.Widget)
             @ingroup Table */
          }
          values {
-            horizontal: double; /*@ the horizontal alignment. */
-            vertical: double; /*@ the vertical alignment. */
+            double horizontal; /*@ the horizontal alignment. */
+            double vertical; /*@ the vertical alignment. */
          }
       }
+   }
+   methods {
       clear {
          /*@
          @brief Faster way to remove all child objects from a table object.
@@ -73,7 +75,7 @@ class Elm.Table (Elm.Widget)
          @ingroup Table */
 
          params {
-            @in clear: bool; /*@ If true, will delete children, else just remove from table. */
+            @in bool clear; /*@ If true, will delete children, else just remove from table. */
          }
       }
       child_get @const {
@@ -83,8 +85,8 @@ class Elm.Table (Elm.Widget)
          @return Child of object if find if not return NULL. */
          return: Evas_Object *;
          params {
-            @in col: int; /*@ Column number of child object */
-            @in row: int; /*@ Row number of child object */
+            @in int col; /*@ Column number of child object */
+            @in int row; /*@ Row number of child object */
          }
       }
       pack_set {
@@ -100,11 +102,11 @@ class Elm.Table (Elm.Widget)
          @ingroup Table */
 
          params {
-            @in subobj: Evas_Object *; /*@ The subobject to be modified in the table */
-            @in column: int; /*@ Column number */
-            @in row: int; /*@ Row number */
-            @in colspan: int; /*@ colspan */
-            @in rowspan: int; /*@ rowspan */
+            @in Evas_Object *subobj; /*@ The subobject to be modified in the table */
+            @in int column; /*@ Column number */
+            @in int row; /*@ Row number */
+            @in int colspan; /*@ colspan */
+            @in int rowspan; /*@ rowspan */
          }
          legacy: null;
       }
@@ -117,11 +119,11 @@ class Elm.Table (Elm.Widget)
          @ingroup Table */
 
          params {
-            @in subobj: Evas_Object *; /*@ The subobject to be modified in the table */
-            @out column: int; /*@ Column number */
-            @out row: int; /*@ Row number */
-            @out colspan: int; /*@ colspan */
-            @out rowspan: int; /*@ rowspan */
+            @in Evas_Object *subobj; /*@ The subobject to be modified in the table */
+            @out int column; /*@ Column number */
+            @out int row; /*@ Row number */
+            @out int colspan; /*@ colspan */
+            @out int rowspan; /*@ rowspan */
          }
          legacy: null;
       }
@@ -132,7 +134,7 @@ class Elm.Table (Elm.Widget)
          @ingroup Table */
 
          params {
-            @in subobj: Evas_Object *; /*@ The subobject */
+            @in Evas_Object *subobj; /*@ The subobject */
          }
       }
       pack {
@@ -152,11 +154,11 @@ class Elm.Table (Elm.Widget)
          @ingroup Table */
 
          params {
-            @in subobj: Evas_Object *; /*@ The subobject to be added to the table */
-            @in column: int; /*@ Column number */
-            @in row: int; /*@ Row number */
-            @in colspan: int; /*@ colspan */
-            @in rowspan: int; /*@ rowspan */
+            @in Evas_Object *subobj; /*@ The subobject to be added to the table */
+            @in int column; /*@ Column number */
+            @in int row; /*@ Row number */
+            @in int colspan; /*@ colspan */
+            @in int rowspan; /*@ rowspan */
          }
       }
    }
@@ -165,12 +167,12 @@ class Elm.Table (Elm.Widget)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.focus_direction;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.theme_apply;
-      Elm.Widget.sub_object_del;
+      Elm_Widget.focus_direction;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.theme_apply;
+      Elm_Widget.sub_object_del;
    }
 
 }

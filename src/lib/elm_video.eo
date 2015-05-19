@@ -1,8 +1,8 @@
-class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
+class Elm_Video (Elm_Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_video;
-   methods {
-      @property audio_level {
+   properties {
+      audio_level {
          set {
             /*@
             @brief Set the audio level of an Elm_Video object.
@@ -18,10 +18,10 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
             @ingroup Video */
          }
          values {
-            volume: double; /*@ The new audio volume. */
+            double volume; /*@ The new audio volume. */
          }
       }
-      @property remember_position {
+      remember_position {
          set {
             /*@
             @brief Set whether the object can remember the last played position.
@@ -42,10 +42,10 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
             @ingroup Video */
          }
          values {
-            remember: bool; /*@ the last played position of the Elm_Video object. */
+            bool remember; /*@ the last played position of the Elm_Video object. */
          }
       }
-      @property play_position {
+      play_position {
          set {
             /*@
             @brief Set the current position (in seconds) to be played in the
@@ -63,10 +63,10 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
             @ingroup Video */
          }
          values {
-            position: double; /*@ The time (in seconds) since the beginning of the media file. */
+            double position; /*@ The time (in seconds) since the beginning of the media file. */
          }
       }
-      @property audio_mute {
+      audio_mute {
          set {
             /*@
             @brief Change the mute state of the Elm_Video object.
@@ -82,10 +82,10 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
             @ingroup Video */
          }
          values {
-            mute: bool; /*@ The new mute state. */
+            bool mute; /*@ The new mute state. */
          }
       }
-      @property is_playing {
+      is_playing {
          get {
             /*@
             @brief Is the video actually playing.
@@ -99,7 +99,7 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
             return: bool;
          }
       }
-      @property play_length {
+      play_length {
          get {
             /*@
             @brief Get the total playing time (in seconds) of the Elm_Video object.
@@ -110,7 +110,7 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
             return: double;
          }
       }
-      @property emotion {
+      emotion {
          get {
             /*@
             @brief Get the underlying Emotion object.
@@ -121,7 +121,7 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
             return: Evas_Object *;
          }
       }
-      @property is_seekable {
+      is_seekable {
          get {
             /*@
             @brief Is it possible to seek inside the video.
@@ -132,7 +132,7 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
             return: bool;
          }
       }
-      @property title {
+      title {
          get {
             /*@
             @brief Get the title (for instance DVD title) from this emotion object.
@@ -147,6 +147,8 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
             return: const(char)*;
          }
       }
+   }
+   methods {
       play {
          /*@
          @brief Start to play the video
@@ -182,10 +184,10 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
       Efl.File.file.get;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.event;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.event;
+      Elm_Layout.sizing_eval;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {

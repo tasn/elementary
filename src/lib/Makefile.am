@@ -48,7 +48,6 @@ elm_widget_bubble.h \
 elm_widget_button.h \
 elm_widget_calendar.h \
 elm_widget_check.h \
-elm_widget_clipper.h \
 elm_widget_clock.h \
 elm_widget_colorselector.h \
 elm_widget_conform.h \
@@ -178,9 +177,6 @@ elm_calendar_common.h \
 elm_check.h \
 elm_check_eo.h \
 elm_check_legacy.h \
-elm_clipper.h \
-elm_clipper_eo.h \
-elm_clipper_legacy.h \
 elm_clock.h \
 elm_clock_eo.h \
 elm_clock_legacy.h \
@@ -217,6 +213,7 @@ elm_entry_eo.h \
 elm_entry_legacy.h \
 elm_finger.h \
 elm_flip.h \
+elm_flip_common.h \
 elm_flip_eo.h \
 elm_flip_legacy.h \
 elm_flipselector.h \
@@ -336,6 +333,7 @@ elm_route_legacy.h \
 elm_scale.h \
 elm_scroll.h \
 elm_scroller.h \
+elm_scroller_common.h \
 elm_scroller_eo.h \
 elm_scroller_legacy.h \
 elm_segment_control.h \
@@ -387,8 +385,6 @@ elm_win.h \
 elm_win_common.h \
 elm_win_eo.h \
 elm_win_legacy.h \
-elm_win_standard.h \
-elm_win_standard.eo.h \
 elm_helper.h
 includesubdir = $(includedir)/elementary-@VMAJ@/
 
@@ -426,7 +422,6 @@ elm_bubble.c \
 elm_button.c \
 elm_calendar.c \
 elm_check.c \
-elm_clipper.c \
 elm_clock.c \
 elm_cnp.c \
 elm_colorselector.c \
@@ -507,7 +502,6 @@ elm_video.c \
 elm_web2.c \
 elm_widget.c \
 elm_win.c \
-elm_win_standard.c \
 elm_helper.c \
 els_box.c \
 els_cursor.c \
@@ -548,7 +542,6 @@ elm_bubble.eo \
 elm_button.eo \
 elm_calendar.eo \
 elm_check.eo \
-elm_clipper.eo \
 elm_clock.eo \
 elm_colorselector.eo \
 elm_conformant.eo \
@@ -626,7 +619,6 @@ elm_video.eo \
 elm_web.eo \
 elm_widget.eo \
 elm_win.eo \
-elm_win_standard.eo \
 elm_widget_item.eo \
 elm_color_item.eo \
 elm_dayselector_item.eo \
@@ -695,7 +687,6 @@ elementaryeolianfiles_DATA = \
 	     elm_button.eo \
 	     elm_calendar.eo \
 	     elm_check.eo \
-	     elm_clipper.eo \
 	     elm_clock.eo \
 	     elm_colorselector.eo \
 	     elm_conformant.eo \
@@ -756,7 +747,6 @@ elementaryeolianfiles_DATA = \
 	     elm_video.eo \
 	     elm_web.eo \
 	     elm_win.eo \
-	     elm_win_standard.eo \
 	     elm_widget_item.eo \
 	     elm_color_item.eo \
 	     elm_dayselector_item.eo \

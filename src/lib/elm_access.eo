@@ -1,4 +1,4 @@
-class Elm.Access (Elm.Widget)
+class Elm_Access (Elm_Widget)
 {
 eo_prefix: elm_obj_access;
    data: null;
@@ -6,8 +6,8 @@ eo_prefix: elm_obj_access;
       class.constructor;
       Eo.Base.constructor;
       Evas.Object_Smart.add;
-      Elm.Widget.activate;
-      Elm.Widget.on_focus;
+      Elm_Widget.activate;
+      Elm_Widget.on_focus;
    }
 
 }

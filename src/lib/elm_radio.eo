@@ -1,8 +1,8 @@
-class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
+class Elm_Radio (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_radio;
-   methods {
-      @property state_value {
+   properties {
+      state_value {
          set {
             /*@
             @brief Set the integer value that this radio object represents
@@ -23,10 +23,10 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Radio */
          }
          values {
-            value: int; /*@ The value to use if this radio object is selected */
+            int value; /*@ The value to use if this radio object is selected */
          }
       }
-      @property value {
+      value {
          set {
             /*@
             @brief Set the value of the radio group.
@@ -45,10 +45,10 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Radio */
          }
          values {
-            value: int; /*@ The value to use for the group */
+            int value; /*@ The value to use for the group */
          }
       }
-      @property value_pointer {
+      value_pointer {
          set {
             /*@
             @brief Set a convenience pointer to a integer to change when radio group
@@ -64,10 +64,10 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Radio */
          }
          values {
-            valuep: int * @nullable; /*@ Pointer to the integer to modify */
+            int *valuep; /*@ Pointer to the integer to modify */
          }
       }
-      @property selected_object {
+      selected_object {
          get {
             /*@
             @brief Get the selected radio object.
@@ -78,6 +78,8 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: Evas_Object *;
          }
       }
+   }
+   methods {
       group_add {
          /*@
          @brief Add this radio to a group of other radio objects
@@ -90,7 +92,7 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          @ingroup Radio */
 
          params {
-            @in group: Elm_Radio *; /*@ Any radio object whose group the @p obj is to join. */
+            @in Elm_Radio *group; /*@ Any radio object whose group the @p obj is to join. */
          }
       }
    }
@@ -99,17 +101,17 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.theme_apply;
-      Elm.Widget.activate;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.disable;
-      Elm.Widget.sub_object_del;
-      Elm.Widget.event;
-      Elm.Container.content_set;
-      Elm.Layout.text_aliases.get;
-      Elm.Layout.content_aliases.get;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.theme_apply;
+      Elm_Widget.activate;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.disable;
+      Elm_Widget.sub_object_del;
+      Elm_Widget.event;
+      Elm_Container.content_set;
+      Elm_Layout.text_aliases.get;
+      Elm_Layout.content_aliases.get;
+      Elm_Layout.sizing_eval;
       Elm_Interface_Atspi_Accessible.state_set.get;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }

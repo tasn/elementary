@@ -1,22 +1,9 @@
-enum Elm.Panel.Orient
-{
-   /*@
-   Panel orientation mode
-
-   @ingroup Panel */
-
-   top, /*@< Panel (dis)appears from the top */
-   bottom, /*@< Panel (dis)appears from the bottom */
-   left, /*@< Panel (dis)appears from the left */
-   right /*@< Panel (dis)appears from the right */
-}
-
-class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
+class Elm_Panel (Elm_Layout, Elm_Interface_Scrollable,
                  Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_panel;
-   methods {
-      @property orient {
+   properties {
+      orient {
          set {
             /*@
             @brief Sets the orientation of the panel
@@ -34,13 +21,13 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Panel */
          }
          values {
-            orient: Elm.Panel.Orient(Elm.Panel.Orient.left); /*@ The panel orientation. Can be one of the following:
+            Elm_Panel_Orient orient(2); /*@ The panel orientation. Can be one of the following:
             @li #ELM_PANEL_ORIENT_TOP
             @li #ELM_PANEL_ORIENT_LEFT
             @li #ELM_PANEL_ORIENT_RIGHT */
          }
       }
-      @property hidden {
+      hidden {
          set {
             /*@
             @brief Set the state of the panel.
@@ -56,10 +43,10 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Panel */
          }
          values {
-            hidden: bool; /*@ If true, the panel will run the animation to disappear. */
+            bool hidden; /*@ If true, the panel will run the animation to disappear. */
          }
       }
-      @property scrollable {
+      scrollable {
          set {
             /*@
             @brief Set the scrollability of the panel.
@@ -76,10 +63,10 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
             @since 1.12 */
          }
          values {
-            scrollable: bool;
+            bool scrollable;
          }
       }
-      @property scrollable_content_size {
+      scrollable_content_size {
          set {
             /*@
             @brief Set the size of the scrollable panel.
@@ -87,9 +74,11 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Panel */
          }
          values {
-            ratio: double;
+            double ratio;
          }
       }
+   }
+   methods {
       toggle {
          /*@
          @brief Toggle the hidden state of the panel from code
@@ -106,17 +95,17 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
       Evas.Object_Smart.del;
       Evas.Object_Smart.resize;
       Evas.Object_Smart.move;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.disable;
-      Elm.Widget.access;
-      Elm.Widget.event;
-      Elm.Widget.on_focus_region;
-      Elm.Container.content_get;
-      Elm.Container.content_unset;
-      Elm.Container.content_set;
-      Elm.Layout.sizing_eval;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.disable;
+      Elm_Widget.access;
+      Elm_Widget.event;
+      Elm_Widget.on_focus_region;
+      Elm_Container.content_get;
+      Elm_Container.content_unset;
+      Elm_Container.content_set;
+      Elm_Layout.sizing_eval;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
