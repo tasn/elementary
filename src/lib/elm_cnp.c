@@ -2562,7 +2562,7 @@ _wl_targets_converter(char *target, Wl_Cnp_Selection *sel EINA_UNUSED, void *dat
    if (sel->format)
      {
         formats = sel->format;
-        is_uri_data = _wl_is_uri_type_data(sel->selbuf, sel->buflen);
+        is_uri_data = _wl_is_uri_type_data(sel->selbuf, sel->buflen); /* why? */
      }
    else
      {
@@ -2575,6 +2575,8 @@ _wl_targets_converter(char *target, Wl_Cnp_Selection *sel EINA_UNUSED, void *dat
      {
         if (formats & _atoms[i].formats)
           {
+             /* Why do we need only uri?
+              * If really needed, instead of strcmp why not just compare atom ids? */
              if ((is_uri_data) || (!is_uri_data &&
                                    strcmp(_atoms[i].name, "text/uri") &&
                                    strcmp(_atoms[i].name, "text/uri-list")))
@@ -2587,6 +2589,7 @@ _wl_targets_converter(char *target, Wl_Cnp_Selection *sel EINA_UNUSED, void *dat
      {
         if (formats & _atoms[i].formats)
           {
+             /* Same here */
              if ((is_uri_data) || (!is_uri_data &&
                                    strcmp(_atoms[i].name, "text/uri") &&
                                    strcmp(_atoms[i].name, "text/uri-list")))
@@ -2816,6 +2819,10 @@ _wl_notify_handler_uri(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Read
    Eina_Inlist *itr;
    Elm_Selection_Data ddata;
 
+   /* Is this function only needed for DnD?
+    * Because it seems like, as __elm_dropable is set only when a drop target
+    * is added! If this function is called during selection, it will sigsegv!
+    */
    eo_do(sel->requestwidget, drop = eo_key_data_get("__elm_dropable"));
    if (drop)
      type = drop->last.type;
@@ -2842,6 +2849,9 @@ _wl_notify_handler_uri(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Read
         uri = calloc(1, sizeof(*uri) * num_files);
         if (!uri) return 0;
 
+        /* Can't it be easier with Eina_Strbuf?
+         * Seems complicated for nothing.
+         */
         for (i = 0; i < num_files ; i++)
           {
              uri[i] = efreet_uri_decode(files[i]);
@@ -2967,6 +2977,7 @@ _wl_notify_handler_uri(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Read
 
         mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
         /* TODO BUG: should never NEVER assume it's an elm_entry! */
+        /* This should not be here! */
         _elm_entry_entry_paste(sel->requestwidget, mkupstr);
         free(mkupstr);
      }
@@ -3197,6 +3208,10 @@ static Eina_Bool _wl_drops_accept(const char *type);
 static unsigned int _wl_elm_widget_window_get(Evas_Object *obj);
 static Evas * _wl_evas_get_from_win(unsigned int win);
 
+/* I think we can have only one function where data would be the widget itself.
+ * Wl_Cnp_Selection is global anyway so no need to put it as parameter.
+ * dragwidget can be NULLified everytime.
+ */
 static void
 _wl_sel_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
@@ -3340,6 +3355,9 @@ _wl_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
                                   EVAS_CALLBACK_DEL, _wl_sel_obj_del2,
                                   &wl_cnp_selection);
 
+   /* Why this check is not at the beginning?
+    * More, I don't think you want to init stuff if the selection type is bad.
+    */
    if ((selection == ELM_SEL_TYPE_CLIPBOARD) ||
        (selection == ELM_SEL_TYPE_PRIMARY) ||
        (selection == ELM_SEL_TYPE_SECONDARY))
@@ -3392,6 +3410,7 @@ _wl_elm_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection EINA_UNUSED
    return EINA_TRUE;
 }
 
+/* If the function is common, it should be renamed. */
 static Eina_Bool
 _wl_selection_send(void *data, int type EINA_UNUSED, void *event)
 {
@@ -3415,6 +3434,7 @@ _wl_selection_send(void *data, int type EINA_UNUSED, void *event)
      {
         cnp_debug("Found a type: %s\n", atom->name);
         Dropable *drop;
+        /* Why do we need it? Because it was in X11? */
         eo_do(sel->requestwidget, drop = eo_key_data_get("__elm_dropable"));
         if (drop)
           drop->last.type = atom->name;
@@ -3430,6 +3450,7 @@ _wl_selection_send(void *data, int type EINA_UNUSED, void *event)
           }
      }
 
+   /* What if we don't find any atom? We don't send anything? */
    len_remained = len_ret;
    buf = data_ret;
 
