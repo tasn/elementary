@@ -1,6 +1,17 @@
 =================
-Elementary 1.14.0
+Elementary 1.14.1
 =================
+
+Changes since 1.14.0:
+---------------------
+
+Fixes:
+
+   * elm_object_item: fix the issue that del_cb doens't get item data as its parameter
+   * widget: more fix wrt item data.
+   * slider: use theme of object for popup.
+   * entry: update selection handlers when entry is resized
+   * elm_win: Set initial withdrawn state from win's ecore_evas property.
 
 Changes since 1.13.0:
 ---------------------
