@@ -12,6 +12,11 @@ Fixes:
    * slider: use theme of object for popup.
    * entry: update selection handlers when entry is resized
    * elm_win: Set initial withdrawn state from win's ecore_evas property.
+   * elm - fix profile handling if ELM_PROFILE is set - dont listen to x msg
+   * Gengrid: fix mirroring bug in gengrid widget.
+   * gengrid/genlist: decrement item counter before triggering item del callback
+   * glview: preserved changed state when altering render mode
+   * tooltip: fix positioning when tooltip is affixed to a window object
 
 Changes since 1.13.0:
 ---------------------
