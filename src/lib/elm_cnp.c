@@ -3011,7 +3011,7 @@ _wl_notify_handler_uri(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Read
         ddata.data = stripstr;
         ddata.len = strlen(stripstr);
         ddata.action = sel->action;
-        sel->datacb(sel->udata, sel->widget, &ddata);
+        sel->datacb(sel->udata, sel->requestwidget, &ddata);
      }
    else
      {
@@ -3070,7 +3070,7 @@ _wl_vcard_receive(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev
         ddata.data = ev->data;
         ddata.len = ev->len;
         ddata.action = sel->action;
-        sel->datacb(sel->udata, sel->widget, &ddata);
+        sel->datacb(sel->udata, sel->requestwidget, &ddata);
      }
    else cnp_debug("Paste request\n");
 
@@ -3127,7 +3127,7 @@ _wl_notify_handler_image(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Re
         ddata.data = ev->data;
         ddata.len = ev->len;
         ddata.action = sel->action;
-        sel->datacb(sel->udata, sel->widget, &ddata);
+        sel->datacb(sel->udata, sel->requestwidget, &ddata);
      }
    else
      {
@@ -3186,7 +3186,7 @@ _wl_notify_handler_text(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Rea
         ddata.data = ev->data;
         ddata.len = ev->len;
         ddata.action = sel->action;
-        sel->datacb(sel->udata, sel->widget, &ddata);
+        sel->datacb(sel->udata, sel->requestwidget, &ddata);
      }
    else
      {
