@@ -1,0 +1,28 @@
+class Elm.Atspi_Bridge (Eo.Base)
+{
+   eo_prefix: elm_obj_atspi_bridge;
+   methods {
+      @property connected {
+         get {
+            values {
+               ret: bool;
+            }
+         }
+      }
+      @property root {
+         get {
+            values {
+               ret: Eo*;
+            }
+         }
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+   }
+   events {
+      connected;
+      disconnected;
+   }
+}

@@ -24,6 +24,7 @@
 #define A11Y_DBUS_NAME "org.a11y.Bus"
 #define A11Y_DBUS_PATH "/org/a11y/bus"
 #define A11Y_DBUS_INTERFACE "org.a11y.Bus"
+#define A11Y_DBUS_STATUS_INTERFACE "org.a11y.Status"
 #define ATSPI_DBUS_INTERFACE_EVENT_WINDOW "org.a11y.atspi.Event.Window"
 
 #define CACHE_ITEM_SIGNATURE "((so)(so)(so)a(so)assusau)"
@@ -35,28 +36,45 @@
 
 #define SIZE(x) sizeof(x)/sizeof(x[0])
 
+#define ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(obj, sd) \
+   Elm_Atspi_Bridge_Data *sd = eo_data_scope_get(obj, ELM_ATSPI_BRIDGE_CLASS); \
+   if (!sd) return;
+
+#define ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(obj, sd, val) \
+   Elm_Atspi_Bridge_Data *sd = eo_data_scope_get(obj, ELM_ATSPI_BRIDGE_CLASS); \
+   if (!sd) return val;
+
 typedef struct Key_Event_Info {
      Ecore_Event_Key event;
      int type;
 } Key_Event_Info;
 
-static int _init_count = 0;
-static Eldbus_Connection *_a11y_bus = NULL;
-static Eina_List *reemited_events;
-static Eo *_root;
-static Ecore_Idler *_cache_update_idler;
-static Eina_List *_pending_objects;
-static Eina_Hash *_cache;
-static Eldbus_Service_Interface *_cache_interface = NULL;
-static Eldbus_Signal_Handler *_register_hdl;
-static Eldbus_Signal_Handler *_unregister_hdl;
-static unsigned long _object_broadcast_mask;
-static unsigned long _object_property_broadcast_mask;
-static unsigned long _object_children_broadcast_mask;
-static unsigned long long _object_state_broadcast_mask;
-static unsigned long long _window_signal_broadcast_mask;
-static Ecore_Event_Filter *_key_flr;
+typedef struct _Elm_Atspi_Bridge_Data
+{
+   Eldbus_Connection *session_bus;
+   Eldbus_Connection *a11y_bus;
+   Eina_List *reemited_events;
+   Eo *root;
+   Eina_Hash *cache;
+   Eldbus_Service_Interface *cache_interface;
+   Eldbus_Signal_Handler *register_hdl;
+   Eldbus_Signal_Handler *unregister_hdl;
+   unsigned long object_broadcast_mask;
+   unsigned long object_property_broadcast_mask;
+   unsigned long object_children_broadcast_mask;
+   unsigned long long object_state_broadcast_mask;
+   unsigned long long window_signal_broadcast_mask;
+   Ecore_Event_Filter *key_flr;
+   Eldbus_Object *bus_obj;
+   Eina_List *pending_requests;
 
+   Eina_Bool connected : 1;
+} Elm_Atspi_Bridge_Data;
+
+static Eo *_instance;
+static int _init_count = 0;
+
+// Object Event handlers
 static Eina_Bool _state_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
 static Eina_Bool _property_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
 static Eina_Bool _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
@@ -66,15 +84,20 @@ static Eina_Bool _text_text_inserted_send(void *data, Eo *obj, const Eo_Event_De
 static Eina_Bool _text_text_removed_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
 static Eina_Bool _text_caret_moved_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
 static Eina_Bool _text_selection_changed_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info EINA_UNUSED);
+
+// bridge private methods
+static void _bridge_cache_build(Eo *bridge, void *obj);
+static void _bridge_object_register(Eo *bridge, Eo *obj, char *path);
+
+// utility functions
+static void _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj);
+static Eina_Bool _elm_atspi_bridge_key_filter(void *data, void *loop, int type, void *event);
+static void _object_signal_send(Eldbus_Service_Interface *infc, int sig_id, const char *minor, unsigned int det1, unsigned int det2, const char *variant_sig, ...);
+static void _object_unregister(void *obj);
 static Eo * _access_object_from_path(const char *path);
 static char * _path_from_access_object(const Eo *eo);
 static void _iter_object_reference_append(Eldbus_Message_Iter *iter, const Eo *obj);
 static void _object_append_desktop_reference(Eldbus_Message_Iter *iter);
-static void _cache_build(void *obj);
-static void _object_register(Eo *obj, char *path);
-static void _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj);
-static Eina_Bool _elm_atspi_bridge_key_filter(void *data, void *loop, int type, void *event);
-static void _object_signal_send(Eldbus_Service_Interface *infc, int sig_id, const char *minor, unsigned int det1, unsigned int det2, const char *variant_sig, ...);
 
 EO_CALLBACKS_ARRAY_DEFINE(_events_cb,
    { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, _property_changed_signal_send},
@@ -488,7 +511,7 @@ _accessible_get_application(const Eldbus_Service_Interface *iface EINA_UNUSED, c
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(ret);
-   _iter_object_reference_append(iter, _root);
+   _iter_object_reference_append(iter, elm_atspi_bridge_root_get(_instance));
 
    return ret;
 }
@@ -1751,7 +1774,7 @@ _access_object_from_path(const char *path)
 
    tmp = path + len; /* Skip over the prefix */
    if (!strcmp(ELM_ACCESS_OBJECT_PATH_ROOT, tmp))
-     return _root;
+     return elm_atspi_bridge_root_get(_instance);
 
    sscanf(tmp, "%llu", &eo_ptr);
    eo = (Eo *) (uintptr_t) eo_ptr;
@@ -1764,7 +1787,7 @@ _path_from_access_object(const Eo *eo)
    char path[256];
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(eo, strdup(ATSPI_DBUS_PATH_NULL));
-   if (eo == _root)
+   if (eo == elm_atspi_bridge_root_get(_instance))
      snprintf(path, sizeof(path), "%s%s", ELM_ACCESS_OBJECT_PATH_PREFIX, ELM_ACCESS_OBJECT_PATH_ROOT);
    else
      snprintf(path, sizeof(path), ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE, (unsigned long long) (uintptr_t)eo);
@@ -2058,10 +2081,12 @@ static const Eldbus_Service_Interface_Desc editable_text_iface_desc = {
 static void
 _iter_object_reference_append(Eldbus_Message_Iter *iter, const Eo *obj)
 {
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(_instance, ELM_ATSPI_BRIDGE_CLASS);
+   if (!pd) return;
   Eldbus_Message_Iter *iter_struct = eldbus_message_iter_container_new(iter, 'r', NULL);
   EINA_SAFETY_ON_NULL_RETURN(iter);
   char *path = _path_from_access_object(obj);
-  eldbus_message_iter_basic_append(iter_struct, 's', eldbus_connection_unique_name_get(_a11y_bus));
+  eldbus_message_iter_basic_append(iter_struct, 's', eldbus_connection_unique_name_get(pd->a11y_bus));
   eldbus_message_iter_basic_append(iter_struct, 'o', path);
   eldbus_message_iter_container_close(iter, iter_struct);
   free(path);
@@ -2115,6 +2140,7 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
   Eldbus_Message_Iter *iter_array = fdata;
   Elm_Atspi_State_Set states;
   Elm_Atspi_Role role;
+  Eo *root = elm_atspi_bridge_root_get(_instance);
 
   eo_do(data, role = elm_interface_atspi_accessible_role_get());
 
@@ -2125,7 +2151,7 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
   _iter_object_reference_append(iter_struct, data);
 
   /* Marshall application */
-  _iter_object_reference_append(iter_struct, _root);
+  _iter_object_reference_append(iter_struct, root);
 
   Eo *parent = NULL;
   eo_do(data, parent = elm_interface_atspi_accessible_parent_get());
@@ -2193,17 +2219,21 @@ fail:
 }
 
 static Eldbus_Message *
-_cache_get_items(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
+_cache_get_items(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
    Eldbus_Message_Iter *iter, *iter_array;
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+   Eo *bridge = eldbus_service_object_data_get(iface, "_bridge");
+   if (!bridge) return NULL;
+
+   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(bridge, pd, NULL);
 
    iter = eldbus_message_iter_get(ret);
    iter_array = eldbus_message_iter_container_new(iter, 'a', CACHE_ITEM_SIGNATURE);
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
-   eina_hash_foreach(_cache, _append_item_fn, iter_array);
+   eina_hash_foreach(pd->cache, _append_item_fn, iter_array);
    eldbus_message_iter_container_close(iter, iter_array);
 
    return ret;
@@ -2525,17 +2555,18 @@ _on_elm_atspi_bridge_app_register(void *data EINA_UNUSED, const Eldbus_Message *
 }
 
 EAPI Eina_Bool
-_elm_atspi_bridge_app_register(void)
+_elm_atspi_bridge_app_register(Eo *bridge)
 {
-   if (!_a11y_bus || !_root) return EINA_FALSE;
+   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(bridge, pd, EINA_FALSE);
+
    Eldbus_Message *message = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY,
                                     ATSPI_DBUS_PATH_ROOT,
                                     ATSPI_DBUS_INTERFACE_SOCKET,
                                     "Embed");
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(message);
 
-   _iter_object_reference_append(iter, _root);
-   eldbus_connection_send(_a11y_bus, message, _on_elm_atspi_bridge_app_register, NULL, -1);
+   _iter_object_reference_append(iter, elm_atspi_bridge_root_get(_instance));
+   eldbus_connection_send(pd->a11y_bus, message, _on_elm_atspi_bridge_app_register, NULL, -1);
 
    return EINA_TRUE;
 }
@@ -2543,29 +2574,38 @@ _elm_atspi_bridge_app_register(void)
 EAPI Eina_Bool
 _elm_atspi_bridge_app_unregister(void)
 {
-   if (!_a11y_bus || !_root) return EINA_FALSE;
+   Eo *root;
+
+   if (!_instance) return EINA_FALSE;
+   root = elm_atspi_bridge_root_get(_instance);
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(_instance, ELM_ATSPI_BRIDGE_CLASS);
+   if (!pd) return EINA_FALSE;
+
    Eldbus_Message *message = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY,
                                     ATSPI_DBUS_PATH_ROOT,
                                     ATSPI_DBUS_INTERFACE_SOCKET,
                                     "Unembed");
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(message);
 
-   _iter_object_reference_append(iter, _root);
-   eldbus_connection_send(_a11y_bus, message, NULL, NULL, -1);
+   _iter_object_reference_append(iter, root);
+   eldbus_connection_send(pd->a11y_bus, message, NULL, NULL, -1);
 
    return EINA_TRUE;
 }
 
 static void
-_cache_register(void)
+_cache_register(Eo *obj)
 {
-   _cache_interface = eldbus_service_interface_register(_a11y_bus, CACHE_INTERFACE_PATH, &cache_iface_desc);
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(obj, ELM_ATSPI_BRIDGE_CLASS);
+   pd->cache_interface = eldbus_service_interface_register(pd->a11y_bus, CACHE_INTERFACE_PATH, &cache_iface_desc);
+   eldbus_service_object_data_set(pd->cache_interface, "_bridge", obj);
 }
 
 static void
-_set_broadcast_flag(const char *event)
+_set_broadcast_flag(const char *event, Eo *bridge)
 {
    char **tokens;
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(bridge, ELM_ATSPI_BRIDGE_CLASS);
 
    tokens = eina_str_split(event, ":", 3);
 
@@ -2577,69 +2617,69 @@ _set_broadcast_flag(const char *event)
         else if (!strcmp(tokens[1], "StateChanged"))
           {
              if (!tokens[2] || *tokens[2] == '\0')
-               _object_state_broadcast_mask = -1; // broadcast all
+               pd->object_state_broadcast_mask = -1; // broadcast all
              else if (!strcmp(tokens[2], "Focused"))
-               STATE_TYPE_SET(_object_state_broadcast_mask, ATSPI_STATE_FOCUSED);
+               STATE_TYPE_SET(pd->object_state_broadcast_mask, ATSPI_STATE_FOCUSED);
              else if (!strcmp(tokens[2], "Showing"))
-               STATE_TYPE_SET(_object_state_broadcast_mask, ATSPI_STATE_SHOWING);
+               STATE_TYPE_SET(pd->object_state_broadcast_mask, ATSPI_STATE_SHOWING);
              else if (!strcmp(tokens[2], "Checked"))
-               STATE_TYPE_SET(_object_state_broadcast_mask, ATSPI_STATE_CHECKED);
+               STATE_TYPE_SET(pd->object_state_broadcast_mask, ATSPI_STATE_CHECKED);
           }
         else if (!strcmp(tokens[1], "PropertyChange"))
           {
              if (!tokens[2] || *tokens[2] == '\0')
-               _object_property_broadcast_mask = -1; //broadcast all
+               pd->object_property_broadcast_mask = -1; //broadcast all
              else if (!strcmp(tokens[2], "AccessibleValue"))
-               STATE_TYPE_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_VALUE);
+               STATE_TYPE_SET(pd->object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_VALUE);
              else if (!strcmp(tokens[2], "AccessibleName"))
-               STATE_TYPE_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_NAME);
+               STATE_TYPE_SET(pd->object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_NAME);
              else if (!strcmp(tokens[2], "AccessibleDescription"))
-               STATE_TYPE_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_DESCRIPTION);
+               STATE_TYPE_SET(pd->object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_DESCRIPTION);
              else if (!strcmp(tokens[2], "AccessibleParent"))
-               STATE_TYPE_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_PARENT);
+               STATE_TYPE_SET(pd->object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_PARENT);
              else if (!strcmp(tokens[2], "AccessibleRole"))
-               STATE_TYPE_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_ROLE);
+               STATE_TYPE_SET(pd->object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_ROLE);
           }
         else if (!strcmp(tokens[1], "ChildrenChanged"))
           {
              if (!tokens[2] || *tokens[2] == '\0')
-               _object_children_broadcast_mask = -1; // broadcast all
+               pd->object_children_broadcast_mask = -1; // broadcast all
              else if (!strcmp(tokens[2], "add"))
-               STATE_TYPE_SET(_object_children_broadcast_mask, ATSPI_OBJECT_CHILD_ADDED);
+               STATE_TYPE_SET(pd->object_children_broadcast_mask, ATSPI_OBJECT_CHILD_ADDED);
              else if (!strcmp(tokens[2], "remove"))
-               STATE_TYPE_SET(_object_children_broadcast_mask, ATSPI_OBJECT_CHILD_ADDED);
+               STATE_TYPE_SET(pd->object_children_broadcast_mask, ATSPI_OBJECT_CHILD_ADDED);
           }
         else if (!strcmp(tokens[1], "TextChanged"))
-          STATE_TYPE_SET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED);
+          STATE_TYPE_SET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED);
         else if (!strcmp(tokens[1], "TextCaretMoved"))
-          STATE_TYPE_SET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CARET_MOVED);
+          STATE_TYPE_SET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CARET_MOVED);
         else if (!strcmp(tokens[1], "TextBoundsChanged"))
-          STATE_TYPE_SET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_BOUNDS_CHANGED);
+          STATE_TYPE_SET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_BOUNDS_CHANGED);
         else if (!strcmp(tokens[1], "TextSelectionChanged"))
-          STATE_TYPE_SET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_SELECTION_CHANGED);
+          STATE_TYPE_SET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_SELECTION_CHANGED);
         else if (!strcmp(tokens[1], "TextAttributesChanged"))
-          STATE_TYPE_SET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_ATTRIBUTES_CHANGED);
+          STATE_TYPE_SET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_ATTRIBUTES_CHANGED);
      }
    else if (!strcmp(tokens[0], "Window"))
      {
         if (!tokens[1] || *tokens[1] == '\0')
-          _window_signal_broadcast_mask = -1; // broadcast all
+          pd->window_signal_broadcast_mask = -1; // broadcast all
         else if (!strcmp(tokens[1], "Create"))
-          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_CREATE);
+          STATE_TYPE_SET(pd->window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_CREATE);
         else if (!strcmp(tokens[1], "Destroy"))
-          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_DESTROY);
+          STATE_TYPE_SET(pd->window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_DESTROY);
         else if (!strcmp(tokens[1], "Activate"))
-          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_ACTIVATE);
+          STATE_TYPE_SET(pd->window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_ACTIVATE);
         else if (!strcmp(tokens[1], "Deactivate"))
-          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_DEACTIVATE);
+          STATE_TYPE_SET(pd->window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_DEACTIVATE);
         else if (!strcmp(tokens[1], "Maximize"))
-          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_MAXIMIZE);
+          STATE_TYPE_SET(pd->window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_MAXIMIZE);
         else if (!strcmp(tokens[1], "Minimize"))
-          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_MINIMIZE);
+          STATE_TYPE_SET(pd->window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_MINIMIZE);
         else if (!strcmp(tokens[1], "Resize"))
-          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_RESIZE);
+          STATE_TYPE_SET(pd->window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_RESIZE);
         else if (!strcmp(tokens[1], "Restore"))
-          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_RESTORE);
+          STATE_TYPE_SET(pd->window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_RESTORE);
      }
 
    free(tokens[0]);
@@ -2647,14 +2687,17 @@ _set_broadcast_flag(const char *event)
 }
 
 static void
-_registered_listeners_get(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+_registered_listeners_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(data, ELM_ATSPI_BRIDGE_CLASS);
+   pd->pending_requests = eina_list_remove(pd->pending_requests, pending);
+
    DBG("Updating registered ATSPI signals list.");
-   _object_broadcast_mask = 0;
-   _object_children_broadcast_mask = 0;
-   _object_property_broadcast_mask = 0;
-   _object_state_broadcast_mask = 0;
-   _window_signal_broadcast_mask = 0;
+   pd->object_broadcast_mask = 0;
+   pd->object_children_broadcast_mask = 0;
+   pd->object_property_broadcast_mask = 0;
+   pd->object_state_broadcast_mask = 0;
+   pd->window_signal_broadcast_mask = 0;
 
    const char *event, *bus;
    Eldbus_Message_Iter *iter, *siter;
@@ -2666,22 +2709,26 @@ _registered_listeners_get(void *data EINA_UNUSED, const Eldbus_Message *msg, Eld
    while (eldbus_message_iter_get_and_next(iter, 'r', &siter))
      {
         eldbus_message_iter_arguments_get(siter, "ss", &bus, &event);
-        _set_broadcast_flag(event);
+        _set_broadcast_flag(event, data);
      }
 }
 
 static void
-_registered_events_list_update(void)
+_registered_events_list_update(Eo *bridge)
 {
    Eldbus_Message *msg;
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(bridge, ELM_ATSPI_BRIDGE_CLASS);
+   Eldbus_Pending *p;
+
    msg = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_REGISTRY, ATSPI_DBUS_INTERFACE_REGISTRY, "GetRegisteredEvents");
-   eldbus_connection_send(_a11y_bus, msg, _registered_listeners_get, NULL, -1);
+   p = eldbus_connection_send(pd->a11y_bus, msg, _registered_listeners_get, bridge, -1);
+   pd->pending_requests = eina_list_append(pd->pending_requests, p);
 }
 
 static void
-_handle_listener_change(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED)
+_handle_listener_change(void *data, const Eldbus_Message *msg EINA_UNUSED)
 {
-   _registered_events_list_update();
+   _registered_events_list_update(data);
 }
 
 static Eina_Bool
@@ -2691,7 +2738,11 @@ _state_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Descr
    Elm_Atspi_Event_State_Changed_Data *state_data = event_info;
    char *type_desc;
 
-   if (!STATE_TYPE_GET(_object_state_broadcast_mask, state_data->type))
+   if (!_instance) return EINA_FALSE;
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(_instance, ELM_ATSPI_BRIDGE_CLASS);
+   if (!pd) return EINA_FALSE;
+
+   if (!STATE_TYPE_GET(pd->object_state_broadcast_mask, state_data->type))
      {
         DBG("Masking event: %d", state_data->type);
         return EINA_FALSE;
@@ -2738,6 +2789,10 @@ _property_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_De
    char *atspi_desc;
    enum _Atspi_Object_Property prop = ATSPI_OBJECT_PROPERTY_LAST;
 
+   if (!_instance) return EINA_FALSE;
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(_instance, ELM_ATSPI_BRIDGE_CLASS);
+   if (!pd) return EINA_FALSE;
+
    if (!events)
      {
         ERR("Atspi object does not have event interface!");
@@ -2774,7 +2829,7 @@ _property_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_De
         ERR("Unrecognized property name!");
         return EINA_FALSE;
      }
-   if (!STATE_TYPE_GET(_object_property_broadcast_mask, prop))
+   if (!STATE_TYPE_GET(pd->object_property_broadcast_mask, prop))
      {
         DBG("Masking property %s changed event.", property);
         return EINA_FALSE;
@@ -2798,13 +2853,17 @@ _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *d
 
    type = ev_data->is_added ? ATSPI_OBJECT_CHILD_ADDED : ATSPI_OBJECT_CHILD_REMOVED;
 
+   if (!_instance) return EINA_FALSE;
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(_instance, ELM_ATSPI_BRIDGE_CLASS);
+   if (!pd) return EINA_FALSE;
+
    // update cached objects
    if (ev_data->is_added)
      {
-        _cache_build(obj);
+        _bridge_cache_build(_instance, obj);
      }
 
-   if (!STATE_TYPE_GET(_object_children_broadcast_mask, type))
+   if (!STATE_TYPE_GET(pd->object_children_broadcast_mask, type))
      return EINA_FALSE;
 
    if (!events)
@@ -2827,7 +2886,7 @@ _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *d
 
    if (!atspi_desc) return EINA_FALSE;
 
-   _object_signal_send(events, ATSPI_OBJECT_EVENT_CHILDREN_CHANGED, atspi_desc, idx, 0, "(so)", eldbus_connection_unique_name_get(_a11y_bus), ev_data->child);
+   _object_signal_send(events, ATSPI_OBJECT_EVENT_CHILDREN_CHANGED, atspi_desc, idx, 0, "(so)", eldbus_connection_unique_name_get(pd->a11y_bus), ev_data->child);
 
    DBG("signal sent childrenChanged:%s:%d", atspi_desc, idx);
 
@@ -2839,6 +2898,10 @@ _window_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description 
 {
    Eldbus_Service_Interface *window = data;
    enum _Atspi_Window_Signals type;
+
+   if (!_instance) return EINA_FALSE;
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(_instance, ELM_ATSPI_BRIDGE_CLASS);
+   if (!pd) return EINA_FALSE;
 
    if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED)
      type = ATSPI_WINDOW_EVENT_CREATE;
@@ -2857,10 +2920,10 @@ _window_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description 
    else
      return EINA_FALSE;
 
-   if (!STATE_TYPE_GET(_window_signal_broadcast_mask, type))
+   if (!STATE_TYPE_GET(pd->window_signal_broadcast_mask, type))
      return EINA_FALSE;
 
-   if (!window || !_a11y_bus)
+   if (!window || !pd->a11y_bus)
      {
         ERR("A11Y connection closed. Unable to send ATSPI event.");
         return EINA_FALSE;
@@ -2891,7 +2954,7 @@ _selection_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Descripti
         return EINA_FALSE;
      }
 
-   if (!selection || !_a11y_bus)
+   if (!selection)
      {
         ERR("A11Y connection closed. Unable to send ATSPI event.");
         return EINA_FALSE;
@@ -2970,7 +3033,7 @@ static void _object_signal_send(Eldbus_Service_Interface *infc, int sig_id, cons
 
    eldbus_message_iter_container_close(iter, iter_stack[0]);
 
-   _iter_object_reference_append(iter, _root);
+   _iter_object_reference_append(iter, elm_atspi_bridge_root_get(_instance));
 
    eldbus_service_signal_send(infc, msg);
 }
@@ -2983,7 +3046,11 @@ _text_caret_moved_send(void *data, Eo *obj, const Eo_Event_Description *desc EIN
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, EINA_TRUE);
 
-   if (!STATE_TYPE_GET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CARET_MOVED))
+   if (!_instance) return EINA_FALSE;
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(_instance, ELM_ATSPI_BRIDGE_CLASS);
+   if (!pd) return EINA_FALSE;
+
+   if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CARET_MOVED))
      return EINA_TRUE;
 
    eo_do(obj, cursor_pos = elm_interface_atspi_text_caret_offset_get());
@@ -3001,7 +3068,11 @@ _text_text_inserted_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Descrip
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, EINA_TRUE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(event_info, EINA_TRUE);
 
-   if (!STATE_TYPE_GET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED))
+   if (!_instance) return EINA_FALSE;
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(_instance, ELM_ATSPI_BRIDGE_CLASS);
+   if (!pd) return EINA_FALSE;
+
+   if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED))
      return EINA_TRUE;
 
    _object_signal_send(event, ATSPI_OBJECT_EVENT_TEXT_CHANGED, "insert", info->pos, info->len, "s", info->content);
@@ -3018,7 +3089,11 @@ _text_text_removed_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Descript
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, EINA_TRUE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(event_info, EINA_TRUE);
 
-   if (!STATE_TYPE_GET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED))
+   if (!_instance) return EINA_FALSE;
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(_instance, ELM_ATSPI_BRIDGE_CLASS);
+   if (!pd) return EINA_FALSE;
+
+   if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED))
      return EINA_TRUE;
 
    _object_signal_send(event, ATSPI_OBJECT_EVENT_TEXT_CHANGED, "delete", info->pos, info->len, "s", info->content);
@@ -3033,7 +3108,11 @@ _text_selection_changed_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Des
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, EINA_TRUE);
 
-   if (!STATE_TYPE_GET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_SELECTION_CHANGED))
+   if (!_instance) return EINA_FALSE;
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(_instance, ELM_ATSPI_BRIDGE_CLASS);
+
+   if (!pd) return EINA_FALSE;
+   if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_SELECTION_CHANGED))
      return EINA_TRUE;
 
    _object_signal_send(event, ATSPI_OBJECT_EVENT_TEXT_SELECTION_CHANGED, "", 0, 0, NULL, NULL);
@@ -3042,90 +3121,192 @@ _text_selection_changed_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Des
 }
 
 static void
-_event_handlers_register(void)
+_event_handlers_register(Eo *bridge)
 {
-   _registered_events_list_update();
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(bridge, ELM_ATSPI_BRIDGE_CLASS);
+
+   _registered_events_list_update(bridge);
 
    // register signal handlers in order to update list of registered listeners of ATSPI-Clients
-   _register_hdl = eldbus_signal_handler_add(_a11y_bus, ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_REGISTRY, ATSPI_DBUS_INTERFACE_REGISTRY, "EventListenerRegistered", _handle_listener_change, NULL);
-   _unregister_hdl = eldbus_signal_handler_add(_a11y_bus, ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_REGISTRY, ATSPI_DBUS_INTERFACE_REGISTRY, "EventListenerDeregistered", _handle_listener_change, NULL);
+   pd->register_hdl = eldbus_signal_handler_add(pd->a11y_bus, ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_REGISTRY, ATSPI_DBUS_INTERFACE_REGISTRY, "EventListenerRegistered", _handle_listener_change, bridge);
+   pd->unregister_hdl = eldbus_signal_handler_add(pd->a11y_bus, ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_REGISTRY, ATSPI_DBUS_INTERFACE_REGISTRY, "EventListenerDeregistered", _handle_listener_change, bridge);
 
-   _key_flr = ecore_event_filter_add(NULL, _elm_atspi_bridge_key_filter, NULL, NULL);
+   pd->key_flr = ecore_event_filter_add(NULL, _elm_atspi_bridge_key_filter, NULL, bridge);
 }
 
 static Eina_Bool
-_on_cache_item_del(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *event EINA_UNUSED, void *event_info EINA_UNUSED)
+_on_cache_item_del(void *data, Eo *obj, const Eo_Event_Description *event EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   Eina_Hash *cache = data;
    char *path;
    path = _path_from_access_object(obj);
-   eina_hash_del(_cache, path, obj);
+   eina_hash_del(cache, path, obj);
    free(path);
 
    return EINA_TRUE;
 }
 
 static void
-_cache_build(void *obj)
+_bridge_cache_build(Eo *bridge, void *obj)
 {
    Eina_List *children;
    Eo *child;
    char *path = NULL;
 
+   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
+
    if (!eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
      return;
 
    path = _path_from_access_object(obj);
-   if (!eina_hash_find(_cache, path))
-     {
-        eina_hash_add(_cache, path, obj);
-        _object_register(obj, path);
-        eo_do(obj, eo_event_callback_add(EO_EV_DEL, _on_cache_item_del, NULL));
-     }
+   _bridge_object_register(bridge, obj, path);
    free(path);
 
    eo_do(obj, children = elm_interface_atspi_accessible_children_get());
    EINA_LIST_FREE(children, child)
-      _cache_build(child);
+      _bridge_cache_build(bridge, child);
 }
 
 static void
-_a11y_bus_initialize(const char *socket_addr)
+_a11y_connection_shutdown(Eo *bridge)
 {
-   _a11y_bus = eldbus_address_connection_get(socket_addr);
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(bridge, ELM_ATSPI_BRIDGE_CLASS);
+   Eldbus_Pending *pending;
 
-   _cache_register();
-   _event_handlers_register();
-   _elm_atspi_bridge_app_register();
-   _cache_build(_root);
+   if (pd->cache) eina_hash_free(pd->cache);
+   pd->cache = NULL;
+
+   if (pd->key_flr) ecore_event_filter_del(pd->key_flr);
+   pd->key_flr = NULL;
+
+   if (pd->register_hdl) eldbus_signal_handler_del(pd->register_hdl);
+   pd->register_hdl = NULL;
+
+   if (pd->unregister_hdl) eldbus_signal_handler_del(pd->unregister_hdl);
+   pd->unregister_hdl = NULL;
+
+   EINA_LIST_FREE(pd->pending_requests, pending)
+      eldbus_pending_cancel(pending);
+   pd->pending_requests = NULL;
+
+   if (pd->a11y_bus) eldbus_connection_unref(pd->a11y_bus);
+   pd->a11y_bus = NULL;
+
+   if (pd->connected)
+      eo_do(bridge, eo_event_callback_call(ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED, NULL));
+
+   pd->connected = EINA_FALSE;
+}
+
+static void _disconnect_cb(void *data, Eldbus_Connection *conn EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _a11y_connection_shutdown(data);
 }
 
 static void
-_a11y_bus_address_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+_a11y_bus_initialize(Eo *obj, const char *socket_addr)
+{
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(obj, ELM_ATSPI_BRIDGE_CLASS);
+   Eo *root;
+
+   pd->a11y_bus = eldbus_private_address_connection_get(socket_addr);
+   if (!pd->a11y_bus)
+     return;
+
+   eldbus_connection_event_callback_add(pd->a11y_bus, ELDBUS_CONNECTION_EVENT_DISCONNECTED, _disconnect_cb, obj);
+
+   // init data structures
+   pd->cache = eina_hash_string_superfast_new(_object_unregister);
+
+   // register interfaces
+   _cache_register(obj);
+   _event_handlers_register(obj);
+   _elm_atspi_bridge_app_register(obj);
+
+   // buid cache
+   eo_do(obj, root = elm_obj_atspi_bridge_root_get());
+   _bridge_cache_build(obj, root);
+
+   pd->connected = EINA_TRUE;
+   eo_do(obj, eo_event_callback_call(ELM_ATSPI_BRIDGE_EVENT_CONNECTED, NULL));
+}
+
+static void
+_a11y_bus_address_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    const char *errname, *errmsg, *sock_addr = NULL;
-   Eldbus_Connection *session_bus = data;
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(data, ELM_ATSPI_BRIDGE_CLASS);
+
+   pd->pending_requests = eina_list_remove(pd->pending_requests, pending);
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("%s %s", errname, errmsg);
-        goto end;
+        return;
      }
 
    if (!eldbus_message_arguments_get(msg, "s", &sock_addr) || !sock_addr)
      {
         ERR("Could not get A11Y Bus socket address.");
-        goto end;
+        return;
      }
 
-   _a11y_bus_initialize(sock_addr);
-
-end:
-   eldbus_connection_unref(session_bus);
+   _a11y_bus_initialize((Eo*)data, sock_addr);
 }
 
-static void _object_register(Eo *obj, char *path)
+static void _a11y_connection_init(Eo *bridge)
+{
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(bridge, ELM_ATSPI_BRIDGE_CLASS);
+   Eina_Bool is_connected;
+   
+   eo_do(bridge, is_connected = elm_obj_atspi_bridge_connected_get());
+
+   if (is_connected) return;
+
+   Eldbus_Message *m = eldbus_object_method_call_new(pd->bus_obj, A11Y_DBUS_INTERFACE, "GetAddress");
+   Eldbus_Pending *p = eldbus_object_send(pd->bus_obj, m, _a11y_bus_address_get, bridge, 100);
+
+   if (p)
+      pd->pending_requests = eina_list_append(pd->pending_requests, p);
+}
+
+static void
+_screen_reader_enabled_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+{
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(data, ELM_ATSPI_BRIDGE_CLASS);
+   const char *errname, *errmsg;
+   Eina_Bool is_enabled;
+   Eldbus_Message_Iter *variant;
+
+   pd->pending_requests = eina_list_remove(pd->pending_requests, pending);
+
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
+     {
+        WRN("%s %s", errname, errmsg);
+        return;
+     }
+   if (!eldbus_message_arguments_get(msg, "v", &variant))
+     {
+        ERR("'ScreenReaderEnabled' not packed into variant.");
+        return;
+     }
+   if (!eldbus_message_iter_arguments_get(variant, "b", &is_enabled))
+     {
+        ERR("Could not get 'ScreenReaderEnabled' boolean property");
+        return;
+     }
+
+   if (is_enabled)
+     _a11y_connection_init(data);
+   else
+     DBG("AT-SPI2 stack not enabled.");
+}
+
+static void _bridge_object_register(Eo *bridge, Eo *obj, char *path)
 {
    Eldbus_Service_Interface *infc = NULL, *event_infc;
+
+   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
    if (!eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
      {
@@ -3133,55 +3314,66 @@ static void _object_register(Eo *obj, char *path)
         return;
      }
 
-   if (_a11y_bus)
+   if (eina_hash_find(pd->cache, path))
      {
-        eldbus_service_interface_register(_a11y_bus, path, &accessible_iface_desc);
+        WRN("Object at path: %s already registered", path);
+        return;
+     }
 
-        event_infc = eldbus_service_interface_register(_a11y_bus, path, &event_iface_desc);
+   eina_hash_add(pd->cache, path, obj);
+   eo_do(obj, eo_event_callback_add(EO_EV_DEL, _on_cache_item_del, pd->cache));
+
+   if (pd->a11y_bus)
+     {
+        eldbus_service_interface_register(pd->a11y_bus, path, &accessible_iface_desc);
+
+        event_infc = eldbus_service_interface_register(pd->a11y_bus, path, &event_iface_desc);
         eo_do(obj, eo_key_data_set("event_interface", event_infc));
         eo_do(obj, eo_event_callback_array_add(_events_cb(), event_infc));
 
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN))
-          eldbus_service_interface_register(_a11y_bus, path, &component_iface_desc);
+          eldbus_service_interface_register(pd->a11y_bus, path, &component_iface_desc);
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_WINDOW_INTERFACE))
           {
-             infc = eldbus_service_interface_register(_a11y_bus, path, &window_iface_desc);
+             infc = eldbus_service_interface_register(pd->a11y_bus, path, &window_iface_desc);
              eo_do(obj, eo_key_data_set("window_interface", infc));
              eo_do(obj, eo_event_callback_array_add(_window_cb(), infc));
           }
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACTION_MIXIN))
-          eldbus_service_interface_register(_a11y_bus, path, &action_iface_desc);
+          eldbus_service_interface_register(pd->a11y_bus, path, &action_iface_desc);
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_VALUE_INTERFACE))
-          eldbus_service_interface_register(_a11y_bus, path, &value_iface_desc);
+          eldbus_service_interface_register(pd->a11y_bus, path, &value_iface_desc);
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_IMAGE_MIXIN))
-          eldbus_service_interface_register(_a11y_bus, path, &image_iface_desc);
+          eldbus_service_interface_register(pd->a11y_bus, path, &image_iface_desc);
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE))
           {
-             eldbus_service_interface_register(_a11y_bus, path, &selection_iface_desc);
+             eldbus_service_interface_register(pd->a11y_bus, path, &selection_iface_desc);
              eo_do(obj, eo_event_callback_array_add(_selection_cb(), event_infc));
           }
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_INTERFACE))
           {
-             eldbus_service_interface_register(_a11y_bus, path, &text_iface_desc);
+             eldbus_service_interface_register(pd->a11y_bus, path, &text_iface_desc);
              eo_do(obj, eo_event_callback_array_add(_text_cb(), event_infc));
           }
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE))
-          eldbus_service_interface_register(_a11y_bus, path, &editable_text_iface_desc);
+          eldbus_service_interface_register(pd->a11y_bus, path, &editable_text_iface_desc);
      }
 }
 
 static void _object_unregister(void *obj)
 {
    Eldbus_Service_Interface *infc, *event_infc = NULL;
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(_instance, ELM_ATSPI_BRIDGE_CLASS);
+   if (!pd) return;
 
    eo_do(obj, event_infc = eo_key_data_get("event_interface"));
-   if (_a11y_bus && event_infc)
+   if (pd->a11y_bus && event_infc)
      {
         eldbus_service_object_unregister(event_infc);
         eo_do(obj, eo_key_data_set("event_interface", NULL));
      }
 
-   eo_do(obj, eo_event_callback_del(EO_EV_DEL, _on_cache_item_del, NULL));
+   eo_do(obj, eo_event_callback_del(EO_EV_DEL, _on_cache_item_del, pd->cache));
 
    if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
       eo_do(obj, eo_event_callback_array_del(_events_cb(), event_infc));
@@ -3196,39 +3388,44 @@ static void _object_unregister(void *obj)
       eo_do(obj, eo_event_callback_array_del(_text_cb(), event_infc));
 }
 
+static Eina_Bool
+_a11y_on(void *data)
+{
+  _instance = eo_add(ELM_ATSPI_BRIDGE_CLASS, NULL);
+  return EINA_FALSE;
+}
+
+static Eina_Bool
+_a11y_off(void *data)
+{
+  eo_del(_instance);
+  _instance = NULL;
+  return EINA_FALSE;
+}
+
 void
 _elm_atspi_bridge_init(void)
 {
-   Eldbus_Message *msg;
-   Eldbus_Connection *session_bus;
-
    if (!_init_count)
      {
-        _root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
-        if (!_root)
-          {
-             ERR("Unable to create root object");
-             return;
-          }
-
-        session_bus = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
-        EINA_SAFETY_ON_NULL_RETURN(session_bus);
-        msg = eldbus_message_method_call_new(A11Y_DBUS_NAME, A11Y_DBUS_PATH, A11Y_DBUS_INTERFACE, "GetAddress");
-        if (!msg)
-          {
-             eldbus_connection_unref(session_bus);
-             return;
-          }
-        eldbus_connection_send(session_bus, msg, _a11y_bus_address_get, session_bus, -1);
-        _cache = eina_hash_string_superfast_new(_object_unregister);
+        _instance = eo_add(ELM_ATSPI_BRIDGE_CLASS, NULL);
+#if 1
+        eo_del(_instance);
+        _instance = NULL;
+        ecore_timer_add(0.1, _a11y_on, NULL);
+        ecore_timer_add(0.4, _a11y_off, NULL);
+        ecore_timer_add(0.41, _a11y_on, NULL);
+        ecore_timer_add(0.41, _a11y_off, NULL);
+        ecore_timer_add(1.21, _a11y_on, NULL);
+#endif
         _init_count = 1;
      }
 }
 
 EAPI Eo*
-_elm_atspi_bridge_root_get(void)
+_elm_atspi_bridge_get(void)
 {
-   return _root;
+   return _instance;
 }
 
 void
@@ -3236,30 +3433,8 @@ _elm_atspi_bridge_shutdown(void)
 {
    if (_init_count)
      {
-        eo_del(_root);
-
-        if (_cache_update_idler)
-          ecore_idler_del(_cache_update_idler);
-        _cache_update_idler = NULL;
-
-        if (_pending_objects)
-          eina_list_free(_pending_objects);
-        _pending_objects = NULL;
-
-        if (_cache)
-          eina_hash_free(_cache);
-        _cache = NULL;
-
-        if (_a11y_bus)
-          eldbus_connection_unref(_a11y_bus);
-        _a11y_bus = NULL;
-
-        if (_key_flr)
-          ecore_event_filter_del(_key_flr);
-        _key_flr = NULL;
-
+        eo_del(_instance);
         _init_count = 0;
-        _root = NULL;
      }
 }
 
@@ -3332,6 +3507,10 @@ _on_listener_answer(void *data, const Eldbus_Message *msg, Eldbus_Pending *pendi
    const char *errname, *errmsg;
    Eina_Bool ret = EINA_TRUE;
 
+   if (!_instance) return;
+   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(_instance, ELM_ATSPI_BRIDGE_CLASS);
+   if (!pd) return;
+
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("%s %s", errname, errmsg);
@@ -3349,24 +3528,26 @@ _on_listener_answer(void *data, const Eldbus_Message *msg, Eldbus_Pending *pendi
      }
 reemit:
    ecore_event_add(info->type, &info->event, _on_event_del, info);
-   reemited_events = eina_list_append(reemited_events, &info->event);
+   pd->reemited_events = eina_list_append(pd->reemited_events, &info->event);
 }
 
 static Eina_Bool
-_elm_atspi_bridge_key_filter(void *data EINA_UNUSED, void *loop EINA_UNUSED, int type, void *event)
+_elm_atspi_bridge_key_filter(void *data, void *loop EINA_UNUSED, int type, void *event)
 {
    Eldbus_Message *msg;
    Eldbus_Message_Iter *iter;
    Ecore_Event_Key *key_event = event;
    Key_Event_Info *ke;
+   Eo *bridge = data;
 
-   if (!_init_count) return EINA_TRUE;
+   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(bridge, pd, EINA_TRUE);
+
    if ((type != ECORE_EVENT_KEY_DOWN) && (type != ECORE_EVENT_KEY_UP)) return EINA_TRUE;
 
    // check if reemited
-   if (eina_list_data_find(reemited_events, event))
+   if (eina_list_data_find(pd->reemited_events, event))
      {
-        reemited_events = eina_list_remove(reemited_events, event);
+        pd->reemited_events = eina_list_remove(pd->reemited_events, event);
         return EINA_TRUE;
      }
 
@@ -3378,8 +3559,106 @@ _elm_atspi_bridge_key_filter(void *data EINA_UNUSED, void *loop EINA_UNUSED, int
    iter = eldbus_message_iter_get(msg);
    _iter_marshall_key_event(iter, ke);
 
-   // timeout should be kept reasonaby low to avoid
-   eldbus_connection_send(_a11y_bus, msg, _on_listener_answer, ke, 500);
+   // timeout should be kept reasonaby low to avoid delays
+   eldbus_connection_send(pd->a11y_bus, msg, _on_listener_answer, ke, 500);
 
    return EINA_FALSE;
 }
+
+EOLIAN Eina_Bool
+_elm_atspi_bridge_connected_get(Eo *obj EINA_UNUSED, Elm_Atspi_Bridge_Data *pd)
+{
+   return pd->connected;
+}
+
+EOLIAN Eo*
+_elm_atspi_bridge_root_get(Eo *obj EINA_UNUSED, Elm_Atspi_Bridge_Data *pd)
+{
+   if (!pd->root)
+      pd->root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+
+   return pd->root;
+}
+
+static void
+_properties_changed_cb(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event)
+{
+   Eldbus_Proxy_Event_Property_Changed *ev = event;
+   Eo *bridge = data;
+   Eina_Bool val;
+   const char *ifc = eldbus_proxy_interface_get(ev->proxy);
+   if (ev->name && !strcmp(ev->name, "ScreenReaderEnabled" ) &&
+       ifc && !strcmp(A11Y_DBUS_STATUS_INTERFACE, ifc))
+     {
+        if (!eina_value_get(ev->value, &val))
+          {
+             ERR("Unable to get ScreenReaderEnabled property value");
+             return;
+          }
+        if (val)
+          _a11y_connection_init(bridge);
+        else
+          _a11y_connection_shutdown(bridge);
+     }
+}
+
+EOLIAN Eo_Base*
+_elm_atspi_bridge_eo_base_constructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
+{
+   Eldbus_Proxy *proxy;
+   Eldbus_Pending *req;
+
+   eo_do_super(obj, ELM_ATSPI_BRIDGE_CLASS, eo_constructor());
+
+   elm_need_eldbus();
+
+   if (!(pd->session_bus = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION)))
+     {
+        ERR("Unable to connect to Session Bus");
+        return NULL;
+     }
+   if (!(pd->bus_obj = eldbus_object_get(pd->session_bus, A11Y_DBUS_NAME, A11Y_DBUS_PATH)))
+     {
+        ERR("Could not get /org/a11y/bus object");
+        goto obj_err;
+     }
+   if (!(proxy = eldbus_proxy_get(pd->bus_obj, A11Y_DBUS_STATUS_INTERFACE)))
+     {
+        ERR("Could not get proxy object for %s interface", A11Y_DBUS_STATUS_INTERFACE);
+        goto proxy_err;
+     }
+   if (!(req = eldbus_proxy_property_get(proxy, "ScreenReaderEnabled", _screen_reader_enabled_get, obj)))
+     {
+        ERR("Could not send PropertyGet request");
+        goto proxy_err;
+     }
+   pd->pending_requests = eina_list_append(pd->pending_requests, req);
+
+   eldbus_proxy_properties_monitor(proxy, EINA_TRUE);
+   eldbus_proxy_event_callback_add(proxy, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED, 
+                                   _properties_changed_cb, obj);
+
+   return obj;
+
+proxy_err:
+   eldbus_object_unref(pd->bus_obj);
+   pd->bus_obj = NULL;
+obj_err:
+   eldbus_connection_unref(pd->session_bus);
+   pd->session_bus = NULL;
+   return NULL;
+}
+
+EOLIAN void
+_elm_atspi_bridge_eo_base_destructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
+{
+   _a11y_connection_shutdown(obj);
+
+   if (pd->bus_obj) eldbus_object_unref(pd->bus_obj);
+   if (pd->session_bus) eldbus_connection_unref(pd->session_bus);
+   if (pd->root) eo_del(pd->root);
+
+   eo_do_super(obj, ELM_ATSPI_BRIDGE_CLASS, eo_destructor());
+}
+
+#include "elm_atspi_bridge.eo.c"
