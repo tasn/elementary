@@ -76,6 +76,7 @@ class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
       clicked;
       language,changed;
       access,changed;
+      recalc;
    }
 
 }
