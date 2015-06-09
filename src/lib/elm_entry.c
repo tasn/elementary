@@ -630,32 +630,26 @@ _elm_entry_theme_group_get(Evas_Object *obj)
 }
 
 static Eina_Bool
-_drag_drop_cb(void *data EINA_UNUSED,
-              Evas_Object *obj,
-              Elm_Selection_Data *drop)
+_selection_data_cb(void *data EINA_UNUSED,
+                   Evas_Object *obj,
+                   Elm_Selection_Data *sel_data)
 {
-   Eina_Bool rv;
    char *buf;
 
+   if (!sel_data->data) return EINA_FALSE;
    ELM_ENTRY_DATA_GET(obj, sd);
 
-   edje_object_part_text_cursor_copy
-     (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, /*->*/ EDJE_CURSOR_USER);
-   rv = edje_object_part_text_cursor_coord_set
-       (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, drop->x, drop->y);
-
-   if (!rv) WRN("Warning: Failed to position cursor: paste anyway");
-
-   buf = malloc(drop->len + 1);
+   buf = malloc(sel_data->len + 1);
    if (!buf)
      {
-        ERR("Failed to allocate memory for dropped text %p", obj);
+        ERR("Failed to allocate memory for pasted/dropped text %p", obj);
         return EINA_FALSE;
      }
-   memcpy(buf, drop->data, drop->len);
-   buf[drop->len] = '\0';
+   memcpy(buf, sel_data->data, sel_data->len);
+   buf[sel_data->len] = '\0';
 
-   if (drop->format & ELM_SEL_FORMAT_IMAGE)
+   if ((sel_data->format & ELM_SEL_FORMAT_IMAGE) &&
+       (sd->cnp_mode != ELM_CNP_MODE_NO_IMAGE))
      {
         char *entry_tag;
         int len;
@@ -671,12 +665,33 @@ _drag_drop_cb(void *data EINA_UNUSED,
      {
         elm_entry_entry_insert(obj, buf);
      }
-
    free(buf);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_drag_drop_cb(void *data EINA_UNUSED,
+              Evas_Object *obj,
+              Elm_Selection_Data *drop)
+{
+   Eina_Bool rv;
+
+   ELM_ENTRY_DATA_GET(obj, sd);
+
+   edje_object_part_text_cursor_copy
+     (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, /*->*/ EDJE_CURSOR_USER);
+   rv = edje_object_part_text_cursor_coord_set
+       (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, drop->x, drop->y);
+
+   if (!rv) WRN("Warning: Failed to position cursor: paste anyway");
+
+   rv = _selection_data_cb(NULL, obj, drop);
+
    edje_object_part_text_cursor_copy
      (sd->entry_edje, "elm.text", EDJE_CURSOR_USER, /*->*/ EDJE_CURSOR_MAIN);
 
-   return EINA_TRUE;
+   return rv;
 }
 
 static Elm_Sel_Format
@@ -1371,7 +1386,7 @@ _paste_cb(void *data,
      formats |= ELM_SEL_FORMAT_IMAGE;
 
    elm_cnp_selection_get
-     (data, ELM_SEL_TYPE_CLIPBOARD, formats, NULL, NULL);
+     (data, ELM_SEL_TYPE_CLIPBOARD, formats, _selection_data_cb, NULL);
 }
 
 static void
@@ -2122,7 +2137,7 @@ _entry_paste_request_signal_cb(void *data,
         else if (sd->cnp_mode != ELM_CNP_MODE_NO_IMAGE)
           formats |= ELM_SEL_FORMAT_IMAGE;
 
-        elm_cnp_selection_get(data, type, formats, NULL, NULL);
+        elm_cnp_selection_get(data, type, formats, _selection_data_cb, NULL);
      }
 }
 

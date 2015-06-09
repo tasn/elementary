@@ -1087,23 +1087,8 @@ _x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify 
         ddata.action = sel->action;
         sel->datacb(sel->udata, sel->widget, &ddata);
      }
-   else
-     {
-        char *stripstr, *mkupstr;
+   else cnp_debug("Paste request\n");
 
-        stripstr = malloc(data->length + 1);
-        if (!stripstr) goto end;
-        strncpy(stripstr, (char *)data->data, data->length);
-        stripstr[data->length] = '\0';
-        cnp_debug("Notify handler text %d %d %p\n", data->format,
-                  data->length, data->data);
-        mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
-        cnp_debug("String is %s (from %s)\n", stripstr, data->data);
-        /* TODO BUG: should never NEVER assume it's an elm_entry! */
-        _elm_entry_entry_paste(sel->requestwidget, mkupstr);
-        free(stripstr);
-        free(mkupstr);
-     }
 end:
    if (sel == (_x11_selections + ELM_SEL_TYPE_XDND))
      ecore_x_dnd_send_finished();
@@ -1233,8 +1218,18 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
      }
    else
      {
+        if (sel->datacb)
+          {
+             Elm_Selection_Data ddata;
+             ddata.x = ddata.y = 0;
+             ddata.format = ELM_SEL_FORMAT_IMAGE;
+             ddata.data = stripstr;
+             ddata.len = strlen(stripstr);
+             sel->datacb(sel->udata, sel->requestwidget, &ddata);
+          }
+        else cnp_debug("Paste request\n");
+
         savedtypes.imgfile = NULL;
-        _pasteimage_append(p, sel->requestwidget);
         free(stripstr);
      }
    return 0;
@@ -1300,7 +1295,6 @@ static int
 _x11_notify_handler_image(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 {
    Ecore_X_Selection_Data *data;
-   Tmp_Info *tmp;
 
    cnp_debug("got a image file!\n");
    data = notify->data;
@@ -1316,16 +1310,8 @@ _x11_notify_handler_image(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify
         ddata.len = data->length;
         ddata.action = sel->action;
         sel->datacb(sel->udata, sel->widget, &ddata);
-        return 0;
      }
-   /* generate tmp name */
-   tmp = _tempfile_new(data->length);
-   if (!tmp) return 0;
-   memcpy(tmp->map, data->data, data->length);
-   munmap(tmp->map, data->length);
-   /* FIXME: Add to paste image data to clean up */
-   _pasteimage_append(tmp->filename, sel->requestwidget);
-   _tmpinfo_free(tmp);
+   else cnp_debug("Paste request\n");
    return 0;
 }
 
