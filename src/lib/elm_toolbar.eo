@@ -24,7 +24,7 @@ enum Elm.Toolbar.Shrink_Mode
 }
 
 class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
-                   Elm_Interface_Atspi_Widget_Action, Elm_Interface_Atspi_Selection)
+                   Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_toolbar;
    methods {
@@ -539,14 +539,6 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
       Elm_Interface_Atspi_Accessible.children.get;
       Elm_Interface_Atspi_Accessible.state_set.get;
-      Elm_Interface_Atspi_Selection.selected_children_count.get;
-      Elm_Interface_Atspi_Selection.selected_child.get;
-      Elm_Interface_Atspi_Selection.selected_child_deselect;
-      Elm_Interface_Atspi_Selection.child_select;
-      Elm_Interface_Atspi_Selection.child_deselect;
-      Elm_Interface_Atspi_Selection.is_child_selected;
-      Elm_Interface_Atspi_Selection.all_children_select;
-      Elm_Interface_Atspi_Selection.clear;
    }
    events {
       scroll;
@@ -563,6 +555,8 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
       access,changed;
       focused;
       unfocused;
+      item,focused;
+      item,unfocused;
    }
 
 }
