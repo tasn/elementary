@@ -1085,7 +1085,7 @@ _x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify 
         ddata.data = data->data;
         ddata.len = data->length;
         ddata.action = sel->action;
-        sel->datacb(sel->udata, sel->widget, &ddata);
+        sel->datacb(sel->udata, sel->requestwidget, &ddata);
      }
    else cnp_debug("Paste request\n");
 
@@ -1285,7 +1285,7 @@ _x11_vcard_receive(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
         ddata.data = data->data;
         ddata.len = data->length;
         ddata.action = sel->action;
-        sel->datacb(sel->udata, sel->widget, &ddata);
+        sel->datacb(sel->udata, sel->requestwidget, &ddata);
      }
    else cnp_debug("Paste request\n");
    return 0;
@@ -1309,7 +1309,7 @@ _x11_notify_handler_image(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify
         ddata.data = data->data;
         ddata.len = data->length;
         ddata.action = sel->action;
-        sel->datacb(sel->udata, sel->widget, &ddata);
+        sel->datacb(sel->udata, sel->requestwidget, &ddata);
      }
    else cnp_debug("Paste request\n");
    return 0;
