@@ -200,7 +200,6 @@ static  Eina_Bool _local_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format fo
 static Ecore_X_Window _x11_elm_widget_xwin_get(const Evas_Object *obj);
 static Tmp_Info  *_tempfile_new      (int size);
 static int        _tmpinfo_free      (Tmp_Info *tmp);
-static Eina_Bool  _pasteimage_append (char *file, Evas_Object *entry);
 
 typedef struct _X11_Cnp_Selection X11_Cnp_Selection;
 
@@ -3013,15 +3012,7 @@ _wl_notify_handler_uri(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Read
         ddata.action = sel->action;
         sel->datacb(sel->udata, sel->requestwidget, &ddata);
      }
-   else
-     {
-        char *mkupstr;
-
-        mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
-        /* TODO BUG: should never NEVER assume it's an elm_entry! */
-        _elm_entry_entry_paste(sel->requestwidget, mkupstr);
-        free(mkupstr);
-     }
+   else cnp_debug("Paste request\n");
 
    return 0;
 }
@@ -3129,17 +3120,7 @@ _wl_notify_handler_image(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Re
         ddata.action = sel->action;
         sel->datacb(sel->udata, sel->requestwidget, &ddata);
      }
-   else
-     {
-        cnp_debug("no datacb\n");
-        tmp = _tempfile_new(ev->len);
-        if (!tmp) return 0;
-        memcpy(tmp->map, ev->data, ev->len);
-        munmap(tmp->map, ev->len);
-        /* FIXME: Add to paste image data to clean up */
-        _pasteimage_append(tmp->filename, sel->requestwidget);
-        _tmpinfo_free(tmp);
-     }
+   else cnp_debug("Paste request\n");
 
    return 0;
 }
@@ -3188,21 +3169,7 @@ _wl_notify_handler_text(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Rea
         ddata.action = sel->action;
         sel->datacb(sel->udata, sel->requestwidget, &ddata);
      }
-   else
-     {
-        cnp_debug("no datacb\n");
-        char *stripstr, *mkupstr;
-
-        stripstr = malloc(ev->len + 1);
-        if (!stripstr) return 0;
-        strncpy(stripstr, (char *)ev->data, ev->len);
-        stripstr[ev->len] = '\0';
-        mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
-        /* TODO BUG: should never NEVER assume it's an elm_entry! */
-        _elm_entry_entry_paste(sel->requestwidget, mkupstr);
-        free(stripstr);
-        free(mkupstr);
-     }
+   else cnp_debug("Paste request\n");
 
    return 0;
 }
@@ -4609,23 +4576,6 @@ _tmpinfo_free(Tmp_Info *info)
    free(info->filename);
    free(info);
    return 0;
-}
-
-static Eina_Bool
-_pasteimage_append(char *file, Evas_Object *entry)
-{
-   char *entrytag;
-   int len;
-   /* TODO BUG: shouldn't define absize=240x180. Prefer data:// instead of href:// -- may need support for evas. See  http://dataurl.net/ */
-   static const char *tagstring = "<item absize=240x180 href=file://%s></item>";
-
-   if ((!file) || (!entry)) return EINA_FALSE;
-   len = strlen(tagstring)+strlen(file);
-   entrytag = alloca(len + 1);
-   snprintf(entrytag, len + 1, tagstring, file);
-   /* TODO BUG: should never NEVER assume it's an elm_entry! */
-   _elm_entry_entry_paste(entry, entrytag);
-   return EINA_TRUE;
 }
 
 ////////////////////////////////////////////////////////////////////////////
