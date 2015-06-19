@@ -223,7 +223,32 @@ color_classes {
       color: FN_COL_HIGHLIGHT;
       desc: "Text of an active hoverselector item";
    }
-   
+
+   color_class { name: "clock_digit";
+      color: FN_COL_HIGHLIGHT;
+      desc: "Digits of a clock widget";
+   }
+
+   color_class { name: "clock_bgdigit";
+      color: FN_COL_CLOCK_BGDIGIT;
+      desc: "Background digits of a clock widget";
+   }
+
+   color_class { name: "clock_hand_hour";
+      color: 255 255 255 255;
+      desc: "Analog clock hand for hours";
+   }
+
+   color_class { name: "clock_hand_min";
+      color: 255 255 255 255;
+      desc: "Analog clock hand for minutes";
+   }
+
+   color_class { name: "clock_hand_sec";
+      color: 255 0 0 255;
+      desc: "Analog clock hand for seconds";
+   }
+
 // modules
    color_class { name: "module_label";
       color: FN_COL_DEFAULT;

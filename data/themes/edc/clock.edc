@@ -308,6 +308,7 @@ group { name: "e/modules/clock/digital";
          image.normal: "digit_"_DIGIT".png"; \
          visible: 0; \
          color: 255 255 255 0; \
+         color_class: "clock_digit"; \
       } \
       description { state: "active" 0.0; \
          inherit: "default" 0.0; \
@@ -335,6 +336,7 @@ group { name: "e/modules/clock/digital";
          image.normal: "digit_"_DIGIT".png"; \
          visible: 0; \
          color: 255 255 255 0; \
+         color_class: "clock_digit"; \
       } \
       description { state: "active" 0.0; \
          inherit: "default" 0.0; \
@@ -361,6 +363,7 @@ group { name: "e/modules/clock/digital";
          rel1.to: _TO; rel2.to: _TO; \
          aspect: (48/31) (48/31); aspect_preference: BOTH; \
          image.normal: "digit_am.png"; \
+         color_class: "clock_digit"; \
       } \
       description { state: "active" 0.0; \
          inherit: "default" 0.0; \
@@ -373,7 +376,8 @@ group { name: "e/modules/clock/digital";
          rel1.to: _BASE; \
          rel2.to: _BASE; \
          image.normal: _IMG; \
-         color: 255 255 255 128; \
+         color: 255 255 255 255; \
+         color_class: "clock_bgdigit"; \
       } \
    }
 #define BASEC(_NAME, _CLIP, _BASE, _IMG) \
@@ -383,7 +387,8 @@ group { name: "e/modules/clock/digital";
          rel1.to: _BASE; \
          rel2.to: _BASE; \
          image.normal: _IMG; \
-         color: 255 255 255 128; \
+         color: 255 255 255 255; \
+         color_class: "clock_bgdigit"; \
       } \
    }
       
@@ -420,7 +425,10 @@ group { name: "e/modules/clock/digital";
              rel1.offset: 0 1;
              rel2.offset: -1 1;
              align: 0.5 1.0;
-             color: FN_COL_HIGHLIGHT;
+             color: 255 255 255 255;
+             color2: 255 255 255 255;
+             color3: 255 255 255 255;
+             color_class: "clock_digit";
              text { font: FN; size: 8;
                 text_class: "module_small";
                 align: 0.5 0.5;
@@ -664,7 +672,8 @@ group { name: "e/modules/clock/main";
       part { name: "seconds"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "tacho_hand_big";
-            color: 255 0 0 255;
+            color: 255 255 255 255;
+            color_class: "clock_hand_sec";
             rel1.to: "base";
             rel2.to: "base";
             map {
@@ -691,6 +700,7 @@ group { name: "e/modules/clock/main";
       part { name: "minutes"; mouse_events: 0;
          description { state: "default" 0.0000;
             color: 255 255 255 255;
+            color_class: "clock_hand_min";
             image.normal: "tacho_hand_big";
             rel1.to: "base";
             rel2.to: "base";
@@ -719,6 +729,7 @@ group { name: "e/modules/clock/main";
          description { state: "default" 0.0;
             image.normal: "tacho_hand_small_min";
             color: 255 255 255 255;
+            color_class: "clock_hand_hour";
             rel1.to: "base";
             rel2.to: "base";
             map {

@@ -48,7 +48,8 @@ group { name: "elm/clock/flipdigit/default";
             rel1.to: "digit";
             rel2.to: "digit";
             image.normal: "digit_na.png";
-            color: 255 255 255 128;
+            color: 255 255 255 255;
+            color_class: "clock_bgdigit";
          }
       }
       part { name: "b";
@@ -89,6 +90,7 @@ group { name: "elm/clock/flipdigit/default";
             rel2.relative: 1.0 0.0;
             aspect: (52/72) (52/72); aspect_preference: BOTH;
             image.normal: "digit_0.png";
+            color_class: "clock_digit";
          }
 #define DIGIT_DESC(_DIGIT) \
    description { state: _DIGIT 0.0; \

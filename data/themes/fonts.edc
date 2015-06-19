@@ -46,6 +46,8 @@
 /* xkbswitch.edc */
 #define FN_COL_OUTLINE_TRANSPARENT 255 255 255 0; color2: 0 0 0 0; color3: 0 0 0 0;
 #define FN_COL_OUTLINE_DEFAULT 255 255 255 255; color2: 0 0 0 128; color3: 0 0 0 24;
+/* clock widgets */
+#define FN_COL_CLOCK_BGDIGIT 30 30 30 128;
 
 #define ENABLED_TEXTBLOCK_TAGS                                             \
    tag: "em" "+ font_style=Oblique";                                       \
