@@ -852,13 +852,13 @@ _x11_targets_converter(char *target EINA_UNUSED, void *data, int size, void **da
         seltype = sel->format;
      }
 
-   for (i = 0, count = 0; i < CNP_N_ATOMS ; i++)
+   for (i = CNP_ATOM_LISTING_ATOMS + 1, count = 0; i < CNP_N_ATOMS ; i++)
      {
         if (seltype & _atoms[i].formats) count++;
      }
    aret = malloc(sizeof(Ecore_X_Atom) * count);
    if (!aret) return EINA_FALSE;
-   for (i = 0, count = 0; i < CNP_N_ATOMS; i++)
+   for (i = CNP_ATOM_LISTING_ATOMS + 1, count = 0; i < CNP_N_ATOMS ; i++)
      {
         if (seltype & _atoms[i].formats)
           aret[count ++] = _atoms[i].x_atom;
