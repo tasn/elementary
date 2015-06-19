@@ -43,7 +43,7 @@ group { name: "elm/segment_control/item/default";
             visible: 0;
             image {
                normal: "day_single_normal.png";
-               border: 4 4 3 5;
+               border: 5 5 4 6;
             }
          }
          description { state: "default_single" 0.0;
@@ -55,7 +55,7 @@ group { name: "elm/segment_control/item/default";
             visible: 1;
             image {
                normal: "day_left_normal.png";
-               border:  4 1 3 5;
+               border:  5 2 4 6;
             }
          }
          description { state: "default_right" 0.0;
@@ -63,7 +63,7 @@ group { name: "elm/segment_control/item/default";
             visible: 1;
             image {
                normal: "day_right_normal.png";
-               border: 1 4 3 5;
+               border: 2 5 4 6;
             }
          }
          description { state: "default_middle" 0.0;
@@ -71,7 +71,7 @@ group { name: "elm/segment_control/item/default";
             visible: 1;
             image {
                normal: "day_middle_normal.png";
-               border: 1 1 3 5;
+               border: 2 2 4 6;
             }
          }
          description { state: "pressed_single" 0.0;
@@ -79,7 +79,7 @@ group { name: "elm/segment_control/item/default";
             visible: 1;
             image {
                normal: "day_single_press.png";
-               border: 4 4 3 5;
+               border: 5 5 4 6;
             }
          }
          description { state: "pressed_left" 0.0;
@@ -87,7 +87,7 @@ group { name: "elm/segment_control/item/default";
             visible: 1;
             image {
                normal: "day_left_press.png";
-               border:  4 1 3 5;
+               border:  5 1 4 6;
             }
          }
          description { state: "pressed_right" 0.0;
@@ -95,7 +95,7 @@ group { name: "elm/segment_control/item/default";
             visible: 1;
             image {
                normal: "day_right_press.png";
-               border: 1 4 3 5;
+               border: 2 5 4 6;
             }
          }
          description { state: "pressed_middle" 0.0;
@@ -103,7 +103,7 @@ group { name: "elm/segment_control/item/default";
             visible: 1;
             image {
                normal: "day_middle_press.png";
-               border: 1 1 3 5;
+               border: 2 2 4 6;
             }
          }
          description { state: "selected_single" 0.0;
@@ -111,7 +111,7 @@ group { name: "elm/segment_control/item/default";
             visible: 1;
             image {
                normal: "day_single_selected.png";
-               border: 4 4 3 5;
+               border: 5 5 4 6;
             }
          }
          description { state: "selected_left" 0.0;
@@ -119,7 +119,7 @@ group { name: "elm/segment_control/item/default";
             visible: 1;
             image {
                normal: "day_left_selected.png";
-               border:  4 1 3 5;
+               border:  5 1 4 6;
             }
          }
          description { state: "selected_right" 0.0;
@@ -127,7 +127,7 @@ group { name: "elm/segment_control/item/default";
             visible: 1;
             image {
                normal: "day_right_selected.png";
-               border: 1 4 3 5;
+               border: 2 5 4 6;
             }
          }
          description { state: "selected_middle" 0.0;
@@ -135,7 +135,7 @@ group { name: "elm/segment_control/item/default";
             visible: 1;
             image {
                normal: "day_middle_selected.png";
-               border: 1 1 3 5;
+               border: 2 2 4 6;
             }
          }
       }
@@ -211,7 +211,9 @@ group { name: "elm/segment_control/item/default";
             fixed: 1 1;
             min: 1 1;
             rel1.to: "elm.text";
+            rel1.offset: -2 -2;
             rel2.to: "elm.text";
+            rel2.offset: 1 1;
             text {
                font: FN;
                size: 10;
