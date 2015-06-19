@@ -8,7 +8,7 @@
 # include <sys/mman.h>
 #endif
 
-//#define DEBUGON 1
+#define DEBUGON 1
 #ifdef DEBUGON
 # define cnp_debug(fmt, args...) fprintf(stderr, __FILE__":%s/%d : " fmt , __FUNCTION__, __LINE__, ##args)
 #else
@@ -922,6 +922,7 @@ _x11_notify_handler_targets(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Noti
 
    targets = notify->data;
    atomlist = (Ecore_X_Atom *)(targets->data.data);
+   for (i = 0; i < targets->data.length; i++) cnp_debug("Source Atom %s\n", ecore_x_atom_name_get(atomlist[i]));
    for (j = (CNP_ATOM_LISTING_ATOMS + 1); j < CNP_N_ATOMS; j++)
      {
         cnp_debug("\t%s %d\n", _atoms[j].name, _atoms[j].x_atom);
