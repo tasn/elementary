@@ -755,8 +755,8 @@ _x11_selection_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event
      }
    cnp_debug("Target is %s\n", ev->target);
 
-   if (!strcmp(ev->target, "TARGETS") ||
-         !strcmp(ev->target, "ATOMS"))
+   if (ev->selection != ECORE_X_SELECTION_XDND &&
+       (!strcmp(ev->target, "TARGETS") || !strcmp(ev->target, "ATOMS")))
      {
         _x11_notify_handler_targets(sel, ev);
         return ECORE_CALLBACK_PASS_ON;
