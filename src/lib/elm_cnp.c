@@ -1218,6 +1218,7 @@ _x11_text_converter(char *target, void *data, int size, void **data_ret, int *si
 
         *size_ret = strlen(*data_ret);
      }
+   if (data_ret) cnp_debug("Data to send %s\n", (char *)*data_ret);
    return EINA_TRUE;
 }
 
@@ -1249,6 +1250,7 @@ _x11_general_converter(char *target EINA_UNUSED, void *data, int size, void **da
              if (size_ret) *size_ret = 0;
           }
      }
+   if (data_ret) cnp_debug("Data to send %s\n", (char *)*data_ret);
    return EINA_TRUE;
 }
 
