@@ -2163,17 +2163,9 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
      }
 
    ecore_x_dnd_types_set(xwin, NULL, 0);
-   for (i = 0; i < CNP_N_ATOMS; i++)
+   for (i = CNP_ATOM_LISTING_ATOMS + 1; i < CNP_N_ATOMS; i++)
      {
-        if (_atoms[i].formats == ELM_SEL_FORMAT_TARGETS)
-          {
-             if (format == ELM_SEL_FORMAT_TARGETS)
-               {
-                  ecore_x_dnd_type_set(xwin, _atoms[i].name, EINA_TRUE);
-                  cnp_debug("set dnd type: %s\n", _atoms[i].name);
-               }
-          }
-        else if (_atoms[i].formats & format)
+        if (format == ELM_SEL_FORMAT_TARGETS || (_atoms[i].formats & format))
           {
              ecore_x_dnd_type_set(xwin, _atoms[i].name, EINA_TRUE);
              cnp_debug("set dnd type: %s\n", _atoms[i].name);
