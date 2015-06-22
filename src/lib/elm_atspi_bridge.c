@@ -97,7 +97,7 @@ static void _object_unregister(void *obj);
 static Eo * _access_object_from_path(const char *path);
 static char * _path_from_access_object(const Eo *eo);
 static void _iter_object_reference_append(Eldbus_Message_Iter *iter, const Eo *obj);
-static void _object_append_desktop_reference(Eldbus_Message_Iter *iter);
+static void _object_desktop_reference_append(Eldbus_Message_Iter *iter);
 
 EO_CALLBACKS_ARRAY_DEFINE(_events_cb,
    { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, _property_changed_signal_send},
@@ -1828,7 +1828,7 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
        Elm_Atspi_Role role = ELM_ATSPI_ROLE_INVALID;
        eo_do(obj, role = elm_interface_atspi_accessible_role_get());
        if ((!ret_obj) && (ELM_ATSPI_ROLE_APPLICATION == role))
-         _object_append_desktop_reference(iter);
+         _object_desktop_reference_append(iter);
        else
          _iter_object_reference_append(iter, ret_obj);
        return EINA_TRUE;
@@ -2093,7 +2093,7 @@ _iter_object_reference_append(Eldbus_Message_Iter *iter, const Eo *obj)
 }
 
 static void
-_object_append_desktop_reference(Eldbus_Message_Iter *iter)
+_object_desktop_reference_append(Eldbus_Message_Iter *iter)
 {
   Eldbus_Message_Iter *iter_struct = eldbus_message_iter_container_new(iter, 'r', NULL);
   EINA_SAFETY_ON_NULL_RETURN(iter);
@@ -2157,7 +2157,7 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
   eo_do(data, parent = elm_interface_atspi_accessible_parent_get());
   /* Marshall parent */
   if ((!parent) && (ELM_ATSPI_ROLE_APPLICATION == role))
-    _object_append_desktop_reference(iter_struct);
+    _object_desktop_reference_append(iter_struct);
   else
     _iter_object_reference_append(iter_struct, parent);
 
