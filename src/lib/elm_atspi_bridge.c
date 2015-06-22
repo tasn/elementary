@@ -88,6 +88,7 @@ static Eina_Bool _text_selection_changed_send(void *data, Eo *obj, const Eo_Even
 // bridge private methods
 static void _bridge_cache_build(Eo *bridge, void *obj);
 static void _bridge_object_register(Eo *bridge, Eo *obj, char *path);
+static char * _bridge_path_from_access_object(Eo *bridge, const Eo *eo);
 
 // utility functions
 static void _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj);
@@ -95,7 +96,6 @@ static Eina_Bool _elm_atspi_bridge_key_filter(void *data, void *loop, int type, 
 static void _object_signal_send(Eldbus_Service_Interface *infc, int sig_id, const char *minor, unsigned int det1, unsigned int det2, const char *variant_sig, ...);
 static void _object_unregister(void *obj);
 static Eo * _access_object_from_path(const char *path);
-static char * _path_from_access_object(const Eo *eo);
 static void _iter_object_reference_append(Eldbus_Message_Iter *iter, const Eo *obj);
 static void _object_desktop_reference_append(Eldbus_Message_Iter *iter);
 
@@ -1782,12 +1782,13 @@ _access_object_from_path(const char *path)
 }
 
 static char *
-_path_from_access_object(const Eo *eo)
+_bridge_path_from_access_object(Eo *bridge, const Eo *eo)
 {
    char path[256];
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(eo, strdup(ATSPI_DBUS_PATH_NULL));
-   if (eo == elm_atspi_bridge_root_get(_instance))
+
+   if (eo == elm_atspi_bridge_root_get(bridge))
      snprintf(path, sizeof(path), "%s%s", ELM_ACCESS_OBJECT_PATH_PREFIX, ELM_ACCESS_OBJECT_PATH_ROOT);
    else
      snprintf(path, sizeof(path), ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE, (unsigned long long) (uintptr_t)eo);
@@ -2085,7 +2086,7 @@ _iter_object_reference_append(Eldbus_Message_Iter *iter, const Eo *obj)
    if (!pd) return;
   Eldbus_Message_Iter *iter_struct = eldbus_message_iter_container_new(iter, 'r', NULL);
   EINA_SAFETY_ON_NULL_RETURN(iter);
-  char *path = _path_from_access_object(obj);
+  char *path = _bridge_path_from_access_object(_instance, obj);
   eldbus_message_iter_basic_append(iter_struct, 's', eldbus_connection_unique_name_get(pd->a11y_bus));
   eldbus_message_iter_basic_append(iter_struct, 'o', path);
   eldbus_message_iter_container_close(iter, iter_struct);
@@ -3006,7 +3007,7 @@ static void _object_signal_send(Eldbus_Service_Interface *infc, int sig_id, cons
                    break;
                 case 'o':
                    atspi_obj = va_arg(va, Eo*);
-                   path = _path_from_access_object(atspi_obj);
+                   path = _bridge_path_from_access_object(_instance, atspi_obj);
                    eldbus_message_iter_basic_append(iter_stack[top], 'o', path);
                    free(path);
                    break;
@@ -3139,7 +3140,7 @@ _on_cache_item_del(void *data, Eo *obj, const Eo_Event_Description *event EINA_U
 {
    Eina_Hash *cache = data;
    char *path;
-   path = _path_from_access_object(obj);
+   path = _bridge_path_from_access_object(_instance, obj);
    eina_hash_del(cache, path, obj);
    free(path);
 
@@ -3158,7 +3159,7 @@ _bridge_cache_build(Eo *bridge, void *obj)
    if (!eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
      return;
 
-   path = _path_from_access_object(obj);
+   path = _bridge_path_from_access_object(bridge, obj);
    _bridge_object_register(bridge, obj, path);
    free(path);
 
