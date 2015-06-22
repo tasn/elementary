@@ -87,7 +87,8 @@ static Eina_Bool _text_selection_changed_send(void *data, Eo *obj, const Eo_Even
 
 // bridge private methods
 static void _bridge_cache_build(Eo *bridge, void *obj);
-static void _bridge_object_register(Eo *bridge, Eo *obj, char *path);
+static void _bridge_object_register(Eo *bridge, Eo *obj);
+static void _bridge_object_unregister(Eo *bridge, Eo *obj);
 static char * _bridge_path_from_access_object(Eo *bridge, const Eo *eo);
 
 // utility functions
@@ -3135,14 +3136,23 @@ _event_handlers_register(Eo *bridge)
    pd->key_flr = ecore_event_filter_add(NULL, _elm_atspi_bridge_key_filter, NULL, bridge);
 }
 
+static void
+_bridge_object_unregister(Eo *bridge, Eo *obj)
+{
+   char *path;
+   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
+
+   path = _bridge_path_from_access_object(bridge, obj);
+   eina_hash_del(pd->cache, path, obj);
+   free(path);
+}
+
 static Eina_Bool
 _on_cache_item_del(void *data, Eo *obj, const Eo_Event_Description *event EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eina_Hash *cache = data;
-   char *path;
-   path = _bridge_path_from_access_object(_instance, obj);
-   eina_hash_del(cache, path, obj);
-   free(path);
+   Eo *bridge = data;
+
+   _bridge_object_unregister(bridge, obj);
 
    return EINA_TRUE;
 }
@@ -3152,16 +3162,13 @@ _bridge_cache_build(Eo *bridge, void *obj)
 {
    Eina_List *children;
    Eo *child;
-   char *path = NULL;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
    if (!eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
      return;
 
-   path = _bridge_path_from_access_object(bridge, obj);
-   _bridge_object_register(bridge, obj, path);
-   free(path);
+   _bridge_object_register(bridge, obj);
 
    eo_do(obj, children = elm_interface_atspi_accessible_children_get());
    EINA_LIST_FREE(children, child)
@@ -3303,9 +3310,10 @@ _screen_reader_enabled_get(void *data, const Eldbus_Message *msg, Eldbus_Pending
      DBG("AT-SPI2 stack not enabled.");
 }
 
-static void _bridge_object_register(Eo *bridge, Eo *obj, char *path)
+static void _bridge_object_register(Eo *bridge, Eo *obj)
 {
    Eldbus_Service_Interface *infc = NULL, *event_infc;
+   char *path;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
@@ -3315,14 +3323,18 @@ static void _bridge_object_register(Eo *bridge, Eo *obj, char *path)
         return;
      }
 
+   path = _bridge_path_from_access_object(bridge, obj);
+
    if (eina_hash_find(pd->cache, path))
      {
         WRN("Object at path: %s already registered", path);
+        free(path);
         return;
      }
 
    eina_hash_add(pd->cache, path, obj);
-   eo_do(obj, eo_event_callback_add(EO_EV_DEL, _on_cache_item_del, pd->cache));
+
+   eo_do(obj, eo_event_callback_add(EO_EV_DEL, _on_cache_item_del, bridge));
 
    if (pd->a11y_bus)
      {
@@ -3359,6 +3371,8 @@ static void _bridge_object_register(Eo *bridge, Eo *obj, char *path)
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE))
           eldbus_service_interface_register(pd->a11y_bus, path, &editable_text_iface_desc);
      }
+
+   free(path);
 }
 
 static void _object_unregister(void *obj)
@@ -3374,7 +3388,7 @@ static void _object_unregister(void *obj)
         eo_do(obj, eo_key_data_set("event_interface", NULL));
      }
 
-   eo_do(obj, eo_event_callback_del(EO_EV_DEL, _on_cache_item_del, pd->cache));
+   eo_do(obj, eo_event_callback_del(EO_EV_DEL, _on_cache_item_del, _instance));
 
    if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
       eo_do(obj, eo_event_callback_array_del(_events_cb(), event_infc));
