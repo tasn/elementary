@@ -1796,7 +1796,7 @@ _access_object_from_path(const char *path)
    if (!strcmp(ELM_ACCESS_OBJECT_PATH_ROOT, tmp))
      return elm_atspi_bridge_root_get(_instance);
 
-   sscanf(tmp, "%llu", &eo_ptr);
+   sscanf(tmp, "root/%llu", &eo_ptr);
    eo = (Eo *) (uintptr_t) eo_ptr;
    return eo_isa(eo, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? eo : NULL;
 }
@@ -2989,13 +2989,13 @@ static void _object_signal_send(Eldbus_Service_Interface *infc, unsigned long lo
    Eo *atspi_obj;
    char *path;
    int top = 0;
-   char buf[32];
+   char buf[64];
 
    EINA_SAFETY_ON_NULL_RETURN(infc);
    EINA_SAFETY_ON_NULL_RETURN(minor);
 
-   snprintf(buf, sizeof(buf), "%llu", id);
-   msg = eldbus_service_fallback_signal_new(infc, buf, sig_id);
+   snprintf(buf, sizeof(buf), "/%llu", id);
+   msg = eldbus_service_signal_new(infc, sig_id);
    EINA_SAFETY_ON_NULL_RETURN(msg);
 
    va_start(va, variant_sig);
