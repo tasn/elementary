@@ -74,7 +74,6 @@ typedef struct _Elm_Atspi_Bridge_Data
    struct {
         Eldbus_Service_Interface *accessible;
         Eldbus_Service_Interface *component;
-        Eldbus_Service_Interface *event;
         Eldbus_Service_Interface *text;
         Eldbus_Service_Interface *editable_text;
         Eldbus_Service_Interface *value;
@@ -2764,12 +2763,6 @@ _state_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Descr
         return EINA_FALSE;
      }
 
-   if (!pd->ifcs.event)
-     {
-        ERR("Atspi object does not have event interface!");
-        return EINA_FALSE;
-     }
-
    switch (state_data->type) {
         case ELM_ATSPI_STATE_FOCUSED:
          type_desc = "focused";
@@ -2805,12 +2798,6 @@ _property_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_De
    enum _Atspi_Object_Property prop = ATSPI_OBJECT_PROPERTY_LAST;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(data, pd, EINA_FALSE);
-
-   if (!pd->ifcs.event)
-     {
-        ERR("Atspi object does not have event interface!");
-        return EINA_FALSE;
-     }
 
    if (!strcmp(property, "parent"))
      {
@@ -2874,12 +2861,6 @@ _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *d
 
    if (!STATE_TYPE_GET(pd->object_children_broadcast_mask, type))
      return EINA_FALSE;
-
-   if (!pd->ifcs.event)
-     {
-        ERR("Atspi object does not have event interface! %p %s", obj, eo_class_name_get(eo_class_get(obj)));
-        return EINA_FALSE;
-     }
 
    switch (type)
     {
@@ -3212,9 +3193,6 @@ static void _bridge_interfaces_register(Eo *bridge)
    pd->ifcs.accessible = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &accessible_iface_desc);
    eldbus_service_object_data_set(pd->ifcs.accessible, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 
-   pd->ifcs.event = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &event_iface_desc);
-   eldbus_service_object_data_set(pd->ifcs.event, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
-
    pd->ifcs.component = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &component_iface_desc);
    eldbus_service_object_data_set(pd->ifcs.component, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 
@@ -3246,8 +3224,6 @@ static void _bridge_interfaces_unregister(Eo *bridge)
 
    if (pd->ifcs.accessible)
      eldbus_service_interface_unregister(pd->ifcs.accessible);
-   if (pd->ifcs.event)
-     eldbus_service_interface_unregister(pd->ifcs.event);
    if (pd->ifcs.component)
      eldbus_service_interface_unregister(pd->ifcs.component);
    if (pd->ifcs.window)
