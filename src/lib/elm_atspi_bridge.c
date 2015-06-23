@@ -32,6 +32,7 @@
 
 #define ELM_ACCESS_OBJECT_PATH_ROOT "root"
 #define ELM_ACCESS_OBJECT_PATH_PREFIX  "/org/a11y/atspi/accessible/"
+#define ELM_ACCESS_OBJECT_PATH_PREFIX2  "/org/a11y/atspi/accessible"
 #define ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE ELM_ACCESS_OBJECT_PATH_PREFIX "%llu"
 
 #define SIZE(x) sizeof(x)/sizeof(x[0])
@@ -3209,34 +3210,34 @@ static void _bridge_interfaces_register(Eo *bridge)
 {
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
-   pd->ifcs.accessible = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX, &accessible_iface_desc);
+   pd->ifcs.accessible = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &accessible_iface_desc);
    eldbus_service_object_data_set(pd->ifcs.accessible, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 
-   pd->ifcs.event = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX, &event_iface_desc);
+   pd->ifcs.event = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &event_iface_desc);
    eldbus_service_object_data_set(pd->ifcs.event, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 
-   pd->ifcs.component = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX, &component_iface_desc);
+   pd->ifcs.component = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &component_iface_desc);
    eldbus_service_object_data_set(pd->ifcs.component, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 
-   pd->ifcs.window = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX, &window_iface_desc);
+   pd->ifcs.window = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &window_iface_desc);
    eldbus_service_object_data_set(pd->ifcs.window, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 
-   pd->ifcs.action = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX, &action_iface_desc);
+   pd->ifcs.action = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &action_iface_desc);
    eldbus_service_object_data_set(pd->ifcs.action, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 
-   pd->ifcs.value = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX, &value_iface_desc);
+   pd->ifcs.value = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &value_iface_desc);
    eldbus_service_object_data_set(pd->ifcs.value, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 
-   pd->ifcs.image = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX, &image_iface_desc);
+   pd->ifcs.image = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &image_iface_desc);
    eldbus_service_object_data_set(pd->ifcs.image, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 
-   pd->ifcs.selection = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX, &selection_iface_desc);
+   pd->ifcs.selection = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &selection_iface_desc);
    eldbus_service_object_data_set(pd->ifcs.selection, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 
-   pd->ifcs.text = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX, &text_iface_desc);
+   pd->ifcs.text = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &text_iface_desc);
    eldbus_service_object_data_set(pd->ifcs.text, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 
-   pd->ifcs.editable_text = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX, &editable_text_iface_desc);
+   pd->ifcs.editable_text = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &editable_text_iface_desc);
    eldbus_service_object_data_set(pd->ifcs.editable_text, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 }
 
