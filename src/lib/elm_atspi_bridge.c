@@ -482,6 +482,7 @@ _accessible_get_localized_role_name(const Eldbus_Service_Interface *iface, const
    Eo *obj = _access_object_from_path(obj_path);
 
    eo_do(obj, l_role_name = elm_interface_atspi_accessible_localized_role_name_get());
+   EINA_SAFETY_ON_NULL_RETURN_VAL(l_role_name, NULL);
 
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -1794,7 +1795,7 @@ _access_object_from_path(const char *path)
    if (!strcmp(ELM_ACCESS_OBJECT_PATH_ROOT, tmp))
      return elm_atspi_bridge_root_get(_instance);
 
-   sscanf(tmp, "root/%llu", &eo_ptr);
+   sscanf(tmp, "%llu", &eo_ptr);
    eo = (Eo *) (uintptr_t) eo_ptr;
    return eo_isa(eo, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? eo : NULL;
 }
