@@ -1,6 +1,17 @@
 =================
-Elementary 1.14.1
+Elementary 1.14.2
 =================
+
+Changes since 1.14.1:
+---------------------
+
+Fixes:
+
+   * interface scrollerable: modify the loop_v condition in _elm_scroll_momentum_animator() function
+   * fix list item mode change on elm list
+   * win: only trigger del trap if win type is not FAKE
+   * win: do not use deferred ecore evas deletion for FAKE wins
+   * genlist: fix resize of items when added after elm_genlist_clear(). (T2367)
 
 Changes since 1.14.0:
 ---------------------
