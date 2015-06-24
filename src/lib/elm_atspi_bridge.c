@@ -621,6 +621,9 @@ _accessible_get_index_in_parent(const Eldbus_Service_Interface *iface EINA_UNUSE
    Eldbus_Message *ret;
    int idx = -1;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
+
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
@@ -641,6 +644,9 @@ _accessible_child_at_index(const Eldbus_Service_Interface *iface EINA_UNUSED, co
    int idx;
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter;
+
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
@@ -667,6 +673,9 @@ _accessible_get_relation_set(const Eldbus_Service_Interface *iface EINA_UNUSED, 
    Eldbus_Message_Iter *iter = NULL, *iter_array = NULL, *iter_array2 = NULL, *iter_struct;
    Elm_Atspi_Relation *rel;
    Eina_List *rels;
+
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -722,6 +731,9 @@ _selection_selected_child_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
+
    if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
@@ -745,6 +757,9 @@ _selection_child_select(const Eldbus_Service_Interface *iface, const Eldbus_Mess
    Eldbus_Message *ret;
    Eina_Bool result;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
+
    if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
@@ -765,6 +780,9 @@ _selection_selected_child_deselect(const Eldbus_Service_Interface *iface, const 
    int idx;
    Eldbus_Message *ret;
    Eina_Bool result;
+
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
@@ -787,6 +805,9 @@ _selection_is_child_selected(const Eldbus_Service_Interface *iface, const Eldbus
    Eldbus_Message *ret;
    Eina_Bool result;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
+
    if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
@@ -807,6 +828,9 @@ _selection_all_children_select(const Eldbus_Service_Interface *iface, const Eldb
    Eldbus_Message *ret;
    Eina_Bool result;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
+
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
@@ -823,6 +847,9 @@ _selection_clear(const Eldbus_Service_Interface *iface, const Eldbus_Message *ms
    Eo *obj = _access_object_from_path(obj_path);
    Eldbus_Message *ret;
    Eina_Bool result;
+
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -842,6 +869,9 @@ _selection_child_deselect(const Eldbus_Service_Interface *iface, const Eldbus_Me
    Eldbus_Message *ret;
    Eina_Bool result;
    
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
+
    if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
@@ -872,6 +902,9 @@ _action_description_get(const Eldbus_Service_Interface *iface, const Eldbus_Mess
    Eo *obj = _access_object_from_path(obj_path);
    int idx;
    Eldbus_Message *ret;
+
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
@@ -997,6 +1030,9 @@ _action_action_do(const Eldbus_Service_Interface *iface, const Eldbus_Message *m
    Eldbus_Message *ret;
    Eina_Bool result;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
+
    if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
@@ -1031,6 +1067,9 @@ _image_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *
 
    x = y = w = h = -1;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
+
    if (!eldbus_message_arguments_get(msg, "u", &type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
@@ -1054,6 +1093,8 @@ _image_position_get(const Eldbus_Service_Interface *iface, const Eldbus_Message 
    int x = -1, y = -1;
    Eina_Bool screen_coords;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
    if (!eldbus_message_arguments_get(msg, "u", &type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
@@ -1076,6 +1117,8 @@ _image_size_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg
    Eo *obj = _access_object_from_path(obj_path);
    int w = -1, h = -1;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
@@ -1446,6 +1489,9 @@ _text_selection_remove(const Eldbus_Service_Interface *iface, const Eldbus_Messa
    Eina_Bool res;
    Eldbus_Message *ret;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
+
    if (!eldbus_message_arguments_get(msg, "i", &sel_num))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Selection number expected.");
 
@@ -1468,6 +1514,8 @@ _text_selection_set(const Eldbus_Service_Interface *iface, const Eldbus_Message 
    Eina_Bool res;
    Eldbus_Message *ret;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
    if (!eldbus_message_arguments_get(msg, "iii", &sel_num, &start, &end))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Selection number expected.");
 
@@ -1492,6 +1540,8 @@ _text_range_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_Mess
    AtspiCoordType type;
    Eldbus_Message *ret;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
    if (!eldbus_message_arguments_get(msg, "iiu", &start, &end, &type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Selection number expected.");
 
@@ -1526,6 +1576,8 @@ _text_bounded_ranges_get(const Eldbus_Service_Interface *iface, const Eldbus_Mes
    Elm_Atspi_Text_Range *range;
    Eldbus_Message_Iter *iter, *iter_array, *iter_struct, *iter_var;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
    if (!eldbus_message_arguments_get(msg, "iiiiuuu", &rect.x, &rect.y, &rect.w, &rect.h, &type, &xc, &yc))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Expected (x,y,w,h) of bounding box, screen coord type and x, y text clip types.");
 
@@ -1587,6 +1639,8 @@ _text_run_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Mes
    Elm_Atspi_Text_Attribute *attr;
    Eina_Bool incl_def;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
    if (!eldbus_message_arguments_get(msg, "ib", &start, &incl_def))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset and include defaults flag expected.");
 
@@ -1652,6 +1706,8 @@ _editable_text_text_content_set(const Eldbus_Service_Interface *iface, const Eld
    Eldbus_Message *ret;
    Eina_Bool res;
 
+   if (!obj)
+     return _dbus_invalid_ref_error_new(msg);
    if (!eldbus_message_arguments_get(msg, "s", &content))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "String expected.");
 
