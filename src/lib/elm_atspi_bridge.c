@@ -2954,31 +2954,16 @@ _window_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void 
 }
 
 static Eina_Bool
-_selection_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc, void *event_info EINA_UNUSED)
+_selection_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   const char *event_desc;
-
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(data, pd, EINA_TRUE);
 
-   enum _Atspi_Object_Signals type;
-   if (desc == ELM_INTERFACE_ATSPI_SELECTION_EVENT_SELECTION_CHANGED)
-     {
-        event_desc = "SelectionChanged";
-        type = ATSPI_OBJECT_EVENT_SELECTION_CHANGED;
-     }
-   else
-     {
-        WRN("ATSPI Selection event not handled");
-        return EINA_FALSE;
-     }
+   if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_SELECTION_CHANGED))
+     return EINA_FALSE;
 
-   if (!pd->ifcs.selection)
-     {
-        ERR("A11Y connection closed. Unable to send ATSPI event.");
-        return EINA_FALSE;
-     }
+   _bridge_signal_send(data, obj, ATSPI_DBUS_INTERFACE_EVENT_OBJECT, "SelectionChanged", "", 0, 0, "i", 0);
 
-   //_object_signal_send(pd->ifcs.selection, _bridge_object_id_get(data, obj), type, event_desc, 0, 0, "i", 0);
+   DBG("sent signal org.a11y.atspi.Event:SelectionChanged");
 
    return EINA_TRUE;
 }
