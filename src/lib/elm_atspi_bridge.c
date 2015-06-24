@@ -1785,6 +1785,15 @@ _access_object_from_path(const char *path)
    unsigned long long eo_ptr = 0;
    Eo *eo = NULL;
    const char *tmp = path;
+   Eo *ret;
+
+   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(_instance, pd, NULL);
+
+   if (!eina_hash_find(pd->cache, path))
+     {
+        WRN("Request for nonexisting object: %s", path);
+       return NULL;
+     }
 
    int len = strlen(ELM_ACCESS_OBJECT_PATH_PREFIX);
 
@@ -1797,7 +1806,8 @@ _access_object_from_path(const char *path)
 
    sscanf(tmp, "%llu", &eo_ptr);
    eo = (Eo *) (uintptr_t) eo_ptr;
-   return eo_isa(eo, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? eo : NULL;
+   ret = eo_isa(eo, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? eo : NULL;
+   return ret;
 }
 
 static char *
@@ -2871,7 +2881,7 @@ _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *d
         break;
      case ATSPI_OBJECT_CHILD_REMOVED:
         atspi_desc = "remove";
-        idx = -1;
+        eo_do(ev_data->child, idx = elm_interface_atspi_accessible_index_in_parent_get());
         break;
     }
 
@@ -3393,8 +3403,8 @@ static void _bridge_object_register(Eo *bridge, Eo *obj)
    sig = eldbus_service_signal_new(pd->cache_interface, ATSPI_OBJECT_CHILD_ADDED);
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(sig);
    _append_item_fn(NULL, NULL, obj, iter);
-
    eldbus_service_signal_send(pd->cache_interface, sig);
+
    free(path);
 }
 
