@@ -2880,7 +2880,6 @@ _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *d
    _bridge_signal_send(data, obj, ATSPI_DBUS_INTERFACE_EVENT_OBJECT, "ChildrenChanged",
                        atspi_desc, idx, 0, "(so)", eldbus_connection_unique_name_get(pd->a11y_bus), ev_data->child);
 
-
    DBG("signal sent ChildrenChanged:%s:%d", atspi_desc, idx);
 
    return EINA_TRUE;
@@ -3168,6 +3167,9 @@ _a11y_connection_shutdown(Eo *bridge)
 
    if (pd->cache) eina_hash_free(pd->cache);
    pd->cache = NULL;
+
+   if (pd->cache_interface)
+     eldbus_service_object_unregister(pd->cache_interface);
 
    if (pd->key_flr) ecore_event_filter_del(pd->key_flr);
    pd->key_flr = NULL;
