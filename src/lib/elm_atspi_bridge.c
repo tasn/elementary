@@ -3114,7 +3114,16 @@ static void
 _bridge_object_unregister(Eo *bridge, Eo *obj)
 {
    char *path;
+   Eldbus_Message *sig;
+
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
+
+   sig = eldbus_service_signal_new(pd->cache_interface, ATSPI_OBJECT_CHILD_REMOVED);
+   Eldbus_Message_Iter *iter = eldbus_message_iter_get(sig);
+
+   _iter_object_reference_append(iter, obj);
+
+   eldbus_service_signal_send(pd->cache_interface, sig);
 
    path = _bridge_path_from_access_object(bridge, obj);
    eina_hash_del(pd->cache, path, obj);
@@ -3346,6 +3355,7 @@ _screen_reader_enabled_get(void *data, const Eldbus_Message *msg, Eldbus_Pending
 static void _bridge_object_register(Eo *bridge, Eo *obj)
 {
    char *path;
+   Eldbus_Message *sig;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
@@ -3378,6 +3388,11 @@ static void _bridge_object_register(Eo *bridge, Eo *obj)
    if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_INTERFACE))
      eo_do(obj, eo_event_callback_array_add(_text_cb(), bridge));
 
+   sig = eldbus_service_signal_new(pd->cache_interface, ATSPI_OBJECT_CHILD_ADDED);
+   Eldbus_Message_Iter *iter = eldbus_message_iter_get(sig);
+   _append_item_fn(NULL, NULL, obj, iter);
+
+   eldbus_service_signal_send(pd->cache_interface, sig);
    free(path);
 }
 
