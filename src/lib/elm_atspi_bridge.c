@@ -3059,7 +3059,10 @@ _text_caret_moved_send(void *data, Eo *obj, const Eo_Event_Description *desc EIN
    if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CARET_MOVED))
      return EINA_TRUE;
 
-   //_object_signal_send(pd->ifcs.event, _bridge_object_id_get(data, obj), ATSPI_OBJECT_EVENT_TEXT_CARET_MOVED, "", cursor_pos, 0, NULL, NULL);
+   eo_do(obj, cursor_pos = elm_interface_atspi_text_caret_offset_get());
+
+   _bridge_signal_send(data, obj, ATSPI_DBUS_INTERFACE_EVENT_OBJECT, "TextCaretMoved", "", cursor_pos, 0, NULL, NULL);
+
    return EINA_TRUE;
 }
 
@@ -3074,7 +3077,7 @@ _text_text_inserted_send(void *data, Eo *obj, const Eo_Event_Description *desc E
    if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED))
      return EINA_TRUE;
 
-   //_object_signal_send(pd->ifcs.event, _bridge_object_id_get(data, obj), ATSPI_OBJECT_EVENT_TEXT_CHANGED, "insert", info->pos, info->len, "s", info->content);
+   _bridge_signal_send(data, obj, ATSPI_DBUS_INTERFACE_EVENT_OBJECT, "TextChanged", "insert", info->pos, info->len, "s", info->content);
 
    return EINA_TRUE;
 }
@@ -3090,7 +3093,7 @@ _text_text_removed_send(void *data, Eo *obj, const Eo_Event_Description *desc EI
    if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED))
      return EINA_TRUE;
 
-   //_object_signal_send(pd->ifcs.event, _bridge_object_id_get(data, obj), ATSPI_OBJECT_EVENT_TEXT_CHANGED, "delete", info->pos, info->len, "s", info->content);
+   _bridge_signal_send(data, obj, ATSPI_DBUS_INTERFACE_EVENT_OBJECT, "TextChanged", "delete", info->pos, info->len, "s", info->content);
 
    return EINA_TRUE;
 }
@@ -3103,7 +3106,7 @@ _text_selection_changed_send(void *data, Eo *obj, const Eo_Event_Description *de
    if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_SELECTION_CHANGED))
      return EINA_TRUE;
 
-   //_object_signal_send(pd->ifcs.event, _bridge_object_id_get(data, obj), ATSPI_OBJECT_EVENT_TEXT_SELECTION_CHANGED, "", 0, 0, NULL, NULL);
+   _bridge_signal_send(data, obj, ATSPI_DBUS_INTERFACE_EVENT_OBJECT, "TextSelectionChanged", "", 0, 0, NULL, NULL);
 
    return EINA_TRUE;
 }
