@@ -79,7 +79,6 @@ typedef struct _Elm_Atspi_Bridge_Data
         Eldbus_Service_Interface *value;
         Eldbus_Service_Interface *selection;
         Eldbus_Service_Interface *image;
-        Eldbus_Service_Interface *window;
         Eldbus_Service_Interface *action;
    } ifcs;
 
@@ -211,6 +210,7 @@ enum _Atspi_Window_Signals
    ATSPI_WINDOW_EVENT_RESTYLE,
 };
 
+#if 0
 static const Eldbus_Signal _event_obj_signals[] = {
    [ATSPI_OBJECT_EVENT_PROPERTY_CHANGED] = {"PropertyChange", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
    [ATSPI_OBJECT_EVENT_BOUNDS_CHANGED] = {"BoundsChange", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
@@ -258,6 +258,7 @@ static const Eldbus_Signal _window_obj_signals[] = {
    [ATSPI_WINDOW_EVENT_RESTYLE] = {"Restyle", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
    {NULL, ELDBUS_ARGS({NULL, NULL}), 0}
 };
+#endif
 
 const int elm_roles_to_atspi_roles[][2] = {
    { ELM_ATSPI_ROLE_INVALID, ATSPI_ROLE_INVALID },
@@ -2076,14 +2077,6 @@ static const Eldbus_Service_Interface_Desc accessible_iface_desc = {
    ATSPI_DBUS_INTERFACE_ACCESSIBLE, accessible_methods, NULL, accessible_properties, _accessible_property_get, NULL
 };
 
-static const Eldbus_Service_Interface_Desc event_iface_desc = {
-   ATSPI_DBUS_INTERFACE_EVENT_OBJECT, NULL, _event_obj_signals, NULL, NULL, NULL
-};
-
-static const Eldbus_Service_Interface_Desc window_iface_desc = {
-   ATSPI_DBUS_INTERFACE_EVENT_WINDOW, NULL, _window_obj_signals, NULL, NULL, NULL
-};
-
 static const Eldbus_Service_Interface_Desc action_iface_desc = {
    ATSPI_DBUS_INTERFACE_ACTION, action_methods, NULL, action_properties, NULL, NULL
 };
@@ -2890,45 +2883,70 @@ _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *d
    _bridge_signal_send(data, obj, ATSPI_DBUS_INTERFACE_EVENT_OBJECT, "ChildrenChanged",
                        atspi_desc, idx, 0, "(so)", eldbus_connection_unique_name_get(pd->a11y_bus), ev_data->child);
 
+   if (type == ATSPI_OBJECT_CHILD_REMOVED)
+     _bridge_object_unregister(data, ev_data->child);
+
    DBG("signal sent ChildrenChanged:%s:%d", atspi_desc, idx);
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_window_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc, void *event_info EINA_UNUSED)
+_window_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info EINA_UNUSED)
 {
    enum _Atspi_Window_Signals type;
+   const char *name;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(data, pd, EINA_FALSE);
 
    if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED)
-     type = ATSPI_WINDOW_EVENT_CREATE;
+     {
+        type = ATSPI_WINDOW_EVENT_CREATE;
+        name = "Create";
+     }
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED)
-     type = ATSPI_WINDOW_EVENT_DESTROY;
+     {
+        type = ATSPI_WINDOW_EVENT_DESTROY;
+        name = "Destroy";
+     }
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED)
-     type = ATSPI_WINDOW_EVENT_DEACTIVATE;
+     {
+        type = ATSPI_WINDOW_EVENT_DEACTIVATE;
+        name = "Deactivate";
+     }
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED)
-     type = ATSPI_WINDOW_EVENT_ACTIVATE;
+     {
+        type = ATSPI_WINDOW_EVENT_ACTIVATE;
+        name = "Activate";
+     }
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MAXIMIZED)
-     type = ATSPI_WINDOW_EVENT_MAXIMIZE;
+     {
+        type = ATSPI_WINDOW_EVENT_MAXIMIZE;
+        name = "Maximize";
+     }
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MINIMIZED)
-     type = ATSPI_WINDOW_EVENT_MINIMIZE;
+     {
+        type = ATSPI_WINDOW_EVENT_MINIMIZE;
+        name = "Minimize";
+     }
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_RESTORED)
-     type = ATSPI_WINDOW_EVENT_RESTORE;
+     {
+        type = ATSPI_WINDOW_EVENT_RESTORE;
+        name = "Restore";
+     }
    else
      return EINA_FALSE;
 
    if (!STATE_TYPE_GET(pd->window_signal_broadcast_mask, type))
      return EINA_FALSE;
 
-   if (!pd->ifcs.window || !pd->a11y_bus)
+   if (!pd->a11y_bus)
      {
         ERR("A11Y connection closed. Unable to send ATSPI event.");
         return EINA_FALSE;
      }
 
-   //_object_signal_send(pd->ifcs.window, _bridge_object_id_get(data, obj), type, "", 0, 0, "i", 0);
+   _bridge_signal_send(data, obj, ATSPI_DBUS_INTERFACE_EVENT_WINDOW, name, "", 0, 0, "i", 0);
 
    DBG("sent signal org.a11y.atspi.Window:%d", type);
 
@@ -3218,9 +3236,6 @@ static void _bridge_interfaces_register(Eo *bridge)
    pd->ifcs.component = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &component_iface_desc);
    eldbus_service_object_data_set(pd->ifcs.component, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 
-   pd->ifcs.window = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &window_iface_desc);
-   eldbus_service_object_data_set(pd->ifcs.window, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
-
    pd->ifcs.action = eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &action_iface_desc);
    eldbus_service_object_data_set(pd->ifcs.action, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 
@@ -3248,8 +3263,6 @@ static void _bridge_interfaces_unregister(Eo *bridge)
      eldbus_service_interface_unregister(pd->ifcs.accessible);
    if (pd->ifcs.component)
      eldbus_service_interface_unregister(pd->ifcs.component);
-   if (pd->ifcs.window)
-     eldbus_service_interface_unregister(pd->ifcs.window);
    if (pd->ifcs.action)
      eldbus_service_interface_unregister(pd->ifcs.action);
    if (pd->ifcs.value)
@@ -3403,6 +3416,7 @@ static void _bridge_object_register(Eo *bridge, Eo *obj)
    sig = eldbus_service_signal_new(pd->cache_interface, ATSPI_OBJECT_CHILD_ADDED);
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(sig);
    _append_item_fn(NULL, NULL, obj, iter);
+
    eldbus_service_signal_send(pd->cache_interface, sig);
 
    free(path);
@@ -3425,14 +3439,14 @@ static void _object_unregister(void *obj)
 }
 
 static Eina_Bool
-_a11y_on(void *data)
+_a11y_on(void *data EINA_UNUSED)
 {
   _instance = eo_add(ELM_ATSPI_BRIDGE_CLASS, NULL);
   return EINA_FALSE;
 }
 
 static Eina_Bool
-_a11y_off(void *data)
+_a11y_off(void *data EINA_UNUSED)
 {
   eo_del(_instance);
   _instance = NULL;
