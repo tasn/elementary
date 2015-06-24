@@ -487,12 +487,15 @@ fail:
 }
 
 static Eldbus_Message *
-_accessible_get_application(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
+_accessible_get_application(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
+
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(ret);
-   _iter_object_reference_append(iter, elm_atspi_bridge_root_get(_instance));
+   _iter_object_reference_append(iter, elm_atspi_bridge_root_get(bridge));
 
    return ret;
 }
@@ -2251,7 +2254,7 @@ _cache_get_items(const Eldbus_Service_Interface *iface, const Eldbus_Message *ms
    Eldbus_Message_Iter *iter, *iter_array;
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-   Eo *bridge = eldbus_service_object_data_get(iface, "_bridge");
+   Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    if (!bridge) return NULL;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(bridge, pd, NULL);
@@ -2623,7 +2626,7 @@ _cache_register(Eo *obj)
 {
    Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(obj, ELM_ATSPI_BRIDGE_CLASS);
    pd->cache_interface = eldbus_service_interface_register(pd->a11y_bus, CACHE_INTERFACE_PATH, &cache_iface_desc);
-   eldbus_service_object_data_set(pd->cache_interface, "_bridge", obj);
+   eldbus_service_object_data_set(pd->cache_interface, ELM_ATSPI_BRIDGE_CLASS_NAME, obj);
 }
 
 static void
@@ -2714,6 +2717,7 @@ _set_broadcast_flag(const char *event, Eo *bridge)
 static void
 _registered_listeners_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
+   const char *event, *bus;
    Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(data, ELM_ATSPI_BRIDGE_CLASS);
    pd->pending_requests = eina_list_remove(pd->pending_requests, pending);
 
@@ -2724,7 +2728,11 @@ _registered_listeners_get(void *data, const Eldbus_Message *msg, Eldbus_Pending 
    pd->object_state_broadcast_mask = 0;
    pd->window_signal_broadcast_mask = 0;
 
-   const char *event, *bus;
+   if (eldbus_message_error_get(msg, &event, &bus))
+     {
+        WRN("%s %s", event, bus);
+        return;
+     }
    Eldbus_Message_Iter *iter, *siter;
    if (!eldbus_message_arguments_get(msg, "a(ss)", &iter))
      {
@@ -3178,7 +3186,8 @@ _a11y_connection_shutdown(Eo *bridge)
    Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(bridge, ELM_ATSPI_BRIDGE_CLASS);
    Eldbus_Pending *pending;
 
-   _elm_atspi_bridge_app_unregister(bridge);
+   if (pd->connected)
+      _elm_atspi_bridge_app_unregister(bridge);
    _bridge_interfaces_unregister(bridge);
 
    if (pd->cache)
