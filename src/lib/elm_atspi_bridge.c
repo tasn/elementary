@@ -49,6 +49,7 @@
 typedef struct Key_Event_Info {
      Ecore_Event_Key event;
      int type;
+     Eo *bridge;
 } Key_Event_Info;
 
 typedef struct _Elm_Atspi_Bridge_Data
@@ -3611,7 +3612,7 @@ _elm_atspi_bridge_shutdown(void)
 }
 
 static Key_Event_Info*
-_key_event_info_new(int event_type, const Ecore_Event_Key *data)
+_key_event_info_new(int event_type, const Ecore_Event_Key *data, Eo *bridge)
 {
    Key_Event_Info *ret;
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, NULL);
@@ -3620,6 +3621,7 @@ _key_event_info_new(int event_type, const Ecore_Event_Key *data)
 
    ret->type = event_type;
    ret->event = *data;
+   ret->bridge = bridge;
 
    ret->event.keyname = eina_stringshare_add(data->keyname);
    ret->event.key = eina_stringshare_add(data->key);
@@ -3679,9 +3681,7 @@ _on_listener_answer(void *data, const Eldbus_Message *msg, Eldbus_Pending *pendi
    const char *errname, *errmsg;
    Eina_Bool ret = EINA_TRUE;
 
-   if (!_instance) return;
-   Elm_Atspi_Bridge_Data *pd = eo_data_scope_get(_instance, ELM_ATSPI_BRIDGE_CLASS);
-   if (!pd) return;
+   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(info->bridge, pd);
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
@@ -3723,7 +3723,7 @@ _elm_atspi_bridge_key_filter(void *data, void *loop EINA_UNUSED, int type, void 
         return EINA_TRUE;
      }
 
-   ke = _key_event_info_new(type, key_event);
+   ke = _key_event_info_new(type, key_event, bridge);
    if (!ke) return EINA_TRUE;
 
    msg = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_DEC,
