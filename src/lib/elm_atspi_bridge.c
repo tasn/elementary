@@ -102,7 +102,7 @@ static Eina_Bool _text_selection_changed_send(void *data, Eo *obj, const Eo_Even
 // bridge private methods
 static void _bridge_cache_build(Eo *bridge, void *obj);
 static void _bridge_object_register(Eo *bridge, Eo *obj);
-static void _bridge_object_callbacks_unregister(Eo *bridge, Eo *obj);
+static void _bridge_object_unregister(Eo *bridge, Eo *obj);
 static char * _bridge_path_from_object(Eo *bridge, const Eo *eo);
 static void _bridge_interfaces_register(Eo *bridge);
 static void _bridge_interfaces_unregister(Eo *bridge);
@@ -3011,7 +3011,7 @@ _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *d
                        atspi_desc, idx, 0, "(so)", eldbus_connection_unique_name_get(pd->a11y_bus), ev_data->child);
 
    if (type == ATSPI_OBJECT_CHILD_REMOVED)
-     _bridge_object_callbacks_unregister(data, ev_data->child);
+     _bridge_object_unregister(data, ev_data->child);
 
    return EINA_TRUE;
 }
@@ -3249,7 +3249,7 @@ _event_handlers_register(Eo *bridge)
 }
 
 static void
-_bridge_object_callbacks_unregister(Eo *bridge, Eo *obj)
+_bridge_object_unregister(Eo *bridge, Eo *obj)
 {
    char *path;
    Eldbus_Message *sig;
@@ -3275,7 +3275,7 @@ _on_object_del(void *data, Eo *obj, const Eo_Event_Description *event EINA_UNUSE
 {
    Eo *bridge = data;
 
-   _bridge_object_callbacks_unregister(bridge, obj);
+   _bridge_object_unregister(bridge, obj);
 
    return EINA_TRUE;
 }
