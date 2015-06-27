@@ -3487,12 +3487,12 @@ _screen_reader_enabled_get(void *data, const Eldbus_Message *msg, Eldbus_Pending
      }
    if (!eldbus_message_arguments_get(msg, "v", &variant))
      {
-        ERR("'IsEnabled' not packed into variant.");
+        ERR("'ScreenReaderEnabled' not packed into variant.");
         return;
      }
    if (!eldbus_message_iter_arguments_get(variant, "b", &is_enabled))
      {
-        ERR("Could not get 'IsEnabled' boolean property");
+        ERR("Could not get 'ScreenReaderEnabled' boolean property");
         return;
      }
 
@@ -3759,12 +3759,12 @@ _properties_changed_cb(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event)
    Eo *bridge = data;
    Eina_Bool val;
    const char *ifc = eldbus_proxy_interface_get(ev->proxy);
-   if (ev->name && !strcmp(ev->name, "IsEnabled" ) &&
+   if (ev->name && !strcmp(ev->name, "ScreenReaderEnabled" ) &&
        ifc && !strcmp(A11Y_DBUS_STATUS_INTERFACE, ifc))
      {
         if (!eina_value_get(ev->value, &val))
           {
-             ERR("Unable to get IsEnabled property value");
+             ERR("Unable to get ScreenReaderEnabled property value");
              return;
           }
         if (val)
@@ -3801,7 +3801,7 @@ _elm_atspi_bridge_eo_base_constructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
         ERR("Could not get proxy object for %s interface", A11Y_DBUS_STATUS_INTERFACE);
         goto proxy_err;
      }
-   if (!(req = eldbus_proxy_property_get(proxy, "IsEnabled", _screen_reader_enabled_get, obj)))
+   if (!(req = eldbus_proxy_property_get(proxy, "ScreenReaderEnabled", _screen_reader_enabled_get, obj)))
      {
         ERR("Could not send PropertyGet request");
         goto proxy_err;
