@@ -3770,7 +3770,8 @@ _elm_atspi_bridge_key_filter(void *data, void *loop EINA_UNUSED, int type, void 
    _iter_marshall_key_event(iter, ke);
 
    // timeout should be kept reasonaby low to avoid delays
-   eldbus_connection_send(pd->a11y_bus, msg, _on_listener_answer, ke, 100);
+   if (!eldbus_connection_send(pd->a11y_bus, msg, _on_listener_answer, ke, 100))
+     return EINA_TRUE;
 
    return EINA_FALSE;
 }
