@@ -3299,7 +3299,6 @@ _bridge_object_unregister(Eo *bridge, Eo *obj)
 {
    char *path;
    Eldbus_Message *sig;
-   Eldbus_Service_Interface *ifc;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
@@ -3309,27 +3308,6 @@ _bridge_object_unregister(Eo *bridge, Eo *obj)
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(sig);
    _iter_object_reference_append(iter, obj);
    eldbus_service_signal_send(pd->cache_interface, sig);
-
-   eo_do(obj, ifc = eo_key_data_get(ATSPI_DBUS_INTERFACE_EVENT_OBJECT));
-   if (ifc) eldbus_service_interface_unregister(ifc);
-   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN)));
-   if (ifc) eldbus_service_interface_unregister(ifc);
-   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_ACTION_MIXIN)));
-   if (ifc) eldbus_service_interface_unregister(ifc);
-   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_COMPONENT_MIXIN)));
-   if (ifc) eldbus_service_interface_unregister(ifc);
-   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE)));
-   if (ifc) eldbus_service_interface_unregister(ifc);
-   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_IMAGE_MIXIN)));
-   if (ifc) eldbus_service_interface_unregister(ifc);
-   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_SELECTION_INTERFACE)));
-   if (ifc) eldbus_service_interface_unregister(ifc);
-   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_TEXT_INTERFACE)));
-   if (ifc) eldbus_service_interface_unregister(ifc);
-   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_WINDOW_INTERFACE)));
-   if (ifc) eldbus_service_interface_unregister(ifc);
-   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_VALUE_INTERFACE)));
-   if (ifc) eldbus_service_interface_unregister(ifc);
 
    path = _bridge_path_from_object(bridge, obj);
    eina_hash_del(pd->cache, path, obj);
@@ -3614,6 +3592,8 @@ static void _bridge_object_register(Eo *bridge, Eo *obj)
 
 static void _object_callbacks_unregister(Eo *obj, void *data)
 {
+   Eldbus_Service_Interface *ifc;
+
    eo_do(obj, eo_event_callback_array_del(_events_cb(), data));
    if (eo_isa(obj, ELM_INTERFACE_ATSPI_WINDOW_INTERFACE))
      eo_do(obj, eo_event_callback_array_del(_window_cb(), data));
@@ -3621,6 +3601,27 @@ static void _object_callbacks_unregister(Eo *obj, void *data)
       eo_do(obj, eo_event_callback_array_del(_selection_cb(), data));
    if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_INTERFACE))
       eo_do(obj, eo_event_callback_array_del(_text_cb(), data));
+
+   eo_do(obj, ifc = eo_key_data_get(ATSPI_DBUS_INTERFACE_EVENT_OBJECT));
+   if (ifc) eldbus_service_interface_unregister(ifc);
+   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN)));
+   if (ifc) eldbus_service_interface_unregister(ifc);
+   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_ACTION_MIXIN)));
+   if (ifc) eldbus_service_interface_unregister(ifc);
+   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_COMPONENT_MIXIN)));
+   if (ifc) eldbus_service_interface_unregister(ifc);
+   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE)));
+   if (ifc) eldbus_service_interface_unregister(ifc);
+   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_IMAGE_MIXIN)));
+   if (ifc) eldbus_service_interface_unregister(ifc);
+   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_SELECTION_INTERFACE)));
+   if (ifc) eldbus_service_interface_unregister(ifc);
+   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_TEXT_INTERFACE)));
+   if (ifc) eldbus_service_interface_unregister(ifc);
+   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_WINDOW_INTERFACE)));
+   if (ifc) eldbus_service_interface_unregister(ifc);
+   eo_do(obj, ifc = eo_key_data_get(eo_class_name_get(ELM_INTERFACE_ATSPI_VALUE_INTERFACE)));
+   if (ifc) eldbus_service_interface_unregister(ifc);
 }
 
 static Eina_Bool
