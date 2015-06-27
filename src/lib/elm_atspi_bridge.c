@@ -32,7 +32,6 @@
 
 #define ELM_ACCESS_OBJECT_PATH_ROOT "root"
 #define ELM_ACCESS_OBJECT_PATH_PREFIX  "/org/a11y/atspi/accessible/"
-#define ELM_ACCESS_OBJECT_PATH_PREFIX2  "/org/a11y/atspi/accessible"
 #define ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE ELM_ACCESS_OBJECT_PATH_PREFIX "%llu"
 
 #define SIZE(x) sizeof(x)/sizeof(x[0])
