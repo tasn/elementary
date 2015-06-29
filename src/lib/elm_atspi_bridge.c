@@ -2495,7 +2495,7 @@ _component_get_accessible_at_point(const Eldbus_Service_Interface *iface EINA_UN
    iter = eldbus_message_iter_get(ret);
    Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
    eo_do(obj, accessible = elm_interface_atspi_component_accessible_at_point_get(type, x, y));
-   _iter_object_reference_append(_instance, iter, accessible);
+   _iter_object_reference_append(bridge, iter, accessible);
 
    return ret;
 }
