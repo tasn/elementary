@@ -78,6 +78,11 @@ typedef struct _Elm_Atspi_Bridge_Data
    Eina_Bool connected : 1;
 } Elm_Atspi_Bridge_Data;
 
+struct cache_closure {
+     Eo *bridge;
+     Eldbus_Message_Iter *iter;
+};
+
 static Eo *_instance;
 static int _init_count = 0;
 
@@ -2327,11 +2332,12 @@ _cache_item_reference_append_cb(const Eina_Hash *hash EINA_UNUSED, const void *k
   if (!eo_ref_get(data) || eo_destructed_is(data))
     return EINA_TRUE;
 
+  struct cache_closure *cl = fdata;
   Eldbus_Message_Iter *iter_struct, *iter_sub_array;
-  Eldbus_Message_Iter *iter_array = fdata;
+  Eldbus_Message_Iter *iter_array = cl->iter;
   Elm_Atspi_State_Set states;
   Elm_Atspi_Role role;
-  Eo *root = elm_atspi_bridge_root_get(_instance);
+  Eo *root = elm_atspi_bridge_root_get(cl->bridge);
 
   eo_do(data, role = elm_interface_atspi_accessible_role_get());
 
@@ -2339,10 +2345,10 @@ _cache_item_reference_append_cb(const Eina_Hash *hash EINA_UNUSED, const void *k
   EINA_SAFETY_ON_NULL_RETURN_VAL(iter_struct, EINA_TRUE);
 
   /* Marshall object path */
-  _bridge_iter_object_reference_append(_instance, iter_struct, data);
+  _bridge_iter_object_reference_append(cl->bridge, iter_struct, data);
 
   /* Marshall application */
-  _bridge_iter_object_reference_append(_instance, iter_struct, root);
+  _bridge_iter_object_reference_append(cl->bridge, iter_struct, root);
 
   Eo *parent = NULL;
   eo_do(data, parent = elm_interface_atspi_accessible_parent_get());
@@ -2350,7 +2356,7 @@ _cache_item_reference_append_cb(const Eina_Hash *hash EINA_UNUSED, const void *k
   if ((!parent) && (ELM_ATSPI_ROLE_APPLICATION == role))
     _object_desktop_reference_append(iter_struct);
   else
-    _bridge_iter_object_reference_append(_instance, iter_struct, parent);
+    _bridge_iter_object_reference_append(cl->bridge, iter_struct, parent);
 
   /* Marshall children  */
   Eina_List *children_list = NULL, *l;
@@ -2361,7 +2367,7 @@ _cache_item_reference_append_cb(const Eina_Hash *hash EINA_UNUSED, const void *k
   EINA_SAFETY_ON_NULL_GOTO(iter_sub_array, fail);
 
   EINA_LIST_FOREACH(children_list, l, child)
-     _bridge_iter_object_reference_append(_instance, iter_sub_array, child);
+     _bridge_iter_object_reference_append(cl->bridge, iter_sub_array, child);
 
   eldbus_message_iter_container_close(iter_struct, iter_sub_array);
   eina_list_free(children_list);
@@ -2412,8 +2418,10 @@ fail:
 static Eldbus_Message *
 _cache_get_items(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
-   Eldbus_Message_Iter *iter, *iter_array;
+   Eldbus_Message_Iter *iter;
    Eldbus_Message *ret;
+   struct cache_closure cl;
+
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    if (!bridge) return NULL;
 
@@ -2423,11 +2431,13 @@ _cache_get_items(const Eldbus_Service_Interface *iface, const Eldbus_Message *ms
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
    iter = eldbus_message_iter_get(ret);
-   iter_array = eldbus_message_iter_container_new(iter, 'a', CACHE_ITEM_SIGNATURE);
-   EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
+   cl.iter = eldbus_message_iter_container_new(iter, 'a', CACHE_ITEM_SIGNATURE);
+   EINA_SAFETY_ON_NULL_GOTO(cl.iter, fail);
 
-   eina_hash_foreach(pd->cache, _cache_item_reference_append_cb, iter_array);
-   eldbus_message_iter_container_close(iter, iter_array);
+   cl.bridge = bridge;
+
+   eina_hash_foreach(pd->cache, _cache_item_reference_append_cb, &cl);
+   eldbus_message_iter_container_close(iter, cl.iter);
 
    return ret;
 fail:
@@ -3495,6 +3505,7 @@ _screen_reader_enabled_get(void *data, const Eldbus_Message *msg, Eldbus_Pending
 static void _bridge_object_register(Eo *bridge, Eo *obj)
 {
    char *path;
+   struct cache_closure cc;
    Eldbus_Message *sig;
    Eldbus_Service_Interface *ifc;
 
@@ -3581,8 +3592,9 @@ static void _bridge_object_register(Eo *bridge, Eo *obj)
      }
 
    sig = eldbus_service_signal_new(pd->cache_interface, ATSPI_OBJECT_CHILD_ADDED);
-   Eldbus_Message_Iter *iter = eldbus_message_iter_get(sig);
-   _cache_item_reference_append_cb(NULL, NULL, obj, iter);
+   cc.iter = eldbus_message_iter_get(sig);
+   cc.bridge = bridge;
+   _cache_item_reference_append_cb(NULL, NULL, obj, &cc);
 
    eldbus_service_signal_send(pd->cache_interface, sig);
 
