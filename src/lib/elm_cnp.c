@@ -249,6 +249,22 @@ static Eina_Bool _x11_elm_selection_selection_has_owner  (Evas_Object *obj EINA_
 
 #endif
 
+#ifdef HAVE_ELEMENTARY_WAYLAND
+typedef struct _Wl_Cnp_Selection Wl_Cnp_Selection;
+
+typedef Eina_Bool (*Wl_Converter_Fn_Cb)  (char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+static Eina_Bool _wl_targets_converter   (char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+static Eina_Bool _wl_general_converter   (char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+static Eina_Bool _wl_text_converter      (char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+
+typedef Eina_Bool (*Wl_Notify_Handler_Cb)  (Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev);
+static Eina_Bool _wl_notify_handler_targets(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev);
+static Eina_Bool _wl_notify_handler_uri(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev);
+static Eina_Bool _wl_vcard_receive(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev);
+static Eina_Bool _wl_notify_handler_image(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev);
+static Eina_Bool _wl_notify_handler_text(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev);
+#endif
+
 struct _Cnp_Atom
 {
    const char              *name;
@@ -259,6 +275,10 @@ struct _Cnp_Atom
    X11_Data_Preparer_Cb     x_data_preparer;
    /* Atom */
    Ecore_X_Atom             x_atom;
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   Wl_Converter_Fn_Cb       wl_converter;
+   Wl_Notify_Handler_Cb     wl_notify;
 #endif
    void                    *_term;
 };
@@ -438,6 +458,10 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_targets_converter,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_targets_converter,
+        .wl_notify = _wl_notify_handler_targets,
+#endif
    },
    ARRAYINIT(CNP_ATOM_ATOM) {
         .name = "ATOM", // for opera browser
@@ -445,12 +469,19 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_targets_converter,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_targets_converter,
+        .wl_notify = _wl_notify_handler_targets,
+#endif
    },
    ARRAYINIT(CNP_ATOM_XELM)  {
         .name = "application/x-elementary-markup",
         .formats = ELM_SEL_FORMAT_MARKUP,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_general_converter,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_general_converter,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_urilist) {
@@ -460,6 +491,10 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_general_converter,
         .x_data_preparer = _x11_data_preparer_uri,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_general_converter,
+        .wl_notify = _wl_notify_handler_uri,
+#endif
    },
    ARRAYINIT(CNP_ATOM_text_x_vcard) {
         .name = "text/x-vcard",
@@ -467,6 +502,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_vcard_send,
         .x_data_preparer = _x11_data_preparer_vcard,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_notify = _wl_vcard_receive,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_png) {
@@ -476,6 +514,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_image_converter,
         .x_data_preparer = _x11_data_preparer_image,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_notify = _wl_notify_handler_image,
+#endif
    },
    ARRAYINIT(CNP_ATOM_image_jpeg) {
         .name = "image/jpeg",
@@ -483,6 +524,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
         .x_data_preparer = _x11_data_preparer_image,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_notify = _wl_notify_handler_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_bmp) {
@@ -492,6 +536,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_image_converter,
         .x_data_preparer = _x11_data_preparer_image,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_notify = _wl_notify_handler_image,
+#endif
    },
    ARRAYINIT(CNP_ATOM_image_gif) {
         .name = "image/gif",
@@ -499,6 +546,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
         .x_data_preparer = _x11_data_preparer_image,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_notify = _wl_notify_handler_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_tiff) {
@@ -508,6 +558,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_image_converter,
         .x_data_preparer = _x11_data_preparer_image,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_notify = _wl_notify_handler_image,
+#endif
    },
    ARRAYINIT(CNP_ATOM_image_svg) {
         .name = "image/svg+xml",
@@ -515,6 +568,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
         .x_data_preparer = _x11_data_preparer_image,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_notify = _wl_notify_handler_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_xpm) {
@@ -524,6 +580,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_image_converter,
         .x_data_preparer = _x11_data_preparer_image,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_notify = _wl_notify_handler_image,
+#endif
    },
    ARRAYINIT(CNP_ATOM_image_tga) {
         .name = "image/x-tga",
@@ -532,6 +591,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_image_converter,
         .x_data_preparer = _x11_data_preparer_image,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_notify = _wl_notify_handler_image,
+#endif
    },
    ARRAYINIT(CNP_ATOM_image_ppm) {
         .name = "image/x-portable-pixmap",
@@ -539,6 +601,9 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
         .x_data_preparer = _x11_data_preparer_image,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_notify = _wl_notify_handler_image,
 #endif
    },
 /*
@@ -566,6 +631,10 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_text_converter,
         .x_data_preparer = _x11_data_preparer_text,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_text_converter,
+        .wl_notify = _wl_notify_handler_text,
+#endif
    },
    ARRAYINIT(CNP_ATOM_STRING) {
         .name = "STRING",
@@ -573,6 +642,10 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_text_converter,
         .x_data_preparer = _x11_data_preparer_text,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_text_converter,
+        .wl_notify = _wl_notify_handler_text,
 #endif
    },
    ARRAYINIT(CNP_ATOM_COMPOUND_TEXT) {
@@ -582,6 +655,10 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_text_converter,
         .x_data_preparer = _x11_data_preparer_text,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_text_converter,
+        .wl_notify = _wl_notify_handler_text,
+#endif
    },
    ARRAYINIT(CNP_ATOM_TEXT) {
         .name = "TEXT",
@@ -589,6 +666,10 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_text_converter,
         .x_data_preparer = _x11_data_preparer_text,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_text_converter,
+        .wl_notify = _wl_notify_handler_text,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_plain_utf8) {
@@ -598,6 +679,10 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .x_converter = _x11_text_converter,
         .x_data_preparer = _x11_data_preparer_text,
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_text_converter,
+        .wl_notify = _wl_notify_handler_text,
+#endif
    },
    ARRAYINIT(CNP_ATOM_text_plain) {
         .name = "text/plain",
@@ -605,6 +690,10 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_text_converter,
         .x_data_preparer = _x11_data_preparer_text,
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        .wl_converter = _wl_text_converter,
+        .wl_notify = _wl_notify_handler_text,
 #endif
    },
 };
@@ -2284,8 +2373,6 @@ _x11_elm_selection_selection_has_owner(Evas_Object *obj EINA_UNUSED)
 #endif
 
 #ifdef HAVE_ELEMENTARY_WAYLAND
-typedef struct _Wl_Cnp_Selection Wl_Cnp_Selection;
-
 struct _Wl_Cnp_Selection
 {
    char *selbuf;
@@ -2307,6 +2394,7 @@ struct _Wl_Cnp_Selection
    Elm_Xdnd_Action action;
 
    Eina_Bool active : 1;
+   Eina_Bool requestfinished : 1;
 };
 
 static Eina_Bool _wl_elm_cnp_init(void);
@@ -2344,7 +2432,7 @@ static Eina_Bool _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void
 static Eina_Bool _wl_dnd_send(void *data, int type EINA_UNUSED, void *event);
 static Eina_Bool _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event);
 static Eina_Bool _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
-static void _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data);
+static void _wl_dropable_data_handle(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev);
 
 static Dropable *_wl_dropable_find(unsigned int win);
 static void _wl_dropable_handle(Dropable *drop, Evas_Coord x, Evas_Coord y);
@@ -2352,6 +2440,599 @@ static void _wl_dropable_all_clean(unsigned int win);
 static Eina_Bool _wl_drops_accept(const char *type);
 static unsigned int _wl_elm_widget_window_get(const Evas_Object *obj);
 static Evas * _wl_evas_get_from_win(unsigned int win);
+
+static Eina_Bool
+_wl_is_uri_type_data(const void *data, int len)
+{
+   char *p;
+   if (len < 6) return EINA_FALSE;
+
+   p = (char *)data;
+   if (!p) return EINA_FALSE;
+   if (strncmp(p, "file:/", 6))
+     {
+        if (*p != '/') return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_wl_targets_converter(char *target, Wl_Cnp_Selection *sel EINA_UNUSED, void *data EINA_UNUSED, int size EINA_UNUSED, void **data_ret, int *size_ret)
+{
+   cnp_debug("in\n");
+   if (!data_ret) return EINA_FALSE;
+
+   const char *sep = "\n";
+   char *aret;
+   int len = 0;
+   int i = 0;
+   Elm_Sel_Format formats = ELM_SEL_FORMAT_NONE;
+   Eina_Bool is_uri_data = EINA_TRUE;
+
+   if (sel->format)
+     {
+        formats = sel->format;
+        is_uri_data = _wl_is_uri_type_data(sel->selbuf, sel->buflen);
+     }
+   else
+     {
+        Cnp_Atom *atom = eina_hash_find(_types_hash, target);
+        if (atom)
+          formats = atom->formats;
+     }
+   /* Only provide formats which selection owner can send */
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        if (formats & _atoms[i].formats)
+          {
+             if ((is_uri_data) || (!is_uri_data &&
+                                   strcmp(_atoms[i].name, "text/uri-list")))
+               len += strlen(_atoms[i].name) + strlen(sep);
+          }
+     }
+   aret = calloc(1, len * sizeof(char));
+   if (!aret) return EINA_FALSE;
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        if (formats & _atoms[i].formats)
+          {
+             if ((is_uri_data) || (!is_uri_data &&
+                                   strcmp(_atoms[i].name, "text/uri-list")))
+               {
+                  aret = strcat(aret, _atoms[i].name);
+                  aret = strcat(aret, sep);
+               }
+          }
+     }
+   *data_ret = aret;
+   if (size_ret) *size_ret = len;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_wl_general_converter(char *target, Wl_Cnp_Selection *sel EINA_UNUSED, void *data, int size, void **data_ret, int *size_ret)
+{
+   cnp_debug("in\n");
+   Elm_Sel_Format formats = ELM_SEL_FORMAT_NONE;
+   Cnp_Atom *atom = NULL;
+
+   atom = eina_hash_find(_types_hash, target);
+   if (atom)
+     formats = atom->formats;
+   if (formats == ELM_SEL_FORMAT_NONE)
+     {
+        if (data_ret)
+          {
+             *data_ret = malloc(size * sizeof(char) + 1);
+             if (!*data_ret) return EINA_FALSE;
+             memcpy(*data_ret, data, size);
+             ((char**)(data_ret))[0][size] = 0;
+          }
+        if (size_ret) *size_ret = size;
+     }
+   else
+     {
+        if (data)
+          {
+             if (data_ret) *data_ret = strdup(data);
+             if (size_ret) *size_ret = strlen(data);
+          }
+        else
+          {
+             if (data_ret) *data_ret = NULL;
+             if (size_ret) *size_ret = 0;
+          }
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_wl_text_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret)
+{
+   cnp_debug("in\n");
+   Elm_Sel_Format formats = ELM_SEL_FORMAT_NONE;
+   Cnp_Atom *atom = NULL;
+
+   atom = eina_hash_find(_types_hash, target);
+   if (atom)
+     formats = atom->formats;
+   if (formats == ELM_SEL_FORMAT_NONE)
+     {
+        if (data_ret)
+          {
+             *data_ret = malloc(size * sizeof(char) + 1);
+             if (!*data_ret) return EINA_FALSE;
+             memcpy(*data_ret, data, size);
+             ((char**)(data_ret))[0][size] = 0;
+             if (size_ret) *size_ret = size;
+             return EINA_TRUE;
+          }
+     }
+   else if ((formats & ELM_SEL_FORMAT_MARKUP) ||
+            (formats & ELM_SEL_FORMAT_HTML))
+     {
+        *data_ret = _elm_util_mkup_to_text(data);
+        if (size_ret && *data_ret) *size_ret = strlen(*data_ret);
+     }
+   else if (formats & ELM_SEL_FORMAT_TEXT)
+     {
+        *data_ret = strdup(data);
+        if (size_ret && *data_ret) *size_ret = strlen(*data_ret);
+     }
+   else if (formats & ELM_SEL_FORMAT_IMAGE)
+     {
+        cnp_debug("Image %s\n", evas_object_type_get(sel->widget));
+        evas_object_image_file_get(elm_photocam_internal_image_get(sel->widget),
+                                   (const char **)data_ret, NULL);
+        if (!data_ret) *data_ret = strdup("No file");
+        else *data_ret = strdup(*data_ret);
+
+        if (!*data_ret)
+          {
+             ERR("Failed to allocate memory!");
+             *size_ret = 0;
+             return EINA_FALSE;
+          }
+        if (size_ret) *size_ret = strlen(*data_ret);
+     }
+   return EINA_TRUE;
+}
+
+static void
+_wl_selection_parser(void *_data,
+                        int size,
+                        char ***ret_data,
+                        int *ret_count)
+{
+   char **files = NULL;
+   int num_files = 0;
+   char *data = _data;
+
+   if (data && (size > 0))
+     {
+        int i, is;
+        char *tmp;
+        char **t2;
+
+        if (data[size - 1])
+          {
+             char *t;
+
+             /* Isn't nul terminated */
+             size++;
+             t = realloc(data, size);
+             if (!t) goto done;
+             data = t;
+             data[size - 1] = 0;
+          }
+
+        tmp = malloc(size);
+        if (!tmp) goto done;
+        i = 0;
+        is = 0;
+        while ((is < size) && (data[is]))
+          {
+             if ((i == 0) && (data[is] == '#'))
+               for (; ((data[is]) && (data[is] != '\n')); is++) ;
+             else
+               {
+                  if ((data[is] != '\r') &&
+                      (data[is] != '\n'))
+                    tmp[i++] = data[is++];
+                  else
+                    {
+                       while ((data[is] == '\r') || (data[is] == '\n'))
+                         is++;
+                       tmp[i] = 0;
+                       num_files++;
+                       t2 = realloc(files, num_files * sizeof(char *));
+                       if (t2)
+                         {
+                            files = t2;
+                            files[num_files - 1] = strdup(tmp);
+                         }
+                       tmp[0] = 0;
+                       i = 0;
+                    }
+               }
+          }
+        if (i > 0)
+          {
+             tmp[i] = 0;
+             num_files++;
+             t2 = realloc(files, num_files * sizeof(char *));
+             if (t2)
+               {
+                  files = t2;
+                  files[num_files - 1] = strdup(tmp);
+               }
+          }
+
+        free(tmp);
+     }
+done:
+   if (ret_data) *ret_data = files;
+   if (ret_count) *ret_count = num_files;
+}
+
+static Eina_Bool
+_wl_dnd_drag_get_timer_cb(void *data)
+{
+   char *type = data;
+
+   ecore_wl_dnd_drag_get(ecore_wl_input_get(), type);
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static Eina_Bool
+_wl_notify_handler_targets(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev)
+{
+   cnp_debug("In\n");
+   if (!ev) return EINA_FALSE;
+   char *data = ev->data;
+   int len = ev->len;
+   int count = 0, i = 0;
+   char **data_arr = NULL;
+   Cnp_Atom *atom = NULL;
+
+   _wl_selection_parser(data, len, &data_arr, &count);
+   for (i = 0; i < count; i++)
+     {
+        atom = eina_hash_find(_types_hash, data_arr[i]);
+        if (atom && (atom->formats != ELM_SEL_FORMAT_TARGETS))
+          {
+             cnp_debug("Match found: %s\n", atom->name);
+             sel->requestfinished = EINA_FALSE;
+             /* Since we cannot call ecore_wl_dnd_drag_get in here (it causes
+                ecore callbacks circular dependency and makes drag_send cannot
+                be called), we use ecore_timer to call it */
+             ecore_timer_add(0.001, _wl_dnd_drag_get_timer_cb, atom->name);
+             break;
+          }
+     }
+   free(data_arr);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_wl_notify_handler_uri(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev)
+{
+   cnp_debug("In\n");
+
+   char *p, *s, *stripstr = NULL;
+   char *data = ev->data;
+   Dropable *drop;
+   const char *type = NULL;
+   Dropable *dropable;
+   Eina_List *l;
+   Dropable_Cbs *cbs;
+   Eina_Inlist *itr;
+   Elm_Selection_Data ddata;
+
+   eo_do(sel->requestwidget, drop = eo_key_data_get("__elm_dropable"));
+   if (drop)
+     type = drop->last.type;
+   if (!strcmp(type, "text/uri-list"))
+     {
+        int num_files = 0;
+        char **files = NULL;
+        int i, len = 0;
+        Efreet_Uri **uri;
+
+        _wl_selection_parser(ev->data, ev->len, &files, &num_files);
+        cnp_debug("got a files list\n");
+        //files = ev->data;
+        /*
+        if (files->num_files > 1)
+          {
+             // Don't handle many items <- this makes mr bigglesworth sad :(
+             cnp_debug("more then one file: Bailing\n");
+             return 0;
+          }
+        stripstr = p = strdup(files->files[0]);
+         */
+
+        uri = calloc(1, sizeof(*uri) * num_files);
+        if (!uri) return 0;
+
+        for (i = 0; i < num_files ; i++)
+          {
+             uri[i] = efreet_uri_decode(files[i]);
+             if (!uri[i])
+               {
+                  /* Is there any reason why we care of URI without scheme? */
+                  if (files[i][0] != '/') continue;
+                  len += strlen(files[i]) + 1;
+               }
+             else
+               {
+                  if (strcmp(uri[i]->protocol, "file"))
+                    {
+                       efreet_uri_free(uri[i]);
+                       uri[i] = NULL;
+                       continue;
+                    }
+                  len += strlen(uri[i]->path) + 1;
+               }
+          }
+        p = NULL;
+        if (len > 0)
+          {
+             s = stripstr = malloc(len + 1);
+             for (i = 0; i < num_files ; i++)
+               {
+                  if (uri[i])
+                    p = (char *)uri[i]->path;
+                  else
+                    p = files[i];
+
+                  len = strlen(p);
+                  strcpy(s, p);
+                  if (i < (num_files - 1))
+                    {
+                       s[len] = '\n';
+                       s[len + 1] = 0;
+                       s += len + 1;
+                    }
+                  else
+                    {
+                       s[len] = 0;
+                       s += len;
+                    }
+
+                  if (uri[i])
+                    efreet_uri_free(uri[i]);
+               }
+          }
+        free(uri);
+     }
+   else
+     {
+        Efreet_Uri *uri;
+        int len = 0;
+
+        p = (char *)data;
+        uri = efreet_uri_decode(p);
+        if (!uri)
+          {
+             /* Is there any reason why we care of URI without scheme? */
+             if (p[0] == '/')
+               len = ev->len;
+          }
+        else
+          {
+             p = (char *)uri->path;
+             len = strlen(p);
+          }
+        if (len > 0)
+          {
+             stripstr = malloc(len + 1);
+             if (!stripstr) return 0;
+             memcpy(stripstr, p, len);
+             stripstr[len] = 0;
+          }
+     }
+
+   if (!stripstr)
+     {
+        cnp_debug("Couldn't find a file\n");
+        return 0;
+     }
+   free(savedtypes.imgfile);
+
+   if (ev->selection == ECORE_WL_SELECTION_DND)
+     {
+        EINA_LIST_FOREACH(drops, l, dropable)
+          {
+             if (dropable->obj == sel->requestwidget) break;
+          }
+        if (!dropable)
+          {
+             cnp_debug("Unable to find drop object");
+             ecore_wl_dnd_drag_end(ecore_wl_input_get());
+             return 0;
+          }
+        dropable = eina_list_data_get(l);
+        ddata.x = savedtypes.x;
+        ddata.y = savedtypes.y;
+        ddata.data = stripstr;
+        ddata.len = strlen(stripstr);
+        ddata.action = sel->action;
+        ddata.format = sel->requestformat;
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+           if ((cbs->types & dropable->last.format) && cbs->dropcb)
+             cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+        ecore_wl_dnd_drag_end(ecore_wl_input_get());
+     }
+   else if (sel->datacb)
+     {
+        ddata.x = ddata.y = 0;
+        ddata.format = ELM_SEL_FORMAT_MARKUP;
+        ddata.data = stripstr;
+        ddata.len = strlen(stripstr);
+        ddata.action = sel->action;
+        sel->datacb(sel->udata, sel->requestwidget, &ddata);
+     }
+   else cnp_debug("Paste request\n");
+
+   return 0;
+}
+
+static Eina_Bool
+_wl_vcard_receive(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev)
+{
+   cnp_debug("In\n");
+   Elm_Selection_Data ddata;
+
+   if (ev->selection == ECORE_WL_SELECTION_DND)
+     {
+        Dropable *dropable;
+        Eina_List *l;
+        Dropable_Cbs *cbs;
+        Eina_Inlist *itr;
+        cnp_debug("vcard receive\n");
+
+        EINA_LIST_FOREACH(drops, l, dropable)
+          {
+             if (dropable->obj == sel->requestwidget) break;
+          }
+        if (!dropable)
+          {
+             cnp_debug("Unable to find drop object");
+             ecore_wl_dnd_drag_end(ecore_wl_input_get());
+             return 0;
+          }
+        dropable = eina_list_data_get(l);
+        ddata.x = savedtypes.x;
+        ddata.y = savedtypes.y;
+        ddata.format = ELM_SEL_FORMAT_VCARD;
+        ddata.data = ev->data;
+        ddata.len = ev->len;
+        ddata.action = sel->action;
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+           if ((cbs->types & dropable->last.format) && cbs->dropcb)
+             cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+        ecore_wl_dnd_drag_end(ecore_wl_input_get());
+     }
+   else if (sel->datacb)
+     {
+        ddata.x = ddata.y = 0;
+        ddata.format = ELM_SEL_FORMAT_VCARD;
+        ddata.data = ev->data;
+        ddata.len = ev->len;
+        ddata.action = sel->action;
+        sel->datacb(sel->udata, sel->requestwidget, &ddata);
+     }
+   else cnp_debug("Paste request\n");
+
+   return 0;
+}
+
+static Eina_Bool
+_wl_notify_handler_image(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev)
+{
+   cnp_debug("In\n");
+   Tmp_Info *tmp;
+   Elm_Selection_Data ddata;
+
+   if (ev->selection == ECORE_WL_SELECTION_DND)
+     {
+        Eina_List *l;
+        Dropable *dropable;
+
+        tmp = _tempfile_new(ev->len);
+        if (!tmp)
+          {
+             ecore_wl_dnd_drag_end(ecore_wl_input_get());
+             return 0;
+          }
+        memcpy(tmp->map, ev->data, ev->len);
+        munmap(tmp->map, ev->len);
+        EINA_LIST_FOREACH(drops, l, dropable)
+          {
+             if (dropable->obj == sel->requestwidget) break;
+             dropable = NULL;
+          }
+        if (dropable)
+          {
+             Dropable_Cbs *cbs;
+             Eina_Inlist *itr;
+             ddata.x = savedtypes.x;
+             ddata.y = savedtypes.y;
+             ddata.format = ELM_SEL_FORMAT_IMAGE;
+             ddata.data = tmp->filename;
+             ddata.len = strlen(tmp->filename);
+             ddata.action = sel->action;
+             EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+                if ((cbs->types & dropable->last.format) && cbs->dropcb)
+                  cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+          }
+        _tmpinfo_free(tmp);
+        ecore_wl_dnd_drag_end(ecore_wl_input_get());
+     }
+   else if (sel->datacb)
+     {
+        ddata.x = ddata.y = 0;
+        ddata.format = ELM_SEL_FORMAT_IMAGE;
+        ddata.data = ev->data;
+        ddata.len = ev->len;
+        ddata.action = sel->action;
+        sel->datacb(sel->udata, sel->requestwidget, &ddata);
+     }
+   else cnp_debug("Paste request\n");
+
+   return 0;
+}
+
+static Eina_Bool
+_wl_notify_handler_text(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev)
+{
+   cnp_debug("In\n");
+
+   Elm_Selection_Data ddata;
+
+   if (ev->selection == ECORE_WL_SELECTION_DND)
+     {
+        Eina_List *l;
+        Dropable *dropable;
+
+        cnp_debug("drag & drop\n");
+        EINA_LIST_FOREACH(drops, l, dropable)
+          {
+             if (dropable->obj == sel->requestwidget) break;
+             dropable = NULL;
+          }
+        if (dropable)
+          {
+             Dropable_Cbs *cbs;
+             Eina_Inlist *itr;
+             ddata.x = savedtypes.x;
+             ddata.y = savedtypes.y;
+             ddata.format = ELM_SEL_FORMAT_TEXT;
+             ddata.data = ev->data;
+             ddata.len = ev->len;
+             ddata.action = sel->action;
+             EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+                if ((cbs->types & dropable->last.format) && cbs->dropcb)
+                  cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+          }
+        ecore_wl_dnd_drag_end(ecore_wl_input_get());
+     }
+   else if (sel->datacb)
+     {
+        ddata.x = ddata.y = 0;
+        ddata.format = ELM_SEL_FORMAT_TEXT;
+        ddata.data = ev->data;
+        ddata.len = ev->len;
+        ddata.action = sel->action;
+        sel->datacb(sel->udata, sel->requestwidget, &ddata);
+     }
+   else cnp_debug("Paste request\n");
+
+   return 0;
+}
 
 static void
 _wl_sel_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -3105,6 +3786,7 @@ _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
           {
              cnp_debug("Request data of type %s\n", drop->last.type);
              wl_cnp_selection.requestwidget = drop->obj;
+             wl_cnp_selection.requestformat = drop->last.format;
              evas_object_event_callback_add(wl_cnp_selection.requestwidget,
                    EVAS_CALLBACK_DEL,
                    _wl_sel_obj_del2,
@@ -3126,15 +3808,38 @@ _wl_dnd_send(void *data, int type EINA_UNUSED, void *event)
    int len_written = 0;
    Wl_Cnp_Selection *sel;
    Ecore_Wl_Event_Data_Source_Send *ev;
+   void *data_ret = NULL;
+   int len_ret = 0;
+   Cnp_Atom *atom  = NULL;
 
    cnp_debug("In\n");
    ev = event;
    sel = data;
 
-   len_remained = sel->buflen;
-   buf = sel->selbuf;
+   atom = eina_hash_find(_types_hash, ev->type);
+   if (atom)
+     {
+        cnp_debug("Found a type: %s\n", atom->name);
+        Dropable *drop;
+        eo_do(sel->requestwidget, drop = eo_key_data_get("__elm_dropable"));
+        if (drop)
+          drop->last.type = atom->name;
+        if (atom->wl_converter)
+          {
+             atom->wl_converter(ev->type, sel, sel->selbuf,
+                                sel->buflen, &data_ret, &len_ret);
+          }
+        else
+          {
+             data_ret = strdup(sel->selbuf);
+             len_ret = sel->buflen;
+          }
+     }
 
-   while (len_written < sel->buflen)
+   len_remained = len_ret;
+   buf = data_ret;
+
+   while (len_written < len_ret)
      {
         ret = write(ev->fd, buf, len_remained);
         if (ret == -1) break;
@@ -3142,6 +3847,7 @@ _wl_dnd_send(void *data, int type EINA_UNUSED, void *event)
         len_written += ret;
         len_remained -= ret;
      }
+   free(data_ret);
 
    close(ev->fd);
    return ECORE_CALLBACK_PASS_ON;
@@ -3160,8 +3866,10 @@ _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event)
    if (sel->requestwidget)
      {
         if (!ev->done)
-          _wl_dropable_data_handle(sel, ev->data);
-        else
+          {
+             _wl_dropable_data_handle(sel, ev);
+          }
+        else if (sel->requestfinished)
           {
              evas_object_event_callback_del_full(sel->requestwidget,
                                                  EVAS_CALLBACK_DEL,
@@ -3212,29 +3920,12 @@ _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSE
 }
 
 static void
-_wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
+_wl_dropable_data_handle(Wl_Cnp_Selection *sel, Ecore_Wl_Event_Selection_Data_Ready *ev)
 {
    cnp_debug("In\n");
    Dropable *drop;
-   Elm_Selection_Data sdata;
-   int len = 0;
-   char *s = NULL;
 
-   len = strlen(data);
-   if (!(s = malloc(len + 1))) return;
-   memcpy(s, data, len);
-   s[len] = 0;
-
-   if (savedtypes.textreq)
-     {
-        savedtypes.textreq = 0;
-        savedtypes.imgfile = s;
-     }
-
-   sdata.len = len;
-   sdata.x = savedtypes.x;
-   sdata.y = savedtypes.y;
-
+   sel->requestfinished = EINA_TRUE;
    eo_do(sel->requestwidget, drop = eo_key_data_get("__elm_dropable"));
    if (drop)
      {
@@ -3244,23 +3935,13 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
           {
              if (cbs->types && drop->last.format)
                {
-                  /* If it's markup that also supports images */
-                  if (cbs->types & (ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE))
+                  Cnp_Atom *atom = eina_hash_find(_types_hash, drop->last.type);
+                  if (atom && atom->wl_notify)
                     {
-                       sdata.format = ELM_SEL_FORMAT_MARKUP;
-                       sdata.data = (char *)savedtypes.imgfile;
+                       cnp_debug("call notify: %s\n", drop->last.type);
+                       atom->wl_notify(sel, ev);
+                       return;
                     }
-                  else if (cbs->types & ELM_SEL_FORMAT_IMAGE)
-                    {
-                       sdata.format = ELM_SEL_FORMAT_IMAGE;
-                       sdata.data = (char *)savedtypes.imgfile;
-                    }
-                  else
-                    {
-                       sdata.format = drop->last.format;
-                       sdata.data = s;
-                    }
-                  if (cbs->dropcb) cbs->dropcb(cbs->dropdata, drop->obj, &sdata);
                }
           }
      }
