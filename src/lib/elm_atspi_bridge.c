@@ -2848,7 +2848,7 @@ _set_broadcast_flag(const char *event, Eo *bridge)
              else if (!strcmp(tokens[2], "add"))
                STATE_TYPE_SET(pd->object_children_broadcast_mask, ATSPI_OBJECT_CHILD_ADDED);
              else if (!strcmp(tokens[2], "remove"))
-               STATE_TYPE_SET(pd->object_children_broadcast_mask, ATSPI_OBJECT_CHILD_ADDED);
+               STATE_TYPE_SET(pd->object_children_broadcast_mask, ATSPI_OBJECT_CHILD_REMOVED);
           }
         else if (!strcmp(tokens[1], "TextChanged"))
           STATE_TYPE_SET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED);
