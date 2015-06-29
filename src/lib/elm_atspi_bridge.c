@@ -3231,7 +3231,7 @@ _text_caret_moved_send(void *data, Eo *obj, const Eo_Event_Description *desc EIN
    int cursor_pos = 0;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(data, pd, EINA_FALSE);
-   ELM_ATSPI_OBJECT_INTERFACE_GET_OR_RETURN_VAL(obj, eo_class_name_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN), ifc, EINA_FALSE);
+   ELM_ATSPI_OBJECT_INTERFACE_GET_OR_RETURN_VAL(obj, ATSPI_DBUS_INTERFACE_EVENT_OBJECT, ifc, EINA_FALSE);
 
    if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CARET_MOVED))
      return EINA_TRUE;
@@ -3249,7 +3249,7 @@ _text_text_inserted_send(void *data, Eo *obj, const Eo_Event_Description *desc E
    Elm_Atspi_Text_Change_Info *info = event_info;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(data, pd, EINA_TRUE);
-   ELM_ATSPI_OBJECT_INTERFACE_GET_OR_RETURN_VAL(obj, eo_class_name_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN), ifc, EINA_FALSE);
+   ELM_ATSPI_OBJECT_INTERFACE_GET_OR_RETURN_VAL(obj, ATSPI_DBUS_INTERFACE_EVENT_OBJECT, ifc, EINA_FALSE);
 
    if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED))
      return EINA_TRUE;
@@ -3265,7 +3265,7 @@ _text_text_removed_send(void *data, Eo *obj, const Eo_Event_Description *desc EI
    Elm_Atspi_Text_Change_Info *info = event_info;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(data, pd, EINA_TRUE);
-   ELM_ATSPI_OBJECT_INTERFACE_GET_OR_RETURN_VAL(obj, eo_class_name_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN), ifc, EINA_FALSE);
+   ELM_ATSPI_OBJECT_INTERFACE_GET_OR_RETURN_VAL(obj, ATSPI_DBUS_INTERFACE_EVENT_OBJECT, ifc, EINA_FALSE);
 
    if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED))
      return EINA_TRUE;
@@ -3279,7 +3279,7 @@ static Eina_Bool
 _text_selection_changed_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(data, pd, EINA_TRUE);
-   ELM_ATSPI_OBJECT_INTERFACE_GET_OR_RETURN_VAL(obj, eo_class_name_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN), ifc, EINA_FALSE);
+   ELM_ATSPI_OBJECT_INTERFACE_GET_OR_RETURN_VAL(obj, ATSPI_DBUS_INTERFACE_EVENT_OBJECT, ifc, EINA_FALSE);
 
    if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_SELECTION_CHANGED))
      return EINA_TRUE;
