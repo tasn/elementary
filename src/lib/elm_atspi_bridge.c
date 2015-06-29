@@ -2322,7 +2322,7 @@ _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj)
 }
 
 static Eina_Bool
-_append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
+_cache_item_reference_append_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
   if (!eo_ref_get(data) || eo_destructed_is(data))
     return EINA_TRUE;
@@ -2426,7 +2426,7 @@ _cache_get_items(const Eldbus_Service_Interface *iface, const Eldbus_Message *ms
    iter_array = eldbus_message_iter_container_new(iter, 'a', CACHE_ITEM_SIGNATURE);
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
-   eina_hash_foreach(pd->cache, _append_item_fn, iter_array);
+   eina_hash_foreach(pd->cache, _cache_item_reference_append_cb, iter_array);
    eldbus_message_iter_container_close(iter, iter_array);
 
    return ret;
@@ -3582,7 +3582,7 @@ static void _bridge_object_register(Eo *bridge, Eo *obj)
 
    sig = eldbus_service_signal_new(pd->cache_interface, ATSPI_OBJECT_CHILD_ADDED);
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(sig);
-   _append_item_fn(NULL, NULL, obj, iter);
+   _cache_item_reference_append_cb(NULL, NULL, obj, iter);
 
    eldbus_service_signal_send(pd->cache_interface, sig);
 
