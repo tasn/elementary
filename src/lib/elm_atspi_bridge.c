@@ -2413,12 +2413,14 @@ static Eldbus_Message *
 _cache_get_items(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
    Eldbus_Message_Iter *iter, *iter_array;
-   Eldbus_Message *ret = eldbus_message_method_return_new(msg);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+   Eldbus_Message *ret;
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    if (!bridge) return NULL;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(bridge, pd, NULL);
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
    iter = eldbus_message_iter_get(ret);
    iter_array = eldbus_message_iter_container_new(iter, 'a', CACHE_ITEM_SIGNATURE);
