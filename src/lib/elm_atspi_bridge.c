@@ -16,7 +16,6 @@
 #include <stdint.h>
 #include <Elementary.h>
 #include "elm_priv.h"
-#include <assert.h>
 
 /*
  * Accessibility Bus info not defined in atspi-constants.h
