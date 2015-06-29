@@ -103,7 +103,7 @@ static Eo * _bridge_object_from_path(Eo *bridge, const char *path);
 // utility functions
 static void _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj);
 static Eina_Bool _elm_atspi_bridge_key_filter(void *data, void *loop, int type, void *event);
-static void _object_callbacks_unregister(Eo *obj, void *data);
+static void _object_unregister(Eo *obj, void *data);
 static void _iter_object_reference_append(Eldbus_Message_Iter *iter, const Eo *obj);
 static void _object_desktop_reference_append(Eldbus_Message_Iter *iter);
 static Eina_Bool _on_object_del(void *data, Eo *obj, const Eo_Event_Description *event EINA_UNUSED, void *event_info EINA_UNUSED);
@@ -3300,7 +3300,7 @@ _bridge_object_unregister(Eo *bridge, Eo *obj)
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
-   _object_callbacks_unregister(obj, bridge);
+   _object_unregister(obj, bridge);
 
    sig = eldbus_service_signal_new(pd->cache_interface, ATSPI_OBJECT_CHILD_REMOVED);
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(sig);
@@ -3342,7 +3342,7 @@ _bridge_cache_build(Eo *bridge, void *obj)
 
 static Eina_Bool _unregister_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
-   _object_callbacks_unregister(data, fdata);
+   _object_unregister(data, fdata);
    return EINA_TRUE;
 }
 
@@ -3588,7 +3588,7 @@ static void _bridge_object_register(Eo *bridge, Eo *obj)
    free(path);
 }
 
-static void _object_callbacks_unregister(Eo *obj, void *data)
+static void _object_unregister(Eo *obj, void *data)
 {
    Eldbus_Service_Interface *ifc;
 
