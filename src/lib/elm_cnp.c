@@ -665,6 +665,89 @@ static X11_Cnp_Selection _x11_selections[ELM_SEL_TYPE_CLIPBOARD + 1] = {
    },
 };
 
+typedef struct
+{
+   Elm_Sel_Type selection;
+   Elm_Sel_Format requestformat;
+   Evas_Object *requestwidget;
+   Ecore_X_Window xwin;
+   const char *target;
+   Elm_Drop_Cb datacb;
+   void *udata;
+} X11_Cnp_Selection_Request;
+
+static X11_Cnp_Selection_Request *_current_sel_request = NULL;
+static Eina_List *_queued_requests = NULL;
+static Ecore_Timer *_sel_request_timer = NULL;
+static void _request_consume();
+
+static void
+_x11_req_disable(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   X11_Cnp_Selection_Request *req = data;
+   req->datacb = NULL;
+   req->udata = NULL;
+   req->requestwidget = NULL;
+   req->requestformat = 0;
+}
+
+static Eina_Bool
+_sel_req_timer_reached(void *data EINA_UNUSED)
+{
+   _sel_request_timer = NULL;
+
+   evas_object_event_callback_del_full
+     (_current_sel_request->requestwidget, EVAS_CALLBACK_DEL,
+      _x11_req_disable, _current_sel_request);
+
+   free(_current_sel_request);
+   _current_sel_request = NULL;
+   _request_consume();
+   return EINA_FALSE;
+}
+
+static void
+_request_consume()
+{
+   if (_sel_request_timer) return;
+
+   _current_sel_request = eina_list_data_get(_queued_requests);
+   _queued_requests = eina_list_remove_list(_queued_requests, _queued_requests);
+
+   cnp_debug("%d elements in queue\n", eina_list_count(_queued_requests));
+   if (!_current_sel_request) return;
+   X11_Cnp_Selection_Request *req = _current_sel_request;
+   X11_Cnp_Selection *sel = _x11_selections + req->selection;
+   sel->request(req->xwin, req->target);
+   cnp_debug("Request %s\n", req->target);
+   _sel_request_timer = ecore_timer_add(5.0, _sel_req_timer_reached, NULL);
+}
+
+static void
+_sel_request(Ecore_X_Window xwin, const Evas_Object *obj, Elm_Sel_Type selection,
+      const char *request_target, Elm_Sel_Format format, Elm_Drop_Cb datacb,
+      void *udata, Eina_Bool priority)
+{
+   X11_Cnp_Selection_Request *req = calloc(1, sizeof(*req));
+   req->selection = selection;
+   req->requestformat = format;
+   req->requestwidget = (Evas_Object *)obj;
+   req->xwin = xwin;
+   req->target = request_target;
+   req->datacb = datacb;
+   req->udata = udata;
+
+   evas_object_event_callback_add
+     (req->requestwidget, EVAS_CALLBACK_DEL, _x11_req_disable, req);
+
+   if (priority)
+      _queued_requests = eina_list_prepend(_queued_requests, req);
+   else
+      _queued_requests = eina_list_append(_queued_requests, req);
+
+   _request_consume();
+}
+
 static void
 _x11_sel_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
@@ -767,6 +850,7 @@ _x11_selection_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event
                   Elm_Selection_Data ddata;
                   Tmp_Info *tmp_info = NULL;
                   Eina_Bool success;
+                  X11_Cnp_Selection_Request *req = _current_sel_request;
                   ddata.data = NULL;
                   cnp_debug("Found something: %s\n", _atoms[i].name);
                   success = _atoms[i].x_data_preparer(ev, &ddata, &tmp_info);
@@ -780,7 +864,7 @@ _x11_selection_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event
                             cnp_debug("drag & drop\n");
                             EINA_LIST_FOREACH(drops, l, dropable)
                               {
-                                 if (dropable->obj == sel->requestwidget) break;
+                                 if (dropable->obj == req->requestwidget) break;
                                  dropable = NULL;
                               }
                             if (dropable)
@@ -797,10 +881,10 @@ _x11_selection_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event
                        /* We have to finish DnD, no matter what */
                        ecore_x_dnd_send_finished();
                     }
-                  else if (sel->datacb && success)
+                  else if (req->datacb && success)
                     {
                        ddata.x = ddata.y = 0;
-                       sel->datacb(sel->udata, sel->requestwidget, &ddata);
+                       req->datacb(req->udata, req->requestwidget, &ddata);
                     }
                   free(ddata.data);
                   if (tmp_info) _tmpinfo_free(tmp_info);
@@ -809,6 +893,8 @@ _x11_selection_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event
              break;
           }
      }
+   ecore_timer_del(_sel_request_timer);
+   _sel_req_timer_reached(NULL);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -916,13 +1002,14 @@ _x11_notify_handler_targets(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Noti
    Ecore_X_Selection_Data_Targets *targets;
    Ecore_X_Atom *atomlist;
    int i, j;
+   X11_Cnp_Selection_Request *req = _current_sel_request;
 
    targets = notify->data;
    atomlist = (Ecore_X_Atom *)(targets->data.data);
    for (j = (CNP_ATOM_LISTING_ATOMS + 1); j < CNP_N_ATOMS; j++)
      {
         cnp_debug("\t%s %d\n", _atoms[j].name, _atoms[j].x_atom);
-        if (!(_atoms[j].formats & sel->requestformat)) continue;
+        if (!(_atoms[j].formats & req->requestformat)) continue;
         for (i = 0; i < targets->data.length; i++)
           {
              if ((_atoms[j].x_atom == atomlist[i]) && (_atoms[j].x_data_preparer))
@@ -932,16 +1019,18 @@ _x11_notify_handler_targets(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Noti
                        if (!_x11_is_uri_type_data(sel, notify)) continue;
                     }
                   cnp_debug("Atom %s matches\n", _atoms[j].name);
-                  goto done;
+                  cnp_debug("Sending request for %s, xwin=%#llx\n",
+                        _atoms[j].name, (unsigned long long)sel->xwin);
+                  _sel_request(req->xwin, req->requestwidget, req->selection,
+                        _atoms[j].name, req->requestformat, req->datacb, req->udata, EINA_TRUE);
+                  goto end;
                }
           }
      }
    cnp_debug("Couldn't find anything that matches\n");
-   return ECORE_CALLBACK_PASS_ON;
-done:
-   cnp_debug("Sending request for %s, xwin=%#llx\n",
-             _atoms[j].name, (unsigned long long)sel->xwin);
-   sel->request(sel->xwin, _atoms[j].name);
+end:
+   ecore_timer_del(_sel_request_timer);
+   _sel_req_timer_reached(NULL);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1945,25 +2034,9 @@ _x11_elm_cnp_selection_get(Ecore_X_Window xwin, const Evas_Object *obj, Elm_Sel_
                            Elm_Sel_Format format, Elm_Drop_Cb datacb,
                            void *udata)
 {
-   X11_Cnp_Selection *sel;
-
    _x11_elm_cnp_init();
-
-   sel = _x11_selections + selection;
-
-   if (sel->requestwidget)
-     evas_object_event_callback_del_full(sel->requestwidget, EVAS_CALLBACK_DEL,
-                                         _x11_sel_obj_del2, sel);
-   sel->requestformat = format;
-   sel->requestwidget = (Evas_Object *)obj;
-   sel->xwin = xwin;
-   sel->request(xwin, ECORE_X_SELECTION_TARGET_TARGETS);
-   sel->datacb = datacb;
-   sel->udata = udata;
-
-   evas_object_event_callback_add
-     (sel->requestwidget, EVAS_CALLBACK_DEL, _x11_sel_obj_del2, sel);
-
+   _sel_request(xwin, obj, selection, ECORE_X_SELECTION_TARGET_TARGETS,
+         format, datacb, udata, EINA_FALSE);
    return EINA_TRUE;
 }
 
