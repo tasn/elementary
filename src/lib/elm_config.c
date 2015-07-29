@@ -3577,6 +3577,5 @@ _elm_config_shutdown(void)
 
    _desc_shutdown();
 
-   if (_elm_key_bindings)
-     eina_hash_free(_elm_key_bindings);
+   ELM_SAFE_FREE(_elm_key_bindings, eina_hash_free);
 }
