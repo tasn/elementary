@@ -3384,7 +3384,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
           }
 #endif
 
-#if defined(HAVE_ELEMENTARY_DRM) || defined(HAVE_ELEMENTARY_FB) || defined(HAVE_ELEMENTARY_EGLFS)
+#if defined(HAVE_ELEMENTARY_DRM) || defined(HAVE_ELEMENTARY_FB)
         else if ((disp) && (!strcmp(disp, "fb")))
           {
 #ifdef HAVE_ELEMENTARY_DRM
@@ -3392,8 +3392,6 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 #endif
 #ifdef HAVE_ELEMENTARY_FB
              enginelist[p++] = ELM_SOFTWARE_FB;
-#endif
-#ifdef HAVE_ELEMENTARY_EGLFS
              enginelist[p++] = ELM_EGLFS;
 #endif
           }
@@ -3455,6 +3453,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
                   enginelist[p++] = ELM_DRM;
 #endif
 #ifdef HAVE_ELEMENTARY_FB
+                  enginelist[p++] = ELM_EGLFS;
                   enginelist[p++] = ELM_SOFTWARE_FB;
 #endif
 #ifdef HAVE_ELEMENTARY_COCOA
@@ -3479,9 +3478,6 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 #ifdef HAVE_ELEMENTARY_PSL1GHT
                   enginelist[p++] = ELM_SOFTWARE_PSL1GHT;
 #endif
-#ifdef HAVE_ELEMENTARY_EGLFS
-                  enginelist[p++] = ELM_EGLFS;
-#endif
                }
              else
                {
@@ -3499,6 +3495,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
                   enginelist[p++] = ELM_DRM;
 #endif
 #ifdef HAVE_ELEMENTARY_FB
+                  enginelist[p++] = ELM_EGLFS;
                   enginelist[p++] = ELM_SOFTWARE_FB;
 #endif
 #ifdef HAVE_ELEMENTARY_COCOA
@@ -3525,9 +3522,6 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 #endif
 #ifdef HAVE_ELEMENTARY_PSL1GHT
                   enginelist[p++] = ELM_SOFTWARE_PSL1GHT;
-#endif
-#ifdef HAVE_ELEMENTARY_EGLFS
-                  enginelist[p++] = ELM_EGLFS;
 #endif
                }
           }
