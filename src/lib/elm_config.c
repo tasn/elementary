@@ -3416,6 +3416,9 @@ _elm_config_sub_init(void)
         ecore_wl_init(NULL);
      }
 #endif
+#ifdef HAVE_ELEMENTARY_COCOA
+   ecore_cocoa_init();
+#endif
    char buf[PATH_MAX];
    size_t len;
    int ok = 0;
