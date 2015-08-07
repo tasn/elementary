@@ -453,7 +453,7 @@ _item_select(Evas_Object *obj,
                {
                   Evas_Object *ao, *po;
                   Eina_Strbuf *buf;
-                  const char *part, *text;
+                  const char *part;
 
                   part = "elm.btn.text";
                   po = (Evas_Object *)edje_object_part_object_get(elm_layout_edje_get(VIEW(it)), part);
@@ -465,8 +465,7 @@ _item_select(Evas_Object *obj,
                     "multi button entry item %s is selected",
                     edje_object_part_text_get(elm_layout_edje_get(VIEW(it)), part));
 
-                  text = (const char*)eina_strbuf_string_steal(buf);
-                  _elm_access_say(text);
+                  _elm_access_say(eina_strbuf_string_get(buf));
                   eina_strbuf_free(buf);
                }
           }
@@ -748,7 +747,6 @@ _item_new(Elm_Multibuttonentry_Data *sd,
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      {
-        const char *text;
         Eina_Strbuf *buf;
         buf = eina_strbuf_new();
 
@@ -756,8 +754,7 @@ _item_new(Elm_Multibuttonentry_Data *sd,
           "multi button entry item %s is added",
           edje_object_part_text_get(elm_layout_edje_get(VIEW(item)), "elm.btn.text"));
 
-        text = (const char*)eina_strbuf_string_steal(buf);
-        _elm_access_say(text);
+        _elm_access_say(eina_strbuf_string_get(buf));
         eina_strbuf_free(buf);
 
         _access_multibuttonentry_item_register(obj, eo_item, EINA_TRUE);
