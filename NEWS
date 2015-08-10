@@ -1,6 +1,14 @@
 =================
-Elementary 1.14.2
+Elementary 1.14.3
 =================
+
+Changes since 1.14.2:
+---------------------
+
+Fixes:
+
+   * elm_datetime: Fix datetime ctxpopup resize issue
+   * Elm_Interface_Scrollable: Improvement in looping behavior
 
 Changes since 1.14.1:
 ---------------------
