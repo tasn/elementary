@@ -1,6 +1,30 @@
 =================
-Elementary 1.15.0
+Elementary 1.15.1
 =================
+
+Changes since 1.15.0:
+---------------------
+
+Features:
+
+   * popup: make scroller optional in popup (T2651)
+
+Fixes:
+
+   * focus: add del callback always.
+   * Tooltip: reset content delete callback directly after invocation
+   * elm_toolbar: fix icon_size to consider edje base scale
+   * spinner: Add to support spinner value %d format.
+   * cnp: init wayland dnd handlers upon creating the first drop target
+   * cnp: initialize Elm_Selection_Data.action for wayland drops
+   * cnp: fix wayland drop format selection
+   * cnp: pass wayland drop event size to handler, do not nul terminate drop data
+   * cnp: end wayland drag on allocation failure
+   * cnp: only nul terminate wayland drops for text type drops
+   * cnp: redo wayland drop to nul terminate for text_uri drops and free on every drop
+   * list: fix crash while setting nearest item in viewport (T2662)
+   * scroller: fix the focus move bug in scroller.
+   * scroller: fix the misstake. change && -> ||
 
 Changes since 1.14.0:
 ---------------------
