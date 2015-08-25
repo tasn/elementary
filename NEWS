@@ -25,6 +25,8 @@ Fixes:
    * list: fix crash while setting nearest item in viewport (T2662)
    * scroller: fix the focus move bug in scroller.
    * scroller: fix the misstake. change && -> ||
+   * elm_win: Initilize the variable 'preferred_rot' as a -1 before invoking _elm_win_xwin_update() in _elm_win_finalize_internal().
+   * scroller: fix memory leak on keys traversal
 
 Changes since 1.14.0:
 ---------------------
