@@ -132,6 +132,9 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          disappear, then deletes the item. The item that was underneath it on the
          stack will become visible.
 
+         When pop transition animation is in progress, new pop operation is blocked until current pop operation
+         is complete.
+
          @see also elm_naviframe_content_preserve_on_pop_get()
          @see also elm_naviframe_item_pop_cb_set()
 
@@ -182,13 +185,15 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          The item pushed becomes one page of the naviframe, this item will be
          deleted when it is popped.
 
+         When push transition animation is in progress, pop operation is blocked until push is complete.
+
          @see also elm_naviframe_item_style_set()
          @see also elm_naviframe_item_insert_before()
          @see also elm_naviframe_item_insert_after()
 
          The following styles are available for this item:
          @li @c "default"
-
+           
          @ingroup Naviframe */
 
          return: Elm_Object_Item *;
