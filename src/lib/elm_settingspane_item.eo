@@ -1,207 +1,179 @@
-class Elm_Settingspane_Item(Eo.Base){
-      eo_prefix: elm_obj_settingspane_item;
-      data: Elm_Settingspane_Item_Data;
-      properties {
-           name {
-               get {
-                  /*@
-                  Returns the name of the item
+class Elm.Settingspane.Item(Eo.Base){
+  eo_prefix: elm_obj_settingspane_item;
+  methods {
+    @property name {
+      get {
+        [[
+          Get the name of the item
 
-                  This will return the name which was passed at the creation via append_item or item_append_relative
-                  This is the string displayed in the item.
-
-                  @return The name of the item
-
-                  @ingroup Settingspane
-                  */
-               }
-               values {
-                 const (char) *name;
-               }
-           }
-           description{
-               set {
-                 /*@
-                 Will set the desrciption for the item.
-
-                 It will be displayed when you hover the item.
-                 @ingroup Settingspane
-                 */
-               }
-               get {
-                 /*@
-                 Return the description of the item
-
-                 This will return the description which was passed at the creation via
-                 append_item or item_append_relative.
-                 This is the string displayed lower of the name.
-
-                 @return The description of the item
-                 @ingroup Settingspane
-                 */
-               }
-               values {
-                 const (char) *description;
-               }
-           }
-           image {
-             set {
-             }
-             get {
-             }
-             values {
-               const (char) *file;
-               const (char) *group;
-             }
-           }
-           parent {
-               get {
-                 /*@
-                 Returns the parent of this item
-
-                 This will return the parent item of this item. If there is none it will return NULL.
-
-                 @return The Elm_Settingspane_Item of the parent.
-                 @ingroup Settingspane
-                 */
-               }
-               values {
-                 const (Elm_Settingspane_Item) *par;
-               }
-           }
-           changed {
-            /*
-             * This will mark this item internally as changed,
-             * the apply button will be enabled, and the item cannot be poped from stack anymore.
-             * This can be undo if the user clicks the apply or reset button.
-             */
-             get {
-               /*@
-               Returns the changed flag
-
-               This returns the changed flag of this Item.
-
-               The changed flag controls the enable/disable of the apply and reset buttons,
-               and controls if the panel can be closed.
-
-               If this flag is set the apply and reset buttons are enabled, a click on them will
-               result in the callbacks to the panel.
-               If someone tryes to close this panel while there are unsaved changes,
-               the panel will be highlighted with an error.
-
-               @return EINA_TRUE if the flag is set, EINA_FALSE if not
-               @ingroup Settingspane
-               */
-             }
-             set {
-               /*@
-               Set the chagned flag
-
-               This will set the changed flag for this item.
-
-               The changed flag controls the enable/disable of the apply and reset buttons,
-               and controls if the panel can be closed.
-
-               If this flag is set the apply and reset buttons are enabled, a click on them will
-               result in the callbacks to the panel.
-               If someone tryes to close this panel while there are unsaved changes,
-               the panel will be highlighted with an error.
-
-               @note if this item doesnt have a attached panel settings this is useless
-
-               @ingroup Settingspane
-               */
-             }
-             values {
-               Eina_Bool changed; /*@ set this item to changed*/
-             }
-          }
-          keywords {
-             get {
-               /*@
-               Returns the keywords
-               @ingroup Settingspane
-               */
-             }
-             set {
-               /*@
-               Set the keywords
-
-               This is the string for the search of a item
-
-               The string should be from the form word[,word2]
-               The value of the searchentry will be compared against the values seperated by a ","
-
-               @ingroup Settingspane
-               */
-             }
-             values {
-               char *word; /*@ set the current keywords to look up */
-             }
-          }
-     }
-      methods {
-        realize {
-          /*@
-          This will realize this item, means display it if it does not exists yet, or raise it
-          */
-        }
-        unrealize {
-          /*@
-          Will delete or just hide this item depending if there are unsaved changes or not
-          */
-        }
-        attach_panel {
-          /*@
-          Attach a panel to the item
-
-          This will attach a panel to this item.
-
-          Attaching a panel means if this items gets focused this panel will be shown.
-
-          The callback content_get is just called if this item gets displayed.
-          If it was closed once and opened another time the callback will be called a second time.
-
-          reset and apply are called when the apply or reset button is clicked.
-
-          @note The panel can just be attached if this node doenst have childs.
-          @note Once the panel has a panel it cannot be used as a parent node anymore.
-
-          @ingroup Settingspane
-           */
-           params {
-             @in Content_Get_Cb content_get; /*@ Callback to call when the content is requested
-                                                 Each time the panel is selected content is requested with the content_cb,
-                                                 If the content is changed the old Evas_Object will be saved and displayed next time the item is selected. */
-             @in Evas_Smart_Cb reset; /*@ Callback to call when the reset button is clicked */
-             @in Evas_Smart_Cb apply; /*@ Callback to call when the apply button is clicked */
-           }
-        }
-        focus {
-          /*@
-          Focus this item
-
-          This will focus the item in the widget, this means its children will be displayed in the menu,
-          or the attached panel will be shown, this item will be the highest on the stack.
-
-          @ingroup Settingspane
-          */
-        }
-        delete {
-          /*@
-          Delete this item
-
-          This will delete this item from the widget.
-
-          If there are children they will also be deleted.
-          If the parent of this item is just diplayed it will be refreshed and show
-          the state after this item is deleted.
-          If this item is the current focused item the stack will go back to a not deleted item.
-
-          @ingroup Settingspane
-          */
-        }
+          This will return the name which was passed at the creation via append_item or item_append_relative
+          This is the string displayed in the item.
+        ]]
       }
+      values {
+        name : const(char)*;
+      }
+    }
+    @property description {
+      set {
+        [[
+          Will set the desrciption for the item.
+
+          It will be displayed when you hover the item.
+        ]]
+      }
+      get {
+        [[
+           Get the description of the item
+
+           This will return the description which was passed at the creation via
+           append_item or item_append_relative.
+           This is the string displayed lower of the name.
+        ]]
+      }
+      values {
+        description : const(char)*;
+      }
+    }
+    @property image {
+      set {
+      }
+      get {
+      }
+      values {
+        file : const(char)*;
+        group : const(char)*;
+      }
+    }
+    @property parent {
+      get {
+        [[
+          Returns the parent of this item
+
+          This will return the parent item of this item. If there is none it will return NULL.
+
+        ]]
+      }
+      values {
+        parent : const(Elm.Settingspane.Item)*;
+      }
+    }
+    @property changed {
+      [[
+        This will mark this item internally as changed,
+        the apply button will be enabled, and the item cannot be poped from stack anymore.
+        This can be undo if the user clicks the apply or reset button.
+      ]]
+      get {
+        [[
+          Returns the changed flag
+
+          This returns the changed flag of this Item.
+
+          The changed flag controls the enable/disable of the apply and reset buttons,
+          and controls if the panel can be closed.
+
+          If this flag is set the apply and reset buttons are enabled, a click on them will
+          result in the callbacks to the panel.
+          If someone tryes to close this panel while there are unsaved changes,
+          the panel will be highlighted with an error.
+        ]]
+      }
+      set {
+        [[
+          Set the chagned flag
+
+          This will set the changed flag for this item.
+
+          The changed flag controls the enable/disable of the apply and reset buttons,
+          and controls if the panel can be closed.
+
+          If this flag is set the apply and reset buttons are enabled, a click on them will
+          result in the callbacks to the panel.
+          If someone tryes to close this panel while there are unsaved changes,
+          the panel will be highlighted with an error.
+
+          noet that if this item doesnt have a attached panel settings this is useless
+
+        ]]
+      }
+      values {
+        changed : bool; [[set this item to changed]]
+      }
+    }
+    @property keywords {
+      get {
+      }
+      set {
+       [[
+         Set the keywords
+
+         This is the string for the search of a item
+
+         The string should be from the form word[,word2]
+         The value of the searchentry will be compared against the values seperated by a ","
+       ]]
+      }
+      values {
+        word : const(char)*;
+      }
+    }
+    realize {
+      [[
+        This will realize this item, means display it if it does not exists yet, or raise it
+      ]]
+    }
+    unrealize {
+      [[
+        Will delete or just hide this item depending if there are unsaved changes or not
+      ]]
+    }
+    attach_panel {
+      [[
+        Attach a panel to the item
+
+        This will attach a panel to this item.
+
+        Attaching a panel means if this items gets focused this panel will be shown.
+
+        The callback content_get is just called if this item gets displayed.
+        If it was closed once and opened another time the callback will be called a second time.
+
+        reset and apply are called when the apply or reset button is clicked.
+
+        Note that if the panel can just be attached if this node doenst have childs.
+        Note that if once the panel has a panel it cannot be used as a parent node anymore.
+      ]]
+      params {
+             @in content_get : Content_Get_Cb; [[ Callback to call when the content is requested
+                                                 Each time the panel is selected content is requested with the content_cb,
+                                                 If the content is changed the old Evas_Object will be saved and displayed next time the item is selected.
+                                                 ]]
+             @in reset : Evas_Smart_Cb; [[Callback to call when the reset button is clicked]]
+             @in apply : Evas_Smart_Cb; [[Callback to call when the apply button is clicked]]
+      }
+    }
+    focus {
+      [[
+        Focus this item
+
+        This will focus the item in the widget, this means its children will be displayed in the menu,
+        or the attached panel will be shown, this item will be the highest on the stack.
+      ]]
+    }
+    delete {
+      [[
+        Delete this item
+
+        This will delete this item from the widget.
+
+        If there are children they will also be deleted.
+        If the parent of this item is just diplayed it will be refreshed and show
+        the state after this item is deleted.
+        If this item is the current focused item the stack will go back to a not deleted item.
+      ]]
+    }
+  }
   implements {
      Eo.Base.destructor;
    }

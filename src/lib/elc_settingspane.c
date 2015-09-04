@@ -939,15 +939,18 @@ _elm_settingspane_evas_object_smart_show(Eo *obj, Elm_Settingspane_Data *pd)
 }
 
 
-EOLIAN static void
+EOLIAN static Eo_Base*
 _elm_settingspane_eo_base_constructor(Eo *obj, Elm_Settingspane_Data *pd)
 {
-   eo_do_super(obj, ELM_SETTINGSPANE_CLASS, eo_constructor());
+   Eo *eo;
+   eo_do_super(obj, ELM_SETTINGSPANE_CLASS, eo = eo_constructor());
 
    pd->itcc = elm_genlist_item_class_new();
    pd->itcc->item_style = "double_label_unblock";
    pd->itcc->func.text_get = _elm_settingspane_ii_text_cb;
    pd->itcc->func.content_get = _elm_settingspane_ii_content_cb;
+
+   return eo;
 }
 
 static Evas_Object*
@@ -1412,7 +1415,7 @@ _elm_settingspane_item_eo_base_destructor(Eo *obj EINA_UNUSED, Elm_Settingspane_
 }
 
 EOLIAN static void
-_elm_settingspane_item_keywords_set(Elm_Settingspane_Item *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd, char *v)
+_elm_settingspane_item_keywords_set(Elm_Settingspane_Item *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd, const char *v)
 {
   char **splits;
   char *split;
@@ -1445,10 +1448,10 @@ _elm_settingspane_item_keywords_set(Elm_Settingspane_Item *obj EINA_UNUSED, Elm_
   pd->key_words = eina_list_append(pd->key_words, str);
 }
 
-EOLIAN static char *
+EOLIAN static const char *
 _elm_settingspane_item_keywords_get(Elm_Settingspane_Item *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd)
 {
-  return ((char*)pd->key_word);
+  return pd->key_word;
 }
 
 /* widget api calls */
