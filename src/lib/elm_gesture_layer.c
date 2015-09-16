@@ -80,6 +80,8 @@ _glayer_buf_dup(void *buf, size_t size)
   if (!obj || !eo_isa(obj, MY_CLASS)) \
     return
 
+#define POINTER_SMOOTH_CNT 63
+
 /**
  * @internal
  *
@@ -91,10 +93,13 @@ _glayer_buf_dup(void *buf, size_t size)
  */
 struct _Pointer_Event
 {
-   Evas_Coord         x, y;
+   Evas_Coord         x, y; // smooth
    unsigned int       timestamp;
    int                device;
    Evas_Callback_Type event_type;
+   Evas_Coord         px[POINTER_SMOOTH_CNT + 1], py[POINTER_SMOOTH_CNT + 1]; // raw
+   unsigned int       ptimestamp[POINTER_SMOOTH_CNT + 1];
+   int                pcnt;
 };
 
 /**
@@ -388,6 +393,12 @@ struct _Elm_Gesture_Layer_Data
    Ecore_Timer          *gest_taps_timeout; /* When this expires, dbl
                                              * click/taps ABORTed  */
 
+   Ecore_Animator       *smooth_animator;
+   double                timestamp_diff; // ms
+   double                last_animator_tick; // ms
+   double                last_move_timestamp; // ms
+   Eina_List            *untouched; /* touched evices that just went UP */
+
    Eina_Bool             repeat_events : 1;
 };
 
@@ -431,6 +442,237 @@ _touched_device_remove(Eina_List *list,
    return list;
 }
 
+static Pointer_Event *
+_touched_device_find(Elm_Gesture_Layer_Data *sd, const Pointer_Event *pe)
+{
+   return eina_list_search_unsorted(sd->touched, _device_compare, pe);
+}
+
+static void
+_smooth_move_record(Pointer_Event *p, const Pointer_Event *praw, Eina_Bool fake)
+{
+   /* praw is a MOVE event and p is either DOWN or MOVE */
+   //assert(p->device == praw->device);
+
+   if (!fake)
+     DBG("Gesture record_real [0/%d] %u %d %d\n", p->pcnt, praw->timestamp, praw->x, praw->y);
+   else
+     DBG("Gesture record_fake [0/%d] %u   %d %d\n", p->pcnt, praw->timestamp, praw->x, praw->y);
+
+   if ((p->event_type == EVAS_CALLBACK_MOUSE_DOWN) ||
+       (p->event_type == EVAS_CALLBACK_MULTI_DOWN))
+     {
+        /* 1st move, no smoothing yet */
+        p->pcnt = 1;
+        p->px[1] = p->x;
+        p->py[1] = p->y;
+        p->ptimestamp[1] = p->timestamp;
+        p->px[0] = praw->x;
+        p->py[0] = praw->y;
+        p->ptimestamp[0] = praw->timestamp;
+        p->event_type = praw->event_type;
+        p->x = praw->x;
+        p->y = praw->y;
+        p->timestamp = praw->timestamp;
+        return;
+     }
+
+   /* TODO */
+   if ((praw->event_type == EVAS_CALLBACK_MOUSE_UP) ||
+       (praw->event_type == EVAS_CALLBACK_MULTI_UP))
+     {
+        CRI("UP smoothing not implemented yet!");
+        return;
+     }
+
+   /* shift past records */
+   if (p->pcnt < POINTER_SMOOTH_CNT)
+     p->pcnt++;
+   for (int i = p->pcnt; i > 0; --i)
+     {
+        p->px[i] = p->px[i - 1];
+        p->py[i] = p->py[i - 1];
+        p->ptimestamp[i] = p->ptimestamp[i - 1];
+     }
+
+   /* insert new record */
+   p->px[0] = praw->x;
+   p->py[0] = praw->y;
+   p->ptimestamp[0] = praw->timestamp;
+}
+
+static double
+_smooth_move_velocity_weight(double factor)
+{
+   // TODO: test more weight functions
+   return 0.5 + 0.5 * cos(factor * M_PI);
+}
+
+static double
+_smooth_move_position_weight(double factor)
+{
+   /* y = (x-1)^2 */
+   double x = factor - 1;
+   return x * x;
+}
+
+#if 0
+static double
+_smooth_move_acceleration_weight(double factor)
+{
+   /* y = (2x-1)^4 */
+   if (factor > 0.5) return 0;
+   double x = factor - 1;
+   x *= x;
+   return x * x;
+}
+#endif
+
+static double
+_smooth_move_position_predict(double f, double avgx, double lastx, double v, double a EINA_UNUSED)
+{
+   /* TODO: predict velocity */
+   static double factor = -1.0;
+   double mixer = _elm_config->scroll_smooth_amount;
+   if (factor < 0.0)
+     {
+        const char *s = getenv("ELM_GESTURE_PREDICTION_AMOUNT");
+        factor = s ? atof(s) : 0.5;
+        if (factor < 0.0) factor = 0.0;
+        else if (factor > 1.0) factor = 1.0;
+     }
+   return (lastx * (1.0 - mixer)) + (avgx * mixer) + (v * f * factor);
+}
+
+static void
+_smooth_move_predict(Elm_Gesture_Layer_Data *sd, Pointer_Event *p)
+{
+   const double now = (ecore_loop_time_get() * 1000.0) + sd->timestamp_diff;
+   double x = 0, y = 0, vx = 0, vy = 0, accw_pos = 0, accw_velo = 0;
+   double w, f, ts, diffts, dts, mints, dt;
+   int i;
+
+   /* TODO: measure acceleration */
+
+   if (p->pcnt > 0)
+     {
+        //dts = now - p->ptimestamp[p->pcnt];
+        dts = _elm_config->scroll_smooth_time_window * 1000.0;
+        mints = now - dts;
+        for (i = 0; i < p->pcnt; i++)
+          {
+             ts = p->ptimestamp[i];
+             if (ts < mints) break;
+             if (ts > now) ts = now;
+
+             if (dts)
+               f = (now - ts) / dts;
+             else
+               f = 0.0;
+
+             /* position */
+             w = _smooth_move_position_weight(f);
+             x += w * p->px[i];
+             y += w * p->py[i];
+             accw_pos += w;
+
+             /* velocity */
+             if (i > 0)
+               {
+                  dt = (double)p->ptimestamp[i - 1] - (double)p->ptimestamp[i];
+                  if (dt > 0)
+                    {
+                       if (dts)
+                         f = (p->ptimestamp[0] - ts) / dts;
+                       else
+                         f = 0.0;
+                       w = _smooth_move_velocity_weight(f) / dt;
+                       vx += w * (p->px[i - 1] - p->px[i]);
+                       vy += w * (p->py[i - 1] - p->py[i]);
+                       accw_velo += w;
+                    }
+               }
+          }
+
+        if (accw_pos)
+          {
+             x /= accw_pos;
+             y /= accw_pos;
+          }
+
+        if (accw_velo)
+          {
+             vx /= accw_velo;
+             vy /= accw_velo;
+          }
+
+        diffts = (now - p->ptimestamp[0]) / dts;
+     }
+   else
+     {
+        x = p->px[0];
+        y = p->py[0];
+        diffts = 0.0;
+     }
+
+   p->timestamp = now;
+   p->x = _smooth_move_position_predict(diffts, x, p->px[0], vx, 0.0) + 0.5;
+   p->y = _smooth_move_position_predict(diffts, y, p->py[0], vy, 0.0) + 0.5;
+
+   DBG("Gesture prediction [0/%d] %u     %d %d %d %d %d %d\n",
+       p->pcnt, p->timestamp, p->x, p->y, (int) x, (int) y, p->px[0], p->py[0]);
+}
+
+static Eina_Bool
+_smooth_animator_cb(void *data)
+{
+   Eina_Bool keep_anim = EINA_FALSE;
+   Pointer_Event *pe;
+   Eina_List *li;
+   double now, dts;
+
+   ELM_GESTURE_LAYER_DATA_GET(data, sd);
+
+   now = (ecore_loop_time_get() * 1000.0) + sd->timestamp_diff;
+   dts = _elm_config->scroll_smooth_time_window * 1000.0;
+
+   EINA_LIST_FOREACH(sd->touched, li, pe)
+     {
+        /* no physical move since last animator */
+        if (pe->ptimestamp[0] < sd->last_animator_tick)
+          {
+             Pointer_Event fake_pe = *pe;
+             fake_pe.timestamp = now;
+             fake_pe.x = pe->px[0];
+             fake_pe.y = pe->py[0];
+             _smooth_move_record(pe, &fake_pe, EINA_TRUE);
+          }
+
+        _smooth_move_predict(sd, pe);
+
+        if ((sd->last_move_timestamp + dts > now) &&
+            ((pe->x != pe->px[0]) || (pe->y != pe->py[0])))
+          {
+             /* still moving */
+             keep_anim = EINA_TRUE;
+          }
+
+        /* FIXME: +1 because of the mistake in the enum. */
+        Gesture_Info **gitr = sd->gesture + 1;
+        Tests_Array_Funcs *fitr = _glayer_tests_array + 1;
+        for (; fitr->test; fitr++, gitr++)
+          {
+             if (IS_TESTED_GESTURE(*gitr))
+               fitr->test(data, pe, NULL /* event_info */, pe->event_type, (*gitr)->g_type);
+          }
+     }
+
+   sd->last_animator_tick = now;
+   if (!keep_anim)
+     sd->smooth_animator = NULL;
+   return keep_anim;
+}
+
 /**
  * @internal
  *
@@ -443,14 +685,16 @@ _touched_device_remove(Eina_List *list,
  * @ingroup Elm_Gesture_Layer
  */
 static Eina_List *
-_touched_device_add(Eina_List *list,
+_touched_device_add(void *data,
+                    Eina_List *list,
                     Pointer_Event *pe)
 {
    Pointer_Event *p = eina_list_search_unsorted(list, _device_compare, pe);
 
    if (p) /* We like to track device touch-position, overwrite info */
      {
-        memcpy(p, pe, sizeof(Pointer_Event));
+        memcpy(p, pe, sizeof(*p));
+        p->pcnt = 0;
         return list;
      }
 
@@ -459,9 +703,13 @@ _touched_device_add(Eina_List *list,
                                                       * device on DOWN
                                                       * event only */
      {
+        ELM_GESTURE_LAYER_DATA_GET(data, sd);
         p = malloc(sizeof(Pointer_Event));
         /* Freed in _touched_device_remove()    */
         memcpy(p, pe, sizeof(Pointer_Event));
+        p->pcnt = 0;
+        sd->timestamp_diff =
+          (ecore_loop_time_get() * 1000.0) - ((double)pe->timestamp);
         return eina_list_append(list, p);
      }
 
@@ -1342,6 +1590,7 @@ _event_process(void *data,
 {
    Pointer_Event _pe;
    Pointer_Event *pe = NULL;
+   Pointer_Event *pe_down = NULL;
 
    ELM_GESTURE_LAYER_DATA_GET(data, sd);
 
@@ -1349,34 +1598,75 @@ _event_process(void *data,
    if (_pointer_event_make(data, event_info, event_type, &_pe))
      pe = &_pe;
 
+   /* Smoothing and predicting inputs, resampling at animator rate */
+   /* FIXME: Use specific variables for gestures (?) */
+   if (_elm_config->scroll_smooth_start_enable &&
+       _elm_config->scroll_smooth_amount &&
+       _elm_config->scroll_smooth_time_window)
+     {
+        /* smooth input */
+        switch (event_type)
+          {
+           case EVAS_CALLBACK_MOUSE_DOWN:
+           case EVAS_CALLBACK_MULTI_DOWN:
+             /* nothing to smoothen yet */
+             break;
+           case EVAS_CALLBACK_MOUSE_MOVE:
+           case EVAS_CALLBACK_MULTI_MOVE:
+             /* find if device is down */
+             pe_down = _touched_device_find(sd, pe);
+             if (!pe_down) break;
+             /* queue move event with exact timestamp and position */
+             _smooth_move_record(pe_down, pe, EINA_FALSE);
+             sd->last_move_timestamp = (double) pe->timestamp;
+             if (!sd->smooth_animator)
+               sd->smooth_animator = ecore_animator_add(_smooth_animator_cb, data);
+             break;
+           case EVAS_CALLBACK_MOUSE_UP:
+           case EVAS_CALLBACK_MULTI_UP:
+             /* for now, send UP immediately, even if smooth move is late */
+             break;
+           default: break;
+          }
+     }
+
    /* Test all the gestures */
-   {
-      /* FIXME: +1 because of the mistake in the enum. */
-      Gesture_Info **gitr = sd->gesture + 1;
-      Tests_Array_Funcs *fitr = _glayer_tests_array + 1;
-      for (; fitr->test; fitr++, gitr++)
-        {
-           if (IS_TESTED_GESTURE(*gitr))
-             fitr->test(data, pe, event_info, event_type, (*gitr)->g_type);
-        }
-   }
+   if (!pe_down)
+     {
+        /* FIXME: +1 because of the mistake in the enum. */
+        Gesture_Info **gitr = sd->gesture + 1;
+        Tests_Array_Funcs *fitr = _glayer_tests_array + 1;
+
+        for (; fitr->test; fitr++, gitr++)
+          {
+             if (IS_TESTED_GESTURE(*gitr))
+               fitr->test(data, pe, event_info, event_type, (*gitr)->g_type);
+          }
+     }
 
    if (_event_flag_get(event_info, event_type) & EVAS_EVENT_FLAG_ON_HOLD)
      _event_history_add(data, event_info, event_type);
 
-   /* we maintain list of touched devices              */
-   /* We also use move to track current device x.y pos */
-   if ((event_type == EVAS_CALLBACK_MOUSE_DOWN) ||
-       (event_type == EVAS_CALLBACK_MULTI_DOWN) ||
-       (event_type == EVAS_CALLBACK_MOUSE_MOVE) ||
-       (event_type == EVAS_CALLBACK_MULTI_MOVE))
+   if (!pe_down)
      {
-        sd->touched = _touched_device_add(sd->touched, pe);
-     }
-   else if ((event_type == EVAS_CALLBACK_MOUSE_UP) ||
-            (event_type == EVAS_CALLBACK_MULTI_UP))
-     {
-        sd->touched = _touched_device_remove(sd->touched, pe);
+        /* we maintain list of touched devices              */
+        /* We also use move to track current device x.y pos */
+        switch (event_type)
+          {
+           case EVAS_CALLBACK_MOUSE_DOWN:
+           case EVAS_CALLBACK_MULTI_DOWN:
+           case EVAS_CALLBACK_MOUSE_MOVE:
+           case EVAS_CALLBACK_MULTI_MOVE:
+             sd->touched = _touched_device_add(data, sd->touched, pe);
+             break;
+           case EVAS_CALLBACK_MOUSE_UP:
+           case EVAS_CALLBACK_MULTI_UP:
+             sd->touched = _touched_device_remove(sd->touched, pe);
+             if (!sd->touched)
+               ELM_SAFE_DEL(sd->smooth_animator);
+             break;
+           default: break;
+          }
      }
 
    /* Report current states and clear history if needed */
@@ -2102,7 +2392,7 @@ _n_long_tap_test(Evas_Object *obj,
      {
       case EVAS_CALLBACK_MULTI_DOWN:
       case EVAS_CALLBACK_MOUSE_DOWN:
-        st->touched = _touched_device_add(st->touched, pe);
+        st->touched = _touched_device_add(obj, st->touched, pe);
         st->info.n = eina_list_count(st->touched);
 
         _event_consume(sd, event_info, event_type, ev_flag);
