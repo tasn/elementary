@@ -171,6 +171,7 @@ extern const char *_elm_engines[];
 
 
 #define ELM_SAFE_FREE(_h, _fn) do { _fn((void*)_h); _h = NULL; } while (0)
+#define ELM_SAFE_DEL(_h) do { eo_del(_h); _h = NULL; } while (0)
 
 #define ELM_PRIV_STATIC_VARIABLE_DECLARE(name, signal, type) \
    static const char name[] = signal;
