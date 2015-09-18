@@ -1036,6 +1036,14 @@ _cf_scrolling(void            *data,
 }
 
 static void
+_cf_glayer(void            *data,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
+{
+   _flip_to(data, "glayer");
+}
+
+static void
 _cf_rendering(void            *data,
               Evas_Object *obj EINA_UNUSED,
               void *event_info EINA_UNUSED)
@@ -1803,6 +1811,76 @@ _status_config_focus(Evas_Object *win,
 
    evas_object_data_set(win, "focus", bx);
 
+   elm_naviframe_item_simple_push(naviframe, bx);
+}
+
+static void
+glz_change(void *data       EINA_UNUSED,
+           Evas_Object     *obj,
+           void *event_info EINA_UNUSED)
+{
+   // crap. there aren't even any Gesture Layer functions for most config options
+   // those could NEVER be changed! wtf.
+
+   /*
+   Eina_Bool val = elm_check_state_get(obj);
+   Eina_Bool ss = elm_config_glayer_;
+
+   if (val == ss) return;
+   elm_config_scroll_thumbscroll_smooth_start_set(val);
+   elm_config_all_flush();
+   */
+}
+
+static void
+_status_config_glayer_zoom(Evas_Object *win,
+                           Evas_Object *box)
+{
+   Evas_Object *fr, *bx, *ck, *pd, *lb, *sl;
+
+   fr = elm_frame_add(box);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(fr, "Zoom");
+   elm_box_pack_end(box, fr);
+   evas_object_show(fr);
+
+   bx = elm_box_add(fr);
+   elm_object_content_set(fr, bx);
+   evas_object_show(bx);
+
+   //ELM_CONFIG_VAL(D, T, glayer_zoom_finger_enable, T_UCHAR);
+   //ELM_CONFIG_VAL(D, T, glayer_zoom_finger_factor, T_DOUBLE);
+   //ELM_CONFIG_VAL(D, T, glayer_zoom_wheel_factor, T_DOUBLE);
+   //ELM_CONFIG_VAL(D, T, glayer_zoom_distance_tolerance, T_DOUBLE);
+
+   CHECK_ADD("Enable finger zoom", "Pinch to zoom with two fingers.",
+             glz_change, NULL);
+   evas_object_data_set(win, "scroll_smooth_start", ck);
+   elm_check_state_set(ck, elm_config_scroll_thumbscroll_smooth_start_get());
+
+}
+
+static void
+_status_config_glayer(Evas_Object *win,
+                      Evas_Object *naviframe)
+{
+   Evas_Object *bx, *sc;
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
+
+   sc = elm_scroller_add(win);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_scroller_bounce_set(sc, EINA_FALSE, EINA_TRUE);
+   evas_object_show(sc);
+   elm_object_content_set(sc, bx);
+
+   _status_config_glayer_zoom(win, bx);
+
+   evas_object_data_set(win, "glayer", bx);
    elm_naviframe_item_simple_push(naviframe, bx);
 }
 
@@ -3850,6 +3928,7 @@ _status_config_full(Evas_Object *win,
    elm_toolbar_item_append(tb, "video-display", "Rendering",
                            _cf_rendering, win);
    elm_toolbar_item_append(tb, "appointment-new", "Caches", _cf_caches, win);
+   elm_toolbar_item_append(tb, NULL, "Gestures", _cf_glayer, win);
    elm_toolbar_item_append(tb, "sound", "Audio", _cf_audio, win);
    elm_toolbar_item_append(tb, NULL, "Focus", _cf_focus, win);
    elm_toolbar_item_append(tb, NULL, "Etc", _cf_etc, win);
@@ -3870,6 +3949,7 @@ _status_config_full(Evas_Object *win,
    _status_config_caches(win, naviframe);
    _status_config_audio(win, naviframe);
    _status_config_focus(win, naviframe);
+   _status_config_glayer(win, naviframe);
    _status_config_etc(win, naviframe);
    _status_config_sizing(win, naviframe); // Note: call this at the end.
 
