@@ -1255,9 +1255,9 @@ _config_display_update(Evas_Object *win)
           ts_sensitivity_friction, ts_acceleration_threshold,
           ts_acceleration_time_limit, ts_acceleration_weight, page_friction,
           bring_in_friction, zoom_friction, transition_duration,
-          smooth_amount, smooth_time_window;
+          scroll_smooth_amount, scroll_smooth_time_window;
    const char *curr_theme;
-   Eina_Bool s_bounce, ts, smooth_start;
+   Eina_Bool s_bounce, ts, scroll_smooth_start;
    Elm_Theme *th;
    int fs;
 
@@ -1288,9 +1288,9 @@ _config_display_update(Evas_Object *win)
    page_friction = elm_config_scroll_page_scroll_friction_get();
    bring_in_friction = elm_config_scroll_bring_in_scroll_friction_get();
    zoom_friction = elm_config_scroll_zoom_friction_get();
-   smooth_start = elm_config_scroll_thumbscroll_smooth_start_get();
-   smooth_amount = elm_config_scroll_thumbscroll_smooth_amount_get();
-   smooth_time_window = elm_config_scroll_thumbscroll_smooth_time_window_get();
+   scroll_smooth_start = elm_config_scroll_thumbscroll_smooth_start_get();
+   scroll_smooth_amount = elm_config_scroll_thumbscroll_smooth_amount_get();
+   scroll_smooth_time_window = elm_config_scroll_thumbscroll_smooth_time_window_get();
 
    /* gotta update root windows' atoms */
    elm_slider_value_set(evas_object_data_get(win, "scale_slider"), scale);
@@ -1356,13 +1356,13 @@ _config_display_update(Evas_Object *win)
                         zoom_friction);
 
    elm_check_state_set(evas_object_data_get(win, "scroll_smooth_start"),
-                       smooth_start);
+                       scroll_smooth_start);
    elm_slider_value_set(evas_object_data_get(win,
                                              "scroll_smooth_amount"),
-                        smooth_amount);
+                        scroll_smooth_amount);
    elm_slider_value_set(evas_object_data_get(win,
                                              "scroll_smooth_time_window"),
-                        smooth_time_window);
+                        scroll_smooth_time_window);
 
    curr_theme = _elm_theme_current_get(elm_theme_get(NULL));
 
