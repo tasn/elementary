@@ -1,7 +1,8 @@
 typedef Evas_Object* (*Content_Get_Cb)(Evas_Object *par, Eo *item, void *data);
 
 /**
- * @defgroup Settingspane Settingspane
+ * @defgroup Elm_Settingspane Elm_Settingspane
+ *
  * @ingroup Elementary
  *
  * This widget aims to displays categorys sub categorys and items.

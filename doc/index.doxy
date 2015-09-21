@@ -239,7 +239,7 @@
  * @image html img/widget/win/preview-00.png
  * @image latex img/widget/win/preview-00.eps
  *
- * @li @ref Settingspane
+ * @li @ref Elm_Settingspane Settingspane
  *
  * @image html img/widget/settingspane/preview-00.png
  * @image latex img/widget/settingspane/preview-00.eps
