@@ -376,11 +376,6 @@ elm_win_standard.eo.h \
 elm_helper.h
 includesubdir = $(includedir)/elementary-@VMAJ@/
 
-COLORCLASS_GEN = \
-eldbus_elementary_colorclass.c \
-eldbus_elementary_colorclass.h \
-eldbus_utils.h
-
 libelementary_la_SOURCES = \
 elm_priv.h \
 els_box.h \
@@ -497,8 +492,7 @@ elm_helper.c \
 els_box.c \
 els_cursor.c \
 els_tooltip.c \
-elu_ews_wm.c \
-$(COLORCLASS_GEN)
+elu_ews_wm.c
 
 libelementary_la_CFLAGS = @ELEMENTARY_CFLAGS@
 libelementary_la_LIBADD = \
@@ -778,7 +772,3 @@ Elementary.hh: $(elm_eolian_hh)
 	@for i in $(elm_eolian_hh); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/Elementary.hh; done
 	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/Elementary.hh
 endif
-
-
-
-MAINTAINERCLEANFILES += $(COLORCLASS_GEN)
