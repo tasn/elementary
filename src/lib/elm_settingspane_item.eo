@@ -148,18 +148,6 @@ class Elm.Settingspane.Item(Eo.Base){
         or the attached panel will be shown, this item will be the highest on the stack.
       ]]
     }
-    delete {
-      [[
-        Delete this item
-
-        This will delete this item from the widget.
-
-        If there are children they will also be deleted.
-        If the parent of this item is just diplayed it will be refreshed and show
-        the state after this item is deleted.
-        If this item is the current focused item the stack will go back to a not deleted item.
-      ]]
-    }
   }
   implements {
      Eo.Base.destructor;

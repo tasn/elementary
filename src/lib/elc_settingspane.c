@@ -1310,11 +1310,6 @@ _elm_settingspane_item_unrealize(Eo *obj, Elm_Settingspane_Item_Data *pd)
     }
 }
 
-EOLIAN static void
-_elm_settingspane_item_delete(Eo *obj, Elm_Settingspane_Item_Data *pd EINA_UNUSED)
-{
-   eo_del(obj);
-}
 
 EOLIAN static void
 _elm_settingspane_item_changed_set(Eo *obj, Elm_Settingspane_Item_Data *pd, Eina_Bool changed)
@@ -1371,18 +1366,11 @@ _elm_settingspane_item_eo_base_destructor(Eo *obj EINA_UNUSED, Elm_Settingspane_
 {
    Elm_Settingspane_Item_Data *id_par;
    Elm_Settingspane_Item *top;
-   C_DATA(pd->sw);
+   id_par = IC_DATA_L(_parent(obj));
 
    eo_do_super(obj, ELM_SETTINGSPANE_ITEM_CLASS, eo_destructor());
 
    eo_do(obj, elm_obj_settingspane_item_unrealize());
-
-   wd->unsaved_changes = eina_list_remove(wd->unsaved_changes, obj);
-
-   if (pd->changed)
-     {
-        ERR("This page has unsaved changes, you have lost all the data!");
-     }
 
    top = _history_stack_current(pd->sw);
 
@@ -1390,23 +1378,16 @@ _elm_settingspane_item_eo_base_destructor(Eo *obj EINA_UNUSED, Elm_Settingspane_
      {
         _history_stack_pop(pd->sw);
      }
-   {
-      Eina_List *node, *nnode;
-      Elm_Settingspane_Item *ci;
-
-      EINA_LIST_FOREACH_SAFE(pd->childs, node, nnode, ci)
-        {
-           eo_del(ci);
-        }
-   }
-
-   if (_parent(obj))
-     _item_menu_refresh(_parent(obj), id_par);
 
    //if we have the item somewhere in the stack, remove it!
    _history_stack_remove(pd->sw, obj);
-   //unref the content, if there is one
-   eo_del(obj);
+
+   if (_parent(obj))
+     id_par->childs = eina_list_remove(id_par->childs, obj);
+
+   _item_menu_refresh(obj, pd);
+
+   //TODO refresh parent if visualizied
 }
 
 EOLIAN static void

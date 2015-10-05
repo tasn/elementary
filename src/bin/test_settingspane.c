@@ -201,7 +201,7 @@ del_focused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_U
 
   item = elm_settingspane_focused_get(data);
 
-  elm_settingspane_item_delete(item);
+  eo_del(item);
 }
 
 void
