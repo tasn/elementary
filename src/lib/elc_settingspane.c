@@ -67,8 +67,6 @@ typedef struct
 
 typedef struct
 {
-   Elm_Settingspane_Item *par;
-
    Eina_List *childs; //list of Elm_Settingspane_Item*
 
    const char *key_word; //< the original string which was given
@@ -176,6 +174,14 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
+EOLIAN static Eo*
+_parent(Eo *item)
+{
+   Eo *par = NULL;
+   eo_do(item, par = eo_parent_get());
+   return par;
+}
+
 static void
 conf_menu_back_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
@@ -205,18 +211,17 @@ _title_bar_cb(void *data , Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED
 static void
 _title_bar_refresh(Evas_Object *w)
 {
-   Elm_Object_Item *it, *walker;
+   Elm_Object_Item *walker;
    Elm_Settingspane_Item_Data *id = NULL;
    Evas_Object *bt;
 
    C_DATA(w);
 
-   it = _history_stack_current(w);
-
    elm_box_clear(wd->title_box);
 
+   walker = _history_stack_current(w);
+
    do {
-        walker = id ? id->par : it;
         id = IC_DATA_L(walker);
 
         bt = elm_button_add(wd->title_box);
@@ -226,7 +231,9 @@ _title_bar_refresh(Evas_Object *w)
         evas_object_show(bt);
 
         elm_box_pack_start(wd->title_box, bt);
-   } while(id->par);
+
+        walker = _parent(walker);
+   } while(walker);
 }
 
 /**
@@ -325,12 +332,11 @@ _item_new(Evas_Object *obj, Elm_Settingspane_Item *par,
                             void *usr_data,
                             const char *name)
 {
-   Elm_Settingspane_Item *item = eo_add(ELM_SETTINGSPANE_ITEM_CLASS, NULL);
+   Elm_Settingspane_Item *item = eo_add(ELM_SETTINGSPANE_ITEM_CLASS, par);
    Elm_Settingspane_Item_Data *data = eo_data_scope_get(item, ELM_SETTINGSPANE_ITEM_CLASS);
 
    data->data = usr_data;
    data->sw = obj;
-   data->par = par;
    data->name = name;
    data->key_words = NULL;
    data->key_words = eina_list_append(data->key_words, eina_stringshare_add(name));
@@ -1011,12 +1017,13 @@ _elm_settingspane_item_append(Eo *obj, Elm_Settingspane_Data *pd, void *data, co
    return _elm_settingspane_item_append_full(obj, pd, data, eina_stringshare_add(name), par, NULL);
 }
 
+
 EOLIAN static Elm_Settingspane_Item *
 _elm_settingspane_item_append_relative(Eo *obj, Elm_Settingspane_Data *pd, void *data, const char *name, Elm_Settingspane_Item *rel)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(rel, NULL);
-   Elm_Settingspane_Item_Data *id = eo_data_scope_get(rel, ELM_SETTINGSPANE_ITEM_CLASS);
-   return _elm_settingspane_item_append_full(obj, pd, data, eina_stringshare_add(name), id->par, rel);
+
+   return _elm_settingspane_item_append_full(obj, pd, data, eina_stringshare_add(name), _parent(obj), rel);
 }
 
 /* Item implement */
@@ -1169,6 +1176,7 @@ EOLIAN static void
 _elm_settingspane_item_realize(Eo *obj, Elm_Settingspane_Item_Data *pd)
 {
   C_DATA(pd->sw);
+  Eo *par = _parent(obj);
   DBG("realize %p", obj);
 
   if (wd->panel_visible)
@@ -1188,8 +1196,8 @@ _elm_settingspane_item_realize(Eo *obj, Elm_Settingspane_Item_Data *pd)
             pd->panel = p;
          }
        /* show its menu */
-       if (pd->par)
-         eo_do(pd->par, elm_obj_settingspane_item_realize());
+       if (par)
+         eo_do(par, elm_obj_settingspane_item_realize());
        /* show this panel */
        _item_panel_show(obj, pd);
        /* set us as visible */
@@ -1206,12 +1214,12 @@ _elm_settingspane_item_realize(Eo *obj, Elm_Settingspane_Item_Data *pd)
             if (wd->menu_visible)
               eo_do(wd->menu_visible, elm_obj_settingspane_item_unrealize());
             wd->menu_hidden = NULL;
-            if (pd->par)
+            if (par)
               {
                  Elm_Settingspane_Item_Data *ido;
-                 ido = IC_DATA_L(pd->par);
-                 _item_menu_realize(pd->par, ido, wd);
-                 wd->menu_hidden = pd->par;
+                 ido = IC_DATA_L(par);
+                 _item_menu_realize(par, ido, wd);
+                 wd->menu_hidden = par;
                 _item_menu_visible_hide(wd->menu_hidden);
               }
             _item_menu_show(obj, pd, (!!wd->menu_hidden));
@@ -1308,12 +1316,6 @@ _elm_settingspane_item_delete(Eo *obj, Elm_Settingspane_Item_Data *pd EINA_UNUSE
    eo_del(obj);
 }
 
-EOLIAN static const Elm_Settingspane_Item *
-_elm_settingspane_item_parent_get(Eo *obj EINA_UNUSED, Elm_Settingspane_Item_Data *pd)
-{
-   return pd->par;
-}
-
 EOLIAN static void
 _elm_settingspane_item_changed_set(Eo *obj, Elm_Settingspane_Item_Data *pd, Eina_Bool changed)
 {
@@ -1398,12 +1400,8 @@ _elm_settingspane_item_eo_base_destructor(Eo *obj EINA_UNUSED, Elm_Settingspane_
         }
    }
 
-   if (pd->par)
-     {
-        id_par = IC_DATA_L(pd->par);
-        id_par->childs = eina_list_remove(id_par->childs, obj);
-        _item_menu_refresh(pd->par, id_par);
-     }
+   if (_parent(obj))
+     _item_menu_refresh(_parent(obj), id_par);
 
    //if we have the item somewhere in the stack, remove it!
    _history_stack_remove(pd->sw, obj);

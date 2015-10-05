@@ -45,19 +45,6 @@ class Elm.Settingspane.Item(Eo.Base){
         group : const(char)*;
       }
     }
-    @property parent {
-      get {
-        [[
-          Returns the parent of this item
-
-          This will return the parent item of this item. If there is none it will return NULL.
-
-        ]]
-      }
-      values {
-        parent : const(Elm.Settingspane.Item)*;
-      }
-    }
     @property changed {
       [[
         This will mark this item internally as changed,
