@@ -12,8 +12,8 @@ Features:
 Fixes:
 
    * focus: add del callback always.
-   * Tooltip: reset content delete callback directly after invocation
-   * elm_toolbar: fix icon_size to consider edje base scale
+   * tooltip: reset content delete callback directly after invocation
+   * toolbar: fix icon_size to consider edje base scale
    * spinner: Add to support spinner value %d format.
    * cnp: init wayland dnd handlers upon creating the first drop target
    * cnp: initialize Elm_Selection_Data.action for wayland drops
@@ -27,6 +27,30 @@ Fixes:
    * scroller: fix the misstake. change && -> ||
    * elm_win: Initilize the variable 'preferred_rot' as a -1 before invoking _elm_win_xwin_update() in _elm_win_finalize_internal().
    * scroller: fix memory leak on keys traversal
+   * Revert "Elm_Interface_Scrollable: Improvement in looping behavior"
+   * naviframe: When push is in progress, block pop until push is complete.
+   * multibuttonentry: Fix mbe  clicked signal is not work.
+   * multibuttonentry: Item resize issue on text set
+   * genlist: Dont select first item if its DISPLAY_ONLY
+   * config: revert first_item_focus_on_first_focus_in to 0 (T2662)
+   * toolbar: fix issue of focus not coming to item on mouse click (T2697)
+   * gengrid: extends D2418 to horizontal mode.
+   * gengird: change focus move mechanism in gengrid.
+   * gengrid: Fix wrong focus movement in _item_single_select_down
+   * gengrid: fix item focus movement in case of horizontal mode
+   * gengrid: no need to loop in case of reorder mode is enabled
+   * gengrid: fix crash issue.
+   * naviframe: fix a focus issue when deleting the first item
+   * fileSelector: fix behaviour when the file is chosen
+   * map: fix module load craziness loading all elm modules
+   * map: fix crash on badly handled zoom timeout callback
+   * multibuttonentry: Input panel should be controlled only if multibuttonentry is editable
+   * toolbar 0 size items fix if icon not found (T2710)
+   * spinner: Notify when value is edited directly
+   * conformant: display mode set fix
+   * gengrid: fix duplicate edje signal (elm,state,focused) to item on focus
+   * spinner: fix extra callback calls
+   * multibuttonentry: Fix MBE item box min size calc error.
 
 Changes since 1.14.0:
 ---------------------
