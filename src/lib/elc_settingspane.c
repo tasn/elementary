@@ -33,10 +33,7 @@ typedef struct
 
 typedef struct
 {
-  Evas_Object *apply; //< apply button
-  Evas_Object *reset; //< reset button
   Evas_Object *layout; //< The layout where everything is displayed
-  Eina_Bool hidden; //< true if it is realized but hidden
 } Panel;
 
 typedef struct
@@ -826,7 +823,7 @@ _elm_settingspane_item_image_get(Eo *obj EINA_UNUSED, Elm_Settingspane_Item_Data
 }
 
 EOLIAN static Elm_Settingspane_Item *
-_elm_settingspane_item_append(Eo *obj, Elm_Settingspane_Data *pd, void *data, const char *name, Elm_Settingspane_Item *par)
+_elm_settingspane_item_append(Eo *obj EINA_UNUSED, Elm_Settingspane_Data *pd, void *data, const char *name, Elm_Settingspane_Item *par)
 {
    return _elm_settingspane_item_append_full(pd, data, eina_stringshare_add(name), par, NULL);
 }
@@ -851,26 +848,24 @@ _elm_settingspane_item_focus(Eo *obj, Elm_Settingspane_Item_Data *pd)
 static void
 _default_reached_cb(void *data, Evas_Object *obj, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
-   Panel *p;
+   Panel *p = data;
+
    if (!data)
      {
+        //this was a search run
         evas_object_del(obj);
         return;
      }
-
-   IC_DATA(data);
-   if (!id) return;
-
-   p = id->panel;
-
-   evas_object_del(p->layout);
-   free(p);
-   id->panel = NULL;
-   DBG("delete item %p", data);
+   else
+     {
+        //a realized panel
+        evas_object_del(p->layout);
+        free(p);
+     }
 }
 
 static Panel*
-_item_panel_realize(Eo *obj, Evas_Object *w, Evas_Object *content)
+_item_panel_realize(Eo *obj EINA_UNUSED, Evas_Object *w, Evas_Object *content)
 {
    Panel *p;
    Evas_Object *bx, *sc;
@@ -881,7 +876,7 @@ _item_panel_realize(Eo *obj, Evas_Object *w, Evas_Object *content)
    evas_object_size_hint_weight_set(p->layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(p->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_layout_theme_set(p->layout, "settingspane", "panel", "default");
-   elm_layout_signal_callback_add(p->layout, "elm,state,default,reached", EMITTER, _default_reached_cb, obj);
+   elm_layout_signal_callback_add(p->layout, "elm,state,default,reached", EMITTER, _default_reached_cb, p);
 
    bx = elm_box_add(w);
    evas_object_size_hint_weight_set(bx, 0, 0);
@@ -1037,8 +1032,8 @@ _elm_settingspane_item_realize(Eo *obj, Elm_Settingspane_Item_Data *pd)
 static void
 _item_panel_unrealize(Eo *obj  EINA_UNUSED, Elm_Settingspane_Item_Data *pd)
 {
-   Panel *p = pd->panel;
-   elm_layout_signal_emit(p->layout, EMIT_CONTENT_DEFAULT);
+   elm_layout_signal_emit(pd->panel->layout, EMIT_CONTENT_DEFAULT);
+   pd->panel = NULL;
 }
 
 static void
