@@ -785,7 +785,7 @@ _elm_settingspane_item_append_full(Elm_Settingspane_Data *pd, void *usr_data,
                                    const char *name,
                                    Elm_Settingspane_Item *par, Elm_Settingspane_Item *rel)
 {
-   Elm_Settingspane_Item *item = eo_add(ELM_SETTINGSPANE_ITEM_CLASS, NULL);
+   Elm_Settingspane_Item *item = eo_add(ELM_SETTINGSPANE_ITEM_CLASS, par ? par : pd->zero);
    Elm_Settingspane_Item_Data *data = eo_data_scope_get(item, ELM_SETTINGSPANE_ITEM_CLASS);
 
    data->data = usr_data;
@@ -793,10 +793,6 @@ _elm_settingspane_item_append_full(Elm_Settingspane_Data *pd, void *usr_data,
    data->name = name;
    data->key_words = NULL;
    data->key_words = eina_list_append(data->key_words, eina_stringshare_add(name));
-
-   //XXX: this is a hack think of a constructor
-
-   eo_do(item, eo_parent_set(par ? par : pd->zero));
 
    return item;
 }
@@ -1156,6 +1152,7 @@ _elm_settingspane_item_eo_base_parent_set(Eo *obj, Elm_Settingspane_Item_Data *p
         pd_par = IC_DATA_L(parent);
         pd_par->childs = eina_list_append_relative(pd_par->childs, obj, pd->rel);
         pd->sw = pd_par->sw;
+
         //check if we are in there
         top = _history_stack_current(pd->sw);
         if (top == parent)
