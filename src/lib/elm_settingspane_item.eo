@@ -45,49 +45,6 @@ class Elm.Settingspane.Item(Eo.Base){
         group : const(char)*;
       }
     }
-    @property changed {
-      [[
-        This will mark this item internally as changed,
-        the apply button will be enabled, and the item cannot be poped from stack anymore.
-        This can be undo if the user clicks the apply or reset button.
-      ]]
-      get {
-        [[
-          Returns the changed flag
-
-          This returns the changed flag of this Item.
-
-          The changed flag controls the enable/disable of the apply and reset buttons,
-          and controls if the panel can be closed.
-
-          If this flag is set the apply and reset buttons are enabled, a click on them will
-          result in the callbacks to the panel.
-          If someone tryes to close this panel while there are unsaved changes,
-          the panel will be highlighted with an error.
-        ]]
-      }
-      set {
-        [[
-          Set the chagned flag
-
-          This will set the changed flag for this item.
-
-          The changed flag controls the enable/disable of the apply and reset buttons,
-          and controls if the panel can be closed.
-
-          If this flag is set the apply and reset buttons are enabled, a click on them will
-          result in the callbacks to the panel.
-          If someone tryes to close this panel while there are unsaved changes,
-          the panel will be highlighted with an error.
-
-          noet that if this item doesnt have a attached panel settings this is useless
-
-        ]]
-      }
-      values {
-        changed : bool; [[set this item to changed]]
-      }
-    }
     @property keywords {
       get {
       }
@@ -126,8 +83,6 @@ class Elm.Settingspane.Item(Eo.Base){
         The callback content_get is just called if this item gets displayed.
         If it was closed once and opened another time the callback will be called a second time.
 
-        reset and apply are called when the apply or reset button is clicked.
-
         Note that if the panel can just be attached if this node doenst have childs.
         Note that if once the panel has a panel it cannot be used as a parent node anymore.
       ]]
@@ -136,8 +91,6 @@ class Elm.Settingspane.Item(Eo.Base){
                                                  Each time the panel is selected content is requested with the content_cb,
                                                  If the content is changed the old Evas_Object will be saved and displayed next time the item is selected.
                                                  ]]
-             @in reset : Evas_Smart_Cb; [[Callback to call when the reset button is clicked]]
-             @in apply : Evas_Smart_Cb; [[Callback to call when the apply button is clicked]]
       }
     }
     focus {
@@ -151,5 +104,6 @@ class Elm.Settingspane.Item(Eo.Base){
   }
   implements {
      Eo.Base.destructor;
+     Eo.Base.parent.set;
    }
 }

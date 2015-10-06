@@ -55,33 +55,6 @@ class Elm.Settingspane(Elm.Layout) {
           @in rel : Elm.Settingspane.Item*; [[the item after which the current one will be appended, if NULL the call will fail!]]
         }
       }
-      save_quit {
-        [[
-          Check if everything is saved
-
-          With the internal stack of the widget it is possible that multiple panels are opened above each other.
-          If the changed flag is set to one of this panels the apply/reset buttons are enabled,
-          and you cannot close this page before you clicked reset or apply.
-          If there are panels with the change flag set this function will return EINA_FALSE,
-          if no change flag is set on the opened panel it will return EINA_TRUE
-
-          \@ref raise_unsaved
-        ]]
-        return : bool; [[true if no change flag is set on the opened panels.]]
-      }
-      raise_unsaved {
-         [[
-           Raise unsaved panels in the internal stack
-
-           This will raise internal panels which have the changed flag set.
-           The panels are raised with a error highlighting.
-
-           The lowest unsaved panel will later be the lowest unsaved panel. The highest at the top.
-           All panels with unsaved changes will be infront of those without unsaved changes.
-
-           \@ref save_quit
-         ]]
-      }
    }
    implements {
      Eo.Base.constructor;

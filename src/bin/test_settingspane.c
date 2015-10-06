@@ -18,13 +18,6 @@ static const char* simple_menu[3][3] =
 };
 
 static void
-entry_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Elm_Settingspane_Item *it = data;
-   elm_settingspane_item_changed_set(it, EINA_TRUE);
-}
-
-static void
 anchor_clicked(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Entry_Anchor_Hover_Info *ei = event_info;
@@ -70,7 +63,6 @@ content_font_get(Evas_Object *par, Elm_Settingspane_Item *item, void *data EINA_
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_entry_single_line_set(o, EINA_TRUE);
-   evas_object_smart_callback_add(o, "changed", entry_changed, item);
    elm_box_pack_end(box, o);
    evas_object_show(o);
 
@@ -123,7 +115,6 @@ content_theme_get(Evas_Object *par, Elm_Settingspane_Item *item, void *data EINA
    elm_entry_single_line_set(o, EINA_TRUE);
    elm_object_text_set(o, "Lets think you can set here a theme (:");
    elm_box_pack_end(box, o);
-   evas_object_smart_callback_add(o, "changed", entry_changed, item);
    evas_object_show(o);
 
    return box;
@@ -153,7 +144,6 @@ content_complex_child_get(Evas_Object *par, Elm_Settingspane_Item *item, void *d
    elm_entry_single_line_set(o, EINA_TRUE);
    elm_object_text_set(o, "EFL EFL EFL EFL EFL :) >>>change me<<<");
    elm_box_pack_end(box, o);
-   evas_object_smart_callback_add(o, "changed", entry_changed, item);
    evas_object_show(o);
 
    return box;
@@ -163,36 +153,6 @@ static Content_Get_Cb content_cb[4] =
 {
    content_font_get,content_color_get, content_theme_get, content_complex_child_get
 };
-
-
-static void
-reset_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-   Elm_Settingspane_Item *item = event_info;
-   elm_settingspane_item_changed_set(item, EINA_FALSE);
-}
-
-static void
-apply_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-   Elm_Settingspane_Item *item = event_info;
-   elm_settingspane_item_changed_set(item, EINA_FALSE);
-}
-
-static void
-highlight_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   elm_settingspane_raise_unsaved(data);
-}
-
-static void
-save_q_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   if (!elm_settingspane_save_quit(data))
-     printf("No.\n");
-   else
-     printf("Yes :)\n");
-}
 
 static void
 del_focused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -240,7 +200,7 @@ test_settingspane(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
         it = elm_settingspane_item_append(sw, buf, simple_menu[i][0], NULL);
         elm_settingspane_item_description_set(it, simple_menu[i][1]);
         elm_settingspane_item_image_set(it, buf, NULL);
-        elm_settingspane_item_attach_panel(it, content_cb[i], reset_cb, apply_cb);
+        elm_settingspane_item_attach_panel(it, content_cb[i]);
      }
 
    /* A complex item! */
@@ -260,7 +220,7 @@ test_settingspane(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_settingspane_item_image_set(it2, buf, NULL);
 
    elm_settingspane_item_keywords_set(it2, "Heavyone,Third,");
-   elm_settingspane_item_attach_panel(it2, content_cb[3], reset_cb, apply_cb);
+   elm_settingspane_item_attach_panel(it2, content_cb[3]);
 
    evas_object_show(sw);
 
@@ -270,22 +230,6 @@ test_settingspane(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    evas_object_size_hint_align_set(btnbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, btnbox);
    evas_object_show(btnbox);
-
-   o = elm_button_add(win);
-   elm_object_text_set(o, "Highlight Unsaved Changes");
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_smart_callback_add(o, "clicked", highlight_cb, sw);
-   elm_box_pack_end(btnbox, o);
-   evas_object_show(o);
-
-   o = elm_button_add(win);
-   elm_object_text_set(o, "Everything Saved ?");
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_smart_callback_add(o, "clicked", save_q_cb, sw);
-   elm_box_pack_end(btnbox, o);
-   evas_object_show(o);
 
    o = elm_button_add(win);
    elm_object_text_set(o, "Delete focused item");
