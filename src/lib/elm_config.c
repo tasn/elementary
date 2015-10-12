@@ -3215,7 +3215,10 @@ elm_config_all_flush(void)
      }
 
    if (!_elm_config_profile_save())
-     return;
+     {
+        ERR("Failed to save profile");
+        return;
+     }
 
    buf[len] = '/';
    len++;
@@ -3238,7 +3241,10 @@ elm_config_all_flush(void)
 
    ok = eet_data_write(ef, _config_edd, "config", _elm_config, 1);
    if (!ok)
-     goto err;
+     {
+        ERR("Failed to write config (error %i)", ok);
+        goto err;
+     }
 
    err = _elm_config_eet_close_error_get(ef, buf2);
    if (err)
