@@ -3316,6 +3316,9 @@ _elm_config_sub_shutdown(void)
 #ifdef HAVE_ELEMENTARY_X
    if (ecore_x_display_get()) ecore_x_shutdown();
 #endif
+#ifdef HAVE_ELEMENTARY_WIN32
+   ecore_win32_shutdown();
+#endif
    ELM_SAFE_FREE(_eio_monitor, eio_monitor_del);
    ELM_SAFE_FREE(_config_change_delay_timer, ecore_timer_del);
 }
