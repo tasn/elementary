@@ -961,6 +961,16 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             legacy: null;
          }
       }
+      @property win32_window {
+         get {
+            [[Get the Ecore_Win32_Window of an Evas_Object
+
+              @since 1.16
+            ]]
+            return: Ecore_Win32_Window *; [[The Ecore_Win32_Window of $obj.]]
+            legacy: null;
+         }
+      }
       @property window_id {
          get {
             [[Get the Ecore_Window of an Evas_Object

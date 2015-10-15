@@ -12,6 +12,9 @@
 #ifdef HAVE_ELEMENTARY_DRM
 #include <Ecore_Drm.h>
 #endif
+#ifdef HAVE_ELEMENTARY_WIN32
+#include <Ecore_Win32.h>
+#endif
 
 #include <Eio.h>
 
