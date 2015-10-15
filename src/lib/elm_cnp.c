@@ -3698,9 +3698,9 @@ struct _Win32_Cnp_Selection
    void                  *udata;
    Elm_Sel_Format         requestformat;
    Elm_Drop_Cb            datacb;
-   Eina_Bool            (*set)(Ecore_Win32_Window *window, const void *data, int size);
-   Eina_Bool            (*clear)(Ecore_Win32_Window *window);
-   Eina_Bool            (*get)(Ecore_Win32_Window *window , void **data, int *size);
+   Eina_Bool            (*set)(const Ecore_Win32_Window *window, const void *data, int size);
+   Eina_Bool            (*clear)(const Ecore_Win32_Window *window);
+   Eina_Bool            (*get)(const Ecore_Win32_Window *window , void **data, int *size);
    Elm_Selection_Loss_Cb  loss_cb;
    void                  *loss_data;
 
