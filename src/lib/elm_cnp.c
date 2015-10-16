@@ -3558,6 +3558,7 @@ _job_pb_cb(void *data)
         type = _elm_sel_format_to_ecore_cocoa_cnp_type(sel->requestformat);
         pbdata = ecore_cocoa_selection_clipboard_get(&pbdata_len, type, &get_type);
 
+        ddata.format = ELM_SEL_FORMAT_NONE;
         if (get_type & ECORE_COCOA_CNP_TYPE_STRING)
           ddata.format |= ELM_SEL_FORMAT_TEXT;
         if (get_type & ECORE_COCOA_CNP_TYPE_MARKUP)
