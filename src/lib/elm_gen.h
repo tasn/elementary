@@ -51,6 +51,16 @@ typedef void                          (*Elm_Gen_Item_Del_Cb)(void *data, Evas_Ob
  */
 typedef Eina_Bool                     (*Elm_Gen_Item_Filter_Get_Cb)(void *data, Evas_Object *obj, void *key); /**< Filter seeking class function for gen item classes. */
 
+/**
+ * Content reusing class function for Elm_Gen_Item_Class.
+ * @param data The data passed in the item creation function
+ * @param obj The base widget object
+ * @param part The part name of the swallow
+ * @param content The content object for reusing
+ * @return The boolean state of filter for this element
+ */
+typedef Eina_Bool                     (*Elm_Gen_Item_Content_Reuse_Cb)(void *data, Evas_Object *obj, const char *part, Evas_Object *content); /**< Content reusing class function for gen item classes. */
+
 struct _Elm_Gen_Item_Class
 {
    int           version;  /**< Set by elementary if you alloc an item class using elm_genlist/gengrid_item_class_new(), or if you set your own class (must be const) then set it to ELM_GENLIST/GENGRID_ITEM_CLASS_VERSION */
@@ -61,11 +71,12 @@ struct _Elm_Gen_Item_Class
    const char   *decorate_all_item_style; /**< Style to use when in edit mode, or NULL if you don't care. currently it's used only in genlist. */
    struct
      {
-        Elm_Gen_Item_Text_Get_Cb    text_get; /**< Text fetching class function for genlist/gengrid item classes.*/
-        Elm_Gen_Item_Content_Get_Cb content_get; /**< Content fetching class function for genlist/gengrid item classes. */
-        Elm_Gen_Item_State_Get_Cb   state_get; /**< State fetching class function for genlist/gengrid item classes. */
-        Elm_Gen_Item_Del_Cb         del; /**< Deletion class function for genlist/gengrid item classes. */
-        Elm_Gen_Item_Filter_Get_Cb  filter_get;  /**< Filter seeking class function for genlist/gengrid item classes. */
+        Elm_Gen_Item_Text_Get_Cb      text_get; /**< Text fetching class function for genlist/gengrid item classes.*/
+        Elm_Gen_Item_Content_Get_Cb   content_get; /**< Content fetching class function for genlist/gengrid item classes. */
+        Elm_Gen_Item_State_Get_Cb     state_get; /**< State fetching class function for genlist/gengrid item classes. */
+        Elm_Gen_Item_Del_Cb           del; /**< Deletion class function for genlist/gengrid item classes. */
+        Elm_Gen_Item_Filter_Get_Cb    filter_get;  /**< Filter seeking class function for genlist/gengrid item classes. */
+        Elm_Gen_Item_Content_Reuse_Cb content_reuse; /**< Content reusing class function for gen item classes. */
      } func;
 }; /**< #Elm_Gen_Item_Class member definitions */
 

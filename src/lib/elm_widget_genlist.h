@@ -277,6 +277,7 @@ struct _Item_Cache
    Evas_Object *base_view, *spacer;
    const char  *item_style; // it->itc->item_style
    Eina_Bool    tree : 1; // it->group
+   Eina_List   *contents; // content objects for reusing
 };
 
 typedef struct _Elm_Genlist_Pan_Data Elm_Genlist_Pan_Data;

@@ -140,6 +140,8 @@ gl_text_get1(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNU
 
 Evas_Object *gl_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
 {
+
+   ERR("part : %s", part);
    char buf[PATH_MAX];
    Evas_Object *ic = elm_icon_add(obj);
    if (!strcmp(part, "elm.swallow.end"))
@@ -210,6 +212,13 @@ Evas_Object *gl_content_full_get(void *data EINA_UNUSED, Evas_Object *obj, const
 Eina_Bool gl_state_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    return EINA_FALSE;
+}
+
+Eina_Bool gl_content_reuse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *part, Evas_Object *content)
+{
+   ERR("part %s obj %p", part, content);
+   if (!strcmp(part, "elm.swallow.end")) return EINA_TRUE;
+   else return EINA_FALSE;
 }
 
 static void
@@ -402,6 +411,7 @@ test_genlist(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    api->itc1->func.content_get = gl_content_get;
    api->itc1->func.state_get = gl_state_get;
    api->itc1->func.del = NULL;
+   api->itc1->func.content_reuse = gl_content_reuse;
 
    bt_50 = elm_button_add(win);
    elm_object_text_set(bt_50, "Go to 50");

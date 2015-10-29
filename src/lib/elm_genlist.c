@@ -346,7 +346,8 @@ _item_content_realize(Elm_Gen_Item *it,
                       Evas_Object *target,
                       Eina_List **contents,
                       const char *src,
-                      const char *parts)
+                      const char *parts,
+                      Eina_List *reused_parts)
 {
    Eina_Bool tmp;
    Evas_Object *content;
@@ -368,6 +369,25 @@ _item_content_realize(Elm_Gen_Item *it,
           {
              if (parts && fnmatch(parts, key, FNM_PERIOD))
                continue;
+
+             if (reused_parts)
+               {
+                  Eina_List *l;
+				  Evas_Object *rc;
+                  const char *prt;
+                  Eina_Bool reused = EINA_FALSE;
+                  EINA_LIST_FOREACH(reused_parts, l, rc)
+                    {
+                       prt = (const char *)evas_object_data_get(rc, "part");
+                       if (!strcmp(prt, key))
+                         {
+                            reused = EINA_TRUE;
+                            *contents = eina_list_append(*contents, rc);
+                            continue;
+                         }
+                    }
+                  if (reused) continue;
+               }
 
              Evas_Object *old = edje_object_part_swallow_get(target, key);
              if (old)
@@ -391,6 +411,7 @@ _item_content_realize(Elm_Gen_Item *it,
                   continue;
                }
              elm_widget_sub_object_add(WIDGET(it), content);
+             evas_object_data_set(content, "part", eina_stringshare_add(key));
              if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()))
                elm_widget_disabled_set(content, EINA_TRUE);
 
@@ -529,8 +550,11 @@ _view_clear(Evas_Object *view, Eina_List **texts, Eina_List **contents)
      edje_object_part_text_set(view, part, NULL);
    ELM_SAFE_FREE(*texts, elm_widget_stringlist_free);
 
-   EINA_LIST_FREE(*contents, c)
-     evas_object_del(c);
+   if (contents)
+     {
+        EINA_LIST_FREE(*contents, c)
+           evas_object_del(c);
+     }
 }
 
 static void
@@ -611,7 +635,7 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
      eo_do(WIDGET(it), eo_event_callback_call(ELM_GENLIST_EVENT_UNREALIZED, EO_OBJ(it)));
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
 
-   _view_clear(VIEW(it), &(it->texts), &(it->contents));
+   _view_clear(VIEW(it), &(it->texts), NULL);
    ELM_SAFE_FREE(it->item_focus_chain, eina_list_free);
 
    eo_do(EO_OBJ(it), elm_wdg_item_track_cancel());
@@ -1288,11 +1312,11 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it)
 
 static void
 _view_inflate(Evas_Object *view, Elm_Gen_Item *it, Eina_List **sources,
-              Eina_List **contents)
+              Eina_List **contents, Eina_List *reused_parts)
 {
    if (!view) return;
    if (sources) _item_text_realize(it, view, sources, NULL);
-   if (contents) _item_content_realize(it, view, contents, "contents", NULL);
+   if (contents) _item_content_realize(it, view, contents, "contents", NULL, reused_parts);
    _item_state_realize(it, view, NULL);
 }
 
@@ -1381,7 +1405,7 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
    if (it->flipped)
      edje_object_signal_emit
        (it->deco_all_view, SIGNAL_FLIP_ENABLED, "elm");
-   _view_inflate(it->deco_all_view, it, NULL, &(GL_IT(it)->deco_all_contents));
+   _view_inflate(it->deco_all_view, it, NULL, &(GL_IT(it)->deco_all_contents), NULL);
    edje_object_part_swallow
      (it->deco_all_view, "elm.swallow.decorate.content", VIEW(it));
 
@@ -1469,10 +1493,13 @@ static void
 _item_cache_free(Item_Cache *itc)
 {
    if (!itc) return;
+   Evas_Object *c;
 
    evas_object_del(itc->spacer);
    evas_object_del(itc->base_view);
    eina_stringshare_del(itc->item_style);
+   EINA_LIST_FREE(itc->contents, c)
+      evas_object_del(c);
    ELM_SAFE_FREE(itc, free);
 }
 
@@ -1505,7 +1532,7 @@ _item_cache_zero(Elm_Genlist_Data *sd)
 
 // add an item to item cache
 static Eina_Bool
-_item_cache_add(Elm_Gen_Item *it)
+_item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
 {
    if (it->item->nocache_once || it->item->nocache) return EINA_FALSE;
 
@@ -1530,6 +1557,7 @@ _item_cache_add(Elm_Gen_Item *it)
    itc->spacer = it->spacer;
    itc->base_view = VIEW(it);
    itc->item_style = eina_stringshare_add(it->itc->item_style);
+   itc->contents = contents;
    if (it->item->type & ELM_GENLIST_ITEM_TREE)
      {
         itc->tree = 1;
@@ -1579,7 +1607,7 @@ _item_cache_add(Elm_Gen_Item *it)
 
 // find an item from item cache and remove it from the cache
 static Eina_Bool
-_item_cache_find(Elm_Gen_Item *it)
+_item_cache_find(Elm_Gen_Item *it, Eina_List **contents)
 {
    if (it->item->nocache_once || it->item->nocache) return EINA_FALSE;
 
@@ -1604,6 +1632,8 @@ _item_cache_find(Elm_Gen_Item *it)
              itc->spacer = NULL;
              itc->base_view = NULL;
 
+             *contents = itc->contents;
+             itc->contents = NULL;
              _item_cache_free(itc);
              return EINA_TRUE;
           }
@@ -1725,6 +1755,7 @@ _item_realize(Elm_Gen_Item *it,
 {
    const char *treesize;
    int tsize = 20;
+   Eina_List *reused_parts = NULL;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    if (it->realized)
@@ -1740,7 +1771,7 @@ _item_realize(Elm_Gen_Item *it,
    it->item->order_num_in = in;
 
    if (sd->tree_effect_enabled ||
-       (!_item_cache_find(it)))
+       (!_item_cache_find(it, &(reused_parts))))
      {
         VIEW(it) = _view_create(it, it->itc->item_style);
         if (it->item->nocache_once)
@@ -1831,7 +1862,8 @@ _item_realize(Elm_Gen_Item *it,
           ERR_ABORT("If you see this error, please notify us and we"
                     "will fix it");
 
-        _view_inflate(VIEW(it), it, &it->texts, &it->contents);
+        _view_inflate(VIEW(it), it, &it->texts, &it->contents, reused_parts);
+
         if (it->has_contents != (!!it->contents))
           it->item->mincalcd = EINA_FALSE;
         it->has_contents = !!it->contents;
@@ -1839,7 +1871,7 @@ _item_realize(Elm_Gen_Item *it,
           {
              edje_object_signal_emit(VIEW(it), SIGNAL_FLIP_ENABLED, "elm");
              _item_content_realize(it, VIEW(it), &GL_IT(it)->flip_contents,
-                                   "flips", NULL);
+                                   "flips", NULL, NULL);
           }
 
         /* access: unregister item which have no text and content */
@@ -5025,9 +5057,24 @@ _decorate_item_finished_signal_cb(void *data,
 static void
 _item_unrealize(Elm_Gen_Item *it)
 {
-   Evas_Object *content;
-   EINA_LIST_FREE(it->item->flip_contents, content)
-     evas_object_del(content);
+   Evas_Object *c;
+   Eina_List *reused_parts = NULL;
+   const char *part;
+
+   EINA_LIST_FREE(it->contents, c)
+     {
+        part = (const char *)evas_object_data_get(c, "part");
+        if (it->itc->func.content_reuse && it->itc->func.content_reuse(
+              (void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), part, c))
+          {
+             reused_parts = eina_list_append(reused_parts, c);
+          }
+        else evas_object_del(c);
+     }
+
+
+   EINA_LIST_FREE(it->item->flip_contents, c)
+     evas_object_del(c);
 
    /* access */
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
@@ -5037,10 +5084,12 @@ _item_unrealize(Elm_Gen_Item *it)
    _decorate_item_unrealize(it);
    if (GL_IT(it)->wsd->decorate_all_mode) _decorate_all_item_unrealize(it);
 
-   if (!_item_cache_add(it))
+   if (!_item_cache_add(it, reused_parts))
      {
         ELM_SAFE_FREE(VIEW(it), evas_object_del);
         ELM_SAFE_FREE(it->spacer, evas_object_del);
+        EINA_LIST_FREE(reused_parts, part)
+           eina_stringshare_del(part);
      }
 
    it->states = NULL;
@@ -5366,7 +5415,7 @@ _decorate_item_realize(Elm_Gen_Item *it)
      it);
 
    _view_inflate(it->item->deco_it_view, it, &GL_IT(it)->deco_it_texts,
-                 &GL_IT(it)->deco_it_contents);
+                 &GL_IT(it)->deco_it_contents, NULL);
    edje_object_part_swallow
      (it->item->deco_it_view,
      edje_object_data_get(it->item->deco_it_view, "mode_part"), VIEW(it));
@@ -6931,23 +6980,23 @@ _elm_genlist_item_fields_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
      }
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_CONTENT))
      {
-        _item_content_realize(it, VIEW(it), &it->contents, "contents", parts);
+        _item_content_realize(it, VIEW(it), &it->contents, "contents", parts, NULL);
         if (it->flipped)
           {
              _item_content_realize(it, VIEW(it), &GL_IT(it)->flip_contents,
-                                   "flips", parts);
+                                   "flips", parts, NULL);
           }
         if (GL_IT(it)->deco_it_view)
           {
              _item_content_realize(it, GL_IT(it)->deco_it_view,
                                    &GL_IT(it)->deco_it_contents,
-                                   "contents", parts);
+                                   "contents", parts, NULL);
           }
         if (GL_IT(it)->wsd->decorate_all_mode)
           {
              _item_content_realize(it, it->deco_all_view,
                                    &GL_IT(it)->deco_all_contents,
-                                   "contents", parts);
+                                   "contents", parts, NULL);
           }
         if (it->has_contents != (!!it->contents))
           it->item->mincalcd = EINA_FALSE;
