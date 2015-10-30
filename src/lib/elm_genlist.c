@@ -373,7 +373,7 @@ _item_content_realize(Elm_Gen_Item *it,
              if (reused_parts)
                {
                   Eina_List *l;
-				  Evas_Object *rc;
+                  Evas_Object *rc;
                   const char *prt;
                   Eina_Bool reused = EINA_FALSE;
                   EINA_LIST_FOREACH(reused_parts, l, rc)
@@ -386,7 +386,10 @@ _item_content_realize(Elm_Gen_Item *it,
                             continue;
                          }
                     }
-                  if (reused) continue;
+                  if (reused &&
+                      it->itc->func.content_reuse && it->itc->func.content_reuse(
+                         (void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key, rc))
+                    continue;
                }
 
              Evas_Object *old = edje_object_part_swallow_get(target, key);
@@ -5065,7 +5068,7 @@ _item_unrealize(Elm_Gen_Item *it)
      {
         part = (const char *)evas_object_data_get(c, "part");
         if (it->itc->func.content_reuse && it->itc->func.content_reuse(
-              (void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), part, c))
+              (void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), part, NULL))
           {
              reused_parts = eina_list_append(reused_parts, c);
           }
