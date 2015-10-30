@@ -1496,14 +1496,21 @@ _item_cache_pop(Elm_Genlist_Data *sd, Item_Cache *itc)
 static void
 _item_cache_free(Item_Cache *itc)
 {
-   if (!itc) return;
    Evas_Object *c;
+   const char *part;
+
+   if (!itc) return;
 
    evas_object_del(itc->spacer);
    evas_object_del(itc->base_view);
    eina_stringshare_del(itc->item_style);
    EINA_LIST_FREE(itc->contents, c)
-      evas_object_del(c);
+     {
+        part = (const char *)evas_object_data_get(c, "part");
+        eina_stringshare_del(part);
+        evas_object_data_del(c, "part");
+        evas_object_del(c);
+     }
    ELM_SAFE_FREE(itc, free);
 }
 
@@ -5092,8 +5099,13 @@ _item_unrealize(Elm_Gen_Item *it)
      {
         ELM_SAFE_FREE(VIEW(it), evas_object_del);
         ELM_SAFE_FREE(it->spacer, evas_object_del);
-        EINA_LIST_FREE(reused_parts, part)
-           eina_stringshare_del(part);
+        EINA_LIST_FREE(reused_parts, c)
+          {
+             part = (const char *)evas_object_data_get(c, "part");
+             eina_stringshare_del(part);
+             evas_object_data_del(c, "part");
+             evas_object_del(c);
+          }
      }
 
    it->states = NULL;
