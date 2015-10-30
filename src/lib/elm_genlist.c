@@ -374,12 +374,12 @@ _item_content_realize(Elm_Gen_Item *it,
                {
                   Eina_List *l;
                   Evas_Object *c, *reused_content;
-                  const char *prt;
+                  const char *part_name;
                   Eina_Bool reused = EINA_FALSE;
-                  EINA_LIST_FOREACH(reused_parts, l, rc)
+                  EINA_LIST_FOREACH(reused_parts, l, c)
                     {
-                       prt = (const char *)evas_object_data_get(c, "part");
-                       if (!strcmp(prt, key))
+                       part_name = (const char *)evas_object_data_get(c, "part");
+                       if (!strcmp(part_name, key))
                          {
                             reused = EINA_TRUE;
                             reused_content = c;
