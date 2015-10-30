@@ -57,7 +57,7 @@ typedef Eina_Bool                     (*Elm_Gen_Item_Filter_Get_Cb)(void *data, 
  * @param obj The base widget object
  * @param part The part name of the swallow
  * @param content The content object for reusing
- * @return The boolean state of filter for this element
+ * @return The boolean state of reusing for this content object
  */
 typedef Eina_Bool                     (*Elm_Gen_Item_Content_Reuse_Cb)(void *data, Evas_Object *obj, const char *part, Evas_Object *content); /**< Content reusing class function for gen item classes. */
 
