@@ -1508,7 +1508,6 @@ _item_cache_free(Item_Cache *itc)
      {
         part = (const char *)evas_object_data_get(c, "part");
         eina_stringshare_del(part);
-        evas_object_data_del(c, "part");
         evas_object_del(c);
      }
    ELM_SAFE_FREE(itc, free);
@@ -5103,7 +5102,6 @@ _item_unrealize(Elm_Gen_Item *it)
           {
              part = (const char *)evas_object_data_get(c, "part");
              eina_stringshare_del(part);
-             evas_object_data_del(c, "part");
              evas_object_del(c);
           }
      }
