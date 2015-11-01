@@ -75,6 +75,8 @@ static int _elm_policies[ELM_POLICY_LAST];
 static Ecore_Event_Handler *_elm_exit_handler = NULL;
 static Eina_Bool quicklaunch_on = 0;
 
+static uint32_t _debug_objs_list_op = EINA_DEBUG_OPCODE_INVALID;
+
 static Eina_Bool
 _elm_signal_exit(void *data  EINA_UNUSED,
                  int ev_type EINA_UNUSED,
@@ -300,6 +302,85 @@ static Eina_Bool _sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED,
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_debug_list_req_cb(Eina_Debug_Client *src, void *buffer EINA_UNUSED, int size EINA_UNUSED)
+{
+   Eo_Class *kl_id = NULL;
+#if 0
+   if (size > 0)
+     {
+        char *req_classname = buffer;
+        unsigned int i;
+        for (i = 0; i < _eo_classes_last_id && !kl_id; i++)
+          {
+             if (!strcmp(_eo_classes[i]->desc->name, req_classname))
+                kl_id = _eo_class_id_get(_eo_classes[i]);
+          }
+     }
+#endif
+   const Eina_List *objs = eo_debug_objects_list_get(), *itr;
+   Eo *obj;
+   unsigned int strings_size = 0;
+   unsigned int objs_count = 0;
+
+   EINA_LIST_FOREACH(objs, itr, obj)
+     {
+        if (!kl_id || eo_isa(obj, kl_id))
+          {
+             strings_size += strlen(eo_class_name_get(obj)) + 1;
+             objs_count++;
+          }
+     }
+
+   unsigned int resp_size = 2 * objs_count * sizeof(uint64_t) + strings_size;
+   unsigned char *buf = alloca(resp_size);
+   unsigned int size_curr = 0;
+
+   EINA_LIST_FOREACH(objs, itr, obj)
+     {
+        if (!kl_id || eo_isa(obj, kl_id))
+          {
+             const char *kl_name = eo_class_name_get(obj);
+             Eo *parent = NULL;
+             memcpy(buf + size_curr, &obj, sizeof(uint64_t));
+             size_curr += sizeof(uint64_t);
+             do
+               {
+                  if (elm_widget_is(obj)) parent = elm_widget_parent_get(obj);
+                  if (!parent && eo_isa(obj, EVAS_OBJECT_CLASS))
+                    {
+                       parent = evas_object_data_get(obj, "elm-parent");
+                       if (!parent) parent = evas_object_smart_parent_get(obj);
+                    }
+                  if (!parent) parent = eo_do_ret(obj, parent, eo_parent_get());
+               }
+             while (parent && kl_id && !eo_isa(parent, kl_id));
+             memcpy(buf + size_curr, &parent, sizeof(uint64_t));
+             size_curr += sizeof(uint64_t);
+             unsigned int len = strlen(kl_name) + 1;
+             memcpy(buf + size_curr, kl_name, len);
+             size_curr += len;
+          }
+     }
+
+   eina_debug_session_send(src, _debug_objs_list_op, buf, resp_size);
+
+   return EINA_TRUE;
+}
+
+static const Eina_Debug_Opcode _debug_ops[] =
+{
+     {"Elementary/objects_list", &_debug_objs_list_op, &_debug_list_req_cb},
+     {NULL, NULL, NULL}
+};
+
+static Eina_Bool
+_debug_init()
+{
+   eina_debug_opcodes_register(NULL, _debug_ops, NULL);
+   return EINA_TRUE;
+}
+
 EAPI int
 elm_init(int    argc,
          char **argv)
@@ -315,6 +396,8 @@ elm_init(int    argc,
 
    if (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF)
      _elm_atspi_bridge_init();
+
+   _debug_init();
 
    return _elm_init_count;
 }
