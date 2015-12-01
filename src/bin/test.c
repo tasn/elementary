@@ -13,6 +13,7 @@ int _log_domain = -1;
 void test_access(void *data, Evas_Object *obj, void *event_info);
 void test_access2(void *data, Evas_Object *obj, void *event_info);
 void test_access3(void *data, Evas_Object *obj, void *event_info);
+void test_atspi(void *data, Evas_Object *obj, void *event_info);
 void test_bg_plain(void *data, Evas_Object *obj, void *event_info);
 void test_bg_image(void *data, Evas_Object *obj, void *event_info);
 void test_bg_options(void *data, Evas_Object *obj, void *event_info);
@@ -865,6 +866,7 @@ add_tests:
    ADD_TEST(NULL, "Miscellaneous", "Accessibility", test_access);
    ADD_TEST(NULL, "Miscellaneous", "Accessibility2", test_access2);
    ADD_TEST(NULL, "Miscellaneous", "Accessibility3", test_access3);
+   ADD_TEST(NULL, "Miscellaneous", "AT-SPI", test_atspi);
 
    //------------------------------//
    ADD_TEST(NULL, "Application client/server", "Task switcher", test_task_switcher);
