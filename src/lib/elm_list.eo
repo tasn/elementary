@@ -458,6 +458,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
       Elm_Interface_Atspi_Selection.is_child_selected;
       Elm_Interface_Atspi_Selection.all_children_select;
       Elm_Interface_Atspi_Selection.clear;
+      Elm_Interface_Atspi_Component.accessible_at_point_get;
    }
    events {
       activated;

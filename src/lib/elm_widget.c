@@ -5979,5 +5979,43 @@ _elm_widget_item_elm_interface_atspi_component_alpha_get(Eo *obj EINA_UNUSED, El
    return (double)alpha / 255.0;
 }
 
+EOLIAN static Eo *
+_elm_widget_elm_interface_atspi_component_accessible_at_point_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Eina_Bool screen_coords, int x, int y)
+{
+   Eina_List *l;
+   Evas_Object *stack_item;
+
+   if (screen_coords)
+     elm_atspi_componenet_coords_convert(ELM_ATSPI_COMPONENT_CONVERT_SCREEN_2_WINDOW, evas_object_evas_get(obj), &x, &y);
+
+   /* Get evas_object stacked at given x,y coordinates starting from top */
+   Eina_List *stack = evas_tree_objects_at_xy_get(evas_object_evas_get(obj), NULL, x, y);
+
+   /* Foreach stacked object starting from top */
+   EINA_LIST_FOREACH(stack, l, stack_item)
+     {
+          Evas_Object *smart_parent = stack_item;
+          while (smart_parent)
+            {
+               if (evas_object_repeat_events_get(smart_parent))
+                 break;
+               if (eo_isa(smart_parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+                 {
+                    Elm_Atspi_Type type;
+                    eo_do(smart_parent, type = elm_interface_atspi_accessible_type_get());
+                    if (type == ELM_ATSPI_TYPE_REGULAR)
+                      {
+                         eina_list_free(stack);
+                         return smart_parent == obj ? NULL : smart_parent;
+                      }
+                 }
+               smart_parent = evas_object_smart_parent_get(smart_parent);
+            }
+     }
+
+   eina_list_free(stack);
+   return NULL;
+}
+
 #include "elm_widget_item.eo.c"
 #include "elm_widget.eo.c"

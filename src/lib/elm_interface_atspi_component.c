@@ -149,4 +149,24 @@ _elm_interface_atspi_component_focus_grab(Eo *obj EINA_UNUSED, void *_pd EINA_UN
    return evas_object_focus_get(obj);
 }
 
+void
+elm_atspi_componenet_coords_convert(Elm_Atspi_Component_Convert_Direction dir, Evas *evas, int *x, int *y)
+{
+   Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas);
+   int ee_x, ee_y;
+   if (!ee) return;
+
+   ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
+   switch (dir)
+     {
+      case ELM_ATSPI_COMPONENT_CONVERT_SCREEN_2_WINDOW:
+         if (x) *x -= ee_x;
+         if (y) *y -= ee_y;
+         break;
+      case ELM_ATSPI_COMPONENT_CONVERT_WINDOW_2_SCREEN:
+         if (x) *x += ee_x;
+         if (y) *y += ee_y;
+     }
+}
+
 #include "elm_interface_atspi_component.eo.c"

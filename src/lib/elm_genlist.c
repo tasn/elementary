@@ -7,6 +7,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 
 #include <Elementary.h>
@@ -8393,6 +8394,20 @@ _elm_genlist_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, E
           }
      }
    return EINA_FALSE;
+}
+
+EOLIAN static Eo *
+_elm_genlist_elm_interface_atspi_component_accessible_at_point_get(Eo *obj, Elm_Genlist_Data *_pd EINA_UNUSED, Eina_Bool screen_coords, int x, int y)
+{
+   Eo *ret;
+   eo_do_super(obj, ELM_GENLIST_CLASS, ret = elm_interface_atspi_component_accessible_at_point_get(screen_coords, x, y));
+
+   if (ret) return ret;
+
+   if (screen_coords)
+     elm_atspi_componenet_coords_convert(ELM_ATSPI_COMPONENT_CONVERT_SCREEN_2_WINDOW, evas_object_evas_get(obj), &x, &y);
+
+   return eo_do_ret(obj, ret, elm_obj_genlist_at_xy_item_get(x, y, NULL));
 }
 
 #include "elm_genlist.eo.c"

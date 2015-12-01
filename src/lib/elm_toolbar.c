@@ -5,6 +5,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 
 #include <Elementary.h>
@@ -4000,6 +4001,36 @@ EOLIAN void
 _elm_toolbar_evas_object_smart_calculate(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED)
 {
    _sizing_eval(obj);
+}
+
+EOLIAN static Eo *
+_elm_toolbar_elm_interface_atspi_component_accessible_at_point_get(Eo *obj, Elm_Toolbar_Data *_pd EINA_UNUSED, Eina_Bool screen_coords, int x, int y)
+{
+   Eo *ret;
+   Elm_Toolbar_Item_Data *it;
+   Eina_Rectangle in_rect;
+   eo_do_super(obj, ELM_TOOLBAR_CLASS, ret = elm_interface_atspi_component_accessible_at_point_get(screen_coords, x, y));
+
+   if (ret) return ret;
+   if (screen_coords)
+     elm_atspi_componenet_coords_convert(ELM_ATSPI_COMPONENT_CONVERT_SCREEN_2_WINDOW, evas_object_evas_get(obj), &x, &y);
+
+   in_rect.x = x;
+   in_rect.y = y;
+   in_rect.w = in_rect.h = 1;
+
+   EINA_INLIST_FOREACH(_pd->items, it)
+     {
+        if (it->separator) continue;
+        if (VIEW(it))
+          {
+             Eina_Rectangle rect;
+             evas_object_geometry_get(VIEW(it), &rect.x, &rect.y, &rect.w, &rect.h);
+             if (eina_rectangle_intersection(&in_rect, &rect))
+               return EO_OBJ(it);
+          }
+     }
+   return NULL;
 }
 
 
