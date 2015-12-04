@@ -116,6 +116,7 @@ struct _Elm_Win_Data
    {
       Ecore_Wl2_Window *win;
       Eina_Bool opaque_dirty : 1;
+      Eina_Bool no_shadow : 1;
    } wl;
 #endif
 #ifdef HAVE_ELEMENTARY_COCOA
@@ -1302,6 +1303,23 @@ _elm_win_frame_obj_update(Elm_Win_Data *sd)
 }
 
 static void
+_elm_win_frame_shadow_state_update(Elm_Win_Data *sd, Eina_Bool noshadow)
+{
+   const char *emission;
+
+   if (noshadow)
+     emission = "elm,state,shadow,off";
+   else
+     emission = "elm,state,shadow,on";
+
+   edje_object_signal_emit(sd->frame_obj, emission, "elm");
+   edje_object_message_signal_process(sd->frame_obj);
+   evas_object_smart_calculate(sd->frame_obj);
+
+   _elm_win_frame_obj_update(sd);
+}
+
+static void
 _elm_win_frame_maximized_state_update(Elm_Win_Data *sd, Eina_Bool maximized)
 {
    const char *emission;
@@ -1335,6 +1353,14 @@ _elm_win_state_change(Ecore_Evas *ee)
    if (!sd) return;
 
    obj = sd->obj;
+
+#ifdef HAVE_ELEMENTARY_WL2
+   if (sd->wl.no_shadow == ecore_wl2_window_shadow_get(sd->wl.win))
+     {
+        sd->wl.no_shadow = !ecore_wl2_window_shadow_get(sd->wl.win);
+        _elm_win_frame_shadow_state_update(sd, sd->wl.no_shadow);
+     }
+#endif
 
    if (sd->withdrawn != ecore_evas_withdrawn_get(sd->ee))
      {
@@ -3079,6 +3105,11 @@ _elm_win_frame_add(Elm_Win_Data *sd,
      _elm_win_frame_cb_maximize, obj);
    edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,close", "elm", _elm_win_frame_cb_close, obj);
+
+   if (sd->wl.no_shadow)
+     edje_object_signal_emit(sd->frame_obj, "elm,state,shadow,off", "elm");
+   else
+     edje_object_signal_emit(sd->frame_obj, "elm,state,shadow,on", "elm");
 
    if (sd->title)
      {
