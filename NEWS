@@ -51,6 +51,9 @@ Fixes:
    * gengrid: fix duplicate edje signal (elm,state,focused) to item on focus
    * spinner: fix extra callback calls
    * multibuttonentry: Fix MBE item box min size calc error.
+   * toolbar: do not change align for "noicon" toolbar items (T2782)
+   * deskmirror: unset proxy.source_clip for urgency effects
+   * border: bring sparklebear theme up-to-date with current efl rendering
 
 Changes since 1.14.0:
 ---------------------
