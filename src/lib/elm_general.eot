@@ -119,3 +119,20 @@ enum Elm.Focus_Direction
    left,     [[ left direction ]]
 }
 
+struct Elm.Key_Binding
+{
+   [[Hold information about a key binding.
+     If the given key is pressed with the given mods,
+     the action will be executed with the given params.
+   ]]
+   key : const(char)*;
+   action : const(char)*;
+   params : const(char)*;
+   mods : list<Elm.Key_Binding_Modifier*>*;
+}
+
+struct Elm.Key_Binding_Modifier
+{
+   mod : const(char)*;
+   flag : ubyte;
+}

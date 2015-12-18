@@ -5724,6 +5724,12 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 #endif
 }
 
+EOLIAN static Eina_List *
+_elm_widget_key_bindings_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED) {
+   return NULL;
+}
+
+
 EOLIAN static Eo *
 _elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
@@ -5794,9 +5800,66 @@ _elm_widget_disable(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
    return EINA_FALSE;
 }
 
-EOLIAN static Eina_Bool
-_elm_widget_event(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *source EINA_UNUSED, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool
+_modifier_check(const Evas_Modifier *m,
+                Eina_List *mod_list)
 {
+   Eina_List *l;
+   Elm_Key_Binding_Modifier *mod;
+   EINA_LIST_FOREACH(mod_list, l, mod)
+     {
+        if ((evas_key_modifier_is_set(m, mod->mod)) ^ (mod->flag))
+          return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+Eina_Bool
+_elm_widget_key_binding_callback(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED, const char *action EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_key_bindings_execute(Evas_Object *obj, Evas_Event_Key_Down *ev)
+{
+   Elm_Key_Binding *binding;
+   Eina_List *node, *key_bindings;
+
+   eo_do(obj, key_bindings = elm_obj_widget_key_bindings_get());
+
+   EINA_LIST_FOREACH(key_bindings, node, binding)
+     {
+        printf("binding %p %p\n",binding, binding->mods);
+        if (binding->key && (!strcmp(binding->key, ev->key)) &&
+            _modifier_check(ev->modifiers, binding->mods))
+          {
+             Eina_Bool ret;
+             eo_do_ret(obj, ret, elm_obj_widget_key_binding_callback(binding->action, binding->params));
+             if (ret) return EINA_TRUE;
+          }
+     }
+
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_widget_event(Eo *obj, Elm_Widget_Smart_Data *_pd, Evas_Object *source EINA_UNUSED, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   //check if there are key bindings for this widget
+   if (_pd->disabled) return EINA_FALSE;
+
+   Evas_Event_Key_Down *ev = event_info;
+   if ((type == EVAS_CALLBACK_KEY_DOWN) &&
+      !(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
+     {
+        if (_key_bindings_execute(obj, event_info))
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+     }
+
    return EINA_FALSE;
 }
 

@@ -2174,6 +2174,76 @@ _elm_config_modifier_check(const Evas_Modifier *m,
    return EINA_TRUE;
 }
 
+static Eina_List*
+_mods_copy(Eina_List *mods)
+{
+   Eina_List *l, *result = NULL;
+   Elm_Config_Binding_Modifier *mod;
+
+   EINA_LIST_FOREACH(mods, l, mod) {
+     Elm_Key_Binding_Modifier *result_mod;
+
+     result_mod = calloc(1, sizeof(Elm_Key_Binding_Modifier));
+
+     result_mod->mod = mod->mod;
+     result_mod->flag = mod->flag;
+
+     result = eina_list_append(result, result_mod);
+   }
+   return result;
+}
+
+static void
+_mods_free(Eina_List *lst)
+{
+   Elm_Key_Binding_Modifier *result_mod;
+
+   EINA_LIST_FREE(lst, result_mod)
+    free(result_mod);
+
+}
+
+Eina_List*
+_elm_config_config_to_key_bindings(const char *name)
+{
+   Elm_Config_Binding_Key *binding;
+   Eina_List *binding_list, *l, *result = NULL;
+
+   binding_list = eina_hash_find(_elm_key_bindings, name);
+
+   if (!binding_list) return NULL;
+
+   EINA_LIST_FOREACH(binding_list, l, binding)
+     {
+        Elm_Key_Binding *key;
+
+        key = calloc(1, sizeof(Elm_Key_Binding));
+        key->key = eina_stringshare_ref(binding->key);
+        key->action = eina_stringshare_ref(binding->action);
+        key->params = eina_stringshare_ref(binding->params);
+        key->mods = _mods_copy(binding->modifiers);
+        printf("%s %s %s\n", key->params, key->action, key->key);
+        result = eina_list_append(result, key);
+     }
+
+   return result;
+}
+
+void
+_elm_config_key_bindings_free(Eina_List *bindings)
+{
+   Elm_Key_Binding *key;
+
+   EINA_LIST_FREE(bindings, key)
+     {
+        eina_stringshare_del(key->key);
+        eina_stringshare_del(key->action);
+        eina_stringshare_del(key->params);
+        _mods_free(key->mods);
+        free(key);
+     }
+}
+
 Eina_Bool
 _elm_config_key_binding_call(Evas_Object *obj,
                              const Evas_Event_Key_Down *ev,

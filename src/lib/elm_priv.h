@@ -459,6 +459,9 @@ void                 _elm_config_color_overlay_apply(void);
 Eina_Bool            _elm_config_access_get(void);
 void                 _elm_config_access_set(Eina_Bool is_access);
 
+Eina_List*           _elm_config_config_to_key_bindings(const char *name);
+void                 _elm_config_key_bindings_free(Eina_List *bindings);
+
 Eina_Bool            _elm_config_key_binding_call(Evas_Object *obj,
                                                   const Evas_Event_Key_Down *ev,
                                                   const Elm_Action *actions);

@@ -556,6 +556,26 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
             @in event_flags: Evas_Event_Flags *;
          }
       }
+      @property key_bindings {
+         [[Returns a list of keybindings.
+           The list is used to resolve a keyboard event to actions and paramters.
+           key_binding_callback will be called later.
+         ]]
+         get {
+
+         }
+         values {
+            key_bindings : list<Elm.Key_Binding*>*;
+         }
+      }
+      key_binding_callback {
+         [[Called when a key binding action is executed]]
+         params {
+            action : const(char)*; [[Name of the action which is executed]]
+            params : const(char)*; [[The params which where passed to the key press]]
+         }
+         return : bool;
+      }
       signal_callback_add {
          params {
             @in emission: const(char)*;
