@@ -893,8 +893,6 @@ _elm_image_file_set_do(Evas_Object *obj)
 EOLIAN static Eina_Bool
 _elm_image_memfile_set(Eo *obj, Elm_Image_Data *sd, const void *img, size_t size, const char *format, const char *key)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(img, EINA_FALSE);
-
    _elm_image_file_set_do(obj);
 
    evas_object_image_memfile_set
@@ -905,8 +903,11 @@ _elm_image_memfile_set(Eo *obj, Elm_Image_Data *sd, const void *img, size_t size
 
    if (evas_object_image_load_error_get(sd->img) != EVAS_LOAD_ERROR_NONE)
      {
-        ERR("Things are going bad for some random " FMT_SIZE_T
-            " byte chunk of memory (%p)", size, sd->img);
+        if (img)
+          ERR("Things are going bad for some random " FMT_SIZE_T
+              " byte chunk of memory (%p)", size, sd->img);
+        else
+          ERR("NULL image data passed (%p)", sd->img);
         return EINA_FALSE;
      }
 
@@ -957,7 +958,6 @@ elm_image_file_set(Evas_Object *obj,
    Eina_Bool ret = EINA_FALSE;
 
    ELM_IMAGE_CHECK(obj) EINA_FALSE;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
    eo_do(obj,
          ret = efl_file_set(file, group);
          elm_obj_image_sizing_eval());
@@ -978,7 +978,6 @@ elm_image_mmap_set(Evas_Object *obj,
    Eina_Bool ret = EINA_FALSE;
 
    ELM_IMAGE_CHECK(obj) EINA_FALSE;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
    eo_do(obj, ret = efl_file_mmap_set(file, group));
    return ret;
 }
@@ -989,7 +988,6 @@ _elm_image_efl_file_mmap_set(Eo *obj, Elm_Image_Data *pd EINA_UNUSED,
 {
    Eina_Bool ret = EINA_FALSE;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
    eo_do(obj,
          ret = elm_obj_image_mmap_set(file, key),
          elm_obj_image_sizing_eval());
@@ -1017,7 +1015,10 @@ _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Data *sd,
 
    if (evas_object_image_load_error_get(sd->img) != EVAS_LOAD_ERROR_NONE)
      {
-        ERR("Things are going bad for '%s' (%p)", file, sd->img);
+        if (file)
+          ERR("Things are going bad for '%s' (%p)", file, sd->img);
+        else
+          ERR("NULL image file passed (%p)", sd->img);
         if (ret) *ret = EINA_FALSE;
         return;
      }
