@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-11-09 11:01+0100\n"
+"POT-Creation-Date: 2015-12-24 09:58+0900\n"
 "PO-Revision-Date: 2013-11-23 14:48+0100\n"
 "Last-Translator: Konrad Makowski <poczta@konradmakowski.pl>\n"
 "Language-Team: General\n"
@@ -28,8 +28,8 @@ msgstr "Początek"
 msgid "Search"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1757 src/lib/elm_entry.c:1588
-#: src/lib/elm_entry.c:1613
+#: src/lib/elc_fileselector.c:1757 src/lib/elm_entry.c:1592
+#: src/lib/elm_entry.c:1617
 msgid "Cancel"
 msgstr "Anuluj"
 
@@ -197,23 +197,23 @@ msgstr "wybór dni"
 msgid "diskselector item"
 msgstr "wybór dysków"
 
-#: src/lib/elm_entry.c:1575
+#: src/lib/elm_entry.c:1579
 msgid "Copy"
 msgstr "Kopiuj"
 
-#: src/lib/elm_entry.c:1580
+#: src/lib/elm_entry.c:1584
 msgid "Cut"
 msgstr "Wytnij"
 
-#: src/lib/elm_entry.c:1584 src/lib/elm_entry.c:1607
+#: src/lib/elm_entry.c:1588 src/lib/elm_entry.c:1611
 msgid "Paste"
 msgstr "Wklej"
 
-#: src/lib/elm_entry.c:1600
+#: src/lib/elm_entry.c:1604
 msgid "Select"
 msgstr "Wybór"
 
-#: src/lib/elm_entry.c:3539
+#: src/lib/elm_entry.c:3543
 msgid "Entry"
 msgstr "Pozycja"
 

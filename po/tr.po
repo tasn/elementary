@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-11-09 11:01+0100\n"
+"POT-Creation-Date: 2015-12-24 09:58+0900\n"
 "PO-Revision-Date: 2014-04-18 13:35+0000\n"
 "Last-Translator: Ali E.İMREK <alierkanimrek@gmail.com>\n"
 "Language-Team: Turkish <tr@li.org>\n"
@@ -31,8 +31,8 @@ msgstr "Ev"
 msgid "Search"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1757 src/lib/elm_entry.c:1588
-#: src/lib/elm_entry.c:1613
+#: src/lib/elc_fileselector.c:1757 src/lib/elm_entry.c:1592
+#: src/lib/elm_entry.c:1617
 msgid "Cancel"
 msgstr "İptal"
 
@@ -200,23 +200,23 @@ msgstr "gün seçici ögesi"
 msgid "diskselector item"
 msgstr "disk seçici öğesi"
 
-#: src/lib/elm_entry.c:1575
+#: src/lib/elm_entry.c:1579
 msgid "Copy"
 msgstr "Kopyala"
 
-#: src/lib/elm_entry.c:1580
+#: src/lib/elm_entry.c:1584
 msgid "Cut"
 msgstr "Kes"
 
-#: src/lib/elm_entry.c:1584 src/lib/elm_entry.c:1607
+#: src/lib/elm_entry.c:1588 src/lib/elm_entry.c:1611
 msgid "Paste"
 msgstr "Yapıştır"
 
-#: src/lib/elm_entry.c:1600
+#: src/lib/elm_entry.c:1604
 msgid "Select"
 msgstr "Seç"
 
-#: src/lib/elm_entry.c:3539
+#: src/lib/elm_entry.c:3543
 msgid "Entry"
 msgstr "Girdi"
 
