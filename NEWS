@@ -133,6 +133,11 @@ Fixes:
    * elm_segment_control: fix invalid parameter
    * atspi: add missing SELECTED changed signals
    * win : Prohibiting auto-rendering, until elm_win is shown.
+   * win: only perform maximize frame state updating during ecore-evas callback
+   * notify: fix broken timeout feature in elm_notify (T2853)
+   * notify: fix hide animation
+   * comp base: allow mouse events to propagate through comp base -> wallpaper
+   * Entry: add markup cnp handlers
 
 Changes since 1.14.0:
 ---------------------
