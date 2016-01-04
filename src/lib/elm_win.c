@@ -3980,9 +3980,6 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
      }
 
    eo_do(obj, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_WINDOW));
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_window_created_signal_emit(obj);
-
    evas_object_show(sd->edje);
 
    eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_ADD, _cb_added, sd),
@@ -5726,13 +5723,11 @@ elm_win_window_id_get(const Evas_Object *obj)
    return ret;
 }
 
-static Eina_Bool
-_on_atspi_bus_connected(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+EOLIAN static void
+_elm_win_elm_interface_atspi_accessible_on_access(Eo *obj, Elm_Win_Data *pd EINA_UNUSED, Eina_Bool val)
 {
-   Evas_Object *win;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(_elm_win_list, l, win)
+   eo_do_super(obj, ELM_WIN_CLASS, elm_interface_atspi_accessible_on_access(val));
+   if (val)
      {
         /**
          * Reemit accessibility events when AT-SPI2 connection is begin
@@ -5740,35 +5735,27 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Ev
          * receive all org.a11y.window events and could keep track of active
          * windows whithin system.
          */
-        elm_interface_atspi_window_created_signal_emit(win);
-        if (elm_win_focus_get(win))
+        elm_interface_atspi_window_created_signal_emit(obj);
+        if (elm_win_focus_get(obj))
           {
-             elm_interface_atspi_window_activated_signal_emit(win);
+             elm_interface_atspi_window_activated_signal_emit(obj);
              /** Reemit focused event to inform atspi clients about currently
               * focused object **/
              unsigned int order = 0;
              Evas_Object *target;
-             eo_do(win, target = elm_obj_widget_newest_focus_order_get(&order, EINA_TRUE));
+             eo_do(obj, target = elm_obj_widget_newest_focus_order_get(&order, EINA_TRUE));
              if (target)
                elm_interface_atspi_accessible_state_changed_signal_emit(target, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
           }
         else
-          elm_interface_atspi_window_deactivated_signal_emit(win);
+          elm_interface_atspi_window_deactivated_signal_emit(obj);
      }
-   return EINA_TRUE;
 }
 
 EOLIAN static void
 _elm_win_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-
-   if (_elm_config->atspi_mode)
-     {
-        Eo *bridge = _elm_atspi_bridge_get();
-        if (bridge)
-           eo_do(bridge, eo_event_callback_add(ELM_ATSPI_BRIDGE_EVENT_CONNECTED, _on_atspi_bus_connected, NULL));
-     }
 }
 
 EOLIAN static Eo*

@@ -3779,8 +3779,11 @@ _registered_listeners_get(void *data, const Eldbus_Message *msg, Eldbus_Pending 
      }
 
    if (!pd->connected)
-      eo_do(data, eo_event_callback_call(ELM_ATSPI_BRIDGE_EVENT_CONNECTED, NULL));
-   pd->connected = EINA_TRUE;
+     {
+        pd->connected = EINA_TRUE;
+        eo_do(data, eo_event_callback_call(ELM_ATSPI_BRIDGE_EVENT_CONNECTED, NULL));
+        eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_init());
+     }
 }
 
 static void
@@ -4262,8 +4265,12 @@ _a11y_connection_shutdown(Eo *bridge)
    eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_handler_del(pd->event_hdlr));
    pd->event_hdlr = NULL;
 
-   eo_do(bridge, eo_event_callback_call(ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED, NULL));
-   pd->connected = EINA_FALSE;
+   if (pd->connected)
+     {
+        pd->connected = EINA_FALSE;
+        eo_do(bridge, eo_event_callback_call(ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED, NULL));
+        eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_shutdown());
+     }
 }
 
 static void _disconnect_cb(void *data, Eldbus_Connection *conn EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -4449,12 +4456,6 @@ _elm_atspi_bridge_init(void)
         _instance = eo_add(ELM_ATSPI_BRIDGE_CLASS, NULL);
         _init_count = 1;
      }
-}
-
-EAPI Eo*
-_elm_atspi_bridge_get(void)
-{
-   return _instance;
 }
 
 void

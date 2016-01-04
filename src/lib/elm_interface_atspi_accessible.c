@@ -129,6 +129,7 @@ struct _Elm_Interface_Atspi_Accessible_Data
    const char    *translation_domain;
    Elm_Atspi_Relation_Set relations;
    Elm_Atspi_Type type: 2;
+   Eina_Bool access : 1;
 };
 
 typedef struct _Elm_Interface_Atspi_Accessible_Data Elm_Interface_Atspi_Accessible_Data;
@@ -136,6 +137,7 @@ typedef struct _Elm_Interface_Atspi_Accessible_Data Elm_Interface_Atspi_Accessib
 
 static Eina_List *global_callbacks;
 static Eo *root;
+static int init_count;
 
 EOLIAN static int
 _elm_interface_atspi_accessible_index_in_parent_get(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
@@ -288,7 +290,9 @@ _elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Interface_
    EINA_ITERATOR_FOREACH(iter, chld)
      {
         if (eo_isa(chld, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
-          children = eina_list_append(children, chld);
+          {
+             children = eina_list_append(children, chld);
+          }
      }
    eina_iterator_free(iter);
 
@@ -584,23 +588,68 @@ EOLIAN void
 _elm_interface_atspi_accessible_type_set(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd, Elm_Atspi_Type val)
 {
    Elm_Interface_Atspi_Accessible *parent;
+   Eina_Bool accessed;
    if (val == pd->type)
      return;
 
-   eo_do(obj, parent = elm_interface_atspi_accessible_parent_get());
+   eo_do(obj,
+         parent = elm_interface_atspi_accessible_parent_get(),
+         accessed = elm_interface_atspi_accessible_is_accessed());
 
    switch (val)
      {
       case ELM_ATSPI_TYPE_DISABLED:
       case ELM_ATSPI_TYPE_SKIPPED:
+         if (accessed) eo_do(obj, elm_interface_atspi_accessible_on_access(EINA_FALSE));
          if (parent) elm_interface_atspi_accessible_children_changed_del_signal_emit(parent, obj);
          elm_interface_atspi_accessible_removed(obj);
          break;
       case ELM_ATSPI_TYPE_REGULAR:
+         if (!accessed) eo_do(obj, elm_interface_atspi_accessible_on_access(EINA_TRUE));
          if (parent) elm_interface_atspi_accessible_children_changed_added_signal_emit(parent, obj);
          elm_interface_atspi_accessible_added(obj);
      }
    pd->type = val;
 }
+
+EOLIAN void
+_elm_interface_atspi_accessible_on_access(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd, Eina_Bool val)
+{
+   pd->access = !!val;
+}
+
+EOLIAN Eina_Bool
+_elm_interface_atspi_accessible_is_accessed(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd)
+{
+   return pd->access;
+}
+
+EOLIAN int
+_elm_interface_atspi_accessible_init(Eo *obj EINA_UNUSED, void *sd EINA_UNUSED)
+{
+   Eo *r;
+   if (!init_count++)
+     {
+        eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, r = elm_interface_atspi_accessible_root_get());
+        eo_do(r, elm_interface_atspi_accessible_on_access(EINA_TRUE));
+     }
+   return init_count;
+}
+
+EOLIAN void
+_elm_interface_atspi_accessible_shutdown(Eo *obj EINA_UNUSED, void *sd EINA_UNUSED)
+{
+   if (init_count > 0)
+     {
+        init_count--;
+        if (!init_count)
+          {
+             eo_do(root, elm_interface_atspi_accessible_on_access(EINA_FALSE));
+             eo_del(root);
+             root = NULL;
+          }
+     }
+}
+
 
 #include "elm_interface_atspi_accessible.eo.c"

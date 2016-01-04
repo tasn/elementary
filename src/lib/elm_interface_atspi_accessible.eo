@@ -210,6 +210,27 @@ mixin Elm_Interface_Atspi_Accessible ()
             }
          }
       }
+      on_access @protected {
+         [[Function invoked when atspi accessible class gets initialized
+           or shutdowned.
+
+           Overwrite to provide custom initialization method for the object.
+
+           By default function traverses all children and invokes "on_activate"
+           method them.]]
+         params {
+            @in state: bool;[[True is atspi accessibily get intitialized, False otherwise]]
+         }
+      }
+      is_accessed @protected {
+         return: bool;
+      }
+      init @class {
+         return: int;
+      }
+      shutdown @class {
+      }
+
    }
    events {
       property,changed: const(char)*;
