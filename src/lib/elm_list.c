@@ -2331,7 +2331,7 @@ _item_new(Evas_Object *obj,
         evas_object_event_callback_add
           (it->icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
           obj);
-        eo_do(it->icon, elm_interface_atspi_accessible_type_set(ELM_ATSPI_TYPE_DISABLED));
+        eo_do(it->icon, elm_interface_atspi_accessible_disabled_set(EINA_TRUE));
      }
    if (it->end)
      {
@@ -2339,7 +2339,7 @@ _item_new(Evas_Object *obj,
         evas_object_event_callback_add
           (it->end, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
           obj);
-        eo_do(it->end, elm_interface_atspi_accessible_type_set(ELM_ATSPI_TYPE_DISABLED));
+        eo_do(it->end, elm_interface_atspi_accessible_disabled_set(EINA_TRUE));
      }
 
    if (_elm_config->atspi_mode)
@@ -2442,7 +2442,7 @@ _elm_list_evas_object_smart_add(Eo *obj, Elm_List_Data *priv)
    priv->box = elm_box_add(obj);
    evas_object_size_hint_weight_set(priv->box, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(priv->box, EVAS_HINT_FILL, 0.0);
-   eo_do(priv->box, elm_interface_atspi_accessible_type_set(ELM_ATSPI_TYPE_DISABLED));
+   eo_do(priv->box, elm_interface_atspi_accessible_disabled_set(EINA_TRUE));
 
    /* FIXME: change this ugly code path later */
    elm_widget_on_show_region_hook_set(priv->box, _show_region_hook, obj);

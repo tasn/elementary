@@ -2397,7 +2397,7 @@ _item_new(Evas_Object *obj,
 
    VIEW(it) = elm_layout_add(obj);
    evas_object_data_set(VIEW(it), "item", it);
-   eo_do(VIEW(it), elm_interface_atspi_accessible_type_set(ELM_ATSPI_TYPE_DISABLED));
+   eo_do(VIEW(it), elm_interface_atspi_accessible_disabled_set(EINA_TRUE));
 
    icon_obj = elm_icon_add(VIEW(it));
    elm_icon_order_lookup_set(icon_obj, sd->lookup_order);
@@ -2783,7 +2783,7 @@ _elm_toolbar_evas_object_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
    else
      elm_object_signal_emit(priv->more, "elm,orient,horizontal", "elm");
 
-   eo_do(priv->more, elm_interface_atspi_accessible_type_set(ELM_ATSPI_TYPE_DISABLED));
+   eo_do(priv->more, elm_interface_atspi_accessible_disabled_set(EINA_TRUE));
    elm_widget_sub_object_add(obj, priv->more);
    evas_object_show(priv->more);
 

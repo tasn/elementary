@@ -18,14 +18,10 @@ _elm_atspi_app_object_elm_interface_atspi_accessible_children_get(Eo *obj EINA_U
 
    EINA_LIST_FOREACH(_elm_win_list, l, win)
      {
-        Elm_Atspi_Type type;
-        if (!eo_isa(win, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
-          continue;
-        eo_do(win, type = elm_interface_atspi_accessible_type_get());
-        if (type == ELM_ATSPI_TYPE_REGULAR)
+        Elm_Win_Type type = elm_win_type_get(win);
+        if (type != ELM_WIN_SOCKET_IMAGE)
           accs = eina_list_append(accs, win);
      }
-
    return accs;
 }
 

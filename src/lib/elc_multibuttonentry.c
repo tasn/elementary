@@ -750,7 +750,7 @@ _item_new(Elm_Multibuttonentry_Data *sd,
    ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
    VIEW(item) = elm_layout_add(obj);
 
-   eo_do(VIEW(item), elm_interface_atspi_accessible_type_set(ELM_ATSPI_TYPE_DISABLED));
+   eo_do(VIEW(item), elm_interface_atspi_accessible_disabled_set(EINA_TRUE));
 
    if (!elm_layout_theme_set
        (VIEW(item), "multibuttonentry", "btn", elm_widget_style_get(obj)))
