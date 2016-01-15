@@ -341,8 +341,7 @@ _item_text_realize(Elm_Gen_Item *it,
           {
              edje_object_part_text_set(target, key, "");
           }
-        if (_elm_config->atspi_mode)
-          elm_interface_atspi_accessible_name_changed_signal_emit(EO_OBJ(it));
+        elm_interface_atspi_accessible_name_changed_signal_emit(EO_OBJ(it));
      }
 }
 
@@ -2672,8 +2671,7 @@ _elm_genlist_item_focused(Elm_Object_Item *eo_it)
    if (it->realized)
      _elm_genlist_item_focus_update(it);
    eo_do(obj, eo_event_callback_call(ELM_GENLIST_EVENT_ITEM_FOCUSED, eo_it));
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
 }
 
 static void
@@ -2700,8 +2698,7 @@ _elm_genlist_item_unfocused(Elm_Object_Item *eo_it)
 
    sd->focused_item = NULL;
    eo_do(obj, eo_event_callback_call(ELM_GENLIST_EVENT_ITEM_UNFOCUSED, eo_it));
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
 }
 
 static Eina_Bool
@@ -3729,8 +3726,7 @@ _item_unselect(Elm_Gen_Item *it)
    sd->selected = eina_list_remove(sd->selected, EO_OBJ(it));
    eo_do(WIDGET(it), eo_event_callback_call
      (EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, EO_OBJ(it)));
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
 }
 
 static void
@@ -4658,11 +4654,8 @@ _item_queue(Elm_Genlist_Data *sd,
    evas_object_geometry_get(sd->obj, NULL, NULL, &w, NULL);
    if (w > 0) _requeue_idle_enterer(sd);
 
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_added(EO_OBJ(it));
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
-     }
+   elm_interface_atspi_accessible_added(EO_OBJ(it));
+   elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
 }
 
 /* If the application wants to know the relative item, use
@@ -5766,8 +5759,7 @@ _item_select(Elm_Gen_Item *it)
    // delete item if it's requested deletion in the above callbacks.
    if ((it->base)->on_deletion) goto item_deleted;
    eo_do(WIDGET(it), eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it));
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
    // delete item if it's requested deletion in the above callbacks.
    if ((it->base)->on_deletion) goto item_deleted;
    it->walking--;
@@ -5882,8 +5874,7 @@ _elm_genlist_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED,
         sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(it));
         return EINA_FALSE;
      }
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_del_signal_emit(WIDGET(it),eo_it);
+   elm_interface_atspi_accessible_children_changed_del_signal_emit(WIDGET(it),eo_it);
 
    _item_del(it);
    return EINA_TRUE;
@@ -6789,8 +6780,7 @@ _elm_genlist_item_expanded_set(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, Eina_B
         eo_do(WIDGET(it), eo_event_callback_call
               (ELM_GENLIST_EVENT_EXPANDED, EO_OBJ(it)));
         sd->auto_scroll_enabled = EINA_TRUE;
-        if (_elm_config->atspi_mode)
-          elm_interface_atspi_accessible_state_changed_signal_emit(eo_item, ELM_ATSPI_STATE_EXPANDED, EINA_TRUE);
+        elm_interface_atspi_accessible_state_changed_signal_emit(eo_item, ELM_ATSPI_STATE_EXPANDED, EINA_TRUE);
      }
    else
      {
@@ -6800,8 +6790,7 @@ _elm_genlist_item_expanded_set(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, Eina_B
         eo_do(WIDGET(it), eo_event_callback_call
               (ELM_GENLIST_EVENT_CONTRACTED, EO_OBJ(it)));
         sd->auto_scroll_enabled = EINA_FALSE;
-        if (_elm_config->atspi_mode)
-          elm_interface_atspi_accessible_state_changed_signal_emit(eo_item, ELM_ATSPI_STATE_EXPANDED, EINA_FALSE);
+        elm_interface_atspi_accessible_state_changed_signal_emit(eo_item, ELM_ATSPI_STATE_EXPANDED, EINA_FALSE);
      }
 }
 

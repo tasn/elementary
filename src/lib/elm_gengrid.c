@@ -542,8 +542,7 @@ _item_unselect(Elm_Gen_Item *it)
         sd->selected = eina_list_remove(sd->selected, eo_it);
         eo_do(WIDGET(it), eo_event_callback_call
           (EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, eo_it));
-        if (_elm_config->atspi_mode)
-          elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
+        elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
      }
 }
 
@@ -852,8 +851,7 @@ _item_text_realize(Elm_Gen_Item *it,
           {
              edje_object_part_text_set(target, key, "");
           }
-        if (_elm_config->atspi_mode)
-          elm_interface_atspi_accessible_name_changed_signal_emit(EO_OBJ(it));
+        elm_interface_atspi_accessible_name_changed_signal_emit(EO_OBJ(it));
      }
 }
 
@@ -2038,8 +2036,7 @@ _elm_gengrid_item_focused(Elm_Object_Item *eo_it)
      }
 
    eo_do(obj, eo_event_callback_call(ELM_GENGRID_EVENT_ITEM_FOCUSED, eo_it));
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
 }
 
 static void
@@ -2068,8 +2065,7 @@ _elm_gengrid_item_unfocused(Elm_Object_Item *eo_it)
 
    sd->focused_item = NULL;
    eo_do(obj, eo_event_callback_call(ELM_GENGRID_EVENT_ITEM_UNFOCUSED, eo_it));
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
 }
 
 static Eina_Bool
@@ -4136,8 +4132,7 @@ _item_select(Elm_Gen_Item *it)
    if (it->generation == sd->generation)
      {
         eo_do(WIDGET(it), eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it));
-        if (_elm_config->atspi_mode)
-          elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
+        elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
      }
 
    it->walking--;
@@ -4444,11 +4439,8 @@ _elm_gengrid_item_append(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_Item_C
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_added(EO_OBJ(it));
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
-     }
+   elm_interface_atspi_accessible_added(EO_OBJ(it));
+   elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
 
    return EO_OBJ(it);
 }
@@ -4470,11 +4462,8 @@ _elm_gengrid_item_prepend(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_Item_
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_added(EO_OBJ(it));
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
-     }
+   elm_interface_atspi_accessible_added(EO_OBJ(it));
+   elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
 
    return EO_OBJ(it);
 }

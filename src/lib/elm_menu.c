@@ -108,8 +108,7 @@ _submenu_sizing_eval(Elm_Menu_Item_Data *parent_it)
      {
         ELM_MENU_ITEM_DATA_GET(eo_item, item);
         elm_layout_sizing_eval(VIEW(item));
-        if (_elm_config->atspi_mode)
-          elm_interface_atspi_accessible_state_changed_signal_emit(eo_item, ELM_ATSPI_STATE_SHOWING, EINA_TRUE);
+        elm_interface_atspi_accessible_state_changed_signal_emit(eo_item, ELM_ATSPI_STATE_SHOWING, EINA_TRUE);
      }
 
 
@@ -503,8 +502,7 @@ _menu_item_activate_cb(void *data,
           }
         eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(WIDGET(item), ELM_INTERFACE_ATSPI_SELECTION_EVENT_SELECTION_CHANGED, NULL));
      }
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(item), ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(item), ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
 }
 
 static void
@@ -517,8 +515,7 @@ _menu_item_inactivate_cb(void *data,
 
    item->selected = 0;
    if (item->submenu.open) _submenu_hide(item);
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(item), ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(item), ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
 }
 
 static Eina_Bool
@@ -1058,11 +1055,8 @@ _elm_menu_item_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *parent, const ch
      it->dbus_idx = _elm_dbus_menu_item_add(sd->dbus_menu, eo_item);
      it->dbus_menu = sd->dbus_menu;
    }
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_added(eo_item);
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(parent ? parent : obj, eo_item);
-     }
+   elm_interface_atspi_accessible_added(eo_item);
+   elm_interface_atspi_accessible_children_changed_added_signal_emit(parent ? parent : obj, eo_item);
 
    return eo_item;
 }

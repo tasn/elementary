@@ -1152,8 +1152,7 @@ _elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *ite
             !edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text"))
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
         eo_do(obj, eo_event_callback_call(ELM_WIDGET_EVENT_FOCUSED, NULL));
-        if (_elm_config->atspi_mode)
-          elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
+        elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
         _return_key_enabled_check(obj);
         _validate(obj);
      }
@@ -1165,8 +1164,7 @@ _elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *ite
             !edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text"))
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
         eo_do(obj, eo_event_callback_call(ELM_WIDGET_EVENT_UNFOCUSED, NULL));
-        if (_elm_config->atspi_mode)
-          elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
+        elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
 
         if (_elm_config->selection_clear_enable)
           {
@@ -2014,6 +2012,7 @@ _entry_changed_user_signal_cb(void *data,
                               const char *emission EINA_UNUSED,
                               const char *source EINA_UNUSED)
 {
+   Elm_Atspi_Text_Change_Info atspi_info;
    Elm_Entry_Change_Info info;
    Edje_Entry_Change_Info *edje_info = (Edje_Entry_Change_Info *)
      edje_object_signal_callback_extra_data_get();
@@ -2027,23 +2026,19 @@ _entry_changed_user_signal_cb(void *data,
      {
         eo_do(data, eo_event_callback_call(ELM_ENTRY_EVENT_CHANGED_USER, NULL));
      }
-   if (_elm_config->atspi_mode)
+   if (edje_info && edje_info->insert)
      {
-        Elm_Atspi_Text_Change_Info atspi_info;
-        if (edje_info && edje_info->insert)
-          {
-             atspi_info.content = edje_info->change.insert.content;
-             atspi_info.pos = edje_info->change.insert.pos;
-             atspi_info.len = edje_info->change.insert.plain_length;
-             eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info));
-          }
-        else if (edje_info && !edje_info->insert)
-          {
-             atspi_info.content = edje_info->change.del.content;
-             atspi_info.pos = MIN(edje_info->change.del.start, edje_info->change.del.end);
-             atspi_info.len = MAX(edje_info->change.del.start, edje_info->change.del.end) - atspi_info.pos;
-             eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info));
-          }
+        atspi_info.content = edje_info->change.insert.content;
+        atspi_info.pos = edje_info->change.insert.pos;
+        atspi_info.len = edje_info->change.insert.plain_length;
+        eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info));
+     }
+   else if (edje_info && !edje_info->insert)
+     {
+        atspi_info.content = edje_info->change.del.content;
+        atspi_info.pos = MIN(edje_info->change.del.start, edje_info->change.del.end);
+        atspi_info.len = MAX(edje_info->change.del.start, edje_info->change.del.end) - atspi_info.pos;
+        eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info));
      }
 }
 
@@ -2133,8 +2128,7 @@ _entry_selection_changed_signal_cb(void *data,
      (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_CHANGED, NULL));
    _selection_store(ELM_SEL_TYPE_PRIMARY, data);
    _update_selection_handler(data);
-   if (_elm_config->atspi_mode)
-     eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_SELECTION_CHANGED, NULL));
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_SELECTION_CHANGED, NULL));
 }
 
 static void
@@ -2230,8 +2224,7 @@ _entry_cursor_changed_signal_cb(void *data,
    if (elm_widget_focus_get(data))
      edje_object_signal_emit(sd->entry_edje, "elm,action,show,cursor", "elm");
    _cursor_geometry_recalc(data);
-   if (_elm_config->atspi_mode)
-     eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL));
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL));
 }
 
 static void
@@ -2242,8 +2235,7 @@ _entry_cursor_changed_manual_signal_cb(void *data,
 {
    eo_do(data, eo_event_callback_call
      (ELM_ENTRY_EVENT_CURSOR_CHANGED_MANUAL, NULL));
-   if (_elm_config->atspi_mode)
-     eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL));
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL));
 }
 
 static void

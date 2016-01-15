@@ -71,15 +71,13 @@ _state_set(Evas_Object *obj, Eina_Bool state, Eina_Bool activate)
              if (activate) elm_layout_signal_emit(obj, "elm,activate,radio,off", "elm");
              elm_layout_signal_emit(obj, "elm,state,radio,off", "elm");
           }
-        if (_elm_config->atspi_mode)
+        if (sd->state)
           {
-             if (sd->state)
-               {
-                  elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_CHECKED, EINA_TRUE);
-               }
-             else
-               elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_CHECKED, EINA_FALSE);
+             elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_CHECKED, EINA_TRUE);
           }
+        else
+          elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_CHECKED, EINA_FALSE);
+        }
      }
 }
 

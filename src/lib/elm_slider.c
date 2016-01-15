@@ -65,8 +65,7 @@ _delay_change(void *data)
    sd->delay = NULL;
    eo_do(data, eo_event_callback_call(ELM_SLIDER_EVENT_DELAY_CHANGED, NULL));
 
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_value_changed_signal_emit(data);
+   elm_interface_atspi_accessible_value_changed_signal_emit(data);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -131,8 +130,7 @@ _val_set(Evas_Object *obj)
      (wd->resize_obj, "elm.dragable.slider", pos, pos);
 
    // emit accessiblity event also if value was chagend by API
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_value_changed_signal_emit(obj);
+   elm_interface_atspi_accessible_value_changed_signal_emit(obj);
 }
 
 static void

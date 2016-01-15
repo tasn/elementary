@@ -202,6 +202,15 @@ mixin Elm_Interface_Atspi_Accessible ()
             }
          }
       }
+      init @class @protected {
+         [[Initializes accessibility submodule.]]
+      }
+      shutdown @class @protected {
+         [[Shutdowns accessibility submodule.]]
+      }
+      enabled_is @class @protected {
+         retrun: bool;
+      }
    }
    events {
       property,changed: const(char)*;

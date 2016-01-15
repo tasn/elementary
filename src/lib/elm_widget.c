@@ -529,12 +529,9 @@ _elm_widget_evas_object_smart_show(Eo *obj, Elm_Widget_Smart_Data *_pd)
      }
    eina_iterator_free(it);
 
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_added(obj);
-        if (!_pd->on_destroy && _elm_widget_onscreen_is(obj))
-           elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_TRUE);
-     }
+   elm_interface_atspi_accessible_added(obj);
+   if (!_pd->on_destroy && _elm_widget_onscreen_is(obj))
+      elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_TRUE);
 }
 
 EOLIAN static void
@@ -551,7 +548,7 @@ _elm_widget_evas_object_smart_hide(Eo *obj, Elm_Widget_Smart_Data *_pd)
      }
    eina_iterator_free(it);
 
-   if (_elm_config->atspi_mode && !_pd->on_destroy)
+   if (!_pd->on_destroy)
      elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_FALSE);
 }
 
@@ -1199,7 +1196,7 @@ _elm_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
 
         elm_widget_display_mode_set(sobj,
               evas_object_size_hint_display_mode_get(obj));
-        if (_elm_config->atspi_mode && !sd->on_create)
+        if (!sd->on_create)
           {
              Elm_Interface_Atspi_Accessible *aparent;
              eo_do(sobj, aparent = elm_interface_atspi_accessible_parent_get());
@@ -1277,7 +1274,7 @@ _elm_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
                   parent = sdp->parent_obj;
                }
           }
-        if (_elm_config->atspi_mode && !sd->on_destroy)
+        if (!sd->on_destroy)
           {
              Elm_Interface_Atspi_Accessible *aparent;
              eo_do(sobj, aparent = elm_interface_atspi_accessible_parent_get());
@@ -5751,7 +5748,7 @@ _elm_widget_on_focus(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Object_Item *item E
                evas_object_focus_set(obj, EINA_TRUE);
               eo_do(obj, eo_event_callback_call
                (ELM_WIDGET_EVENT_FOCUSED, NULL));
-             if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
+             if (!elm_widget_child_can_focus_get(obj))
                elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
           }
         else
@@ -5760,7 +5757,7 @@ _elm_widget_on_focus(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Object_Item *item E
                evas_object_focus_set(obj, EINA_FALSE);
              eo_do(obj, eo_event_callback_call
                (ELM_WIDGET_EVENT_UNFOCUSED, NULL));
-             if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
+             if (!elm_widget_child_can_focus_get(obj))
                elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
     }
      }

@@ -1163,8 +1163,7 @@ _elm_list_item_focused(Elm_Object_Item *eo_it)
      evas_object_raise(VIEW(it));
    eo_do(WIDGET(it), eo_event_callback_call
      (ELM_LIST_EVENT_ITEM_FOCUSED, eo_it));
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
 }
 
 static void
@@ -1190,8 +1189,7 @@ _elm_list_item_unfocused(Elm_Object_Item *eo_it)
 
    sd->focused_item = NULL;
    eo_do(obj, eo_event_callback_call(ELM_LIST_EVENT_ITEM_UNFOCUSED, eo_it));
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
 }
 
 /*
@@ -1420,8 +1418,7 @@ call:
 
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
    eo_do(obj, eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it));
-     if (_elm_config->atspi_mode)
-       elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
    sd->last_selected_item = eo_it;
 
    _elm_list_unwalk(obj, sd);
@@ -1490,8 +1487,7 @@ _item_unselect(Elm_List_Item_Data *it)
               (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)))
           eo_do(WIDGET(it), eo_event_callback_call
             (EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, EO_OBJ(it)));
-        if (_elm_config->atspi_mode)
-          elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
+        elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
      }
 
    _elm_list_unwalk(obj, sd);
@@ -2342,8 +2338,7 @@ _item_new(Evas_Object *obj,
         eo_do(it->end, elm_interface_atspi_accessible_disabled_set(EINA_TRUE));
      }
 
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_added(eo_it);
+   elm_interface_atspi_accessible_added(eo_it);
 
    return it;
 }
@@ -2801,8 +2796,7 @@ _elm_list_item_append(Eo *obj, Elm_List_Data *sd, const char *label, Evas_Object
    it->node = eina_list_last(sd->items);
    elm_box_pack_end(sd->box, VIEW(it));
 
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
+   elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
 
    return EO_OBJ(it);
 }
@@ -2818,8 +2812,7 @@ _elm_list_item_prepend(Eo *obj, Elm_List_Data *sd, const char *label, Evas_Objec
    it->node = sd->items;
    elm_box_pack_start(sd->box, VIEW(it));
 
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
+   elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
 
    return EO_OBJ(it);
 }
@@ -2840,8 +2833,7 @@ _elm_list_item_insert_before(Eo *obj, Elm_List_Data *sd, Elm_Object_Item *eo_bef
    it->node = before_it->node->prev;
    elm_box_pack_before(sd->box, VIEW(it), VIEW(before_it));
 
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
+   elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
 
    return EO_OBJ(it);
 }
@@ -2862,8 +2854,7 @@ _elm_list_item_insert_after(Eo *obj, Elm_List_Data *sd, Elm_Object_Item *eo_afte
    it->node = after_it->node->next;
    elm_box_pack_after(sd->box, VIEW(it), VIEW(after_it));
 
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
+   elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
 
    return EO_OBJ(it);
 }
@@ -2893,8 +2884,7 @@ _elm_list_item_sorted_insert(Eo *obj, Elm_List_Data *sd, const char *label, Evas
         elm_box_pack_before(sd->box, VIEW(it), VIEW(before));
      }
 
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
+   elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
 
    return EO_OBJ(it);
 }

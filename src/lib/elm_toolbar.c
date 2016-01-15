@@ -160,8 +160,7 @@ _item_unselect(Elm_Toolbar_Item_Data *item)
    if (item->icon)
      elm_widget_signal_emit(item->icon, "elm,state,unselected", "elm");
    eo_do(WIDGET(item), eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, EO_OBJ(item)));
-   if (_elm_config->atspi_mode)
-    elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(item), ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(item), ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
 }
 
 static void
@@ -636,8 +635,7 @@ _elm_toolbar_item_focused(Elm_Object_Item *eo_it)
      evas_object_raise(VIEW(it));
    eo_do(obj, eo_event_callback_call
      (ELM_TOOLBAR_EVENT_ITEM_FOCUSED, EO_OBJ(it)));
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
 }
 
 static void
@@ -663,8 +661,7 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *eo_it)
    sd->focused_item = NULL;
    eo_do(obj, eo_event_callback_call
      (ELM_TOOLBAR_EVENT_ITEM_UNFOCUSED, eo_it));
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
 }
 
 /*
@@ -1179,8 +1176,7 @@ _item_select(Elm_Toolbar_Item_Data *it)
      }
    eo_do(obj, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, EO_OBJ(it)));
    eo_do(obj, eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, EO_OBJ(it)));
-   if (_elm_config->atspi_mode)
-    elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
+   elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
 }
 
 static void
@@ -2468,8 +2464,7 @@ _item_new(Evas_Object *obj,
    if ((!sd->items) && (sd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS))
      _item_select(it);
 
-   if (_elm_config->atspi_mode)
-        elm_interface_atspi_accessible_added(eo_it);
+   elm_interface_atspi_accessible_added(eo_it);
 
    return it;
 }

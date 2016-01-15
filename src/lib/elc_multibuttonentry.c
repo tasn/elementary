@@ -650,8 +650,7 @@ EOLIAN static void
 _elm_multibuttonentry_item_eo_base_destructor(Eo *eo_it,
                                               Elm_Multibuttonentry_Item_Data *it)
 {
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_del_signal_emit(WIDGET(it), eo_it);
+   elm_interface_atspi_accessible_children_changed_del_signal_emit(WIDGET(it), eo_it);
    _item_del(it);
 
    eo_do_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS, eo_destructor());
@@ -916,11 +915,8 @@ _item_new(Elm_Multibuttonentry_Data *sd,
    eo_do(obj, eo_event_callback_call
      (ELM_MULTIBUTTONENTRY_EVENT_ITEM_ADDED, eo_item));
 
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, eo_item);
-        elm_interface_atspi_accessible_added(eo_item);
-     }
+   elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, eo_item);
+   elm_interface_atspi_accessible_added(eo_item);
 
    return eo_item;
 }

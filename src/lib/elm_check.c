@@ -80,10 +80,7 @@ _activate(Evas_Object *obj)
 
    eo_do(obj, eo_event_callback_call(ELM_CHECK_EVENT_CHANGED, NULL));
 
-   if (_elm_config->atspi_mode)
-       elm_interface_atspi_accessible_state_changed_signal_emit(obj,
-                                                                ELM_ATSPI_STATE_CHECKED,
-                                                                sd->state);
+   elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_CHECKED, sd->state);
 }
 
 /* FIXME: replicated from elm_layout just because check's icon spot
@@ -285,10 +282,7 @@ _on_check_off(void *data,
    elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
    eo_do(obj, eo_event_callback_call(ELM_CHECK_EVENT_CHANGED, NULL));
 
-   if (_elm_config->atspi_mode)
-       elm_interface_atspi_accessible_state_changed_signal_emit(data,
-                                                                ELM_ATSPI_STATE_CHECKED,
-                                                                sd->state);
+   elm_interface_atspi_accessible_state_changed_signal_emit(data, ELM_ATSPI_STATE_CHECKED, sd->state);
 }
 
 static void
@@ -306,10 +300,7 @@ _on_check_on(void *data,
    elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
    eo_do(obj, eo_event_callback_call(ELM_CHECK_EVENT_CHANGED, NULL));
 
-   if (_elm_config->atspi_mode)
-       elm_interface_atspi_accessible_state_changed_signal_emit(data,
-                                                                ELM_ATSPI_STATE_CHECKED,
-                                                                sd->state);
+   elm_interface_atspi_accessible_state_changed_signal_emit(data, ELM_ATSPI_STATE_CHECKED, sd->state);
 }
 
 static void

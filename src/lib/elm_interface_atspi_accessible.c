@@ -136,6 +136,7 @@ typedef struct _Elm_Interface_Atspi_Accessible_Data Elm_Interface_Atspi_Accessib
 
 static Eina_List *global_callbacks;
 static Eo *root;
+static int _init_count;
 
 EOLIAN static int
 _elm_interface_atspi_accessible_index_in_parent_get(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
@@ -324,6 +325,9 @@ _elm_interface_atspi_accessible_event_emit(Eo *class EINA_UNUSED, void *pd EINA_
    Eina_List *l;
    Elm_Atspi_Event_Handler *hdl;
    Eina_Bool disabled;
+
+   if (!_init_count)
+     return;
 
    if (!accessible || !event || !eo_isa(accessible, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
      {
@@ -600,6 +604,25 @@ _elm_interface_atspi_accessible_disabled_set(Eo *obj, Elm_Interface_Atspi_Access
          elm_interface_atspi_accessible_added(obj);
      }
    pd->disabled = !!val;
+}
+
+EOLIAN void
+_elm_interface_atspi_accessible_init(Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
+{
+   _init_count++;
+}
+
+EOLIAN void
+_elm_interface_atspi_accessible_shutdown(Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
+{
+   if (_init_count > 0)
+     _init_count--;
+}
+
+EOLIAN Eina_Bool
+_elm_interface_atspi_accessible_enabled_is(Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
+{
+   return _init_count > 0 ? EINA_TRUE : EINA_FALSE;
 }
 
 #include "elm_interface_atspi_accessible.eo.c"

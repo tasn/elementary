@@ -1130,11 +1130,8 @@ _elm_win_focus_in(Ecore_Evas *ee)
         edje_object_signal_emit(sd->frame_obj, "elm,action,focus", "elm");
      }
 
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_window_activated_signal_emit(obj);
-        elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_ACTIVE, EINA_TRUE);
-     }
+   elm_interface_atspi_window_activated_signal_emit(obj);
+   elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_ACTIVE, EINA_TRUE);
 
    /* do nothing */
    /* else if (sd->img_obj) */
@@ -1168,11 +1165,8 @@ _elm_win_focus_out(Ecore_Evas *ee)
    /* access */
    _elm_access_object_highlight_disable(evas_object_evas_get(obj));
 
-   if (_elm_config->atspi_mode)
-     {
-        elm_interface_atspi_window_deactivated_signal_emit(obj);
-        elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_ACTIVE, EINA_FALSE);
-     }
+   elm_interface_atspi_window_deactivated_signal_emit(obj);
+   elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_ACTIVE, EINA_FALSE);
 
    /* do nothing */
    /* if (sd->img_obj) */
@@ -1394,14 +1388,12 @@ _elm_win_state_change(Ecore_Evas *ee)
         else if (sd->iconified)
           {
              eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_ICONIFIED, NULL));
-             if (_elm_config->atspi_mode)
-               elm_interface_atspi_window_minimized_signal_emit(obj);
+             elm_interface_atspi_window_minimized_signal_emit(obj);
           }
         else
           {
              eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_NORMAL, NULL));
-             if (_elm_config->atspi_mode)
-               elm_interface_atspi_window_restored_signal_emit(obj);
+             elm_interface_atspi_window_restored_signal_emit(obj);
           }
      }
    if (ch_sticky)
@@ -1438,14 +1430,12 @@ _elm_win_state_change(Ecore_Evas *ee)
         if (sd->maximized)
           {
              eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_MAXIMIZED, NULL));
-             if (_elm_config->atspi_mode)
-               elm_interface_atspi_window_maximized_signal_emit(obj);
+             elm_interface_atspi_window_maximized_signal_emit(obj);
           }
         else
           {
              eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_UNMAXIMIZED, NULL));
-             if (_elm_config->atspi_mode)
-               elm_interface_atspi_window_restored_signal_emit(obj);
+             elm_interface_atspi_window_restored_signal_emit(obj);
           }
         _elm_win_frame_maximized_state_update(sd, sd->maximized);
      }
@@ -1602,6 +1592,7 @@ _elm_win_evas_object_smart_show(Eo *obj, Elm_Win_Data *sd)
    if (sd->modal_count) return;
    const Eina_List *l;
    Evas_Object *current;
+   Eo *root;
 
    if (!evas_object_visible_get(obj))
      _elm_win_state_eval_queue();
@@ -1616,9 +1607,8 @@ _elm_win_evas_object_smart_show(Eo *obj, Elm_Win_Data *sd)
 
    TRAP(sd, show);
 
-   if (_elm_config->atspi_mode)
+   if (elm_atspi_accessible_enabled_is())
      {
-        Eo *root;
         elm_interface_atspi_window_created_signal_emit(obj);
         eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, root = elm_interface_atspi_accessible_root_get());
         if (root)
