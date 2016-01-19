@@ -31,9 +31,6 @@ typedef char * (*Elm_Calendar_Format_Cb)(struct tm *stime);
  */
 EAPI void                 elm_calendar_mark_del(Elm_Calendar_Mark *mark);
 
-/* temporary until better solution is found: is here because of eolian */
-typedef struct tm Elm_Calendar_Time;
-
 /**
  * @}
  */
