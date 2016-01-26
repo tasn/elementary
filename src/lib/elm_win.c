@@ -209,10 +209,9 @@ struct _Elm_Win_Data
    void *trap_data;
 
    struct
-     {
-        Ecore_Animator *obj;
-        unsigned short wants;
-     } animator;
+   {
+      unsigned short wants;
+   } animator;
 
    double       aspect;
    int          size_base_w, size_base_h;
@@ -3338,12 +3337,13 @@ _accel_is_gl(void)
 }
 
 static Eina_Bool
-_animator_tick_cb(void *_obj)
+_animator_tick_cb(void *_obj, Eo *o EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Elm_Win *obj = _obj;
-   eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_ANIMATOR_TICK, NULL));
 
-   return ECORE_CALLBACK_RENEW;
+   eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_ANIMATOR_TICK, event_info));
+
+   return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
@@ -3360,8 +3360,8 @@ _cb_added(void *_data,
         data->animator.wants++;
         if (data->animator.wants == 1)
           {
-             data->animator.obj = eo_add(ECORE_ANIMATOR_CLASS, obj,
-                   ecore_animator_constructor(_animator_tick_cb, obj));
+             eo_do(evas_object_evas_get(obj),
+                   eo_event_callback_add(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _animator_tick_cb, obj));
           }
      }
 
@@ -3382,8 +3382,8 @@ _cb_deled(void *_data,
         data->animator.wants--;
         if (data->animator.wants == 0)
           {
-             eo_del(data->animator.obj);
-             data->animator.obj = NULL;
+             eo_do(evas_object_evas_get(obj),
+                   eo_event_callback_del(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _animator_tick_cb, obj));
           }
      }
 
