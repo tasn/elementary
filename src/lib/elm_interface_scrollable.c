@@ -31,14 +31,14 @@
     }
 
 #define ELM_ANIMATOR_CONNECT(Obj, Bool, Callback, Data)                 \
-  eo_do(evas_object_evas_get(Obj),                                      \
-        eo_event_callback_del(EVAS_CANVAS_EVENT_ANIMATOR_TICK, Callback, Data), \
-        eo_event_callback_add(EVAS_CANVAS_EVENT_ANIMATOR_TICK, Callback, Data)); \
+  eo_do(Obj,                                                            \
+        eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data), \
+        eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data)); \
   Bool = 1;
 
-#define ELM_ANIMATOR_DISCONNECT(Obj, Bool, Callback, Data) \
-  eo_do(evas_object_evas_get(Obj),                                      \
-        eo_event_callback_del(EVAS_CANVAS_EVENT_ANIMATOR_TICK, Callback, Data)); \
+#define ELM_ANIMATOR_DISCONNECT(Obj, Bool, Callback, Data)              \
+  eo_do(Obj,                                                            \
+        eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data)); \
   Bool = 0;
 
 static const char SIG_CHANGED[] = "changed";
