@@ -1129,8 +1129,8 @@ _elm_panel_evas_object_smart_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, E
          break;
      }
 
-   eo_do(evas_object_evas_get(obj),
-         eo_event_callback_add(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj));
+   eo_do(obj,
+         eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj));
 }
 
 EOLIAN static void
@@ -1188,8 +1188,8 @@ _elm_panel_eo_base_constructor(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
 EOLIAN static void
 _elm_panel_eo_base_destructor(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
 {
-   eo_do(evas_object_evas_get(obj),
-         eo_event_callback_del(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj));
+   eo_do(obj,
+         eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj));
 
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
@@ -1393,8 +1393,8 @@ _elm_panel_scrollable_content_size_set(Eo *obj, Elm_Panel_Data *sd, double ratio
          break;
      }
 
-   eo_do(evas_object_evas_get(obj),
-         eo_event_callback_add(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj));
+   eo_do(obj,
+         eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj));
 }
 
 EOLIAN static Eina_Bool
