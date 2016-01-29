@@ -789,8 +789,8 @@ _zoom_anim_cb(void *data,
      {
         sd->no_smooth--;
         if (!sd->no_smooth) _smooth_update(data);
-        eo_do(evas_object_evas_get(obj),
-              eo_event_callback_del(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj));
+        eo_do(obj,
+              eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj));
         eo_do(obj, eo_event_callback_call(EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_STOP, NULL));
      }
 
@@ -1087,8 +1087,8 @@ _bounce_eval(void *data,
 
    eo_do(obj, elm_interface_scrollable_freeze_set(EINA_FALSE));
 
-   eo_do(evas_object_evas_get(obj),
-         eo_event_callback_del(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _bounce_eval, obj));
+   eo_do(obj,
+         eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _bounce_eval, obj));
    return EO_CALLBACK_CONTINUE;
 }
 
@@ -1097,8 +1097,8 @@ _elm_photocam_bounce_reset(Eo *obj, Elm_Photocam_Data *sd EINA_UNUSED)
 {
    Eina_Bool r;
 
-   eo_do(evas_object_evas_get(obj),
-         r = eo_event_callback_del(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _bounce_eval, obj));
+   eo_do(obj,
+         r = eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _bounce_eval, obj));
    if (r) _zoom_do(obj, 1.0);
 }
 
@@ -1107,8 +1107,8 @@ _elm_photocam_zoom_reset(Eo *obj, Elm_Photocam_Data *sd)
 {
    Eina_Bool r;
 
-   eo_do(evas_object_evas_get(obj),
-         r = eo_event_callback_del(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj));
+   eo_do(obj,
+         r = eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj));
    if (r)
      {
         sd->no_smooth--;
@@ -1313,8 +1313,8 @@ _g_layer_zoom_end_cb(void *data,
         sd->g_layer_zoom.bounce.t_end = t +
           _elm_config->page_scroll_friction;
 
-        eo_do(evas_object_evas_get(obj),
-              eo_event_callback_add(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _bounce_eval, obj));
+        eo_do(obj,
+              eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _bounce_eval, obj));
      }
    else
      {
@@ -1483,9 +1483,9 @@ _elm_photocam_evas_object_smart_del(Eo *obj, Elm_Photocam_Data *sd)
    ecore_job_del(sd->calc_job);
    ecore_timer_del(sd->scr_timer);
    ecore_timer_del(sd->long_timer);
-   eo_do(evas_object_evas_get(obj),
-         eo_event_callback_del(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj),
-         eo_event_callback_del(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _bounce_eval, obj));
+   eo_do(obj,
+         eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj),
+         eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _bounce_eval, obj));
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -1956,9 +1956,9 @@ done:
      }
    else
      {
-        eo_do(evas_object_evas_get(obj),
-              an = eo_event_callback_del(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj),
-              eo_event_callback_add(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj));
+        eo_do(obj,
+              an = eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj),
+              eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj));
         if (!an)
           {
              sd->no_smooth++;
