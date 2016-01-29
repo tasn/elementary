@@ -208,11 +208,6 @@ struct _Elm_Win_Data
 
    void *trap_data;
 
-   struct
-   {
-      unsigned short wants;
-   } animator;
-
    double       aspect;
    int          size_base_w, size_base_h;
    int          size_step_w, size_step_h;
@@ -3336,60 +3331,6 @@ _accel_is_gl(void)
    return EINA_FALSE;
 }
 
-static Eina_Bool
-_animator_tick_cb(void *_obj, Eo *o EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
-{
-   Elm_Win *obj = _obj;
-
-   eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_ANIMATOR_TICK, event_info));
-
-   return EO_CALLBACK_CONTINUE;
-}
-
-static Eina_Bool
-_cb_added(void *_data,
-          Eo *obj,
-          const Eo_Event_Description *desc EINA_UNUSED,
-          void *event_info)
-{
-   const Eo_Callback_Array_Item *event = event_info;
-   Elm_Win_Data *data = _data;
-
-   if (event->desc == ELM_WIN_EVENT_ANIMATOR_TICK)
-     {
-        data->animator.wants++;
-        if (data->animator.wants == 1)
-          {
-             eo_do(evas_object_evas_get(obj),
-                   eo_event_callback_add(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _animator_tick_cb, obj));
-          }
-     }
-
-   return EO_CALLBACK_CONTINUE;
-}
-
-static Eina_Bool
-_cb_deled(void *_data,
-          Eo *obj EINA_UNUSED,
-          const Eo_Event_Description *desc EINA_UNUSED,
-          void *event_info)
-{
-   const Eo_Callback_Array_Item *event = event_info;
-   Elm_Win_Data *data = _data;
-
-   if (event->desc == ELM_WIN_EVENT_ANIMATOR_TICK)
-     {
-        data->animator.wants--;
-        if (data->animator.wants == 0)
-          {
-             eo_do(evas_object_evas_get(obj),
-                   eo_event_callback_del(EVAS_CANVAS_EVENT_ANIMATOR_TICK, _animator_tick_cb, obj));
-          }
-     }
-
-   return EO_CALLBACK_CONTINUE;
-}
-
 static Eo *
 _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type type)
 {
@@ -3985,8 +3926,6 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 
    evas_object_show(sd->edje);
 
-   eo_do(obj, eo_event_callback_add(EO_BASE_EVENT_CALLBACK_ADD, _cb_added, sd),
-         eo_event_callback_add(EO_BASE_EVENT_CALLBACK_DEL, _cb_deled, sd));
    if (type == ELM_WIN_FAKE)
      {
         _elm_win_resize_job(obj);
