@@ -1,5 +1,6 @@
 interface Elm.Focusable {
     [[Implemented by objects which may be focusable]]
+    legacy_prefix: null;
     methods {
         focusable {
             [[returns true if this object is focusable]]

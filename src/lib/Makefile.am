@@ -382,6 +382,8 @@ elm_win_eo.h \
 elm_win_legacy.h \
 elm_win_standard.h \
 elm_win_standard.eo.h \
+elm_focus_manager.eo.h \
+elm_focusable.eo.h \
 elm_helper.h
 includesubdir = $(includedir)/elementary-@VMAJ@/
 
@@ -634,7 +636,9 @@ elm_gengrid_item.eo \
 elm_list_item.eo \
 elm_toolbar_item.eo \
 elm_diskselector_item.eo \
-elm_popup_item.eo
+elm_popup_item.eo \
+elm_focus_manager.eo \
+elm_focusable.eo
 
 elm_eolian_type_files = \
 elm_general.eot

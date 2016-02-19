@@ -1,9 +1,11 @@
 interface Elm.Focus_Manager {
+
     [[A focusable Object should register itself to the next available Focus_Manager.
 
      The next Focus_Manager which is found up in the widget tree is used.
 
      Container widgets can also implement this interface to set there own right left top bottom objects, they just have to redirect the call up the widget tree so the next focus_manager registers the object]]
+    legacy_prefix: null;
     methods {
         register {
             [[register a focusable object to a focusmanager.
@@ -13,25 +15,25 @@ interface Elm.Focus_Manager {
               if the given object is already regsitered the childs will be updated.
             ]]
             params {
-                object : Elm.Focus*; [[object to add to the graph]]
-                right : Elm.Focus*; [[Next focusable object for direction right]]
-                left : Elm.Focus*; [[Next focusable object for direction left]]
-                top : Elm.Focus*;  [[Next focusable object for direction top]]
-                bottom : Elm.Focus*;  [[Next focusable object for direction bottom]]
-                back : Elm.Focus*;  [[Next focusable object for tab presses]]
-                forth : Elm.Focus*;  [[Next focusable object for forth presses]]
+                object : Elm.Focusable*; [[object to add to the graph]]
+                right : Elm.Focusable*; [[Next focusable object for direction right]]
+                left : Elm.Focusable*; [[Next focusable object for direction left]]
+                top : Elm.Focusable*;  [[Next focusable object for direction top]]
+                bottom : Elm.Focusable*;  [[Next focusable object for direction bottom]]
+                back : Elm.Focusable*;  [[Next focusable object for tab presses]]
+                next : Elm.Focusable*;  [[Next focusable object for forth presses]]
             }
         }
         register_simple {
             [[registers a focusable object to this Focus_Manager without any presetted direction objects.]]
             params {
-                object : Elm.Focus*;
+                object : Elm.Focusable*;
             }
         }
         unregister {
             [[unregister a before registered widget]]
             params {
-                object : Elm.Focus*;
+                object : Elm.Focusable*;
             }
         }
     }

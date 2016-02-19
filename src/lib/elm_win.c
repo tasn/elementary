@@ -17,6 +17,9 @@
 #define MY_CLASS_NAME "Elm_Win"
 #define MY_CLASS_NAME_LEGACY "elm_win"
 
+#include "elm_focusable.eo.h"
+#include "elm_focus_manager.eo.h"
+
 static const Elm_Win_Trap *trap = NULL;
 
 #define TRAP(sd, name, ...)                                             \
@@ -230,6 +233,7 @@ struct _Elm_Win_Data
    Eina_Bool    noblank : 1;
    Eina_Bool    theme_alpha : 1; /**< alpha value fetched by a theme. this has higher priority than application_alpha */
    Eina_Bool    application_alpha : 1; /**< alpha value set by an elm_win_alpha_set() api. this has lower priority than theme_alpha */
+   Eina_List *focus_objects;
 };
 
 static const char SIG_DELETE_REQUEST[] = "delete,request";
@@ -1912,7 +1916,7 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
        DECREMENT_MODALITY()
      }
 
-   if ((sd->modal) && (sd->modal_count > 0)) 
+   if ((sd->modal) && (sd->modal_count > 0))
      ERR("Deleted modal win was blocked by another modal win which was created after creation of that win.");
 
    evas_object_event_callback_del_full(sd->edje,
@@ -5758,4 +5762,216 @@ _elm_win_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Win_Data *sd EINA_
    return name ? strdup(name) : NULL;
 }
 
+//following is focus tryouts
+
+typedef struct _Focus_Node Focus_Node;
+
+typedef enum {
+   LEFT = 0,
+   RIGHT = 1,
+   BOTTOM = 2,
+   TOP = 3,
+   NEXT = 4,
+   PREV = 5,
+   CONNECT_TYPE_END = 6
+} Connect_Type;
+
+struct _Focus_Node{
+   Eo *widget;
+   Focus_Node *refs[CONNECT_TYPE_END];
+};
+
+static Connect_Type
+complement(Connect_Type type) {
+    if (type == LEFT) return RIGHT;
+    if (type == RIGHT) return LEFT;
+    if (type == TOP) return BOTTOM;
+    if (type == BOTTOM) return TOP;
+    if (type == PREV) return NEXT;
+    if (type == NEXT) return PREV;
+
+    return CONNECT_TYPE_END;
+}
+
+static Focus_Node*
+focus_node_unconnect(Focus_Node *node1, Connect_Type type)
+{
+    Focus_Node *node2 = NULL;
+
+    if (node1)
+      {
+         node2 = node1->refs[type];
+         node1->refs[type] = NULL;
+      }
+    if (node2)
+      {
+         node2->refs[complement(type)] = NULL;
+         return node2;
+      }
+
+    return node2;
+}
+
+static void
+focus_node_connect(Focus_Node *node1, Focus_Node *node2, Connect_Type type)
+{
+    focus_node_unconnect(node1, type);
+    focus_node_unconnect(node2, complement(type));
+
+    if (node1) node1->refs[type] = node2;
+    if (node2) node2->refs[complement(type)] = node1;
+}
+
+static Eina_Bool
+_del(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+{
+   eo_do(obj, elm_focus_manager_unregister(data));
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+static void
+_dump(Eina_List *list) {
+    Eina_List *node;
+    Focus_Node *n;
+
+    if (!getenv("ELM_FOCUS_DEBUG")) return;
+
+    printf("====================================================>\n");
+
+    EINA_LIST_FOREACH(list, node, n)
+      {
+         if (!n->widget) continue;
+
+         printf("Node %s %p - %p %p %p %p %p %p\n"
+            ,elm_object_widget_type_get(n->widget)
+            ,n
+            ,n->refs[0]
+            ,n->refs[1]
+            ,n->refs[2]
+            ,n->refs[3]
+            ,n->refs[4]
+            ,n->refs[5]
+            );
+      }
+}
+
+static void
+_compare(int d, Focus_Node *node, int distances[4], Focus_Node *nodes[4], int dir)
+{
+    if (d > distances[dir] && distances[dir] != -1) return;
+
+    nodes[dir] = node;
+    distances[dir] = d;
+
+}
+
+static void
+_compute_node(Focus_Node *node, Eina_List *objects)
+{
+   int x = 0,y = 0,w = 0,h = 0;
+   Focus_Node *nodes[4] = { 0 }, *r;
+   Eina_List *n;
+   int distances[4] = {-1, -1, -1, -1};
+
+   evas_object_geometry_get(node->widget, &x, &y, &w, &h);
+   EINA_LIST_FOREACH(objects, n, r)
+     {
+         int rx = 0,ry = 0,rw = 0,rh = 0;
+         int rel_x = 0, rel_y = 0; //relativ coords from new widget to old
+         int d;
+
+         if (r == node) continue;
+
+         evas_object_geometry_get(r->widget, &rx, &ry, &rw, &rh);
+         rel_x = rx+rw/2 - x+w/2;
+         rel_y = ry+rh/2 - y+h/2;
+         d = sqrt(powerof2(rel_x)+powerof2(rel_y));
+
+         if (rel_x > 0)
+            _compare(d, r, distances, nodes, LEFT);
+         if (rel_x <= 0)
+            _compare(d, r, distances, nodes, RIGHT);
+         if (rel_y > 0)
+            _compare(d, r, distances, nodes, TOP);
+         if (rel_y <= 0)
+            _compare(d, r, distances, nodes, BOTTOM);
+     }
+
+   focus_node_connect(node, nodes[LEFT], LEFT);
+   focus_node_connect(node, nodes[RIGHT], RIGHT);
+   focus_node_connect(node, nodes[TOP], TOP);
+   focus_node_connect(node, nodes[BOTTOM], BOTTOM);
+}
+
+EOLIAN static void
+_elm_win_elm_focus_manager_register(Eo *obj, Elm_Win_Data *pd, Elm_Focusable *object,
+  Elm_Focusable *right, Elm_Focusable *left, Elm_Focusable *top, Elm_Focusable *bottom, Elm_Focusable *back, Elm_Focusable *forth)
+{
+   Focus_Node *node;
+
+   node = calloc(1, sizeof(Focus_Node));
+
+   //add the node to the known ones
+   node->widget = object;
+   eo_do(node->widget, eo_event_callback_add(EO_BASE_EVENT_DEL, _del, obj));
+   pd->focus_objects = eina_list_append(pd->focus_objects, node);
+   _compute_node(node, pd->focus_objects);
+
+   _dump(pd->focus_objects);
+}
+
+
+EOLIAN static void
+_elm_win_elm_focus_manager_register_simple(Eo *obj, Elm_Win_Data *pd, Elm_Focusable *object)
+{
+   eo_do(obj, elm_focus_manager_register(obj, NULL,NULL,NULL,NULL,NULL,NULL));
+}
+
+
+EOLIAN static void
+_elm_win_elm_focus_manager_unregister(Eo *obj, Elm_Win_Data *pd, Elm_Focusable *object)
+{
+   Focus_Node *n = NULL, *focusable;
+   Eina_List *node;
+
+   EINA_LIST_FOREACH(pd->focus_objects, node, focusable)
+     {
+        if (focusable->widget == object)
+          {
+             n = focusable;
+             break;
+          }
+     }
+
+   //check if this is focusable at all
+   if (!n) return;
+
+   pd->focus_objects = eina_list_remove(pd->focus_objects, n);
+
+   //delete all attached events
+   eo_do(n->widget, eo_event_callback_del(EO_BASE_EVENT_DEL, _del, n));
+
+   #define UNCONNECT_RECOMPUTE(n,d) \
+    do { \
+      Focus_Node *orphan_node; \
+      orphan_node = focus_node_unconnect(n, d); \
+      if (orphan_node) {\
+        _compute_node(orphan_node, pd->focus_objects); \
+      } \
+    } while(0) \
+
+   //unconnect all nodes
+   UNCONNECT_RECOMPUTE(n, RIGHT);
+   UNCONNECT_RECOMPUTE(n, LEFT);
+   UNCONNECT_RECOMPUTE(n, BOTTOM);
+   UNCONNECT_RECOMPUTE(n, TOP);
+   UNCONNECT_RECOMPUTE(n, NEXT);
+   UNCONNECT_RECOMPUTE(n, PREV);
+
+   free(n);
+}
+
+#include "elm_focus_manager.eo.c"
+#include "elm_focusable.eo.c"
 #include "elm_win.eo.c"

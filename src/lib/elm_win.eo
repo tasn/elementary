@@ -155,7 +155,8 @@ enum Elm.Illume_Command
 }
 
 class Elm.Win (Elm.Widget, Elm.Interface_Atspi_Window,
-               Elm.Interface_Atspi_Widget_Action)
+               Elm.Interface_Atspi_Widget_Action,
+               Elm.Focus_Manager)
 {
    eo_prefix: elm_obj_win;
    methods {
@@ -1287,6 +1288,9 @@ class Elm.Win (Elm.Widget, Elm.Interface_Atspi_Window,
       Elm.Interface_Atspi_Accessible.state_set.get;
       Elm.Interface_Atspi_Accessible.name.get;
       Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Focus_Manager.register;
+      Elm.Focus_Manager.register_simple;
+      Elm.Focus_Manager.unregister;
    }
    constructors {
       .name;
