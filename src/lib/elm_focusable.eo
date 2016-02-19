@@ -2,13 +2,29 @@ interface Elm.Focusable {
     [[Implemented by objects which may be focusable]]
     legacy_prefix: null;
     methods {
-        focusable {
+        @property focusable {
             [[returns true if this object is focusable]]
-            return : bool;
+            values {
+                focusable : bool;
+            }
+            set {
+
+            }
+            get {
+
+            }
         }
-        focus {
+        @property focus {
             [[returnds if this object is currently focused]]
-            return : bool;
+            values {
+                focus : bool;
+            }
+            set {
+
+            }
+            get {
+
+            }
         }
     }
     events {

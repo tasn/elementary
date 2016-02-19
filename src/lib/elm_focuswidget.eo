@@ -1,0 +1,7 @@
+class Elm.Focuswidget (Elm.Layout, Elm.Focusable) {
+    implements {
+        Elm.Focusable.focus;
+        Elm.Focusable.focusable;
+        Eo.Base.finalize;
+    }
+}

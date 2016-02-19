@@ -10,6 +10,8 @@
 #include "elm_widget_button.h"
 #include "elm_widget_layout.h"
 
+#include "elm_focuswidget.eo.h"
+
 #define MY_CLASS ELM_BUTTON_CLASS
 
 #define MY_CLASS_NAME "Elm_Button"

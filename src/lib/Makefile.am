@@ -506,6 +506,7 @@ elm_helper.c \
 els_box.c \
 els_cursor.c \
 els_tooltip.c \
+elm_focuswidget.c \
 elu_ews_wm.c
 
 libelementary_la_CFLAGS = @ELEMENTARY_CFLAGS@
@@ -638,7 +639,8 @@ elm_toolbar_item.eo \
 elm_diskselector_item.eo \
 elm_popup_item.eo \
 elm_focus_manager.eo \
-elm_focusable.eo
+elm_focusable.eo \
+elm_focuswidget.eo
 
 elm_eolian_type_files = \
 elm_general.eot
