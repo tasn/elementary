@@ -41,7 +41,7 @@ struct Elm.Image.Error
    open_error: Eina.Bool;
 }
 
-class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
+class Elm.Image (Elm.Widget, Efl.File, Efl.Image_Load, Evas.Clickable_Interface,
                  Edje.Object,
                  Elm.Interface_Atspi_Image, Elm.Interface_Atspi_Widget_Action,
                  Efl.Player)
@@ -317,8 +317,8 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
       Efl.File.async.set;
       Efl.File.async.get;
       Efl.File.async_wait;
-      Efl.Image.load_size.set;
-      Efl.Image.load_size.get;
+      Efl.Image_Load.load_size.set;
+      Efl.Image_Load.load_size.get;
       Efl.Image.smooth_scale.set;
       Efl.Image.smooth_scale.get;
       Efl.Player.playable.get;

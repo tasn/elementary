@@ -1370,7 +1370,7 @@ elm_image_prescale_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_image_efl_image_load_size_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int w, int h)
+_elm_image_efl_image_load_load_size_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int w, int h)
 {
    if (w > h)
       sd->load_size = w;
@@ -1389,7 +1389,7 @@ elm_image_prescale_get(const Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_image_efl_image_load_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int *w, int *h)
+_elm_image_efl_image_load_load_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int *w, int *h)
 {
    if (w) *w = sd->load_size;
    if (h) *h = sd->load_size;
