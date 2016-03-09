@@ -34,9 +34,9 @@ static void
 _label_format_set(Evas_Object *obj, const char *format)
 {
    if (format)
-     edje_object_part_text_style_user_push(obj, "elm.text", format);
+     elm_entry_text_style_user_push(obj, format);
    else
-     edje_object_part_text_style_user_pop(obj, "elm.text");
+     elm_entry_text_style_user_pop(obj);
 }
 
 static void
@@ -275,7 +275,7 @@ _on_slide_end(void *data, Evas_Object *obj EINA_UNUSED,
    ELM_LABEL_DATA_GET(data, sd);
 
    if (sd->slide_ellipsis)
-     elm_obj_label_ellipsis_set(data, EINA_TRUE);
+     elm_label_ellipsis_set(data, EINA_TRUE);
 
    eo_event_callback_call(data, ELM_LABEL_EVENT_SLIDE_END, NULL);
 }
@@ -365,11 +365,37 @@ _elm_label_wrap_width_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 }
 
 EOLIAN static void
-_elm_label_ellipsis_set(Eo *obj, Elm_Label_Data *sd, Eina_Bool ellipsis)
+_elm_label_slide_mode_set(Eo *obj EINA_UNUSED, Elm_Label_Data *sd, Elm_Label_Slide_Mode mode)
+{
+   sd->slide_mode = mode;
+}
+
+EOLIAN static Elm_Label_Slide_Mode
+_elm_label_slide_mode_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
+{
+   return sd->slide_mode;
+}
+
+EAPI void
+elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap)
+{
+   elm_obj_entry_line_wrap_set(eo_super(obj, MY_CLASS), wrap);
+}
+
+EAPI Elm_Wrap_Type
+elm_label_line_wrap_get(const Evas_Object *obj)
+{
+   return elm_obj_entry_line_wrap_get(eo_super(obj, MY_CLASS));
+}
+
+EAPI void
+elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis)
 {
    Eina_Strbuf *fontbuf = NULL;
    int len, removeflag = 0;
    const char *text;
+
+   ELM_LABEL_DATA_GET(obj, sd);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -397,35 +423,6 @@ _elm_label_ellipsis_set(Eo *obj, Elm_Label_Data *sd, Eina_Bool ellipsis)
    eina_strbuf_free(fontbuf);
 }
 
-EOLIAN static Eina_Bool
-_elm_label_ellipsis_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
-{
-   return sd->ellipsis;
-}
-
-EOLIAN static void
-_elm_label_slide_mode_set(Eo *obj EINA_UNUSED, Elm_Label_Data *sd, Elm_Label_Slide_Mode mode)
-{
-   sd->slide_mode = mode;
-}
-
-EOLIAN static Elm_Label_Slide_Mode
-_elm_label_slide_mode_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
-{
-   return sd->slide_mode;
-}
-
-EAPI void
-elm_label_line_wrap_set(const Evas_Object *obj, Elm_Wrap_Type wrap)
-{
-   elm_obj_entry_line_wrap_set(eo_super(obj, MY_CLASS), wrap);
-}
-
-EAPI Elm_Wrap_Type
-elm_label_line_wrap_get(const Evas_Object *obj)
-{
-   return elm_obj_entry_line_wrap_get(eo_super(obj, MY_CLASS));
-}
 
 EINA_DEPRECATED EAPI void
 elm_label_slide_set(Evas_Object *obj, Eina_Bool slide)

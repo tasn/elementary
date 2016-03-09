@@ -80,22 +80,6 @@ class Elm.Label (Elm.Entry)
             duration: double; [[The duration in seconds in moving text from slide begin position to slide end position]]
          }
       }
-      @property ellipsis {
-         [[Control the ellipsis behavior of the label
-
-           If set to true and the text doesn't fit in the label an ellipsis("...")
-           will be shown at the end of the widget.
-
-           Warning This doesn't work with slide(elm_label_slide_set()) or if the
-           chosen wrap method was $ELM_WRAP_WORD.]]
-         set {
-         }
-         get {
-         }
-         values {
-            ellipsis: bool; [[To ellipsis text or not]]
-         }
-      }
       slide_go {
          [[Start slide effect.
 
