@@ -80,22 +80,6 @@ class Elm.Label (Elm.Entry)
             duration: double; [[The duration in seconds in moving text from slide begin position to slide end position]]
          }
       }
-      @property line_wrap {
-         [[Control the wrapping behavior of the label
-
-           By default no wrapping is done. Possible values for $wrap are:
-           $ELM_WRAP_NONE - No wrapping
-           $ELM_WRAP_CHAR - wrap between characters
-           $ELM_WRAP_WORD - wrap between words
-           $ELM_WRAP_MIXED - Word wrap, and if that fails, char wrap]]
-         set {
-         }
-         get {
-         }
-         values {
-            wrap: Elm.Wrap.Type; [[To wrap text or not]]
-         }
-      }
       @property ellipsis {
          [[Control the ellipsis behavior of the label
 

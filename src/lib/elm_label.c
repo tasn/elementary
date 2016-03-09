@@ -31,43 +31,6 @@ static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 };
 
 static void
-_recalc(void *data)
-{
-   ELM_LABEL_DATA_GET(data, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
-
-   Evas_Coord minw = -1, minh = -1;
-   Evas_Coord resw, w;
-
-   evas_event_freeze(evas_object_evas_get(data));
-   edje_object_size_min_calc(wd->resize_obj, &minw, NULL);
-   evas_object_geometry_get(wd->resize_obj, NULL, NULL, &w, NULL);
-
-   if (sd->wrap_w > minw)
-     resw = sd->wrap_w;
-   else if ((sd->wrap_w > 0) && (minw > sd->wrap_w))
-     resw = minw;
-   else
-     resw = w;
-   edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh, resw, 0);
-
-   /* This is a hack to workaround the way min size hints are treated.
-    * If the minimum width is smaller than the restricted width, it means
-    * the minimum doesn't matter. */
-   if ((minw <= resw) && (minw != sd->wrap_w))
-     {
-        Evas_Coord ominw = -1;
-
-        evas_object_size_hint_min_get(data, &ominw, NULL);
-        minw = ominw;
-     }
-
-   evas_object_size_hint_min_set(data, minw, minh);
-   evas_event_thaw(evas_object_evas_get(data));
-   evas_event_thaw_eval(evas_object_evas_get(data));
-}
-
-static void
 _label_format_set(Evas_Object *obj, const char *format)
 {
    if (format)
@@ -378,12 +341,6 @@ _elm_label_eo_base_finalize(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
    return obj;
 }
 
-EOLIAN static Elm_Wrap_Type
-_elm_label_line_wrap_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
-{
-   return sd->linewrap;
-}
-
 EOLIAN static void
 _elm_label_wrap_width_set(Eo *obj, Elm_Label_Data *sd, Evas_Coord w)
 {
@@ -456,6 +413,18 @@ EOLIAN static Elm_Label_Slide_Mode
 _elm_label_slide_mode_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 {
    return sd->slide_mode;
+}
+
+EAPI void
+elm_label_line_wrap_set(const Evas_Object *obj, Elm_Wrap_Type wrap)
+{
+   elm_obj_entry_line_wrap_set(eo_super(obj, MY_CLASS), wrap);
+}
+
+EAPI Elm_Wrap_Type
+elm_label_line_wrap_get(const Evas_Object *obj)
+{
+   return elm_obj_entry_line_wrap_get(eo_super(obj, MY_CLASS));
 }
 
 EINA_DEPRECATED EAPI void
