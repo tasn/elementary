@@ -195,33 +195,6 @@ _elm_label_elm_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
    return int_ret;
 }
 
-EOLIAN static void
-_elm_label_elm_layout_sizing_eval(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-   Evas_Coord resw, resh;
-
-   ELM_LABEL_DATA_GET(obj, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   if (sd->linewrap)
-     {
-        evas_object_geometry_get(wd->resize_obj, NULL, NULL, &resw, &resh);
-        if (resw == sd->lastw) return;
-        sd->lastw = resw;
-        _recalc(obj);
-     }
-   else
-     {
-        evas_event_freeze(evas_object_evas_get(obj));
-        edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
-        if (sd->wrap_w > 0 && minw > sd->wrap_w) minw = sd->wrap_w;
-        evas_object_size_hint_min_set(obj, minw, minh);
-        evas_event_thaw(evas_object_evas_get(obj));
-        evas_event_thaw_eval(evas_object_evas_get(obj));
-     }
-}
-
 static void
 _on_label_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -322,24 +295,6 @@ _stringshare_key_value_replace(const char **srcstring, const char *key, const ch
    return 0;
 }
 
-EOLIAN static Eina_Bool
-_elm_label_elm_layout_text_set(Eo *obj, Elm_Label_Data *sd, const char *part, const char *label)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   Eina_Bool int_ret = EINA_FALSE;
-
-   if (!label) label = "";
-   _label_format_set(wd->resize_obj, sd->format);
-
-   int_ret = elm_obj_layout_text_set(eo_super(obj, MY_CLASS), part, label);
-   if (int_ret)
-     {
-        sd->lastw = -1;
-        elm_obj_layout_sizing_eval(obj);
-     }
-   return int_ret;
-}
-
 static char *
 _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
@@ -392,12 +347,6 @@ _elm_label_evas_object_smart_add(Eo *obj, Elm_Label_Data *priv)
                         E_("Label"));
    _elm_access_callback_set(_elm_access_info_get(obj), ELM_ACCESS_INFO,
                             _access_info_cb, NULL);
-
-   if (!elm_layout_theme_set(obj, "label", "base", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
-
-   elm_layout_text_set(obj, NULL, "<br>");
-   elm_layout_sizing_eval(obj);
 }
 
 EAPI Evas_Object *
@@ -419,48 +368,14 @@ _elm_label_eo_base_constructor(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
    return obj;
 }
 
-EOLIAN static void
-_elm_label_line_wrap_set(Eo *obj, Elm_Label_Data *sd, Elm_Wrap_Type wrap)
+EOLIAN static Eo *
+_elm_label_eo_base_finalize(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
 {
-   const char *wrap_str, *text;
-   int len;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   if (sd->linewrap == wrap) return;
-
-   sd->linewrap = wrap;
-   text = elm_layout_text_get(obj, NULL);
-   if (!text) return;
-
-   len = strlen(text);
-   if (len <= 0) return;
-
-   switch (wrap)
-     {
-      case ELM_WRAP_CHAR:
-        wrap_str = "char";
-        break;
-
-      case ELM_WRAP_WORD:
-        wrap_str = "word";
-        break;
-
-      case ELM_WRAP_MIXED:
-        wrap_str = "mixed";
-        break;
-
-      default:
-        wrap_str = "none";
-        break;
-     }
-
-   if (_stringshare_key_value_replace(&sd->format, "wrap", wrap_str, 0) == 0)
-     {
-        sd->lastw = -1;
-        _label_format_set(wd->resize_obj, sd->format);
-        elm_layout_sizing_eval(obj);
-     }
+   if (!elm_layout_theme_set(obj, "entry", "base-noedit", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
+   elm_layout_text_set(obj, NULL, "<br>");
+   elm_layout_sizing_eval(obj);
+   return obj;
 }
 
 EOLIAN static Elm_Wrap_Type

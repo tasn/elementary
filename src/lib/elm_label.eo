@@ -8,7 +8,7 @@ enum Elm.Label.Slide_Mode
    always [[Slide always.]]
 }
 
-class Elm.Label (Elm.Layout)
+class Elm.Label (Elm.Entry)
 {
    eo_prefix: elm_obj_label;
    methods {
@@ -121,13 +121,12 @@ class Elm.Label (Elm.Layout)
    implements {
       class.constructor;
       Eo.Base.constructor;
+      Eo.Base.finalize;
       Evas.Object_Smart.add;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;
-      Elm.Layout.text.set;
       Elm.Layout.text_aliases.get;
-      Elm.Layout.sizing_eval;
    }
    events {
       slide,end;
