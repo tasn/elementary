@@ -3566,9 +3566,6 @@ _elm_entry_evas_object_smart_add(Eo *obj, Elm_Entry_Data *priv)
                        NULL, NULL,
                        _drag_drop_cb, NULL);
 
-   if (!elm_layout_theme_set(obj, "entry", "base", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
-
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_data_set(priv->hit_rect, "_elm_leaveme", obj);
 
@@ -3663,16 +3660,12 @@ _elm_entry_evas_object_smart_add(Eo *obj, Elm_Entry_Data *priv)
      (priv->entry_edje, "entry,redo,request", "elm.text",
      _entry_redo_request_signal_cb, obj);
 
-   elm_layout_text_set(obj, "elm.text", "");
-
    elm_object_sub_cursor_set
      (wd->resize_obj, obj, ELM_CURSOR_XTERM);
    elm_widget_can_focus_set(obj, EINA_TRUE);
    if (_elm_config->desktop_entry)
      edje_object_part_text_select_allow_set
        (priv->entry_edje, "elm.text", EINA_TRUE);
-
-   elm_layout_sizing_eval(obj);
 
    elm_entry_input_panel_layout_set(obj, ELM_INPUT_PANEL_LAYOUT_NORMAL);
    elm_entry_input_panel_enabled_set(obj, EINA_TRUE);
@@ -3909,6 +3902,16 @@ _elm_entry_eo_base_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
    eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_ADD, _cb_added, NULL);
    eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_DEL, _cb_deleted, NULL);
 
+   return obj;
+}
+
+EOLIAN static Eo *
+_elm_entry_eo_base_finalize(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+{
+   if (!elm_layout_theme_set(obj, "entry", "base", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
+   elm_layout_text_set(obj, "elm.text", "");
+   elm_layout_sizing_eval(obj);
    return obj;
 }
 

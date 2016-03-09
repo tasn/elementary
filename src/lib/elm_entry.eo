@@ -918,6 +918,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
    implements {
       class.constructor;
       Eo.Base.constructor;
+      Eo.Base.finalize;
       Evas.Object_Smart.move;
       Evas.Object_Smart.member_add;
       Evas.Object_Smart.add;
