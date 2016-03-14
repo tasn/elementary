@@ -3919,15 +3919,12 @@ EOLIAN static void
 _elm_entry_text_style_user_push(Eo *obj, Elm_Entry_Data *sd, const char *style)
 {
    edje_object_part_text_style_user_push(sd->entry_edje, "elm.text", style);
-   elm_obj_widget_theme_apply(obj);
 }
 
 EOLIAN static void
 _elm_entry_text_style_user_pop(Eo *obj, Elm_Entry_Data *sd)
 {
    edje_object_part_text_style_user_pop(sd->entry_edje, "elm.text");
-
-   elm_obj_widget_theme_apply(obj);
 }
 
 EOLIAN static const char*
