@@ -147,7 +147,6 @@ _elm_label_elm_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
-   _label_format_set(wd->resize_obj, sd->format);
    _label_slide_change(obj);
 
    evas_event_thaw(evas_object_evas_get(obj));
@@ -294,7 +293,7 @@ _elm_label_evas_object_smart_add(Eo *obj, Elm_Label_Data *priv)
    priv->slide_duration = 10;
 
    priv->format = eina_stringshare_add("");
-   _label_format_set(wd->resize_obj, priv->format);
+   _label_format_set(obj, priv->format);
 
    evas_object_event_callback_add(wd->resize_obj, EVAS_CALLBACK_RESIZE,
                                   _on_label_resize, obj);
@@ -351,7 +350,7 @@ _elm_label_wrap_width_set(Eo *obj, Elm_Label_Data *sd, Evas_Coord w)
    if (sd->wrap_w == w) return;
 
    if (sd->ellipsis)
-     _label_format_set(wd->resize_obj, sd->format);
+     _label_format_set(obj, sd->format);
    sd->wrap_w = w;
    sd->lastw = -1;
 
@@ -417,7 +416,7 @@ elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis)
          (&sd->format, "ellipsis", eina_strbuf_string_get
            (fontbuf), removeflag) == 0)
      {
-        _label_format_set(wd->resize_obj, sd->format);
+        _label_format_set(obj, sd->format);
         elm_layout_sizing_eval(obj);
      }
    eina_strbuf_free(fontbuf);
