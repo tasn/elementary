@@ -1090,9 +1090,8 @@ _elm_entry_elm_layout_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
              else
                evas_object_size_hint_max_set(obj, -1, -1);
           }
-        else
+        else if (!sd->deferred_recalc_job)
           {
-             ecore_job_del(sd->deferred_recalc_job);
              sd->deferred_recalc_job =
                ecore_job_add(_deferred_recalc_job, obj);
           }
