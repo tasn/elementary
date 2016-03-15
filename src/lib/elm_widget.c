@@ -5,6 +5,8 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
+#define ELM_WIDGET_PROTECTED
+
 #include <Elementary.h>
 
 #include "elm_priv.h"
@@ -336,25 +338,9 @@ _obj_mouse_in(void *data,
 }
 
 EOLIAN static void
-_elm_widget_evas_object_smart_add(Eo *obj, Elm_Widget_Smart_Data *priv)
+_elm_widget_evas_object_smart_add(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *priv EINA_UNUSED)
 {
-
-   priv->obj = obj;
-   priv->mirrored_auto_mode = EINA_TRUE; /* will follow system locale
-                                          * settings */
-   priv->focus_region_show_mode = ELM_FOCUS_REGION_SHOW_WIDGET;
-   elm_widget_can_focus_set(obj, EINA_TRUE);
-   priv->is_mirrored = elm_config_mirrored_get();
-   priv->focus_move_policy = _elm_config->focus_move_policy;
-
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _obj_mouse_down, obj);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_MOVE,
-                                  _obj_mouse_move, obj);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
-                                  _obj_mouse_up, obj);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_IN,
-                                  _obj_mouse_in, obj);
+   /* Do nothing */
 }
 
 static void
@@ -4394,6 +4380,20 @@ _elm_widget_item_eo_base_constructor(Eo *eo_item, Elm_Widget_Item_Data *item)
    return eo_item;
 }
 
+EOLIAN static Eo *
+_elm_widget_eo_base_finalize(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
+{
+   if (!elm_obj_widget_theme_init(obj))
+     {
+        WRN("Could not set theme during construction");
+#if 0
+        /* TODO: do cleanup */
+        return NULL;
+#endif
+     }
+   return obj;
+}
+
 EOLIAN static void
 _elm_widget_item_eo_base_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
 {
@@ -5659,19 +5659,35 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 }
 
 EOLIAN static Eo *
-_elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
+_elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
-   Eo *parent = NULL;
-
-   sd->on_create = EINA_TRUE;
    obj = eo_constructor(eo_super(obj, MY_CLASS));
+
+   Eo *parent = NULL;
    evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    parent = eo_parent_get(obj);
    elm_obj_widget_parent_set(obj, parent);
-   sd->on_create = EINA_FALSE;
 
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_UNKNOWN);
+
+   sd->obj = obj;
+   sd->mirrored_auto_mode = EINA_TRUE; /* will follow system locale
+                                          * settings */
+   sd->focus_region_show_mode = ELM_FOCUS_REGION_SHOW_WIDGET;
+   elm_widget_can_focus_set(obj, EINA_TRUE);
+   sd->is_mirrored = elm_config_mirrored_get();
+   sd->focus_move_policy = _elm_config->focus_move_policy;
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _obj_mouse_down, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_MOVE,
+                                  _obj_mouse_move, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
+                                  _obj_mouse_up, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_IN,
+                                  _obj_mouse_in, obj);
+
    return obj;
 }
 

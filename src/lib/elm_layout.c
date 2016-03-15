@@ -3,6 +3,7 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define ELM_WIDGET_PROTECTED
 
 #include <Elementary.h>
 
@@ -400,6 +401,14 @@ _elm_layout_elm_widget_theme_apply(Eo *obj, Elm_Layout_Smart_Data *sd)
    return _elm_layout_theme_internal(obj, sd);
 }
 
+EOLIAN static Eina_Bool
+_elm_layout_elm_widget_theme_init(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
+{
+   /* Nothing to theme for a layout object. Theme should be set later by the
+    * user. */
+   return EINA_TRUE;
+}
+
 static void *
 _elm_layout_list_data_get(const Eina_List *list)
 {
@@ -747,27 +756,6 @@ _on_size_evaluate_signal(void *data,
                          const char *source EINA_UNUSED)
 {
    elm_obj_layout_sizing_eval(data);
-}
-
-EOLIAN static void
-_elm_layout_evas_object_smart_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
-{
-   Evas_Object *edje;
-
-   elm_widget_sub_object_parent_add(obj);
-
-   /* has to be there *before* parent's smart_add() */
-   edje = edje_object_add(evas_object_evas_get(obj));
-   elm_widget_resize_object_set(obj, edje, EINA_TRUE);
-
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
-
-   elm_widget_can_focus_set(obj, EINA_FALSE);
-
-   edje_object_signal_callback_add
-     (edje, "size,eval", "elm", _on_size_evaluate_signal, obj);
-
-   elm_obj_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
@@ -1778,11 +1766,23 @@ elm_layout_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_layout_eo_base_constructor(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
-   sd->obj = obj;
    obj = eo_constructor(eo_super(obj, MY_CLASS));
+
+   Evas_Object *edje;
+
    evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
+   elm_widget_sub_object_parent_add(obj);
+
+   sd->obj = obj;
+
+   edje = edje_object_add(evas_object_evas_get(obj));
+   elm_widget_resize_object_set(obj, edje, EINA_TRUE);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
+
+   edje_object_signal_callback_add
+     (edje, "size,eval", "elm", _on_size_evaluate_signal, obj);
 
    return obj;
 }
