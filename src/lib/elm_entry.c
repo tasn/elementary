@@ -5,6 +5,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
 #define ELM_INTERFACE_ATSPI_EDITABLE_TEXT_PROTECTED
+#define ELM_WIDGET_PROTECTED
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -917,6 +918,20 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    eo_event_callback_call(obj, ELM_LAYOUT_EVENT_THEME_CHANGED, NULL);
 
    evas_object_unref(obj);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_widget_theme_init(Eo *obj, Elm_Entry_Data *sd)
+{
+   if (!elm_layout_theme_set(obj, "entry", "base", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
+   elm_layout_text_set(obj, "elm.text", "");
+   if (_elm_config->desktop_entry)
+     edje_object_part_text_select_allow_set
+       (sd->entry_edje, "elm.text", EINA_TRUE);
+
 
    return EINA_TRUE;
 }
@@ -3543,167 +3558,6 @@ _end_handler_mouse_move_cb(void *data,
      _magnifier_move(data);
 }
 
-EOLIAN static void
-_elm_entry_evas_object_smart_add(Eo *obj, Elm_Entry_Data *priv)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
-
-   priv->entry_edje = wd->resize_obj;
-
-   priv->cnp_mode = ELM_CNP_MODE_MARKUP;
-   priv->line_wrap = ELM_WRAP_WORD;
-   priv->context_menu = EINA_TRUE;
-   priv->auto_save = EINA_TRUE;
-   priv->editable = EINA_TRUE;
-
-   priv->drop_format = ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
-   elm_drop_target_add(obj, priv->drop_format,
-                       NULL, NULL,
-                       NULL, NULL,
-                       NULL, NULL,
-                       _drag_drop_cb, NULL);
-
-   if (!elm_layout_theme_set(obj, "entry", "base", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
-
-   priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
-   evas_object_data_set(priv->hit_rect, "_elm_leaveme", obj);
-
-   Evas_Object* clip = evas_object_clip_get(priv->entry_edje);
-   evas_object_clip_set(priv->hit_rect, clip);
-
-   evas_object_smart_member_add(priv->hit_rect, obj);
-   elm_widget_sub_object_add(obj, priv->hit_rect);
-
-   /* common scroller hit rectangle setup */
-   evas_object_color_set(priv->hit_rect, 0, 0, 0, 0);
-   evas_object_show(priv->hit_rect);
-   evas_object_repeat_events_set(priv->hit_rect, EINA_TRUE);
-
-   elm_interface_scrollable_objects_set(obj, priv->entry_edje, priv->hit_rect);
-
-   edje_object_item_provider_set(priv->entry_edje, _item_get, obj);
-
-   edje_object_text_markup_filter_callback_add
-     (priv->entry_edje, "elm.text", _markup_filter_cb, obj);
-
-   evas_object_event_callback_add
-     (priv->entry_edje, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, obj);
-   evas_object_event_callback_add
-     (priv->entry_edje, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, obj);
-   evas_object_event_callback_add
-     (priv->entry_edje, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, obj);
-   evas_object_event_callback_add
-     (priv->entry_edje, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, obj);
-
-   /* this code can't go in smart_resize. sizing gets wrong */
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize_cb, obj);
-
-   edje_object_signal_callback_add
-     (priv->entry_edje, "entry,changed", "elm.text",
-     _entry_changed_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "entry,changed,user", "elm.text",
-     _entry_changed_user_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "preedit,changed", "elm.text",
-     _entry_preedit_changed_signal_cb, obj);
-
-   _entry_selection_callbacks_register(obj);
-
-   edje_object_signal_callback_add
-     (priv->entry_edje, "cursor,changed", "elm.text",
-     _entry_cursor_changed_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "cursor,changed,manual", "elm.text",
-     _entry_cursor_changed_manual_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "anchor,mouse,down,*", "elm.text",
-     _entry_anchor_down_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "anchor,mouse,up,*", "elm.text",
-     _entry_anchor_up_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "anchor,mouse,clicked,*", "elm.text",
-     _entry_anchor_clicked_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "anchor,mouse,move,*", "elm.text",
-     _entry_anchor_move_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "anchor,mouse,in,*", "elm.text",
-     _entry_anchor_in_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "anchor,mouse,out,*", "elm.text",
-     _entry_anchor_out_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "entry,key,enter", "elm.text",
-     _entry_key_enter_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "entry,key,escape", "elm.text",
-     _entry_key_escape_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "mouse,down,1", "elm.text",
-     _entry_mouse_down_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "mouse,clicked,1", "elm.text",
-     _entry_mouse_clicked_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "mouse,down,1,double", "elm.text",
-     _entry_mouse_double_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "mouse,down,1,triple", "elm.text",
-     _entry_mouse_triple_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "entry,undo,request", "elm.text",
-     _entry_undo_request_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "entry,redo,request", "elm.text",
-     _entry_redo_request_signal_cb, obj);
-
-   elm_layout_text_set(obj, "elm.text", "");
-
-   elm_object_sub_cursor_set
-     (wd->resize_obj, obj, ELM_CURSOR_XTERM);
-   elm_widget_can_focus_set(obj, EINA_TRUE);
-   if (_elm_config->desktop_entry)
-     edje_object_part_text_select_allow_set
-       (priv->entry_edje, "elm.text", EINA_TRUE);
-
-   elm_layout_sizing_eval(obj);
-
-   elm_entry_input_panel_layout_set(obj, ELM_INPUT_PANEL_LAYOUT_NORMAL);
-   elm_entry_input_panel_enabled_set(obj, EINA_TRUE);
-   elm_entry_prediction_allow_set(obj, EINA_TRUE);
-   elm_entry_input_hint_set(obj, ELM_INPUT_HINT_AUTO_COMPLETE);
-
-   priv->autocapital_type = (Elm_Autocapital_Type)edje_object_part_text_autocapital_type_get
-       (priv->entry_edje, "elm.text");
-
-   entries = eina_list_prepend(entries, obj);
-
-   // module - find module for entry
-   priv->api = _module_find(obj);
-   // if found - hook in
-   if ((priv->api) && (priv->api->obj_hook)) priv->api->obj_hook(obj);
-
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
-
-   // access
-   _elm_access_object_register(obj, priv->entry_edje);
-   _elm_access_text_set
-     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Entry"));
-   _elm_access_callback_set
-     (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
-   _elm_access_callback_set
-     (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
-
-   if (_elm_config->desktop_entry)
-     priv->sel_handler_disabled = EINA_TRUE;
-}
-
 static void
 _create_selection_handlers(Evas_Object *obj, Elm_Entry_Data *sd)
 {
@@ -3900,14 +3754,157 @@ _cb_deleted(void *data EINA_UNUSED, const Eo_Event *ev)
 }
 
 EOLIAN static Eo *
-_elm_entry_eo_base_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_eo_base_constructor(Eo *obj, Elm_Entry_Data *sd)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
+
    evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_ENTRY);
    eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_ADD, _cb_added, NULL);
    eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_DEL, _cb_deleted, NULL);
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+
+   sd->entry_edje = wd->resize_obj;
+
+   sd->cnp_mode = ELM_CNP_MODE_MARKUP;
+   sd->line_wrap = ELM_WRAP_WORD;
+   sd->context_menu = EINA_TRUE;
+   sd->auto_save = EINA_TRUE;
+   sd->editable = EINA_TRUE;
+
+   sd->drop_format = ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
+   elm_drop_target_add(obj, sd->drop_format,
+                       NULL, NULL,
+                       NULL, NULL,
+                       NULL, NULL,
+                       _drag_drop_cb, NULL);
+
+   sd->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_data_set(sd->hit_rect, "_elm_leaveme", obj);
+
+   Evas_Object* clip = evas_object_clip_get(sd->entry_edje);
+   evas_object_clip_set(sd->hit_rect, clip);
+
+   evas_object_smart_member_add(sd->hit_rect, obj);
+   elm_widget_sub_object_add(obj, sd->hit_rect);
+
+   /* common scroller hit rectangle setup */
+   evas_object_color_set(sd->hit_rect, 0, 0, 0, 0);
+   evas_object_show(sd->hit_rect);
+   evas_object_repeat_events_set(sd->hit_rect, EINA_TRUE);
+
+   edje_object_item_provider_set(sd->entry_edje, _item_get, obj);
+
+   edje_object_text_markup_filter_callback_add
+     (sd->entry_edje, "elm.text", _markup_filter_cb, obj);
+
+   evas_object_event_callback_add
+     (sd->entry_edje, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, obj);
+   evas_object_event_callback_add
+     (sd->entry_edje, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, obj);
+   evas_object_event_callback_add
+     (sd->entry_edje, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, obj);
+   evas_object_event_callback_add
+     (sd->entry_edje, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, obj);
+
+   /* this code can't go in smart_resize. sizing gets wrong */
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize_cb, obj);
+
+   edje_object_signal_callback_add
+     (sd->entry_edje, "entry,changed", "elm.text",
+     _entry_changed_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "entry,changed,user", "elm.text",
+     _entry_changed_user_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "preedit,changed", "elm.text",
+     _entry_preedit_changed_signal_cb, obj);
+
+   _entry_selection_callbacks_register(obj);
+
+   edje_object_signal_callback_add
+     (sd->entry_edje, "cursor,changed", "elm.text",
+     _entry_cursor_changed_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "cursor,changed,manual", "elm.text",
+     _entry_cursor_changed_manual_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "anchor,mouse,down,*", "elm.text",
+     _entry_anchor_down_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "anchor,mouse,up,*", "elm.text",
+     _entry_anchor_up_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "anchor,mouse,clicked,*", "elm.text",
+     _entry_anchor_clicked_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "anchor,mouse,move,*", "elm.text",
+     _entry_anchor_move_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "anchor,mouse,in,*", "elm.text",
+     _entry_anchor_in_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "anchor,mouse,out,*", "elm.text",
+     _entry_anchor_out_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "entry,key,enter", "elm.text",
+     _entry_key_enter_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "entry,key,escape", "elm.text",
+     _entry_key_escape_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "mouse,down,1", "elm.text",
+     _entry_mouse_down_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "mouse,clicked,1", "elm.text",
+     _entry_mouse_clicked_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "mouse,down,1,double", "elm.text",
+     _entry_mouse_double_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "mouse,down,1,triple", "elm.text",
+     _entry_mouse_triple_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "entry,undo,request", "elm.text",
+     _entry_undo_request_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "entry,redo,request", "elm.text",
+     _entry_redo_request_signal_cb, obj);
+
+   // module - find module for entry
+   sd->api = _module_find(obj);
+   // if found - hook in
+   if ((sd->api) && (sd->api->obj_hook)) sd->api->obj_hook(obj);
+
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+
+   // access
+   _elm_access_object_register(obj, sd->entry_edje);
+   _elm_access_text_set
+     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Entry"));
+   _elm_access_callback_set
+     (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
+   _elm_access_callback_set
+     (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
+
+   if (_elm_config->desktop_entry)
+     sd->sel_handler_disabled = EINA_TRUE;
+
+   elm_object_sub_cursor_set
+     (wd->resize_obj, obj, ELM_CURSOR_XTERM);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
+
+   elm_entry_input_panel_layout_set(obj, ELM_INPUT_PANEL_LAYOUT_NORMAL);
+   elm_entry_input_panel_enabled_set(obj, EINA_TRUE);
+   elm_entry_prediction_allow_set(obj, EINA_TRUE);
+   elm_entry_input_hint_set(obj, ELM_INPUT_HINT_AUTO_COMPLETE);
+
+   sd->autocapital_type = (Elm_Autocapital_Type)edje_object_part_text_autocapital_type_get
+       (sd->entry_edje, "elm.text");
+
+   entries = eina_list_prepend(entries, obj);
 
    return obj;
 }
