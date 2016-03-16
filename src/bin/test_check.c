@@ -15,6 +15,12 @@ changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static void
+_tristate_changed_cb(void *d EINA_UNUSED, Evas_Object *o, void *ei EINA_UNUSED)
+{
+   printf("tristate check state: %d\n", efl_ui_nstate_value_get(o));
+}
+
+static void
 state_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("State Pointer Value: %d\n", eb);
@@ -105,6 +111,14 @@ test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
    evas_object_show(ic);
+
+   ck = elm_check_add(win);
+   efl_ui_nstate_count_set(ck, 3);
+   elm_object_style_set(ck, "tristate");
+   elm_object_text_set(ck, "tristate");
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+   evas_object_smart_callback_add(ck, "state,changed", _tristate_changed_cb, NULL);
 
    evas_object_show(win);
 }
