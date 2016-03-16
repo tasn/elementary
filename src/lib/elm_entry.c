@@ -924,95 +924,18 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 static void
 _cursor_geometry_recalc(Evas_Object *obj)
 {
+   Evas_Coord cx, cy, cw, ch;
+
    ELM_ENTRY_DATA_GET(obj, sd);
 
    eo_event_callback_call(obj, ELM_ENTRY_EVENT_CURSOR_CHANGED, NULL);
 
-   if (!sd->deferred_recalc_job)
+   edje_object_part_text_cursor_geometry_get
+      (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
+   if (sd->cur_changed)
      {
-        Evas_Coord cx, cy, cw, ch;
-
-        edje_object_part_text_cursor_geometry_get
-          (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
-        if (sd->cur_changed)
-          {
-             sd->cur_changed = EINA_FALSE;
-             elm_widget_show_region_set(obj, cx, cy, cw, ch, EINA_FALSE);
-          }
-     }
-   else
-     sd->deferred_cur = EINA_TRUE;
-}
-
-static void
-_deferred_recalc_job(void *data)
-{
-   Evas_Coord minh = -1, resw = -1, minw = -1, fw = 0, fh = 0;
-
-   ELM_ENTRY_DATA_GET(data, sd);
-
-   sd->deferred_recalc_job = NULL;
-
-   evas_object_geometry_get(sd->entry_edje, NULL, NULL, &resw, NULL);
-   edje_object_size_min_restricted_calc(sd->entry_edje, &minw, &minh, resw, 0);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-
-   /* This is a hack to workaround the way min size hints are treated.
-    * If the minimum width is smaller than the restricted width, it
-    * means the minimum doesn't matter. */
-   if (minw <= resw)
-     {
-        Evas_Coord ominw = -1;
-
-        evas_object_size_hint_min_get(data, &ominw, NULL);
-        minw = ominw;
-     }
-
-   sd->ent_mw = minw;
-   sd->ent_mh = minh;
-
-   elm_coords_finger_size_adjust(1, &fw, 1, &fh);
-   if (sd->scroll)
-     {
-        Evas_Coord vmw = 0, vmh = 0;
-
-        edje_object_size_min_calc(sd->scr_edje, &vmw, &vmh);
-        if (sd->single_line)
-          {
-             evas_object_size_hint_min_set(data, vmw, minh + vmh);
-             evas_object_size_hint_max_set(data, -1, minh + vmh);
-          }
-        else
-          {
-             evas_object_size_hint_min_set(data, vmw, vmh);
-             evas_object_size_hint_max_set(data, -1, -1);
-          }
-     }
-   else
-     {
-        if (sd->single_line)
-          {
-             evas_object_size_hint_min_set(data, minw, minh);
-             evas_object_size_hint_max_set(data, -1, minh);
-          }
-        else
-          {
-             evas_object_size_hint_min_set(data, fw, minh);
-             evas_object_size_hint_max_set(data, -1, -1);
-          }
-     }
-
-   if (sd->deferred_cur)
-     {
-        Evas_Coord cx, cy, cw, ch;
-
-        edje_object_part_text_cursor_geometry_get
-          (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
-        if (sd->cur_changed)
-          {
-             sd->cur_changed = EINA_FALSE;
-             elm_widget_show_region_set(data, cx, cy, cw, ch, EINA_FALSE);
-          }
+        sd->cur_changed = EINA_FALSE;
+        elm_widget_show_region_set(obj, cx, cy, cw, ch, EINA_FALSE);
      }
 }
 
@@ -1090,10 +1013,28 @@ _elm_entry_elm_layout_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
              else
                evas_object_size_hint_max_set(obj, -1, -1);
           }
-        else if (!sd->deferred_recalc_job)
+        else if (resw > 0)
           {
-             sd->deferred_recalc_job =
-               ecore_job_add(_deferred_recalc_job, obj);
+             Evas_Coord fw = 0;
+
+             edje_object_size_min_restricted_calc(sd->entry_edje, &minw, &minh, resw, 0);
+             elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+             evas_object_resize(sd->entry_edje, minw, minh);
+
+             if (minw <= resw)
+               {
+                  Evas_Coord ominw = -1;
+
+                  evas_object_size_hint_min_get(obj, &ominw, NULL);
+                  minw = ominw;
+               }
+
+             sd->ent_mw = minw;
+             sd->ent_mh = minh;
+
+             elm_coords_finger_size_adjust(1, &fw, 1, &minh);
+             evas_object_size_hint_min_set(obj, fw, minh);
+             evas_object_size_hint_max_set(obj, -1, -1);
           }
 
         evas_event_thaw(evas_object_evas_get(obj));
@@ -3759,7 +3700,6 @@ _elm_entry_evas_object_smart_del(Eo *obj, Elm_Entry_Data *sd)
    entries = eina_list_remove(entries, obj);
    eina_stringshare_del(sd->cut_sel);
    eina_stringshare_del(sd->text);
-   ecore_job_del(sd->deferred_recalc_job);
    if (sd->append_text_idler)
      {
         ecore_idler_del(sd->append_text_idler);
@@ -4103,8 +4043,6 @@ _elm_entry_line_wrap_set(Eo *obj, Elm_Entry_Data *sd, Elm_Wrap_Type wrap)
    if (sd->line_wrap == wrap) return;
    sd->last_w = -1;
    sd->line_wrap = wrap;
-   if (wrap == ELM_WRAP_NONE)
-     ELM_SAFE_FREE(sd->deferred_recalc_job, ecore_job_del);
    elm_obj_widget_theme_apply(obj);
 }
 

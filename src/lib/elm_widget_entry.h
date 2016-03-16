@@ -37,7 +37,6 @@ struct _Elm_Entry_Data
    Evas_Object                          *mgf_proxy;
    Evas_Object                          *start_handler;
    Evas_Object                          *end_handler;
-   Ecore_Job                            *deferred_recalc_job;
    Ecore_Timer                          *longpress_timer;
    Ecore_Timer                          *delay_write;
    /* for deferred appending */
@@ -94,7 +93,6 @@ struct _Elm_Entry_Data
    Eina_Bool                             selection_asked : 1;
    Eina_Bool                             auto_return_key : 1;
    Eina_Bool                             have_selection : 1;
-   Eina_Bool                             deferred_cur : 1;
    Eina_Bool                             context_menu : 1;
    Eina_Bool                             long_pressed : 1;
    Eina_Bool                             cur_changed : 1;
