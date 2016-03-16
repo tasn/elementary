@@ -9,7 +9,7 @@
  *
  * @ref calendar_example_01
  *
- * @ingroup Calendar
+ * @ingroup Elm_Calendar
  */
 EAPI Evas_Object         *elm_calendar_add(Evas_Object *parent);
 
