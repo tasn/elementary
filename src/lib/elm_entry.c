@@ -957,7 +957,7 @@ _entry_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
 
    evas_object_geometry_get(obj, NULL, NULL, &resw, &resh);
 
-   if (sd->line_wrap)
+   if (!sd->single_line && sd->line_wrap)
      {
         if ((resw == sd->last_w) && (!sd->changed))
           {
@@ -3279,7 +3279,7 @@ _elm_entry_resize_internal(Evas_Object *obj)
 {
    ELM_ENTRY_DATA_GET(obj, sd);
 
-   if (sd->line_wrap)
+   if (!sd->single_line && sd->line_wrap)
      {
         elm_layout_sizing_eval(obj);
      }
@@ -3897,7 +3897,6 @@ _elm_entry_single_line_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool single_line)
    if (sd->single_line == single_line) return;
 
    sd->single_line = single_line;
-   sd->line_wrap = ELM_WRAP_NONE;
    if (elm_entry_cnp_mode_get(obj) == ELM_CNP_MODE_MARKUP)
      elm_entry_cnp_mode_set(obj, ELM_CNP_MODE_NO_IMAGE);
    if (sd->single_line)
@@ -3945,7 +3944,6 @@ _elm_entry_password_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool password)
    if (password)
      {
         sd->single_line = EINA_TRUE;
-        sd->line_wrap = ELM_WRAP_NONE;
         elm_entry_input_hint_set(obj, ((sd->input_hints & ~ELM_INPUT_HINT_AUTO_COMPLETE) | ELM_INPUT_HINT_SENSITIVE_DATA));
         _entry_selection_callbacks_unregister(obj);
         elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_PASSWORD_TEXT);
