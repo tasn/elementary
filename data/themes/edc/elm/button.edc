@@ -106,11 +106,10 @@ group { name: "elm/button/base/default";
       image { "base"; nomouse;
          desc { "default";
             image.normal: "button_normal.png";
-            image.border: 4 4 3 5;
+            image.border: 5 5 4 6;
             image.middle: SOLID;
             rel1.offset: -1 0;
             rel2.offset: 0 1;
-            fill.smooth: 0;
             color_class: "button_bg";
          }
          desc { "pressed";
@@ -1773,11 +1772,10 @@ group { name: "elm/button/base/combobox_vertical/default";
       image { "base"; nomouse;
          desc { "default";
             image.normal: "button_normal.png";
-            image.border: 4 4 3 5;
+            image.border: 5 5 4 6;
             image.middle: SOLID;
             rel1.offset: -1 0;
             rel2.offset: 0 1;
-            fill.smooth: 0;
          }
          desc { "clicked";
             inherit: "default";
