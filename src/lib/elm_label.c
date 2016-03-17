@@ -381,6 +381,10 @@ _elm_label_slide_mode_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 EAPI void
 elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap)
 {
+   if (wrap == ELM_WRAP_NONE)
+     elm_obj_entry_single_line_set(eo_super(obj, MY_CLASS), EINA_TRUE);
+   else
+     elm_obj_entry_single_line_set(eo_super(obj, MY_CLASS), EINA_FALSE);
    elm_obj_entry_line_wrap_set(eo_super(obj, MY_CLASS), wrap);
 }
 
