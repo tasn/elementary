@@ -325,21 +325,10 @@ _elm_label_eo_base_constructor(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
    evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_LABEL);
 
-   return obj;
-}
-
-EOLIAN static Eo *
-_elm_label_eo_base_finalize(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
-{
-   /* FIXME: It should be called when eo_add() is called for
-    * improving performance. Elm label is singleline and non editable
-    * by default. The changing these properties not only change Edje,
-    * but also change flags inside of entry.
-    * So, we need to call entry APIs for changing its properties. */
-   elm_entry_editable_set(obj, EINA_FALSE);
+   if (!elm_layout_theme_set(obj, "entry", "base-noedit", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
    elm_entry_single_line_set(obj, EINA_TRUE);
 
-   elm_layout_sizing_eval(obj);
    return obj;
 }
 

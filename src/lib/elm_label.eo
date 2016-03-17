@@ -89,7 +89,6 @@ class Elm.Label (Elm.Entry)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Eo.Base.finalize;
       Evas.Object_Smart.add;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
