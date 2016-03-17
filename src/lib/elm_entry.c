@@ -790,10 +790,8 @@ _elm_entry_background_switch(Evas_Object *from_edje, Evas_Object *to_edje)
      }
 }
 
-/* we can't issue the layout's theming code here, cause it assumes an
- * unique edje object, always */
-EOLIAN static Eina_Bool
-_elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
+static inline Eina_Bool
+_entry_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 {
    const char *str;
    const char *t;
@@ -919,6 +917,17 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    evas_object_unref(obj);
 
    return EINA_TRUE;
+
+}
+
+/* we can't issue the layout's theming code here, cause it assumes an
+ * unique edje object, always */
+EOLIAN static Eina_Bool
+_elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
+{
+   if (!eo_finalized_get(obj)) return EINA_TRUE;
+
+   return _entry_theme_apply(obj, sd);
 }
 
 static void
@@ -939,11 +948,12 @@ _cursor_geometry_recalc(Evas_Object *obj)
      }
 }
 
-EOLIAN static void
-_elm_entry_elm_layout_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
+static inline void
+_entry_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
 {
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord resw, resh;
+
 
    evas_object_geometry_get(obj, NULL, NULL, &resw, &resh);
 
@@ -1090,6 +1100,15 @@ _elm_entry_elm_layout_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
      }
 
    _cursor_geometry_recalc(obj);
+
+}
+
+EOLIAN static void
+_elm_entry_elm_layout_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
+{
+   if (!eo_finalized_get(obj)) return;
+
+   _entry_sizing_eval(obj, sd);
 }
 
 static void
@@ -3841,16 +3860,17 @@ _elm_entry_eo_base_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
    eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_ADD, _cb_added, NULL);
    eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_DEL, _cb_deleted, NULL);
 
+   if (!elm_layout_theme_set(obj, "entry", "base", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
+
    return obj;
 }
 
 EOLIAN static Eo *
-_elm_entry_eo_base_finalize(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_eo_base_finalize(Eo *obj, Elm_Entry_Data *_pd)
 {
-   if (!elm_layout_theme_set(obj, "entry", "base", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
    elm_layout_text_set(obj, "elm.text", "");
-   elm_layout_sizing_eval(obj);
+   _entry_theme_apply(obj, _pd);
    return obj;
 }
 
