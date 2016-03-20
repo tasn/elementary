@@ -3869,7 +3869,6 @@ _elm_entry_eo_base_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 EOLIAN static Eo *
 _elm_entry_eo_base_finalize(Eo *obj, Elm_Entry_Data *_pd)
 {
-   elm_layout_text_set(obj, "elm.text", "");
    _entry_theme_apply(obj, _pd);
    return obj;
 }
