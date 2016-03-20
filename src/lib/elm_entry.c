@@ -3875,13 +3875,13 @@ _elm_entry_eo_base_finalize(Eo *obj, Elm_Entry_Data *_pd)
 }
 
 EOLIAN static void
-_elm_entry_text_style_user_push(Eo *obj, Elm_Entry_Data *sd, const char *style)
+_elm_entry_text_style_user_push(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *style)
 {
    edje_object_part_text_style_user_push(sd->entry_edje, "elm.text", style);
 }
 
 EOLIAN static void
-_elm_entry_text_style_user_pop(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_text_style_user_pop(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    edje_object_part_text_style_user_pop(sd->entry_edje, "elm.text");
 }
