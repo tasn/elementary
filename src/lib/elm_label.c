@@ -344,7 +344,6 @@ _elm_label_wrap_width_set(Eo *obj, Elm_Label_Data *sd, Evas_Coord w)
    if (sd->ellipsis)
      _label_format_set(obj, sd->format);
    sd->wrap_w = w;
-   sd->lastw = -1;
 
    elm_layout_sizing_eval(obj);
 }
