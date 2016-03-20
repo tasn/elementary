@@ -20,7 +20,6 @@ struct _Elm_Label_Data
    const char           *format;
    double                slide_duration;
    double                slide_speed;
-   Evas_Coord            lastw; /*<< lastly calculated resize object width.This is used to force the calculation on width changes. */
    Evas_Coord            wrap_w; /*<< wrap width by pixel for the line wrap support **/
    Elm_Wrap_Type         linewrap;
    Elm_Label_Slide_Mode  slide_mode;
