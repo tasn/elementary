@@ -371,16 +371,16 @@ EAPI void
 elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap)
 {
    if (wrap == ELM_WRAP_NONE)
-     elm_obj_entry_single_line_set(eo_super(obj, MY_CLASS), EINA_TRUE);
+     elm_obj_entry_single_line_set(obj, EINA_TRUE);
    else
-     elm_obj_entry_single_line_set(eo_super(obj, MY_CLASS), EINA_FALSE);
-   elm_obj_entry_line_wrap_set(eo_super(obj, MY_CLASS), wrap);
+     elm_obj_entry_single_line_set(obj, EINA_FALSE);
+   elm_obj_entry_line_wrap_set(obj, wrap);
 }
 
 EAPI Elm_Wrap_Type
 elm_label_line_wrap_get(const Evas_Object *obj)
 {
-   return elm_obj_entry_line_wrap_get(eo_super(obj, MY_CLASS));
+   return elm_obj_entry_line_wrap_get(obj);
 }
 
 EAPI void
