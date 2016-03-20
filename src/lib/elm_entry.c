@@ -73,6 +73,7 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
    {"icon", "elm.swallow.icon"},
    {"end", "elm.swallow.end"},
+   {"default", "elm.text"},
    {NULL, NULL}
 };
 
