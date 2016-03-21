@@ -948,6 +948,39 @@ _elm_slider_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Slider_Data 
    return _content_aliases;
 }
 
+EOLIAN static Eina_Bool
+_elm_slider_range_enable_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *pd)
+{
+   return pd->range_enable;
+}
+
+EOLIAN static void
+_elm_slider_range_enable_set(Eo *obj, Elm_Slider_Data *pd, Eina_Bool enable)
+{
+   if (pd->range_enable == enable) return;
+
+   pd->range_enable = enable;
+}
+
+EOLIAN static void
+_elm_slider_range_value_get(Eo *obj, Elm_Slider_Data *pd, double *from, double *to)
+{
+   if (from) *from = pd->range_from;
+   if (to) *to = pd->range_to;
+}
+
+EOLIAN static Eina_Bool
+_elm_slider_range_value_set(Eo *obj, Elm_Slider_Data *pd, double from, double to)
+{
+   pd->range_from = from;
+   pd->range_to = to;
+
+   //do some thing here
+
+   return EINA_TRUE;
+}
+
+
 EAPI Evas_Object *
 elm_slider_add(Evas_Object *parent)
 {

@@ -263,6 +263,34 @@ class Elm.Slider (Elm.Layout, Elm.Interface_Atspi_Value,
             free_func: slider_freefunc_type @nullable; [[The freeing function for the format string.]]
          }
       }
+      @property range_enable {
+         set {
+            [[Enable range]]
+         }
+         get {
+            [[Enable range]]
+         }
+         values {
+            enable: Eina_Bool;
+         }
+      }
+      range_value_get {
+         [[Get range between two indicator
+         ]]
+         params {
+            @out from: double;
+            @out to: double;
+         }
+      }
+      range_value_set {
+         [[Set range between two indicators from to to 
+         ]]
+         return: Eina_Bool;
+         params {
+            @in from: double;
+            @in to: double;
+         }
+      }
    }
    implements {
       class.constructor;
