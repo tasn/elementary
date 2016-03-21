@@ -136,7 +136,7 @@ _label_slide_change(Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_elm_label_elm_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
+_elm_label_elm_widget_theme_apply(Eo *obj, Elm_Label_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
