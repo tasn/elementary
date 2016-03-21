@@ -1,6 +1,3 @@
-//collections {
-//#define FN "arial"
-//#define FN_COL_DEFAULT 255 0 0 255
 group { name: "elm/slider/hidden/limit";
    parts {
       part { name: "elm.units.min"; type: TEXT; mouse_events: 0;
@@ -202,13 +199,11 @@ group { name: "elm/slider/horizontal/default";
       part { name: "glow"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "horiz_glow_run.png";
-            rel1.relative: 0.5 1.0;
-            rel1.offset: -1 -2;
-            rel1.to_x: "button";
-            rel1.to_y: "base";
+            rel1.offset: 1 1;
+            rel1.to: "base";
             rel2.relative: 0.5 1.0;
             rel2.offset: -1 -2;
-            rel2.to_x: "button2";
+            rel2.to_x: "button";
             rel2.to_y: "base";
             image.border: 0 4 0 0;
          }
@@ -508,8 +503,8 @@ group { name: "elm/slider/horizontal/default";
          source: "elm/slider/horizontal/indicator/default";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "elm.dragable.slider2";
-            rel2.to: "elm.dragable.slider2";
+            rel1.to: "elm.dragable2.slider";
+            rel2.to: "elm.dragable2.slider";
             visible: 0;
          }
          description { state: "show" 0.0;
@@ -521,7 +516,7 @@ group { name: "elm/slider/horizontal/default";
             visible: 0;
          }
       }
-      part { name: "elm.dragable.slider2"; type: RECT;
+      part { name: "elm.dragable2.slider"; type: RECT;
          scale: 1;
          dragable.x: -1 1 0;
          dragable.y: 0 0 0;
@@ -549,9 +544,9 @@ group { name: "elm/slider/horizontal/default";
             min: 12 12;
             step: 2 2;
             max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "elm.dragable.slider2";
+            rel1.to: "elm.dragable2.slider";
             rel1.offset: -4 -4;
-            rel2.to: "elm.dragable.slider2";
+            rel2.to: "elm.dragable2.slider";
             rel2.offset: 3 3;
             visible: 0;
          }
@@ -566,11 +561,11 @@ group { name: "elm/slider/horizontal/default";
       part { name: "slideevent2"; type: RECT; repeat_events: 1;
          scale: 1;
          ignore_flags: ON_HOLD;
-         dragable.events: "elm.dragable.slider2";
+         dragable.events: "elm.dragable2.slider";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "elm.dragable.slider2";
-            rel2.to: "elm.dragable.slider2";
+            rel1.to: "elm.dragable2.slider";
+            rel2.to: "elm.dragable2.slider";
             color: 0 0 0 0;
             visible: 0;
          }
@@ -579,11 +574,11 @@ group { name: "elm/slider/horizontal/default";
             visible: 1;
          }
       }
-      part { name: "elm.track.slider2"; type: SWALLOW; mouse_events: 0;
+      part { name: "elm.track2.slider"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
             max: 0 0;
-            rel1.to: "elm.dragable.slider2";
-            rel2.to: "elm.dragable.slider2";
+            rel1.to: "elm.dragable2.slider";
+            rel2.to: "elm.dragable2.slider";
             visible: 0;
          }
          description { state: "show" 0.0;
@@ -609,10 +604,10 @@ group { name: "elm/slider/horizontal/default";
          script {
               set_int(range, 1);
               set_state(PART:"button2", "show", 0.0);
-              set_state(PART:"elm.dragable.slider2", "show", 0.0);
+              set_state(PART:"elm.dragable2.slider", "show", 0.0);
               set_state(PART:"knob2", "show", 0.0);
               set_state(PART:"slideevent2", "show", 0.0);
-              set_state(PART:"elm.track.slider2", "show", 0.0);
+              set_state(PART:"elm.track2.slider", "show", 0.0);
               set_state(PART:"glow", "range", 0.0);
          }
       }
@@ -972,7 +967,6 @@ group { name: "elm/slider/vertical/default";
            new id;
            id = get_int(g_timer_id);
            cancel_timer(id);
-
            update_glow();
       }
       public eval_mode(m) {
@@ -1105,17 +1099,17 @@ group { name: "elm/slider/vertical/default";
             rel1.relative: 0.5 1.0;
             rel1.offset: -1 -2;
             rel1.to_x: "base";
-            rel1.to_y: "button";
+            rel1.to_y: "button2";
             rel2.relative: 0.5 1.0;
             rel2.offset: -1 -2;
             rel2.to_x: "base";
-            rel2.to_y: "button2";
+            rel2.to_y: "button";
             image.border: 0 4 0 0;
          }
          description { state: "range_reverse" 0.0;
             inherit: "range" 0.0;
-            rel1.to_y: "button2";
-            rel2.to_y: "button";
+            rel1.to_y: "button";
+            rel2.to_y: "button2";
          }
          description { state: "disabled_inverted" 0.0;
             inherit: "inverted" 0.0;
@@ -1385,8 +1379,8 @@ group { name: "elm/slider/vertical/default";
          source: "elm/slider/vertical/indicator/default";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "elm.dragable.slider2";
-            rel2.to: "elm.dragable.slider2";
+            rel1.to: "elm.dragable2.slider";
+            rel2.to: "elm.dragable2.slider";
             visible: 0;
          }
          description { state: "hidden" 0.0;
@@ -1398,7 +1392,7 @@ group { name: "elm/slider/vertical/default";
             visible: 1;
          }
       }
-      part { name: "elm.dragable.slider2"; type: RECT;
+      part { name: "elm.dragable2.slider"; type: RECT;
          scale: 1;
          dragable.x: 0 0 0;
          dragable.y: -1 1 0;
@@ -1426,9 +1420,9 @@ group { name: "elm/slider/vertical/default";
             min: 12 12;
             step: 2 2;
             max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "elm.dragable.slider2";
+            rel1.to: "elm.dragable2.slider";
             rel1.offset: -4 -4;
-            rel2.to: "elm.dragable.slider2";
+            rel2.to: "elm.dragable2.slider";
             rel2.offset: 3 3;
             visible: 0;
          }
@@ -1443,11 +1437,11 @@ group { name: "elm/slider/vertical/default";
       part { name: "slideevent2"; type: RECT; repeat_events: 1;
          scale: 1;
          ignore_flags: ON_HOLD;
-         dragable.events: "elm.dragable.slider2";
+         dragable.events: "elm.dragable2.slider";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "elm.dragable.slider2";
-            rel2.to: "elm.dragable.slider2";
+            rel1.to: "elm.dragable2.slider";
+            rel2.to: "elm.dragable2.slider";
             color: 0 0 0 0;
             visible: 0;
          }
@@ -1456,11 +1450,11 @@ group { name: "elm/slider/vertical/default";
             visible: 1;
          }
       }
-      part { name: "elm.track.slider2"; type: SWALLOW; mouse_events: 0;
+      part { name: "elm.track2.slider"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
             max: 0 0;
-            rel1.to: "elm.dragable.slider2";
-            rel2.to: "elm.dragable.slider2";
+            rel1.to: "elm.dragable2.slider";
+            rel2.to: "elm.dragable2.slider";
             visible: 0;
          }
          description { state: "show" 0.0;
@@ -1486,10 +1480,10 @@ group { name: "elm/slider/vertical/default";
          script {
               set_int(range, 1);
               set_state(PART:"button2", "show", 0.0);
-              set_state(PART:"elm.dragable.slider2", "show", 0.0);
+              set_state(PART:"elm.dragable2.slider", "show", 0.0);
               set_state(PART:"knob2", "show", 0.0);
               set_state(PART:"slideevent2", "show", 0.0);
-              set_state(PART:"elm.track.slider2", "show", 0.0);
+              set_state(PART:"elm.track2.slider", "show", 0.0);
               set_state(PART:"glow", "range", 0.0);
          }
       }

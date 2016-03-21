@@ -106,10 +106,8 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_text_set(sl, "Manual step");
    step = _step_size_calculate(0, 9);
    elm_slider_step_set(sl, step);
-   evas_object_size_hint_max_set(sl, 120, 10);
-//   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
-//   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_weight_set(sl, 0.0, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
