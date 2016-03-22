@@ -116,7 +116,6 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
      }
    if (fabs(val2 - sd->range_to) > DBL_EPSILON)
      {
-        printf("setting range_to: %f\n", val2);
         sd->range_to = val2;
         if (user_event)
           {
@@ -257,7 +256,7 @@ _indicator_set(Evas_Object *obj)
 
         snprintf(buf, sizeof(buf), sd->indicator, sd->val);
         elm_layout_text_set(obj, "elm.indicator", buf);
-        elm_layout_text_set(obj, "elm.dragable.slider:elm.indicator", buf);
+        elm_layout_text_set(obj, "elm.dragable2.slider:elm.indicator", buf);
         if (sd->popup)
           edje_object_part_text_set(sd->popup, "elm.indicator", buf);
         if (sd->popup2)
@@ -373,29 +372,20 @@ _popup_show(void *data,
    if (sd->popup &&
        (sd->indicator_visible_mode != ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE))
      {
-        printf("showing popup......\n");
         evas_object_raise(sd->popup);
         evas_object_show(sd->popup);
         sd->popup_visible = EINA_TRUE;
         edje_object_signal_emit(sd->popup, "popup,show", "elm"); // XXX: for compat
         edje_object_signal_emit(sd->popup, "elm,popup,show", "elm");
-        Evas_Coord x, y, w, h;
-        evas_object_geometry_get(sd->popup, &x, &y, &w, &h);
-        printf("geoementry: %d, %d. %d, %d\n", x, y, w, h);
      }
+   printf("sd->popup2: %p\n", sd->popup2);
    if (sd->popup2 &&
        (sd->indicator_visible_mode != ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE))
      {
-        printf("showing popup2......\n");
         evas_object_raise(sd->popup2);
         evas_object_show(sd->popup2);
-        sd->popup_visible = EINA_TRUE;
         edje_object_signal_emit(sd->popup2, "popup,show", "elm"); // XXX: for compat
         edje_object_signal_emit(sd->popup2, "elm,popup,show", "elm");
-        Evas_Coord x, y, w, h;
-
-        evas_object_geometry_get(sd->popup2, &x, &y, &w, &h);
-        printf("geoementry: %d, %d. %d, %d\n", x, y, w, h);
      }
    ELM_SAFE_FREE(sd->wheel_indicator_timer, ecore_timer_del);
 }
@@ -418,8 +408,11 @@ _popup_hide(void *data,
    edje_object_signal_emit(sd->popup, "popup,hide", "elm"); // XXX: for compat
    edje_object_signal_emit(sd->popup, "elm,popup,hide", "elm");
 
-   edje_object_signal_emit(sd->popup2, "popup,hide", "elm"); // XXX: for compat
-   edje_object_signal_emit(sd->popup2, "elm,popup,hide", "elm");
+   if (sd->popup2)
+     {
+        edje_object_signal_emit(sd->popup2, "popup,hide", "elm"); // XXX: for compat
+        edje_object_signal_emit(sd->popup2, "elm,popup,hide", "elm");
+     }
 }
 
 static void
@@ -444,7 +437,7 @@ _popup_hide_done(void *data,
               (sd->indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS)))
           {
              evas_object_hide(sd->popup2);
-             sd->popup_visible = EINA_FALSE;
+           //  sd->popup_visible = EINA_FALSE;
           }
      }
 }
@@ -730,7 +723,11 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
           _popup_add(sd, obj, &sd->popup2, &sd->track2, EINA_TRUE);
      }
    else
-     _popup_add(sd, obj, &sd->popup, &sd->track, EINA_FALSE);
+     {
+        _popup_add(sd, obj, &sd->popup, &sd->track, EINA_FALSE);
+        if (sd->range_enable && !sd->popup2)
+          _popup_add(sd, obj, &sd->popup2, &sd->track2, EINA_TRUE);
+     }
 
    if (sd->horizontal)
      evas_object_size_hint_min_set
@@ -794,6 +791,8 @@ _spacer_down_cb(void *data,
 {
    ELM_SLIDER_DATA_GET(data, sd);
 
+   if (sd->range_enable) return;
+
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_Coord x, y, w, h;
    double button_x = 0.0, button_y = 0.0;
@@ -834,6 +833,8 @@ _spacer_move_cb(void *data,
                 void *event_info)
 {
    ELM_SLIDER_DATA_GET(data, sd);
+
+   if (sd->range_enable) return;
 
    Evas_Coord x, y, w, h;
    double button_x = 0.0, button_y = 0.0;
@@ -900,6 +901,7 @@ _spacer_up_cb(void *data,
 {
    ELM_SLIDER_DATA_GET(data, sd);
 
+   if (sd->range_enable) return;
    if (!sd->spacer_down) return;
    if (sd->spacer_down) sd->spacer_down = EINA_FALSE;
 
@@ -1138,6 +1140,8 @@ EOLIAN static Eina_Bool
 _elm_slider_range_value_set(Eo *obj, Elm_Slider_Data *pd, double from, double to)
 {
    pd->range_from = from;
+   //TODO: remove val later
+   pd->val = from;
    pd->range_to = to;
 
    _visuals_refresh(obj);
@@ -1175,12 +1179,16 @@ _elm_slider_span_size_set(Eo *obj, Elm_Slider_Data *sd, Evas_Coord size)
         elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
      }
    else
      {
         elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,val,hide", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,hide", "elm");
      }
 
    evas_object_smart_changed(obj);
@@ -1274,6 +1282,7 @@ _elm_slider_value_set(Eo *obj, Elm_Slider_Data *sd, double val)
 {
    if (sd->val == val) return;
    sd->val = val;
+   sd->range_from = val;
 
    if (sd->val < sd->val_min) sd->val = sd->val_min;
    if (sd->val > sd->val_max) sd->val = sd->val_max;
@@ -1284,7 +1293,13 @@ _elm_slider_value_set(Eo *obj, Elm_Slider_Data *sd, double val)
 EOLIAN static double
 _elm_slider_value_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
 {
-   return sd->val;
+   double val;
+
+   if (!sd->range_enable)
+     val = sd->val;
+   else
+     val = sd->range_to - sd->range_from;
+   return val;
 }
 
 EOLIAN static void
@@ -1346,6 +1361,8 @@ _elm_slider_indicator_show_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool show)
         elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
      }
    else
      {
@@ -1353,6 +1370,8 @@ _elm_slider_indicator_show_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool show)
         elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,val,hide", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,hide", "elm");
      }
 
    evas_object_smart_changed(obj);
