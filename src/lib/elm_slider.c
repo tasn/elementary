@@ -131,27 +131,44 @@ static void
 _val_set(Evas_Object *obj)
 {
    Eina_Bool rtl;
-   double pos;
+   double pos, pos2;
 
    ELM_SLIDER_DATA_GET(obj, sd);
 
    if (sd->val_max > sd->val_min)
-     pos = (sd->val - sd->val_min) / (sd->val_max - sd->val_min);
-   else pos = 0.0;
+     {
+        pos = (sd->val - sd->val_min) / (sd->val_max - sd->val_min);
+        pos2 = (sd->range_to - sd->val_min) / (sd->val_max - sd->val_min);
+     }
+   else
+     {
+        pos = 0.0;
+        pos2 = 0.0;
+     }
 
    if (pos < 0.0) pos = 0.0;
    else if (pos > 1.0)
      pos = 1.0;
+   if (pos2 < 0.0) pos2 = 0.0;
+   else if (pos2 > 1.0)
+     pos2 = 1.0;
 
    rtl = elm_widget_mirrored_get(obj);
    if ((!rtl && sd->inverted) ||
        (rtl && ((!sd->horizontal && sd->inverted) ||
                 (sd->horizontal && !sd->inverted))))
-     pos = 1.0 - pos;
+     {
+        pos = 1.0 - pos;
+        pos2 = 1.0 - pos2;
+     }
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", pos, pos);
+
+   if (sd->range_enable)
+     edje_object_part_drag_value_set
+        (wd->resize_obj, "elm.dragable2.slider", pos2, pos2);
 
    // emit accessiblity event also if value was chagend by API
    if (_elm_config->atspi_mode)
@@ -1123,7 +1140,7 @@ _elm_slider_range_value_set(Eo *obj, Elm_Slider_Data *pd, double from, double to
    pd->range_from = from;
    pd->range_to = to;
 
-   _slider_update(obj, EINA_FALSE);
+   _visuals_refresh(obj);
 
    return EINA_TRUE;
 }
