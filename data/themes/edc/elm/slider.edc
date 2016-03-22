@@ -79,24 +79,6 @@ group { name: "elm/slider/horizontal/default";
            else
              set_state(PART:"glow", "range", 0.0);
         }
-      public timer_cb()
-        {
-           new id;
-           update_glow();
-           id = get_int(g_timer_id);
-           if (id) cancel_timer(id);
-           id = timer(0.1, "update_glow", 1);
-           set_int(g_timer_id, id);
-        }
-      public start_drag() {
-           timer_cb();
-      }
-      public stop_drag() {
-           new id;
-           id = get_int(g_timer_id);
-           cancel_timer(id);
-           update_glow();
-      }
       public eval_mode(m) {
          new ic = m & ICON;
          new l = m & LABEL;
@@ -639,21 +621,10 @@ group { name: "elm/slider/horizontal/default";
          }
       }
       program {
-         signal: "drag,start";
+         signal: "drag";
          source: "elm.dragable*";
          script {
-            new r = get_int(range);
-            if (r)
-              start_drag();
-         }
-      }
-      program {
-         signal: "drag,stop";
-         source: "elm.dragable*";
-         script {
-            new r = get_int(range);
-            if (r)
-              stop_drag();
+            update_glow();
          }
       }
       program {
@@ -1000,24 +971,6 @@ group { name: "elm/slider/vertical/default";
            else
              set_state(PART:"glow", "range", 0.0);
         }
-      public timer_cb()
-        {
-           new id;
-           update_glow();
-           id = get_int(g_timer_id);
-           if (id) cancel_timer(id);
-           id = timer(0.1, "update_glow", 1);
-           set_int(g_timer_id, id);
-        }
-      public start_drag() {
-           timer_cb();
-      }
-      public stop_drag() {
-           new id;
-           id = get_int(g_timer_id);
-           cancel_timer(id);
-           update_glow();
-      }
       public eval_mode(m) {
          new ic = m & ICON;
          new l = m & LABEL;
@@ -1557,21 +1510,10 @@ group { name: "elm/slider/vertical/default";
          }
       }
       program {
-         signal: "drag,start";
+         signal: "drag";
          source: "elm.dragable*";
          script {
-            new r = get_int(range);
-            if (r)
-              start_drag();
-         }
-      }
-      program {
-         signal: "drag,stop";
-         source: "elm.dragable*";
-         script {
-            new r = get_int(range);
-            if (r)
-              stop_drag();
+              update_glow();
          }
       }
       program {
