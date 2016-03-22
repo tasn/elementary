@@ -39,6 +39,7 @@ group { name: "elm/slider/horizontal/default";
    images.image: "slider_run_bevel_horiz.png" COMP;
    images.image: "slider_run_base_light_horiz.png" COMP;
    images.image: "horiz_glow_run.png" COMP;
+   images.image: "horiz_glow_range.png" COMP;
    images.image: "horiz_glow_run_rev.png" COMP;
    images.image: "knob_round_small_normal.png" COMP;
    images.image: "knob_round_small_selected.png" COMP;
@@ -222,7 +223,7 @@ group { name: "elm/slider/horizontal/default";
             image.border: 4 0 0 0;
          }
 		 description { state: "range" 0.0;
-            image.normal: "horiz_glow_run.png";
+            image.normal: "horiz_glow_range.png";
             rel1.relative: 0.5 1.0;
             rel1.offset: -1 -2;
             rel1.to_x: "button";
@@ -608,12 +609,12 @@ group { name: "elm/slider/horizontal/default";
               set_state(PART:"knob2", "show", 0.0);
               set_state(PART:"slideevent2", "show", 0.0);
               set_state(PART:"elm.track2.slider", "show", 0.0);
-              set_state(PART:"glow", "range", 0.0);
+              update_glow();
          }
       }
       program {
          signal: "drag,start";
-         source: "elm.dragable.slider*";
+         source: "elm.dragable*";
          script {
             new r = get_int(range);
             if (r)
@@ -622,7 +623,7 @@ group { name: "elm/slider/horizontal/default";
       }
       program {
          signal: "drag,stop";
-         source: "elm.dragable.slider*";
+         source: "elm.dragable*";
          script {
             new r = get_int(range);
             if (r)
@@ -912,6 +913,7 @@ group { name: "elm/slider/vertical/default";
    images.image: "slider_run_bevel_vert.png" COMP;
    images.image: "slider_run_base_light_vert.png" COMP;
    images.image: "vert_glow_run.png" COMP;
+   images.image: "vert_glow_range.png" COMP;
    images.image: "vert_glow_run_rev.png" COMP;
    images.image: "knob_round_small_normal.png" COMP;
    images.image: "knob_round_small_selected.png" COMP;
@@ -1095,21 +1097,21 @@ group { name: "elm/slider/vertical/default";
             image.border: 0 0 4 0;
          }
          description { state: "range" 0.0;
-            image.normal: "horiz_glow_run.png";
+            image.normal: "vert_glow_range.png";
             rel1.relative: 0.5 1.0;
             rel1.offset: -1 -2;
             rel1.to_x: "base";
-            rel1.to_y: "button2";
+            rel1.to_y: "button";
             rel2.relative: 0.5 1.0;
             rel2.offset: -1 -2;
             rel2.to_x: "base";
-            rel2.to_y: "button";
+            rel2.to_y: "button2";
             image.border: 0 4 0 0;
          }
          description { state: "range_reverse" 0.0;
             inherit: "range" 0.0;
-            rel1.to_y: "button";
-            rel2.to_y: "button2";
+            rel1.to_y: "button2";
+            rel2.to_y: "button";
          }
          description { state: "disabled_inverted" 0.0;
             inherit: "inverted" 0.0;
@@ -1484,12 +1486,12 @@ group { name: "elm/slider/vertical/default";
               set_state(PART:"knob2", "show", 0.0);
               set_state(PART:"slideevent2", "show", 0.0);
               set_state(PART:"elm.track2.slider", "show", 0.0);
-              set_state(PART:"glow", "range", 0.0);
+              update_glow();
          }
       }
       program {
          signal: "drag,start";
-         source: "elm.dragable.slider*";
+         source: "elm.dragable*";
          script {
             new r = get_int(range);
             if (r)
@@ -1498,7 +1500,7 @@ group { name: "elm/slider/vertical/default";
       }
       program {
          signal: "drag,stop";
-         source: "elm.dragable.slider*";
+         source: "elm.dragable*";
          script {
             new r = get_int(range);
             if (r)
