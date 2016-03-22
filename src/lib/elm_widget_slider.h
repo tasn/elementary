@@ -26,7 +26,7 @@
 typedef struct _Elm_Slider_Data Elm_Slider_Data;
 struct _Elm_Slider_Data
 {
-   Evas_Object          *spacer, *popup, *track;
+   Evas_Object          *spacer, *popup, *popup2, *track, *track2;
    Ecore_Timer          *delay;
 
    const char           *units;
