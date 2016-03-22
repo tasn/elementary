@@ -949,6 +949,30 @@ _cursor_geometry_recalc(Evas_Object *obj)
      }
 }
 
+/* The following functions are added for
+ * elm_label_wrap_width_set, get APIs */
+void
+_elm_entry_wrap_width_set(Eo *obj, Evas_Coord w)
+{
+   ELM_ENTRY_DATA_GET(obj, sd);
+
+   if (w < 0) w = 0;
+
+   if (sd->wrap_w == w) return;
+
+   sd->wrap_w = w;
+
+   elm_layout_sizing_eval(obj);
+}
+
+Evas_Coord
+_elm_entry_wrap_width_get(Eo *obj)
+{
+   ELM_ENTRY_DATA_GET(obj, sd);
+
+   return sd->wrap_w;
+}
+
 static inline void
 _entry_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
 {
@@ -957,6 +981,9 @@ _entry_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
 
 
    evas_object_geometry_get(obj, NULL, NULL, &resw, &resh);
+
+   if (sd->wrap_w > resw)
+     resw = sd->wrap_w;
 
    if (!sd->single_line && sd->line_wrap)
      {
@@ -992,6 +1019,7 @@ _entry_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
              edje_object_size_min_calc(sd->scr_edje, &vmw, &vmh);
              elm_interface_scrollable_content_viewport_geometry_get
                    (obj, NULL, NULL, &vw, &vh);
+
              edje_object_size_min_restricted_calc
                (sd->entry_edje, &minw, &minh, vw, 0);
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -1016,6 +1044,8 @@ _entry_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
              if (sd->single_line) h = vmh + minh;
              else h = vmh;
 
+             w = sd->wrap_w;
+
              evas_object_resize(sd->entry_edje, vw, vh);
              evas_object_size_hint_min_set(obj, w, h);
 
@@ -1026,7 +1056,7 @@ _entry_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
           }
         else if (resw > 0)
           {
-             Evas_Coord fw = 0;
+             Evas_Coord obj_minw = sd->wrap_w;
 
              edje_object_size_min_restricted_calc(sd->entry_edje, &minw, &minh, resw, 0);
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -1043,8 +1073,8 @@ _entry_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
              sd->ent_mw = minw;
              sd->ent_mh = minh;
 
-             elm_coords_finger_size_adjust(1, &fw, 1, &minh);
-             evas_object_size_hint_min_set(obj, fw, minh);
+             elm_coords_finger_size_adjust(1, &obj_minw, 1, &minh);
+             evas_object_size_hint_min_set(obj, obj_minw, minh);
              evas_object_size_hint_max_set(obj, -1, -1);
           }
 

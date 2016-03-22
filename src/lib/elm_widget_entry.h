@@ -52,6 +52,7 @@ struct _Elm_Entry_Data
    Evas_Coord                            last_w, ent_mw, ent_mh;
    Evas_Coord                            downx, downy;
    Evas_Coord                            ox, oy;
+   Evas_Coord                            wrap_w; /** wrap width by pixel for the line wrap support **/
    Eina_List                            *items; /** context menu item list */
    Eina_List                            *item_providers;
    Eina_List                            *markup_filters;

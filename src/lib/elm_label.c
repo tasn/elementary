@@ -332,25 +332,15 @@ _elm_label_eo_base_constructor(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_label_wrap_width_set(Eo *obj, Elm_Label_Data *sd, Evas_Coord w)
+_elm_label_wrap_width_set(Eo *obj, Elm_Label_Data *sd EINA_UNUSED, Evas_Coord w)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   if (w < 0) w = 0;
-
-   if (sd->wrap_w == w) return;
-
-   if (sd->ellipsis)
-     _label_format_set(obj, sd->format);
-   sd->wrap_w = w;
-
-   elm_layout_sizing_eval(obj);
+   _elm_entry_wrap_width_set(obj, w);
 }
 
 EOLIAN static Evas_Coord
-_elm_label_wrap_width_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
+_elm_label_wrap_width_get(Eo *obj, Elm_Label_Data *sd EINA_UNUSED)
 {
-   return sd->wrap_w;
+   return _elm_entry_wrap_width_get(obj);
 }
 
 EOLIAN static void
