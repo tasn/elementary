@@ -658,6 +658,24 @@ group { name: "elm/slider/horizontal/default";
          action:  STATE_SET "default" 0.0;
          target: "button";
       }
+       program {
+         signal: "mouse,down,1"; source: "slideevent2";
+         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         after: "popup2_show2";
+      }
+      program { name: "popup2_show2";
+         action:  STATE_SET "show" 0.0;
+         target: "button2";
+      }
+      program {
+         signal: "mouse,up,1"; source: "slideevent2";
+         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         after: "popup2_hide2";
+      }
+      program { name: "popup2_hide2";
+         action:  STATE_SET "hidden" 0.0;
+         target: "button2";
+      }
       program {
          signal: "elm,state,text,visible"; source: "elm";
          script {
@@ -1534,6 +1552,24 @@ group { name: "elm/slider/vertical/default";
       program { name: "popup_hide2";
          action:  STATE_SET "default" 0.0;
          target: "button";
+      }
+      program {
+         signal: "mouse,down,1"; source: "slideevent2";
+         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         after: "popup2_show2";
+      }
+      program { name: "popup2_show2";
+         action:  STATE_SET "show" 0.0;
+         target: "button2";
+      }
+      program {
+         signal: "mouse,up,1"; source: "slideevent2";
+         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         after: "popup2_hide2";
+      }
+      program { name: "popup2_hide2";
+         action:  STATE_SET "hidden" 0.0;
+         target: "button2";
       }
       program {
          signal: "elm,state,text,visible"; source: "elm";
