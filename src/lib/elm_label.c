@@ -325,8 +325,7 @@ _elm_label_eo_base_constructor(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
    evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_LABEL);
 
-   if (!elm_layout_theme_set(obj, "entry", "base-noedit", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
+   elm_entry_editable_set(obj, EINA_FALSE);
    elm_entry_single_line_set(obj, EINA_TRUE);
 
    return obj;

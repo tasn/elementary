@@ -1180,6 +1180,7 @@ group { name: "elm/entry/handler/end/default";
 
 group { name: "elm/entry/base/slide_long";
    inherit: "elm/entry/base-noedit/default";
+   alias: "elm/entry/base-single-noedit/slide_long";
    script {
       public g_duration, g_stopslide, g_timer_id, g_anim_id;
 
@@ -1297,6 +1298,7 @@ group { name: "elm/entry/base/slide_long";
 
 group { name: "elm/entry/base/slide_short";
    inherit: "elm/entry/base-noedit/default";
+   alias: "elm/entry/base-single-noedit/slide_short";
    script {
       public g_duration, g_stopslide, g_timer_id, g_anim_id;
 
@@ -1411,6 +1413,7 @@ group { name: "elm/entry/base/slide_short";
 
 group { name: "elm/entry/base/slide_bounce";
    inherit: "elm/entry/base-noedit/default";
+   alias: "elm/entry/base-single-noedit/slide_bounce";
    script {
       public g_duration, g_stopslide, g_timer_id, g_anim_id;
 
