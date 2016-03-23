@@ -378,7 +378,6 @@ _popup_show(void *data,
         edje_object_signal_emit(sd->popup, "popup,show", "elm"); // XXX: for compat
         edje_object_signal_emit(sd->popup, "elm,popup,show", "elm");
      }
-   printf("sd->popup2: %p\n", sd->popup2);
    if (sd->popup2 &&
        (sd->indicator_visible_mode != ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE))
      {
@@ -1121,6 +1120,8 @@ _elm_slider_range_enable_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool enable)
      {
         elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");
         _popup_add(sd, obj, &sd->popup2, &sd->track2, sd->range_enable);
+        if (sd->indicator_show)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
      }
    else
      {
