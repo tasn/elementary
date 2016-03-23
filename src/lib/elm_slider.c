@@ -208,7 +208,16 @@ _units_set(Evas_Object *obj)
      {
         char buf[1024];
 
-        snprintf(buf, sizeof(buf), sd->units, sd->val);
+        if (!sd->range_enable)
+          snprintf(buf, sizeof(buf), sd->units, sd->val);
+        else
+          {
+             double v1, v2;
+
+             elm_slider_range_get(obj, &v1, &v2);
+             snprintf(buf, sizeof(buf), sd->units, v2 - v1);
+          }
+
         elm_layout_text_set(obj, "elm.units", buf);
         if (!sd->units_show)
           {
@@ -737,6 +746,11 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
        (sd->spacer, 1, (double)sd->size * elm_widget_scale_get(obj) *
        elm_config_scale_get());
 
+   if (sd->range_enable)
+     elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");
+   else
+     elm_layout_signal_emit(obj, "elm,slider,range,disable", "elm");
+
    if (sd->inverted)
      {
         elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
@@ -753,6 +767,7 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
         if (sd->popup2)
           edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
      }
+
    _min_max_set(obj);
    _units_set(obj);
    _indicator_set(obj);
@@ -790,6 +805,7 @@ _spacer_down_cb(void *data,
 {
    ELM_SLIDER_DATA_GET(data, sd);
 
+   //TODO: implement for range too
    if (sd->range_enable) return;
 
    Evas_Event_Mouse_Down *ev = event_info;
@@ -833,6 +849,7 @@ _spacer_move_cb(void *data,
 {
    ELM_SLIDER_DATA_GET(data, sd);
 
+   //TODO: implement for range too
    if (sd->range_enable) return;
 
    Evas_Coord x, y, w, h;
@@ -900,6 +917,7 @@ _spacer_up_cb(void *data,
 {
    ELM_SLIDER_DATA_GET(data, sd);
 
+   //TODO: implement for range too
    if (sd->range_enable) return;
    if (!sd->spacer_down) return;
    if (sd->spacer_down) sd->spacer_down = EINA_FALSE;
@@ -1105,13 +1123,13 @@ _elm_slider_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Slider_Data 
 }
 
 EOLIAN static Eina_Bool
-_elm_slider_range_enable_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *pd)
+_elm_slider_range_enabled_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *pd)
 {
    return pd->range_enable;
 }
 
 EOLIAN static void
-_elm_slider_range_enable_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool enable)
+_elm_slider_range_enabled_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool enable)
 {
    if (sd->range_enable == enable) return;
 
@@ -1131,23 +1149,24 @@ _elm_slider_range_enable_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool enable)
 }
 
 EOLIAN static void
-_elm_slider_range_value_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *pd, double *from, double *to)
+_elm_slider_range_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *pd, double *from, double *to)
 {
-   if (from) *from = pd->range_from;
-   if (to) *to = pd->range_to;
+   if (from) *from = fmin(pd->range_from, pd->range_to);
+   if (to) *to = fmax(pd->range_from, pd->range_to);
 }
 
-EOLIAN static Eina_Bool
-_elm_slider_range_value_set(Eo *obj, Elm_Slider_Data *pd, double from, double to)
+EOLIAN static void
+_elm_slider_range_set(Eo *obj, Elm_Slider_Data *pd, double from, double to)
 {
    pd->range_from = from;
    //TODO: remove val later
    pd->val = from;
    pd->range_to = to;
 
-   _visuals_refresh(obj);
+   if (pd->range_from < pd->val_min) pd->range_from = pd->val_min;
+   if (pd->range_to > pd->val_max) pd->range_to = pd->val_max;
 
-   return EINA_TRUE;
+   _visuals_refresh(obj);
 }
 
 EAPI Evas_Object *
@@ -1213,6 +1232,8 @@ _elm_slider_unit_format_set(Eo *obj, Elm_Slider_Data *sd, const char *units)
         edje_object_message_signal_process(wd->resize_obj);
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,units,visible", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,units,visible", "elm");
      }
    else
      {
@@ -1220,6 +1241,8 @@ _elm_slider_unit_format_set(Eo *obj, Elm_Slider_Data *sd, const char *units)
         edje_object_message_signal_process(wd->resize_obj);
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,units,hidden", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,units,hidden", "elm");
      }
    evas_object_smart_changed(obj);
 }
@@ -1294,13 +1317,7 @@ _elm_slider_value_set(Eo *obj, Elm_Slider_Data *sd, double val)
 EOLIAN static double
 _elm_slider_value_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
 {
-   double val;
-
-   if (!sd->range_enable)
-     val = sd->val;
-   else
-     val = sd->range_to - sd->range_from;
-   return val;
+   return sd->val;
 }
 
 EOLIAN static void
