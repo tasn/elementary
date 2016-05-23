@@ -1,6 +1,27 @@
 =================
-Elementary 1.17.0
+Elementary 1.17.1
 =================
+
+Changes since 1.17.0:
+---------------------
+
+Fixes:
+
+   * calendar.edc: fix typo in text style
+   * fix the wrong operation of mirrored set
+   * tooltip: set pass events on the tooltip, not the content
+   * ctxpopup: completely disable focus-setting on show (T3088)
+   * cursor: do not unconditionally unset cursor before setting an engine cursor
+   * config: add more frames for scrolling options
+   * hoversel: set hover layer to layer of hover_parent (T3203)
+   * list: do not constantly reset scr_min flags
+   * list: always apply new size hints for subobjects
+   * list: do not change scr_min flags when setting an unenforced list mode
+   * list: set update hints on item edje objects
+   * elm - genlist item - index get start from 0 - unbreak api break
+   * docs: bring back docs from eo files by switching to the new group name (T3109)
+   * docs: bring back docs from eo files by switching to the new group name (T3109)
+   * docs: bring back docs from eo files by switching to the new group name (T3109)
 
 Changes since 1.16.0:
 ---------------------
