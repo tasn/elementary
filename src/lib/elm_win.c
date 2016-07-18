@@ -5383,7 +5383,7 @@ _elm_win_theme_internal(Eo *obj, Elm_Win_Data *sd)
    eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_THEME_CHANGED, NULL));
    eo_do(obj, ret = elm_obj_widget_disable());
 
-   if (!sd->theme_alpha && !sd->application_alpha)
+   if (!sd->theme_alpha)
      {
         s = edje_object_data_get(sd->edje, "alpha");
         if (s)
@@ -5391,7 +5391,7 @@ _elm_win_theme_internal(Eo *obj, Elm_Win_Data *sd)
              if (!strcmp(s, "1") ||
                  !strcmp(s, "true"))
                {
-                  sd->application_alpha = 1;
+                  sd->theme_alpha = 1;
                   _elm_win_apply_alpha(obj, sd);
                }
           }
