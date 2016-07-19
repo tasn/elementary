@@ -5383,9 +5383,9 @@ _elm_win_theme_internal(Eo *obj, Elm_Win_Data *sd)
    eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_THEME_CHANGED, NULL));
    eo_do(obj, ret = elm_obj_widget_disable());
 
+   s = edje_object_data_get(sd->edje, "alpha");
    if (!sd->theme_alpha)
-     {
-        s = edje_object_data_get(sd->edje, "alpha");
+     {        
         if (s)
           {
              if (!strcmp(s, "1") ||
@@ -5396,6 +5396,15 @@ _elm_win_theme_internal(Eo *obj, Elm_Win_Data *sd)
                }
           }
      }
+   else
+      {
+         if (!s || ((strcmp(s, "1") != 0) && (strcmp(s, "false") != 0)))
+            {
+               sd->theme_alpha = 0;
+               _elm_win_apply_alpha(obj, sd);
+            }
+      }
+ 
 
    return ret;
 }
