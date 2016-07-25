@@ -351,8 +351,6 @@ elm_systray_eo.h \
 elm_systray_common.h \
 elm_systray_watcher.h \
 elm_sys_notify.h \
-elm_sys_notify.eo.h \
-elm_sys_notify_dbus.eo.h \
 elm_table.h \
 elm_table_eo.h \
 elm_table_legacy.h \
@@ -381,7 +379,6 @@ elm_win_common.h \
 elm_win_eo.h \
 elm_win_legacy.h \
 elm_win_standard.h \
-elm_win_standard.eo.h \
 elm_helper.h
 includesubdir = $(includedir)/elementary-@VMAJ@/
 
